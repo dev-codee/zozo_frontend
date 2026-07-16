@@ -28,17 +28,45 @@ export interface Phone {
       ram_options_gb?: number[];
       storage_options_gb?: number[];
       chipset?: string;
+      cpu?: string;
+      gpu?: string;
+      expandable_storage?: boolean;
     };
     battery?: {
       capacity_mah?: number;
+      charging_watts?: number;
+      fast_charging?: boolean;
+      wireless_charging?: boolean;
     };
     camera?: {
       rear_summary?: string;
+      front_summary?: string;
+      video_recording?: string;
     };
     display?: {
       size_inches?: number;
       type?: string;
+      resolution?: string;
+      refresh_rate_hz?: number;
+      protection?: string;
+      peak_brightness_nits?: number;
     };
+    body?: {
+      height_mm?: number;
+      width_mm?: number;
+      thickness_mm?: number;
+      weight_g?: number;
+      materials?: string;
+      water_resistance?: string;
+    };
+    connectivity?: {
+      network?: string;
+      sim?: string;
+      usb?: string;
+      bluetooth?: string;
+      nfc?: boolean;
+    };
+    os?: string;
   };
   prices: PhonePrice[];
   pta_tax?: number;
@@ -71,7 +99,7 @@ export interface ApiResponse<T> {
 // ─── Config ───────────────────────────────────────────────────────────────────
 
 const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
+  process.env.NEXT_PUBLIC_API_URL;
 
 // ─── Fetch Helpers ────────────────────────────────────────────────────────────
 

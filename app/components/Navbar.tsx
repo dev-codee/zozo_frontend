@@ -7,7 +7,7 @@ import Image from "next/image";
 const navLinks = [
   { label: "Latest", href: "/phones?sort=latest" },
   { label: "Trending", href: "/phones?sort=trending" },
-  { label: "Brands", href: "/brands" },
+  { label: "Brands", href: "/phones" },
   { label: "Compare", href: "/compare" },
 ];
 
