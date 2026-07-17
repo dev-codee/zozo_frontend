@@ -147,3 +147,9 @@ export async function getBrands(): Promise<Brand[]> {
 export async function getPhoneBySlug(slug: string): Promise<Phone | null> {
   return apiFetch<Phone>(`/phones/${slug}`);
 }
+
+export async function getComparisonData(slugs: string[]): Promise<Phone[]> {
+  if (slugs.length === 0) return [];
+  const data = await apiFetch<Phone[]>(`/compare?slugs=${slugs.join(",")}`);
+  return data || [];
+}
