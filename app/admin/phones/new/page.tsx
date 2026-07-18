@@ -7,6 +7,14 @@ import Link from 'next/link';
 import Cookies from 'js-cookie';
 import ImageUploader from '../../../components/ImageUploader';
 
+const EXTRA_SPEC_FIELDS = [
+  'dimensions', 'weight', 'build', 'sim', 'type', 'size', 'resolution', 
+  'protection', 'os', 'chipset', 'cpu', 'gpu', 'card slot', 'internal', 
+  'triple', 'features', 'video', 'single', 'loudspeaker', '3.5mm jack', 
+  'wlan', 'bluetooth', 'positioning', 'nfc', 'radio', 'usb', 'sensors', 
+  'charging', 'colors', 'models', 'sar', 'sar eu', 'price'
+];
+
 export default function AddMobilePage() {
   const router = useRouter();
   const [brands, setBrands] = useState<{ slug: string, name: string }[]>([]);
@@ -38,7 +46,8 @@ export default function AddMobilePage() {
       battery: { capacity_mah: '', charging_watts: '', fast_charging: false, wireless_charging: false },
       body: { height_mm: '', width_mm: '', thickness_mm: '', weight_g: '', materials: '', water_resistance: '' },
       connectivity: { network: '', sim: '', usb: '', bluetooth: '', nfc: false },
-      os: ''
+      os: '',
+      extra_specs: EXTRA_SPEC_FIELDS.reduce((acc, field) => ({ ...acc, [field]: '' }), {})
     },
     prices: [] as any[],
     seo: { meta_title: '', meta_description: '' },
@@ -60,6 +69,19 @@ export default function AddMobilePage() {
         ...prev.specs,
         [section]: {
           ...(prev.specs as any)[section],
+          [field]: value
+        }
+      }
+    }));
+  };
+
+  const handleExtraSpecChange = (field: string, value: string) => {
+    setFormData(prev => ({
+      ...prev,
+      specs: {
+        ...prev.specs,
+        extra_specs: {
+          ...prev.specs.extra_specs,
           [field]: value
         }
       }
@@ -288,6 +310,27 @@ export default function AddMobilePage() {
               <input type="checkbox" name="is_published" checked={formData.is_published} onChange={handleBasicChange} className="h-4 w-4 text-indigo-600 border-gray-300 rounded" />
               <label className="ml-2 block text-sm font-bold text-gray-900">Publish Immediately</label>
             </div>
+          </div>
+        </section>
+
+        {/* Detailed Scraped Specs */}
+        <section className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+          <h3 className="text-xl font-semibold mb-4 text-gray-800">Detailed Specifications (Raw / Scraped)</h3>
+          <p className="text-sm text-gray-500 mb-6">These fields map directly to raw GSMArena-style data.</p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {EXTRA_SPEC_FIELDS.map(field => (
+              <div key={field}>
+                <label className="block text-sm font-medium text-gray-700 mb-1 capitalize">
+                  {field.replace(' ', ' ')} <span className="text-gray-400 font-normal text-xs lowercase">(optional)</span>
+                </label>
+                <input 
+                  type="text" 
+                  value={(formData.specs.extra_specs as any)[field]} 
+                  onChange={e => handleExtraSpecChange(field, e.target.value)} 
+                  className="w-full px-4 py-2 border rounded-md focus:ring-indigo-500 focus:border-indigo-500" 
+                />
+              </div>
+            ))}
           </div>
         </section>
 
