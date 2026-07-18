@@ -10,7 +10,7 @@ import ImageUploader from '../../../components/ImageUploader';
 const EXTRA_SPEC_FIELDS = [
   'dimensions', 'weight', 'build', 'sim', 'type', 'size', 'resolution',
   'protection', 'os', 'chipset', 'cpu', 'gpu', 'card slot', 'internal',
-  'triple', 'features', 'video', 'single', 'loudspeaker', '3.5mm jack',
+  'triple', 'features', 'video', 'single', 'loudspeaker', '3_5mm_jack',
   'wlan', 'bluetooth', 'positioning', 'nfc', 'radio', 'usb', 'sensors',
   'charging', 'colors', 'models', 'sar', 'sar eu', 'price'
 ];
@@ -341,7 +341,7 @@ export default function AddMobilePage() {
             {EXTRA_SPEC_FIELDS.map(field => (
               <div key={field}>
                 <label className="block text-sm font-medium text-gray-700 mb-1 capitalize">
-                  {field.replace(' ', ' ')} <span className="text-gray-400 font-normal text-xs lowercase">(optional)</span>
+                  {field === '3_5mm_jack' ? '3.5mm jack' : field.replace(/_/g, ' ')} <span className="text-gray-400 font-normal text-xs lowercase">(optional)</span>
                 </label>
                 <input
                   type="text"
