@@ -4,7 +4,7 @@ async function getStats() {
   const cookieStore = await cookies();
   const token = cookieStore.get('admin_token')?.value;
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/admin/stats`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/stats`, {
       headers: {
         'Authorization': `Bearer ${token}`
       },
@@ -30,7 +30,7 @@ export default async function AdminDashboard() {
           </h2>
         </div>
       </div>
-      
+
       <div className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
         <div className="overflow-hidden rounded-lg bg-white shadow">
           <div className="p-5">

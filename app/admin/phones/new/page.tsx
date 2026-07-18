@@ -14,7 +14,7 @@ export default function AddMobilePage() {
 
   useEffect(() => {
     // Fetch brands
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/brands`)
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/brands`)
       .then(res => res.json())
       .then(data => {
         if (data.success && data.data) {
