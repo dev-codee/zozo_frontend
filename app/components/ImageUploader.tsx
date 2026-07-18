@@ -34,7 +34,7 @@ export default function ImageUploader({ onImagesChange, existingImages = [] }: I
         formData.append('image', file);
 
         const token = Cookies.get('admin_token');
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/admin/upload`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/upload`, {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${token}`

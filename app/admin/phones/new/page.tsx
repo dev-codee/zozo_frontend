@@ -83,7 +83,7 @@ export default function AddMobilePage() {
       } else { payload.specs.performance.storage_options_gb = []; }
 
       const token = Cookies.get('admin_token');
-      const response = await fetch('http://localhost:5000/api/admin/phones', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/phones`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
