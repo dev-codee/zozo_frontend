@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { LayoutDashboard, Smartphone, PlusCircle } from 'lucide-react';
+import LogoutButton from '../components/LogoutButton';
 
 export default function AdminLayout({
   children,
@@ -15,7 +16,7 @@ export default function AdminLayout({
             <h1 className="text-xl font-bold text-gray-900">Zozo Admin</h1>
           </div>
           
-          <nav className="flex-1 py-4 px-3 space-y-1">
+          <nav className="flex-1 py-4 px-3 space-y-1 flex flex-col">
             <Link 
               href="/admin" 
               className="flex items-center px-3 py-2 text-sm font-medium text-gray-900 rounded-md hover:bg-gray-50"
@@ -45,6 +46,10 @@ export default function AdminLayout({
               <PlusCircle className="mr-3 h-5 w-5 text-indigo-500" />
               Add Mobile
             </Link>
+
+            <div className="mt-auto pt-4 border-t border-gray-200">
+              <LogoutButton />
+            </div>
           </nav>
         </div>
       </aside>

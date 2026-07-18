@@ -104,6 +104,26 @@ export default function AddMobilePage() {
         payload.specs.performance.storage_options_gb = payload.specs.performance.storage_options_gb.toString().split(',').map((x: string) => Number(x.trim()));
       } else { payload.specs.performance.storage_options_gb = []; }
 
+      // Clean up empty number fields to prevent Mongoose cast errors
+      const numFields = [
+        ['display', 'size_inches'], ['display', 'refresh_rate_hz'], ['display', 'peak_brightness_nits'],
+        ['battery', 'capacity_mah'], ['battery', 'charging_watts'],
+        ['body', 'height_mm'], ['body', 'width_mm'], ['body', 'thickness_mm'], ['body', 'weight_g']
+      ];
+      numFields.forEach(([section, field]) => {
+        if (payload.specs[section][field] === '') {
+          delete payload.specs[section][field];
+        } else {
+          payload.specs[section][field] = Number(payload.specs[section][field]);
+        }
+      });
+
+      // Mongoose Maps have a known bug when casting an object that contains a key literally named "type".
+      if (payload.specs.extra_specs.type !== undefined) {
+        payload.specs.extra_specs.device_type = payload.specs.extra_specs.type;
+        delete payload.specs.extra_specs.type;
+      }
+
       const token = Cookies.get('admin_token');
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/phones`, {
         method: 'POST',
