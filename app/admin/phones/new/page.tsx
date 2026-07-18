@@ -8,10 +8,10 @@ import Cookies from 'js-cookie';
 import ImageUploader from '../../../components/ImageUploader';
 
 const EXTRA_SPEC_FIELDS = [
-  'dimensions', 'weight', 'build', 'sim', 'type', 'size', 'resolution', 
-  'protection', 'os', 'chipset', 'cpu', 'gpu', 'card slot', 'internal', 
-  'triple', 'features', 'video', 'single', 'loudspeaker', '3.5mm jack', 
-  'wlan', 'bluetooth', 'positioning', 'nfc', 'radio', 'usb', 'sensors', 
+  'dimensions', 'weight', 'build', 'sim', 'type', 'size', 'resolution',
+  'protection', 'os', 'chipset', 'cpu', 'gpu', 'card slot', 'internal',
+  'triple', 'features', 'video', 'single', 'loudspeaker', '3.5mm jack',
+  'wlan', 'bluetooth', 'positioning', 'nfc', 'radio', 'usb', 'sensors',
   'charging', 'colors', 'models', 'sar', 'sar eu', 'price'
 ];
 
@@ -304,7 +304,7 @@ export default function AddMobilePage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Operating System</label>
-              <input type="text" value={formData.specs.os} onChange={e => handleSpecChange('os', '', e.target.value)} className="w-full px-4 py-2 border rounded-md" placeholder="Android 14, One UI 6.1" />
+              <input type="text" value={formData.specs.os} onChange={e => setFormData(prev => ({ ...prev, specs: { ...prev.specs, os: e.target.value } }))} className="w-full px-4 py-2 border rounded-md" placeholder="Android 14, One UI 6.1" />
             </div>
             <div className="flex items-center mt-6">
               <input type="checkbox" name="is_published" checked={formData.is_published} onChange={handleBasicChange} className="h-4 w-4 text-indigo-600 border-gray-300 rounded" />
@@ -323,11 +323,11 @@ export default function AddMobilePage() {
                 <label className="block text-sm font-medium text-gray-700 mb-1 capitalize">
                   {field.replace(' ', ' ')} <span className="text-gray-400 font-normal text-xs lowercase">(optional)</span>
                 </label>
-                <input 
-                  type="text" 
-                  value={(formData.specs.extra_specs as any)[field]} 
-                  onChange={e => handleExtraSpecChange(field, e.target.value)} 
-                  className="w-full px-4 py-2 border rounded-md focus:ring-indigo-500 focus:border-indigo-500" 
+                <input
+                  type="text"
+                  value={(formData.specs.extra_specs as any)[field]}
+                  onChange={e => handleExtraSpecChange(field, e.target.value)}
+                  className="w-full px-4 py-2 border rounded-md focus:ring-indigo-500 focus:border-indigo-500"
                 />
               </div>
             ))}
