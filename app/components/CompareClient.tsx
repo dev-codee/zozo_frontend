@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Phone } from "@/app/lib/api";
+import AIVerdictClient from "@/app/components/AIVerdictClient";
 
 interface CompareClientProps {
   initialPhones: Phone[];
@@ -236,6 +237,9 @@ export default function CompareClient({ initialPhones, allPhones }: CompareClien
           Add up to {maxSlots} devices to compare prices, PTA taxes, and full specifications side-by-side.
         </p>
       </div>
+
+      {/* AI Verdict Section */}
+      <AIVerdictClient slugs={slots.filter((p) => p !== null).map((p) => p!.slug)} />
 
       {/* Responsive Scrollable Container */}
       <div className="w-full overflow-x-auto relative rounded-xl border border-border-subtle bg-surface-white shadow-sm scrollbar-thin">

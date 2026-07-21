@@ -154,3 +154,9 @@ export async function getComparisonData(slugs: string[]): Promise<Phone[]> {
   const data = await apiFetch<Phone[]>(`/compare?slugs=${slugs.join(",")}`);
   return data || [];
 }
+
+export async function getAIComparisonVerdict(slugs: string[]): Promise<string | null> {
+  if (slugs.length < 2) return null;
+  const data = await apiFetch<{ verdict: string }>(`/compare/ai?slugs=${slugs.join(",")}`);
+  return data?.verdict || null;
+}
