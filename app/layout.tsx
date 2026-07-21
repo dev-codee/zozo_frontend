@@ -13,6 +13,10 @@ export const metadata: Metadata = {
   description:
     "Compare latest mobile phone prices in Pakistan across all top retailers. Find the best deals on Samsung, Apple, Xiaomi, Vivo, and more.",
   keywords: "mobile phones, prices, Pakistan, compare, Samsung, Apple, Xiaomi",
+  robots: {
+    index: false,
+    follow: false,
+  },
 };
 
 export default function RootLayout({
