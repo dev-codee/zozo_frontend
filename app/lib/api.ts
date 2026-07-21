@@ -68,6 +68,8 @@ export interface Phone {
       nfc?: boolean;
     };
     os?: string;
+    ai_features?: string[];
+    extra_specs?: any;
   };
   prices: PhonePrice[];
   pta_tax?: number;
