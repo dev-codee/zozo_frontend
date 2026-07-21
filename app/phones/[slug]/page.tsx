@@ -182,6 +182,18 @@ export default async function PhoneDetailPage({
           </div>
         </div>
 
+        {/* Product Description */}
+        {phone.description && (
+          <section className="bg-surface-white border border-border-subtle rounded-xl p-6 md:p-8 mt-2">
+            <h2 className="font-headline-md text-xl font-bold text-text-main mb-4">
+              Overview
+            </h2>
+            <div className="prose prose-sm md:prose-base max-w-none text-text-main whitespace-pre-wrap">
+              {phone.description}
+            </div>
+          </section>
+        )}
+
         {/* Key Specs Row */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mt-4">
           <div className="bg-surface-white border border-border-subtle p-4 flex items-center gap-3 hover:shadow-md transition-shadow rounded-xl">

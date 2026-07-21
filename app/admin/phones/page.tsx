@@ -1,11 +1,13 @@
 "use client";
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { PlusCircle, Trash2 } from 'lucide-react';
+import { PlusCircle, Trash2, Pencil } from 'lucide-react';
 import Cookies from 'js-cookie';
 
 export default function PhonesListPage() {
+  const router = useRouter();
   const [phones, setPhones] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -24,6 +26,9 @@ export default function PhonesListPage() {
       const data = await res.json();
       if (res.ok && data.data) {
         setPhones(data.data);
+      } else if (res.status === 401) {
+        Cookies.remove('admin_token');
+        router.push('/login');
       }
     } catch (error) {
       console.error('Failed to fetch phones', error);
@@ -119,13 +124,22 @@ export default function PhonesListPage() {
                     {phone.status.replace('_', ' ')}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    <button 
-                      onClick={() => handleDelete(phone._id, phone.name)}
-                      className="text-red-600 hover:text-red-900 bg-red-50 hover:bg-red-100 p-2 rounded-md transition-colors inline-flex items-center"
-                      title="Delete Mobile"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
+                    <div className="flex justify-end space-x-2">
+                      <Link 
+                        href={`/admin/phones/${phone._id}`}
+                        className="text-indigo-600 hover:text-indigo-900 bg-indigo-50 hover:bg-indigo-100 p-2 rounded-md transition-colors inline-flex items-center"
+                        title="Edit Mobile"
+                      >
+                        <Pencil className="w-4 h-4" />
+                      </Link>
+                      <button 
+                        onClick={() => handleDelete(phone._id, phone.name)}
+                        className="text-red-600 hover:text-red-900 bg-red-50 hover:bg-red-100 p-2 rounded-md transition-colors inline-flex items-center"
+                        title="Delete Mobile"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}
