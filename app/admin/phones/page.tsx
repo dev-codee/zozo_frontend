@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { PlusCircle, Trash2, Pencil } from 'lucide-react';
+import { PlusCircle, Trash2, Pencil, Copy } from 'lucide-react';
 import Cookies from 'js-cookie';
 
 export default function PhonesListPage() {
@@ -131,6 +131,13 @@ export default function PhonesListPage() {
                         title="Edit Mobile"
                       >
                         <Pencil className="w-4 h-4" />
+                      </Link>
+                      <Link 
+                        href={`/admin/phones/new?clone=${phone._id}`}
+                        className="text-emerald-600 hover:text-emerald-900 bg-emerald-50 hover:bg-emerald-100 p-2 rounded-md transition-colors inline-flex items-center"
+                        title="Clone Mobile"
+                      >
+                        <Copy className="w-4 h-4" />
                       </Link>
                       <button 
                         onClick={() => handleDelete(phone._id, phone.name)}

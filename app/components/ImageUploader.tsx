@@ -92,7 +92,7 @@ export default function ImageUploader({ onImagesChange, existingImages = [] }: I
 
   return (
     <div className="space-y-4">
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 gap-4">
         {images.map((img, index) => (
           <div key={img.cloud_public_id || index} className="relative group rounded-lg overflow-hidden border border-gray-200">
             <img src={img.url} alt="Phone upload" className="w-full h-32 object-cover" />
