@@ -2,85 +2,100 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import Cookies from 'js-cookie';
+import { GoogleLogin } from '@react-oauth/google';
+import { useAuth } from '../context/AuthContext';
+import Link from 'next/link';
 
-export default function AdminLogin() {
+export default function LoginPage() {
   const router = useRouter();
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const { setUser } = useAuth();
+  const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleGoogleSuccess = async (credentialResponse: any) => {
+    setLoading(true);
     setError('');
-    setIsLoading(true);
-
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/login`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/google`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password })
+        body: JSON.stringify({
+          token: credentialResponse.credential,
+          rememberMe
+        })
       });
-
       const data = await res.json();
-
-      if (res.ok && data.data?.token) {
-        Cookies.set('admin_token', data.data.token, { expires: 30 }); // 30 days
-        router.push('/admin');
-        router.refresh();
+      
+      if (res.ok && data.data?.user) {
+        setUser(data.data.user);
+        router.push('/profile');
       } else {
-        setError(data.message || 'Invalid credentials');
+        setError(data.message || 'Login failed');
       }
     } catch (err) {
-      setError('Failed to connect to server');
+      setError('An error occurred during sign in');
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8 bg-white p-10 rounded-xl shadow-lg border border-gray-100">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8 bg-[url('/bg-pattern.svg')]">
+      <div className="max-w-md w-full space-y-8 bg-white/80 backdrop-blur-xl p-10 rounded-3xl shadow-xl border border-white/50">
         <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">Admin Login</h2>
-          <p className="mt-2 text-center text-sm text-gray-600">Enter your credentials to access the dashboard</p>
+          <h2 className="mt-2 text-center text-3xl font-extrabold text-gray-900">
+            Sign in to zozo.pk
+          </h2>
+          <p className="mt-2 text-center text-sm text-gray-600">
+            Compare prices, save your favorites, and manage your account.
+          </p>
         </div>
-        <form className="mt-8 space-y-6" onSubmit={handleLogin}>
-          {error && <div className="text-red-500 text-sm text-center bg-red-50 p-3 rounded">{error}</div>}
-          <div className="rounded-md shadow-sm -space-y-px">
-            <div>
+        
+        {error && (
+          <div className="bg-red-50 text-red-600 p-3 rounded-lg text-sm text-center border border-red-100">
+            {error}
+          </div>
+        )}
+
+        <div className="mt-8 space-y-6">
+          <div className="flex items-center justify-between mt-4">
+            <div className="flex items-center">
               <input
-                type="text"
-                required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Username"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                id="remember-me"
+                name="remember-me"
+                type="checkbox"
+                checked={rememberMe}
+                onChange={(e) => setRememberMe(e.target.checked)}
+                className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
               />
-            </div>
-            <div>
-              <input
-                type="password"
-                required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
+              <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-900">
+                Remember me for 30 days
+              </label>
             </div>
           </div>
 
-          <div>
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50"
-            >
-              {isLoading ? 'Signing in...' : 'Sign in'}
-            </button>
+          <div className="pt-4 flex justify-center">
+            {loading ? (
+              <div className="animate-pulse text-indigo-600 font-medium">Signing in...</div>
+            ) : (
+              <GoogleLogin
+                onSuccess={handleGoogleSuccess}
+                onError={() => setError('Google Login Failed')}
+                useOneTap
+                theme="outline"
+                size="large"
+                shape="pill"
+                text="signin_with"
+                width="100%"
+              />
+            )}
           </div>
-        </form>
+        </div>
+
+        <div className="mt-6 text-center text-xs text-gray-500">
+          By signing in, you agree to our <Link href="/terms" className="text-indigo-600 hover:underline">Terms of Service</Link> and <Link href="/privacy" className="text-indigo-600 hover:underline">Privacy Policy</Link>.
+        </div>
       </div>
     </div>
   );

@@ -5,14 +5,14 @@ export function middleware(request: NextRequest) {
   const token = request.cookies.get('admin_token')?.value;
 
   // Protect /admin routes
-  if (request.nextUrl.pathname.startsWith('/admin')) {
+  if (request.nextUrl.pathname.startsWith('/admin') && !request.nextUrl.pathname.startsWith('/admin-login')) {
     if (!token) {
-      return NextResponse.redirect(new URL('/login', request.url));
+      return NextResponse.redirect(new URL('/admin-login', request.url));
     }
   }
 
-  // If logged in, don't show login page
-  if (request.nextUrl.pathname === '/login' && token) {
+  // If logged in as admin, don't show admin login page
+  if (request.nextUrl.pathname === '/admin-login' && token) {
     return NextResponse.redirect(new URL('/admin', request.url));
   }
 
@@ -20,5 +20,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/admin/:path*', '/login'],
+  matcher: ['/admin/:path*', '/admin-login'],
 };

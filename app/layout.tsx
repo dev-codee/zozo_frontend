@@ -19,6 +19,9 @@ export const metadata: Metadata = {
   },
 };
 
+import { AuthProvider } from './context/AuthContext';
+import ActivityTracker from './components/ActivityTracker';
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -32,7 +35,12 @@ export default function RootLayout({
           href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=block"
         />
       </head>
-      <body className="min-h-full flex flex-col font-sans">{children}</body>
+      <body className="min-h-full flex flex-col font-sans">
+        <AuthProvider>
+          <ActivityTracker />
+          {children}
+        </AuthProvider>
+      </body>
     </html>
   );
 }

@@ -54,14 +54,6 @@ export default function AdminPhoneForm({ initialData, onSubmit, isEditing = fals
   const [isAIFilling, setIsAIFilling] = useState(false);
   const [activeTab, setActiveTab] = useState('basic'); // 'basic', 'ai_content', 'detailed_specs', 'seo'
 
-  useEffect(() => {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
-    fetch(`${apiUrl}/brands`)
-      .then(res => res.json())
-      .then(data => { if (data.success && data.data) setBrands(data.data); })
-      .catch(console.error);
-  }, []);
-
   const [formData, setFormData] = useState<any>(() => {
     const defaultData = {
       name: '', brand_slug: '', model_number: '', release_date: '', status: 'available', images: [] as any[],
@@ -100,6 +92,70 @@ export default function AdminPhoneForm({ initialData, onSubmit, isEditing = fals
     }
     return defaultData;
   });
+
+  useEffect(() => {
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+    fetch(`${apiUrl}/brands`)
+      .then(res => res.json())
+      .then(data => { if (data.success && data.data) setBrands(data.data); })
+      .catch(console.error);
+  }, []);
+
+  // Duplicate checker & Revisions state
+  const [duplicates, setDuplicates] = useState<any[]>([]);
+  const [revisions, setRevisions] = useState<any[]>([]);
+  const [loadingRevisions, setLoadingRevisions] = useState(false);
+
+  const checkDuplicate = async (nameVal: string, modelVal: string) => {
+    if (!nameVal && !modelVal) return;
+    try {
+      const token = Cookies.get('admin_token');
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/phones/check-duplicate?name=${encodeURIComponent(nameVal)}&model_number=${encodeURIComponent(modelVal)}`, {
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      const data = await res.json();
+      if (res.ok && data.data) {
+        const filtered = data.data.filter((x: any) => x._id !== initialData?._id);
+        setDuplicates(filtered);
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (formData.name || formData.model_number) {
+        checkDuplicate(formData.name, formData.model_number);
+      } else {
+        setDuplicates([]);
+      }
+    }, 800);
+    return () => clearTimeout(timer);
+  }, [formData.name, formData.model_number]);
+
+  useEffect(() => {
+    if (activeTab === 'history' && isEditing && initialData?._id) {
+      const fetchRevisions = async () => {
+        setLoadingRevisions(true);
+        try {
+          const token = Cookies.get('admin_token');
+          const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/phones/${initialData._id}/revisions`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+          });
+          const data = await res.json();
+          if (res.ok) {
+            setRevisions(data.data || []);
+          }
+        } catch (e) {
+          console.error(e);
+        } finally {
+          setLoadingRevisions(false);
+        }
+      };
+      fetchRevisions();
+    }
+  }, [activeTab, isEditing, initialData?._id]);
 
   const handleBasicChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value, type } = e.target;
@@ -248,7 +304,7 @@ export default function AdminPhoneForm({ initialData, onSubmit, isEditing = fals
       </div>
 
       <div className="flex space-x-2 mb-6 overflow-x-auto pb-2">
-        {['basic', 'detailed_specs', 'ai_content', 'gaming_benchmarks', 'seo_affiliate'].map(tab => (
+        {['basic', 'detailed_specs', 'ai_content', 'gaming_benchmarks', 'seo_affiliate', ...(isEditing ? ['history'] : [])].map(tab => (
           <button key={tab} type="button" onClick={() => setActiveTab(tab)} className={`px-4 py-2 rounded-full text-sm font-semibold capitalize whitespace-nowrap ${activeTab === tab ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}>
             {tab.replace(/_/g, ' ')}
           </button>
@@ -261,6 +317,16 @@ export default function AdminPhoneForm({ initialData, onSubmit, isEditing = fals
         {activeTab === 'basic' && (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="lg:col-span-2 space-y-6">
+              {duplicates.length > 0 && (
+                <div className="bg-amber-50 border border-amber-200 text-amber-900 px-4 py-3 rounded-xl flex flex-col gap-1">
+                  <span className="font-bold text-sm">Warning: Potential Duplicates Detected!</span>
+                  <div className="text-xs space-y-1">
+                    {duplicates.map(d => (
+                      <div key={d._id}>• <span className="font-semibold">{d.name}</span> ({d.model_number || 'No Model No.'}) - Status: {d.status}</div>
+                    ))}
+                  </div>
+                </div>
+              )}
               <section className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
                 <h3 className="text-lg font-bold mb-4">Core Info</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -316,6 +382,26 @@ export default function AdminPhoneForm({ initialData, onSubmit, isEditing = fals
                     <option value="discontinued">Discontinued</option>
                     <option value="out_of_stock">Out of Stock</option>
                   </select>
+                </div>
+                <div className="mt-4">
+                  <label className="block text-xs font-semibold text-gray-600 mb-1">Approval Workflow Status</label>
+                  <div className="px-3 py-2 bg-gray-50 border rounded-md text-sm font-semibold capitalize text-gray-700">
+                    {formData.approvalStatus || 'DRAFT'}
+                  </div>
+                </div>
+                <div className="mt-4 border-t pt-4">
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-gray-500 mb-3">Integration Sync</h4>
+                  {renderInput('Import Source', formData.importSource, v => setFormData((p: any) => ({ ...p, importSource: v })))}
+                  {renderInput('Last Sync Date', formData.lastSync, v => setFormData((p: any) => ({ ...p, lastSync: v })), 'datetime-local')}
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-600 mb-1">Sync Status</label>
+                    <select value={formData.syncStatus || ''} onChange={e => setFormData((p: any) => ({ ...p, syncStatus: e.target.value || undefined }))} className="w-full px-3 py-2 border rounded-md text-sm">
+                      <option value="">No Sync / Local Only</option>
+                      <option value="SUCCESS">Success</option>
+                      <option value="FAILED">Failed</option>
+                      <option value="PENDING">Pending</option>
+                    </select>
+                  </div>
                 </div>
                 <div className="mt-4">
                   <label className="block text-xs font-semibold text-gray-600 mb-2">Tags</label>
@@ -471,6 +557,41 @@ export default function AdminPhoneForm({ initialData, onSubmit, isEditing = fals
                 {Object.keys(DEFAULT_EXTRA_SPECS.price_section).map(key => renderInput(key, (formData.specs.extra_specs as any).price_section[key], v => handleNestedExtraSpec('price_section', key, v), typeof DEFAULT_EXTRA_SPECS.price_section[key as keyof typeof DEFAULT_EXTRA_SPECS.price_section] === 'boolean' ? 'checkbox' : 'text'))}
               </div>
             </section>
+          </div>
+        )}
+
+        {/* REVISION HISTORY TAB */}
+        {activeTab === 'history' && (
+          <div className="bg-white rounded-xl border p-6 space-y-6 shadow-sm">
+            <h3 className="text-lg font-bold">Revision History & Change Logs</h3>
+            {loadingRevisions ? (
+              <div className="text-gray-500 text-sm">Loading revisions...</div>
+            ) : revisions.length === 0 ? (
+              <div className="text-gray-500 text-sm">No revisions recorded for this mobile.</div>
+            ) : (
+              <div className="space-y-4">
+                {revisions.map(rev => (
+                  <div key={rev._id} className="border border-gray-100 rounded-xl p-4 hover:bg-gray-50/50 transition flex flex-col gap-1">
+                    <div className="flex items-center justify-between text-sm">
+                      <div className="font-semibold text-gray-900">
+                        {rev.changedBy?.name || 'System'} ({rev.changedBy?.role || 'SYSTEM'})
+                      </div>
+                      <div className="text-xs text-gray-400">
+                        {new Date(rev.createdAt).toLocaleString()}
+                      </div>
+                    </div>
+                    <div className="text-xs text-indigo-600 font-semibold mt-1">
+                      Action: {rev.action}
+                    </div>
+                    {rev.note && (
+                      <div className="text-xs text-rose-700 bg-rose-50 px-2 py-1 rounded border border-rose-100 mt-2">
+                        Rejection Note: "{rev.note}"
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         )}
 

@@ -37,6 +37,58 @@ export default function PhonesListPage() {
     }
   };
 
+  const token = Cookies.get('admin_token');
+  let role = '';
+  if (token) {
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      role = payload.role;
+    } catch (e) {}
+  }
+  const canApprove = ['SUPER_ADMIN', 'MODERATOR'].includes(role);
+
+  const handleApprove = async (id: string) => {
+    const token = Cookies.get('admin_token');
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/phones/${id}/approve`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
+      if (res.ok) {
+        fetchPhones();
+      } else {
+        const error = await res.json();
+        alert(`Failed to approve: ${error.message}`);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleReject = async (id: string) => {
+    const note = prompt("Enter rejection reason/note:");
+    if (note === null) return;
+    const token = Cookies.get('admin_token');
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/phones/${id}/reject`, {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}` 
+        },
+        body: JSON.stringify({ note })
+      });
+      if (res.ok) {
+        fetchPhones();
+      } else {
+        const error = await res.json();
+        alert(`Failed to reject: ${error.message}`);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   const handleDelete = async (id: string, name: string) => {
     if (!window.confirm(`Are you sure you want to delete ${name}?`)) return;
 
@@ -94,6 +146,8 @@ export default function PhonesListPage() {
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Mobile</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Brand</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Approval</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Author</th>
                 <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
               </tr>
             </thead>
@@ -123,8 +177,39 @@ export default function PhonesListPage() {
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 capitalize">
                     {phone.status.replace('_', ' ')}
                   </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                      phone.approvalStatus === 'APPROVED' ? 'bg-emerald-100 text-emerald-800' :
+                      phone.approvalStatus === 'PENDING_REVIEW' ? 'bg-amber-100 text-amber-800' :
+                      phone.approvalStatus === 'REJECTED' ? 'bg-rose-100 text-rose-800' :
+                      'bg-gray-100 text-gray-800'
+                    }`}>
+                      {phone.approvalStatus || 'DRAFT'}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {phone.createdBy?.name || 'Super Admin'}
+                  </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                     <div className="flex justify-end space-x-2">
+                      {canApprove && phone.approvalStatus === 'PENDING_REVIEW' && (
+                        <>
+                          <button 
+                            onClick={() => handleApprove(phone._id)}
+                            className="text-emerald-600 hover:text-emerald-900 bg-emerald-50 px-2 py-1 rounded text-xs"
+                            title="Approve Mobile"
+                          >
+                            Approve
+                          </button>
+                          <button 
+                            onClick={() => handleReject(phone._id)}
+                            className="text-rose-600 hover:text-rose-900 bg-rose-50 px-2 py-1 rounded text-xs"
+                            title="Reject Mobile"
+                          >
+                            Reject
+                          </button>
+                        </>
+                      )}
                       <Link 
                         href={`/admin/phones/${phone._id}`}
                         className="text-indigo-600 hover:text-indigo-900 bg-indigo-50 hover:bg-indigo-100 p-2 rounded-md transition-colors inline-flex items-center"
