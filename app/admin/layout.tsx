@@ -1,3 +1,6 @@
+"use client";
+
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { LayoutDashboard, Smartphone, PlusCircle, Users, Activity } from 'lucide-react';
 import LogoutButton from '../components/LogoutButton';
@@ -8,14 +11,32 @@ export default function AdminLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const token = Cookies.get('admin_token');
-  let role = '';
-  if (token) {
-    try {
-      const payload = JSON.parse(atob(token.split('.')[1]));
-      role = payload.role;
-    } catch (e) {}
-  }
+  const [role, setRole] = useState('');
+  const [decodeError, setDecodeError] = useState('');
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+    const token = Cookies.get('admin_token');
+    if (token) {
+      try {
+        const base64Url = token.split('.')[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const padding = '='.repeat((4 - (base64.length % 4)) % 4);
+        const base64Decoded = atob(base64 + padding);
+        const jsonPayload = decodeURIComponent(base64Decoded.split('').map(function(c) {
+            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        }).join(''));
+        const payload = JSON.parse(jsonPayload);
+        setRole(payload.role || '');
+      } catch (e: any) {
+        setDecodeError(e.message || String(e));
+        console.error("JWT Decode error", e);
+      }
+    } else {
+      setDecodeError("Token missing");
+    }
+  }, []);
 
   const isSuperAdmin = role === 'SUPER_ADMIN';
 
@@ -23,36 +44,45 @@ export default function AdminLayout({
     <div className="min-h-screen bg-gray-50 flex">
       {/* Sidebar */}
       <aside className="w-64 bg-white border-r border-gray-200 flex flex-col h-screen sticky top-0">
-        <div className="h-16 flex items-center px-6 border-b border-gray-200 shrink-0">
-          <h1 className="text-xl font-bold text-gray-900">Zozo Admin</h1>
+        <div className="h-16 flex flex-col justify-center px-6 border-b border-gray-200 shrink-0">
+          <h1 className="text-base font-bold text-gray-900">Zozo Admin</h1>
+          {role ? (
+            <span className="text-[10px] uppercase font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded w-fit mt-0.5">
+              {role.replace('_', ' ')}
+            </span>
+          ) : (
+            <span className="text-[10px] uppercase font-bold text-rose-600 bg-rose-50 px-2 py-0.5 rounded w-fit mt-0.5" title={decodeError}>
+              {decodeError ? `Error: ${decodeError}` : "No Token"}
+            </span>
+          )}
         </div>
-        
+
         <nav className="flex-1 py-4 px-3 flex flex-col">
           <div className="space-y-1">
-            <Link 
-              href="/admin" 
+            <Link
+              href="/admin"
               className="flex items-center px-3 py-2 text-sm font-medium text-gray-900 rounded-md hover:bg-gray-50"
             >
               <LayoutDashboard className="mr-3 h-5 w-5 text-gray-500" />
               Dashboard
             </Link>
-            
+
             <div className="pt-4 pb-2">
               <p className="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">
                 Mobiles
               </p>
             </div>
-            
-            <Link 
-              href="/admin/phones" 
+
+            <Link
+              href="/admin/phones"
               className="flex items-center px-3 py-2 text-sm font-medium text-gray-700 rounded-md hover:bg-gray-50"
             >
               <Smartphone className="mr-3 h-5 w-5 text-gray-400" />
               All Mobiles
             </Link>
-            
-            <Link 
-              href="/admin/phones/new" 
+
+            <Link
+              href="/admin/phones/new"
               className="flex items-center px-3 py-2 text-sm font-medium text-indigo-600 bg-indigo-50 rounded-md animate-pulse"
             >
               <PlusCircle className="mr-3 h-5 w-5 text-indigo-500" />
@@ -66,25 +96,25 @@ export default function AdminLayout({
                     System & Team
                   </p>
                 </div>
-                
-                <Link 
-                  href="/admin/team" 
+
+                <Link
+                  href="/admin/team"
                   className="flex items-center px-3 py-2 text-sm font-medium text-gray-700 rounded-md hover:bg-gray-50"
                 >
                   <Users className="mr-3 h-5 w-5 text-gray-400" />
                   Team Management
                 </Link>
 
-                <Link 
-                  href="/admin/activity" 
+                <Link
+                  href="/admin/activity"
                   className="flex items-center px-3 py-2 text-sm font-medium text-gray-700 rounded-md hover:bg-gray-50"
                 >
                   <Activity className="mr-3 h-5 w-5 text-gray-400" />
                   User Activity Logs
                 </Link>
 
-                <Link 
-                  href="/admin/team-activity" 
+                <Link
+                  href="/admin/team-activity"
                   className="flex items-center px-3 py-2 text-sm font-medium text-gray-700 rounded-md hover:bg-gray-50"
                 >
                   <Activity className="mr-3 h-5 w-5 text-gray-400" />

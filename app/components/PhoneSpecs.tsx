@@ -14,7 +14,7 @@ function getPerformanceRating(specs: Phone["specs"]) {
 
   if (chipset.includes("snapdragon 8 elite") || chipset.includes("apple a18 pro") || chipset.includes("dimensity 9400") || chipset.includes("8s gen 4") || chipset.includes("7s gen 4")) {
     if (chipset.includes("7s gen 4")) {
-      score = 8.2; 
+      score = 8.2;
     } else {
       score = 9.8;
     }
@@ -224,7 +224,7 @@ export default function PhoneSpecs({ specs }: PhoneSpecsProps) {
   ) => {
     // Determine if the rows fragment actually contains any rendered rows
     if (!rows || (rows as any).props?.children?.length === 0 || (rows as any).props?.children?.every((c: any) => c === null)) {
-        // We'll just render it anyway, empty rows usually evaluate to empty divs internally
+      // We'll just render it anyway, empty rows usually evaluate to empty divs internally
     }
     const colors = rating ? getRatingColors(rating.label) : null;
 
@@ -277,7 +277,7 @@ export default function PhoneSpecs({ specs }: PhoneSpecsProps) {
           {specs.performance?.expandable_storage !== undefined && renderRow("Expandable Storage", specs.performance.expandable_storage ? (ext.ram_storage?.max_expansion || "Yes") : "No")}
         </>
       ), ratings.performance)}
-      
+
       {renderSection("display", "Display", "smartphone", (
         <>
           {specs.display?.size_inches && renderRow("Size", `${specs.display.size_inches} inches`)}

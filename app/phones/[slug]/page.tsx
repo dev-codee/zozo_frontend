@@ -26,16 +26,16 @@ export default async function PhoneDetailPage({
     : null;
   const rating = phone.rating?.average;
   const reviewCount = phone.rating?.count || 0;
-  
+
   // Format specs for the row
   const specs = phone.specs || {};
-  
+
   // RAM processing
   const ramOptions = specs.performance?.ram_options_gb;
-  const ramDisplay = ramOptions?.length 
-    ? `${Math.max(...ramOptions)}GB` 
+  const ramDisplay = ramOptions?.length
+    ? `${Math.max(...ramOptions)}GB`
     : "N/A";
-    
+
   // Storage processing
   const storageOptions = specs.performance?.storage_options_gb;
   const storageDisplay = storageOptions?.length
@@ -45,28 +45,28 @@ export default async function PhoneDetailPage({
   // Battery processing
   const batteryCap = specs.battery?.capacity_mah;
   const batteryDisplay = batteryCap ? `${batteryCap}mAh` : "N/A";
-  
+
   // Camera processing (simplified, taking first rear camera if available or a summary)
   const cameraDisplay = specs.camera?.rear_summary || "N/A";
-  
+
   // Display processing
   const displaySize = specs.display?.size_inches;
   const displayType = specs.display?.type;
   // If type contains size info (like "6000 mAh" which is wrong in the DB for display), we just use size
   const displayString = displaySize ? `${displaySize}"` : "N/A";
-  
+
   // Chipset processing
   const chipsetFull = specs.performance?.chipset;
   // Try to extract a shorter name, e.g., "Snapdragon 6 Gen 3" from "Qualcomm SM6475-AB Snapdragon 6 Gen 3 (4 nm)"
   let chipsetDisplay = chipsetFull || "N/A";
   if (chipsetFull?.includes("Snapdragon")) {
-     const match = chipsetFull.match(/(Snapdragon[^(\n]+)/);
-     if(match) chipsetDisplay = match[1].trim();
+    const match = chipsetFull.match(/(Snapdragon[^(\n]+)/);
+    if (match) chipsetDisplay = match[1].trim();
   } else if (chipsetFull?.includes("Apple")) {
-     const match = chipsetFull.match(/(Apple[^(\n]+)/);
-     if(match) chipsetDisplay = match[1].trim();
-  } else if(chipsetDisplay.length > 20) {
-      chipsetDisplay = chipsetDisplay.substring(0, 20) + "...";
+    const match = chipsetFull.match(/(Apple[^(\n]+)/);
+    if (match) chipsetDisplay = match[1].trim();
+  } else if (chipsetDisplay.length > 20) {
+    chipsetDisplay = chipsetDisplay.substring(0, 20) + "...";
   }
 
 
@@ -96,12 +96,12 @@ export default async function PhoneDetailPage({
               <h1 className="font-headline-lg text-3xl md:text-4xl lg:text-5xl text-text-main mb-3 font-bold tracking-tight">
                 {phone.name}
               </h1>
-              
+
               {/* Rating */}
               <div className="flex items-center gap-2">
                 {rating ? (
                   <>
-                     <div className="flex items-center text-yellow-500">
+                    <div className="flex items-center text-yellow-500">
                       <span
                         className="material-symbols-outlined text-[20px]"
                         style={{ fontVariationSettings: "'FILL' 1" }}
@@ -118,7 +118,7 @@ export default async function PhoneDetailPage({
                   </>
                 ) : (
                   <span className="inline-flex items-center gap-1 bg-primary/10 text-primary rounded-full px-3 py-1 text-xs font-medium">
-                     New Release
+                    New Release
                   </span>
                 )}
               </div>
@@ -133,33 +133,33 @@ export default async function PhoneDetailPage({
 
             {/* PTA Tax Box */}
             {phone.pta_tax ? (
-                <div className="bg-surface-container-low rounded-lg p-4 flex items-start gap-3 border border-border-subtle">
+              <div className="bg-surface-container-low rounded-lg p-4 flex items-start gap-3 border border-border-subtle">
                 <span className="material-symbols-outlined text-primary mt-0.5">
-                    info
+                  info
                 </span>
                 <div>
-                    <h4 className="font-label-md text-sm font-semibold text-text-main">
+                  <h4 className="font-label-md text-sm font-semibold text-text-main">
                     PTA Tax (Passport): Rs. {phone.pta_tax.toLocaleString()}
-                    </h4>
-                    <p className="font-body-sm text-xs text-text-muted mt-1">
+                  </h4>
+                  <p className="font-body-sm text-xs text-text-muted mt-1">
                     Estimated tax. Subject to change by FBR.
-                    </p>
+                  </p>
                 </div>
-                </div>
+              </div>
             ) : (
-               <div className="bg-surface-container-low rounded-lg p-4 flex items-start gap-3 border border-border-subtle">
+              <div className="bg-surface-container-low rounded-lg p-4 flex items-start gap-3 border border-border-subtle">
                 <span className="material-symbols-outlined text-outline mt-0.5">
-                    info
+                  info
                 </span>
                 <div>
-                    <h4 className="font-label-md text-sm font-semibold text-text-main">
+                  <h4 className="font-label-md text-sm font-semibold text-text-main">
                     PTA Tax Info Unavailable
-                    </h4>
-                    <p className="font-body-sm text-xs text-text-muted mt-1">
+                  </h4>
+                  <p className="font-body-sm text-xs text-text-muted mt-1">
                     Tax details for this model are not currently available.
-                    </p>
+                  </p>
                 </div>
-                </div>
+              </div>
             )}
 
             {/* Action Buttons */}
@@ -200,7 +200,7 @@ export default async function PhoneDetailPage({
               </div>
             </div>
           </div>
-          
+
           <div className="bg-surface-white border border-border-subtle p-4 flex items-center gap-3 hover:shadow-md transition-shadow rounded-xl">
             <span className="material-symbols-outlined text-primary text-[28px] bg-primary/10 p-2 rounded-lg">
               hard_drive
@@ -279,12 +279,12 @@ export default async function PhoneDetailPage({
               Price Comparison
             </h2>
           </div>
-          
+
           <div className="divide-y divide-border-subtle">
             {phone.prices && phone.prices.length > 0 ? (
               phone.prices.map((priceItem, index) => (
-                <div 
-                  key={index} 
+                <div
+                  key={index}
                   className="p-4 md:px-6 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:bg-surface-container-lowest transition-colors"
                 >
                   <div className="flex items-center gap-4">
@@ -296,7 +296,7 @@ export default async function PhoneDetailPage({
                         {priceItem.retailer_name}
                       </div>
                       <div className="font-body-sm text-sm text-price-green font-medium flex items-center gap-1 mt-0.5">
-                         <span className="w-2 h-2 rounded-full bg-price-green"></span>
+                        <span className="w-2 h-2 rounded-full bg-price-green"></span>
                         {priceItem.stock_status || "In Stock"}
                       </div>
                     </div>
@@ -306,21 +306,21 @@ export default async function PhoneDetailPage({
                       Rs. {priceItem.price_pkr.toLocaleString()}
                     </div>
                     {priceItem.product_url ? (
-                        <a 
+                      <a
                         href={priceItem.product_url}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="bg-primary hover:bg-on-primary-fixed-variant text-white font-label-md text-sm px-8 h-11 transition-all shadow-md hover:shadow-lg rounded-lg font-semibold flex items-center justify-center cursor-pointer"
-                        >
+                      >
                         Buy Now
-                        </a>
+                      </a>
                     ) : (
-                         <button 
+                      <button
                         className="bg-surface-container-low text-text-muted font-label-md text-sm px-8 h-11 rounded-lg font-semibold flex items-center justify-center cursor-not-allowed border border-border-subtle"
                         disabled
-                        >
+                      >
                         Unavailable
-                        </button>
+                      </button>
                     )}
                   </div>
                 </div>
@@ -328,7 +328,7 @@ export default async function PhoneDetailPage({
             ) : (
               <div className="p-8 text-center">
                 <span className="material-symbols-outlined text-4xl text-outline mb-2">
-                    storefront
+                  storefront
                 </span>
                 <p className="text-text-muted font-medium">No prices available for this phone yet.</p>
               </div>
