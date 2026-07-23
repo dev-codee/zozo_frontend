@@ -52,10 +52,10 @@ export default async function PhoneDetailPage({
 
   const releaseDateStr = phone.release_date && !isNaN(Date.parse(phone.release_date))
     ? new Date(phone.release_date).toLocaleDateString("en-US", {
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      })
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    })
     : null;
 
   // Format specs for the row
@@ -117,6 +117,9 @@ export default async function PhoneDetailPage({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
           {/* Gallery */}
           <PhoneGallery images={phone.images} altText={phone.name} />
+          <h1 className="font-headline-lg text-2xl md:text-3xl lg:text-4xl text-text-main mb-3 font-bold tracking-tight">
+            {phone.name}
+          </h1>
 
           {/* Product Info */}
           <div className="flex flex-col gap-6">
@@ -136,9 +139,6 @@ export default async function PhoneDetailPage({
                   </span>
                 )}
               </div>
-              <h1 className="font-headline-lg text-2xl md:text-3xl lg:text-4xl text-text-main mb-3 font-bold tracking-tight">
-                {phone.name}
-              </h1>
 
               {/* Rating */}
               {rating && (
@@ -176,7 +176,7 @@ export default async function PhoneDetailPage({
                 <span className="w-1 h-6 bg-primary rounded-full"></span>
                 Key Specs
               </h2>
-              
+
               <div className="flex flex-col divide-y divide-border-subtle [&>div]:py-4 [&>div:first-child]:pt-0 [&>div:last-child]:pb-0">
                 {/* OS */}
                 {phone.specs.os && (
