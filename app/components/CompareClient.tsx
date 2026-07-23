@@ -184,6 +184,7 @@ export default function CompareClient({ initialPhones, allPhones }: CompareClien
       icon: "wifi",
       fields: [
         { label: "Operating System", getValue: (p: Phone) => p.specs.os || "N/A" },
+        { label: "5G Support", getValue: (p: Phone) => p.specs.connectivity?.network?.includes("5G") ? "Yes" : (p.specs.connectivity?.network ? "No" : "N/A") },
         { label: "Network Support", getValue: (p: Phone) => p.specs.connectivity?.network || "N/A" },
         { label: "SIM Options", getValue: (p: Phone) => p.specs.connectivity?.sim || "N/A" },
         { label: "Bluetooth", getValue: (p: Phone) => p.specs.connectivity?.bluetooth || "N/A" },

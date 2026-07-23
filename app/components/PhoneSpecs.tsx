@@ -347,6 +347,8 @@ export default function PhoneSpecs({ specs }: PhoneSpecsProps) {
 
       {renderSection("network", "Network & SIM", "cell_tower", (
         <>
+          {specs.connectivity?.network && renderRow("5G Support", specs.connectivity.network.includes("5G") ? "Yes" : "No")}
+          {specs.connectivity?.network && renderRow("4G / LTE", (specs.connectivity.network.includes("4G") || specs.connectivity.network.includes("LTE")) ? "Yes" : "No")}
           {renderRow("Network", specs.connectivity?.network)}
           {renderRow("Network Features", ext.network_detailed?.features)}
           {renderRow("SIM", specs.connectivity?.sim)}
