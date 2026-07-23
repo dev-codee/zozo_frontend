@@ -221,22 +221,24 @@ export default function PhonesListPage() {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-xs font-medium">
                     <div className="flex justify-end space-x-2">
-                      {canApprove && phone.approvalStatus === 'PENDING_REVIEW' && (
+                      {canApprove && phone.approvalStatus !== 'APPROVED' && (
                         <>
                           <button 
                             onClick={() => handleApprove(phone._id)}
-                            className="text-emerald-600 hover:text-emerald-900 bg-emerald-50 px-2 py-1 rounded text-xs"
+                            className="text-emerald-600 hover:text-emerald-900 bg-emerald-50 px-2 py-1 rounded text-xs cursor-pointer"
                             title="Approve Mobile"
                           >
                             Approve
                           </button>
-                          <button 
-                            onClick={() => handleReject(phone._id)}
-                            className="text-rose-600 hover:text-rose-900 bg-rose-50 px-2 py-1 rounded text-xs"
-                            title="Reject Mobile"
-                          >
-                            Reject
-                          </button>
+                          {phone.approvalStatus !== 'REJECTED' && (
+                            <button 
+                              onClick={() => handleReject(phone._id)}
+                              className="text-rose-600 hover:text-rose-900 bg-rose-50 px-2 py-1 rounded text-xs cursor-pointer"
+                              title="Reject Mobile"
+                            >
+                              Reject
+                            </button>
+                          )}
                         </>
                       )}
                       <Link 
