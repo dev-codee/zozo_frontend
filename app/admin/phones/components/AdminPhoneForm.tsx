@@ -54,6 +54,55 @@ export default function AdminPhoneForm({ initialData, onSubmit, isEditing = fals
   const [isAIFilling, setIsAIFilling] = useState(false);
   const [activeTab, setActiveTab] = useState('basic'); // 'basic', 'ai_content', 'detailed_specs', 'seo'
 
+  const [newPrice, setNewPrice] = useState({
+    retailer_name: '',
+    price_pkr: '',
+    stock_status: 'available',
+    product_url: '',
+    variant: ''
+  });
+
+  const addPriceItem = () => {
+    if (!newPrice.retailer_name || !newPrice.price_pkr) {
+      alert("Retailer Name and Price are required.");
+      return;
+    }
+    const priceNum = Number(newPrice.price_pkr);
+    if (isNaN(priceNum)) {
+      alert("Price must be a valid number.");
+      return;
+    }
+
+    const itemToAdd = {
+      retailer_name: newPrice.retailer_name,
+      retailer_slug: newPrice.retailer_name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, ''),
+      price_pkr: priceNum,
+      stock_status: newPrice.stock_status,
+      product_url: newPrice.product_url || undefined,
+      variant: newPrice.variant || undefined
+    };
+
+    setFormData((p: any) => ({
+      ...p,
+      prices: [...(p.prices || []), itemToAdd]
+    }));
+
+    setNewPrice({
+      retailer_name: '',
+      price_pkr: '',
+      stock_status: 'available',
+      product_url: '',
+      variant: ''
+    });
+  };
+
+  const removePriceItem = (index: number) => {
+    setFormData((p: any) => ({
+      ...p,
+      prices: (p.prices || []).filter((_: any, i: number) => i !== index)
+    }));
+  };
+
   const [formData, setFormData] = useState<any>(() => {
     const defaultData = {
       name: '', brand_slug: '', model_number: '', release_date: '', status: 'available', images: [] as any[],
@@ -381,6 +430,113 @@ export default function AdminPhoneForm({ initialData, onSubmit, isEditing = fals
                   {renderInput('RAM (GB, comma)', formData.specs.performance.ram_options_gb, v => handleSpecChange('performance', 'ram_options_gb', v))}
                   {renderInput('Storage (GB, comma)', formData.specs.performance.storage_options_gb, v => handleSpecChange('performance', 'storage_options_gb', v))}
                   {renderInput('Battery (mAh)', formData.specs.battery.capacity_mah, v => handleSpecChange('battery', 'capacity_mah', v), 'number')}
+                </div>
+              </section>
+
+              <section className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+                <h3 className="text-lg font-bold mb-4">Prices</h3>
+                
+                {/* List of current prices */}
+                {formData.prices && formData.prices.length > 0 ? (
+                  <div className="mb-4 overflow-x-auto">
+                    <table className="w-full text-left text-xs border-collapse">
+                      <thead>
+                        <tr className="border-b bg-gray-50 text-gray-600">
+                          <th className="py-2 px-3 font-bold">Retailer</th>
+                          <th className="py-2 px-3 font-bold">Price (PKR)</th>
+                          <th className="py-2 px-3 font-bold">Stock Status</th>
+                          <th className="py-2 px-3 font-bold">Variant</th>
+                          <th className="py-2 px-3 font-bold text-right">Action</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {formData.prices.map((pr: any, idx: number) => (
+                          <tr key={idx} className="border-b hover:bg-gray-50/50">
+                            <td className="py-2 px-3 font-semibold text-gray-800">{pr.retailer_name}</td>
+                            <td className="py-2 px-3 text-gray-700">Rs. {pr.price_pkr.toLocaleString()}</td>
+                            <td className="py-2 px-3 capitalize text-gray-700">{pr.stock_status || 'available'}</td>
+                            <td className="py-2 px-3 text-gray-700">{pr.variant || '-'}</td>
+                            <td className="py-2 px-3 text-right">
+                              <button
+                                type="button"
+                                onClick={() => removePriceItem(idx)}
+                                className="text-red-600 hover:text-red-900 bg-red-50 hover:bg-red-100 px-2 py-1 rounded text-[10px] font-bold cursor-pointer"
+                              >
+                                Delete
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                ) : (
+                  <p className="text-xs text-gray-500 mb-4">No prices added yet.</p>
+                )}
+
+                {/* Add new price form */}
+                <div className="bg-gray-50 p-4 rounded-lg border border-gray-200 grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-[10px] font-semibold text-gray-500 mb-1">Retailer Name (e.g. PriceOye, Daraz)</label>
+                    <input
+                      type="text"
+                      value={newPrice.retailer_name}
+                      onChange={e => setNewPrice(p => ({ ...p, retailer_name: e.target.value }))}
+                      className="w-full px-2 py-1.5 border rounded-md text-xs bg-white focus:outline-none focus:border-indigo-500"
+                      placeholder="Retailer Name"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-semibold text-gray-500 mb-1">Price (PKR)</label>
+                    <input
+                      type="number"
+                      value={newPrice.price_pkr}
+                      onChange={e => setNewPrice(p => ({ ...p, price_pkr: e.target.value }))}
+                      className="w-full px-2 py-1.5 border rounded-md text-xs bg-white focus:outline-none focus:border-indigo-500"
+                      placeholder="e.g. 150000"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-semibold text-gray-500 mb-1">Variant (Optional)</label>
+                    <input
+                      type="text"
+                      value={newPrice.variant}
+                      onChange={e => setNewPrice(p => ({ ...p, variant: e.target.value }))}
+                      className="w-full px-2 py-1.5 border rounded-md text-xs bg-white focus:outline-none focus:border-indigo-500"
+                      placeholder="e.g. 8GB/256GB"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-semibold text-gray-500 mb-1">Stock Status</label>
+                    <select
+                      value={newPrice.stock_status}
+                      onChange={e => setNewPrice(p => ({ ...p, stock_status: e.target.value }))}
+                      className="w-full px-2 py-1.5 border rounded-md text-xs bg-white focus:outline-none focus:border-indigo-500"
+                    >
+                      <option value="available">Available</option>
+                      <option value="out_of_stock">Out of Stock</option>
+                      <option value="upcoming">Upcoming</option>
+                    </select>
+                  </div>
+                  <div className="md:col-span-2">
+                    <label className="block text-[10px] font-semibold text-gray-500 mb-1">Product URL (Optional)</label>
+                    <input
+                      type="text"
+                      value={newPrice.product_url}
+                      onChange={e => setNewPrice(p => ({ ...p, product_url: e.target.value }))}
+                      className="w-full px-2 py-1.5 border rounded-md text-xs bg-white focus:outline-none focus:border-indigo-500"
+                      placeholder="e.g. https://priceoye.pk/..."
+                    />
+                  </div>
+                  <div className="md:col-span-2 flex justify-end mt-2">
+                    <button
+                      type="button"
+                      onClick={addPriceItem}
+                      className="px-4 py-1.5 bg-gray-900 hover:bg-gray-800 text-white rounded text-xs font-semibold cursor-pointer"
+                    >
+                      Add Price
+                    </button>
+                  </div>
                 </div>
               </section>
             </div>
