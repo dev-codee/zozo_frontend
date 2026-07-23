@@ -7,7 +7,8 @@ export default function ActivityTracker() {
   const pathname = usePathname();
 
   useEffect(() => {
-    // Only track actual page views, skip API routes or static files if any hit here
+    // Paused user activity tracking for now
+    /*
     if (pathname) {
       try {
         fetch(`${process.env.NEXT_PUBLIC_API_URL}/activity/track`, {
@@ -18,11 +19,15 @@ export default function ActivityTracker() {
             details: pathname
           }),
           credentials: 'include'
+        }).catch(e => {
+          // silently fail tracking
+          console.debug('Failed to track activity', e);
         });
       } catch (e) {
-        // silently fail tracking
+        // silently fail synchronous errors
       }
     }
+    */
   }, [pathname]);
 
   return null;
