@@ -113,8 +113,10 @@ export default async function PhoneDetailPage({
           ]}
         />
 
-        {/* Hero Section */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+        {/* Hero Section Container */}
+        <div className="bg-white border border-border-subtle rounded-xl p-6 md:p-8 shadow-sm">
+          {/* Hero Section */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
           {/* Gallery */}
           <PhoneGallery images={phone.images} altText={phone.name} />
 
@@ -299,6 +301,7 @@ export default async function PhoneDetailPage({
             </div>
           </div>
         </div>
+      </div>
 
         {/* Price Comparison Table */}
         {hasAffiliateUrls && (

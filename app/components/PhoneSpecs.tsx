@@ -209,8 +209,8 @@ export default function PhoneSpecs({ specs }: PhoneSpecsProps) {
     }
     return (
       <div className="grid grid-cols-1 md:grid-cols-[200px_1fr] gap-2 md:gap-6 py-1.5 px-6 border-b border-border-subtle last:border-b-0 hover:bg-surface-container-lowest/40 transition-colors duration-150">
-        <span className="text-text-muted font-medium text-sm capitalize">{label.replace(/_/g, " ")}</span>
-        <span className="text-text-main text-sm font-semibold leading-relaxed">{value}</span>
+        <span className="text-text-main font-bold text-sm capitalize">{label.replace(/_/g, " ")}</span>
+        <span className="text-text-main text-sm font-normal leading-relaxed">{value}</span>
       </div>
     );
   };
