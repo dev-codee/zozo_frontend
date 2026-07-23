@@ -105,7 +105,7 @@ export default function AdminPhoneForm({ initialData, onSubmit, isEditing = fals
 
   const [formData, setFormData] = useState<any>(() => {
     const defaultData = {
-      name: '', brand_slug: '', model_number: '', release_date: '', status: 'available', images: [] as any[],
+      name: '', brand_slug: '', model_number: '', release_date: '', status: 'available', images: [] as any[], price_pkr: '',
       series: '', category: '', subcategory: '', country_availability: '', carrier_version: '', region_version: '', manufacturer: '', made_in: '', tags: [] as string[], video_url: '',
       specs: {
         display: { size_inches: '', resolution: '', type: '', refresh_rate_hz: '', protection: '', peak_brightness_nits: '', features: [] },
@@ -300,6 +300,14 @@ export default function AdminPhoneForm({ initialData, onSubmit, isEditing = fals
     try {
       const payload = JSON.parse(JSON.stringify(formData));
       // Cleanup arrays and types
+      if (payload.price_pkr !== undefined && payload.price_pkr !== '') {
+        payload.price_pkr = Number(payload.price_pkr);
+        if (isNaN(payload.price_pkr)) {
+          payload.price_pkr = null;
+        }
+      } else {
+        payload.price_pkr = null;
+      }
       if (typeof payload.specs.performance.ram_options_gb === 'string') {
         payload.specs.performance.ram_options_gb = payload.specs.performance.ram_options_gb.split(',').map((x: string) => Number(x.trim())).filter((x: number) => !isNaN(x));
       }
@@ -400,6 +408,7 @@ export default function AdminPhoneForm({ initialData, onSubmit, isEditing = fals
                 <h3 className="text-lg font-bold mb-4">Core Info</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {renderInput('Phone Name', formData.name, v => setFormData((p: any) => ({ ...p, name: v })))}
+                  {renderInput('Price (PKR) - Header Display Price', formData.price_pkr, v => setFormData((p: any) => ({ ...p, price_pkr: v })), 'number')}
                   <div>
                     <label className="block text-xs font-semibold text-gray-600 mb-1">Brand</label>
                     <select value={formData.brand_slug} onChange={e => setFormData((p: any) => ({ ...p, brand_slug: e.target.value }))} className="w-full px-3 py-2 border rounded-md text-xs">

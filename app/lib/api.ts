@@ -73,6 +73,7 @@ export interface Phone {
     extra_specs?: any;
   };
   prices: PhonePrice[];
+  price_pkr?: number;
   pta_tax?: number;
   rating: {
     average: number;

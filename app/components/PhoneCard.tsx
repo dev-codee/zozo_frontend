@@ -13,9 +13,9 @@ export default function PhoneCard({ phone }: PhoneCardProps) {
   const imageAlt = primaryImage?.alt_text || phone.name;
 
   // Get lowest price
-  const lowestPrice = phone.prices?.length
+  const lowestPrice = phone.price_pkr || (phone.prices?.length
     ? Math.min(...phone.prices.map((p) => p.price_pkr))
-    : null;
+    : null);
 
   // Build spec summary
   const ram = phone.specs?.performance?.ram_options_gb;

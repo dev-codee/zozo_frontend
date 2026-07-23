@@ -43,9 +43,9 @@ export default async function PhoneDetailPage({
   }
 
   // Derived values
-  const lowestPrice = phone.prices?.length
+  const lowestPrice = phone.price_pkr || (phone.prices?.length
     ? Math.min(...phone.prices.map((p) => p.price_pkr))
-    : null;
+    : null);
   const rating = phone.rating?.average;
   const reviewCount = phone.rating?.count || 0;
   const hasAffiliateUrls = phone.prices?.some((p) => !!p.product_url);
