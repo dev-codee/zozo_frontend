@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
 import Link from "next/link";
-import { getPhoneBySlug } from "@/app/lib/api";
+import { getPhoneBySlug, getPhones } from "@/app/lib/api";
 import Navbar from "@/app/components/Navbar";
 import Footer from "@/app/components/Footer";
 import Breadcrumb from "@/app/components/Breadcrumb";
@@ -49,6 +49,26 @@ export default async function PhoneDetailPage({
   const rating = phone.rating?.average;
   const reviewCount = phone.rating?.count || 0;
   const hasAffiliateUrls = phone.prices?.some((p) => !!p.product_url);
+
+  // Fetch competitor phones
+  let competitorPhones: any[] = [];
+  try {
+    if (lowestPrice) {
+      const minPrice = lowestPrice - 3000;
+      const maxPrice = lowestPrice + 3000;
+      const allMatching = await getPhones(`min_price=${minPrice}&max_price=${maxPrice}`);
+      competitorPhones = allMatching
+        .filter((p: any) => p.slug !== phone.slug)
+        .slice(0, 5);
+    } else {
+      const sameBrand = await getPhones(`brand=${phone.brand_slug}`);
+      competitorPhones = sameBrand
+        .filter((p: any) => p.slug !== phone.slug)
+        .slice(0, 5);
+    }
+  } catch (error) {
+    console.error("Failed to fetch competitors:", error);
+  }
 
   const releaseDateStr = phone.release_date && !isNaN(Date.parse(phone.release_date))
     ? new Date(phone.release_date).toLocaleDateString("en-US", {
@@ -369,8 +389,66 @@ export default async function PhoneDetailPage({
           </section>
         )}
 
-        {/* Full Specifications Table */}
-        <PhoneSpecs specs={phone.specs} />
+        {/* Specifications and Competitors Section */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+          <div className="lg:col-span-2">
+            {/* Full Specifications Table */}
+            <PhoneSpecs specs={phone.specs} />
+          </div>
+
+          <div className="lg:col-span-1 space-y-6">
+            <div className="bg-white border border-border-subtle rounded-xl p-6 shadow-sm">
+              <h3 className="font-headline-sm text-lg font-bold text-text-main mb-4 flex items-center gap-2">
+                <span className="material-symbols-outlined text-primary text-xl">compare_arrows</span>
+                Competitors
+              </h3>
+              
+              {competitorPhones.length > 0 ? (
+                <div className="flex flex-col gap-4">
+                  {competitorPhones.map((comp) => {
+                    const compLowestPrice = comp.prices?.length
+                      ? Math.min(...comp.prices.map((p) => p.price_pkr))
+                      : null;
+                    const primaryImage = comp.images?.find((img: any) => img.is_primary) || comp.images?.[0];
+
+                    return (
+                      <Link
+                        key={comp._id}
+                        href={`/phones/${comp.slug}`}
+                        className="flex gap-4 p-3 rounded-lg border border-border-subtle hover:border-primary hover:shadow-sm transition-all bg-surface-container-lowest/50"
+                      >
+                        <div className="w-16 h-16 bg-white border border-border-subtle rounded flex items-center justify-center overflow-hidden flex-shrink-0">
+                          {primaryImage ? (
+                            <img
+                              src={primaryImage.url}
+                              alt={comp.name}
+                              className="object-contain w-full h-full p-1"
+                            />
+                          ) : (
+                            <span className="material-symbols-outlined text-text-muted text-2xl">smartphone</span>
+                          )}
+                        </div>
+                        <div className="flex flex-col justify-center">
+                          <h4 className="font-semibold text-sm text-text-main hover:text-primary transition-colors line-clamp-1">
+                            {comp.name}
+                          </h4>
+                          <span className="text-xs text-text-muted capitalize">
+                            {comp.brand_slug.replace("-", " ")}
+                          </span>
+                          <span className="text-xs font-bold text-price-green mt-1">
+                            {compLowestPrice ? `Rs. ${compLowestPrice.toLocaleString()}` : "Price TBA"}
+                          </span>
+                        </div>
+                      </Link>
+                    );
+                  })}
+                </div>
+              ) : (
+                <p className="text-xs text-text-muted">No competitor devices found.</p>
+              )}
+            </div>
+          </div>
+        </div>
 
         {/* Product Description */}
         <PhoneDescriptionClient slug={phone.slug} initialDescription={phone.description} />
