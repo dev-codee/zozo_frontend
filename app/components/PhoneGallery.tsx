@@ -34,9 +34,9 @@ export default function PhoneGallery({ images, altText }: PhoneGalleryProps) {
   const mainImage = images[selectedIndex];
 
   return (
-    <div className="bg-surface-white rounded-xl border border-border-subtle p-6 flex flex-col gap-4 h-full">
+    <div className="bg-surface-white rounded-xl border border-border-subtle p-6 flex flex-col gap-4 h-fit">
       {/* Main Image */}
-      <div className="w-full h-[350px] md:h-[450px] rounded-lg bg-surface-container-lowest flex items-center justify-center p-8 relative mx-auto">
+      <div className="w-full h-[280px] md:h-[360px] rounded-lg bg-surface-container-lowest flex items-center justify-center p-8 relative mx-auto">
         <Image
           src={mainImage.url}
           alt={mainImage.alt_text || altText}
