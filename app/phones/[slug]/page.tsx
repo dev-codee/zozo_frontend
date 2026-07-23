@@ -170,28 +170,9 @@ export default async function PhoneDetailPage({
 
             {/* PTA Tax Box is hidden for now */}
 
-            {/* Action Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 mt-4">
-              <Link
-                href={`/compare?phone=${phone.slug}`}
-                className="flex-1 bg-surface-white border border-border-subtle text-text-main hover:bg-surface-container-low hover:border-primary font-semibold text-sm px-6 h-12 rounded-lg flex items-center justify-center gap-2 transition-all shadow-sm"
-              >
-                <span className="material-symbols-outlined text-[20px]">
-                  compare_arrows
-                </span>
-                Add to Compare
-              </Link>
-              <button className="flex-1 bg-surface-white border border-border-subtle text-text-main hover:bg-surface-container-low hover:border-primary font-semibold text-sm px-6 h-12 rounded-lg flex items-center justify-center gap-2 transition-all shadow-sm">
-                <span className="material-symbols-outlined text-[20px]">
-                  notifications
-                </span>
-                Set Price Alert
-              </button>
-            </div>
-
             {/* Key Specs */}
             <div className="mt-8 border-t border-border-subtle pt-6">
-              <h2 className="text-xl font-bold text-text-main flex items-center gap-2 mb-6">
+              <h2 className="text-lg font-bold text-text-main flex items-center gap-2 mb-6">
                 <span className="w-1 h-6 bg-primary rounded-full"></span>
                 Key Specs
               </h2>
@@ -200,8 +181,8 @@ export default async function PhoneDetailPage({
                 {/* OS */}
                 {phone.specs.os && (
                   <div>
-                    <div className="flex items-center gap-2 text-sm text-text-muted font-medium">
-                      <span className="material-symbols-outlined text-primary text-lg">android</span>
+                    <div className="flex items-center gap-2 text-xs text-text-muted font-medium">
+                      <span className="material-symbols-outlined text-primary text-base">android</span>
                       {phone.specs.os}
                     </div>
                   </div>
@@ -210,11 +191,11 @@ export default async function PhoneDetailPage({
                 {/* Performance */}
                 {phone.specs.performance && (
                   <div>
-                    <div className="flex items-center gap-2 font-semibold text-text-main mb-2">
-                      <span className="material-symbols-outlined text-text-muted text-lg">speed</span>
+                    <div className="flex items-center gap-2 text-sm font-semibold text-text-main mb-2">
+                      <span className="material-symbols-outlined text-text-muted text-base">speed</span>
                       Performance
                     </div>
-                    <ul className="list-disc pl-8 text-sm text-text-muted space-y-1">
+                    <ul className="list-disc pl-8 text-xs text-text-muted space-y-1">
                       {chipsetFull && <li>{chipsetFull}</li>}
                       {phone.specs.performance.cpu && <li>{phone.specs.performance.cpu}</li>}
                       {ramDisplay !== "N/A" && <li>{ramDisplay} RAM</li>}
@@ -225,11 +206,11 @@ export default async function PhoneDetailPage({
                 {/* Display */}
                 {phone.specs.display && (
                   <div>
-                    <div className="flex items-center gap-2 font-semibold text-text-main mb-2">
-                      <span className="material-symbols-outlined text-text-muted text-lg">smartphone</span>
+                    <div className="flex items-center gap-2 text-sm font-semibold text-text-main mb-2">
+                      <span className="material-symbols-outlined text-text-muted text-base">smartphone</span>
                       Display
                     </div>
-                    <ul className="list-disc pl-8 text-sm text-text-muted space-y-1">
+                    <ul className="list-disc pl-8 text-xs text-text-muted space-y-1">
                       {phone.specs.display.size_inches && <li>{phone.specs.display.size_inches} inches ({Math.round(phone.specs.display.size_inches * 2.54)} cm); {phone.specs.display.type || 'Display'}</li>}
                       {phone.specs.display.resolution && <li>{phone.specs.display.resolution}</li>}
                       {phone.specs.display.refresh_rate_hz && <li>{phone.specs.display.refresh_rate_hz} Hz Refresh Rate</li>}
@@ -241,11 +222,11 @@ export default async function PhoneDetailPage({
                 {/* Rear Camera */}
                 {phone.specs.camera?.rear_summary && (
                   <div>
-                    <div className="flex items-center gap-2 font-semibold text-text-main mb-2">
-                      <span className="material-symbols-outlined text-text-muted text-lg">photo_camera</span>
+                    <div className="flex items-center gap-2 text-sm font-semibold text-text-main mb-2">
+                      <span className="material-symbols-outlined text-text-muted text-base">photo_camera</span>
                       Rear Camera
                     </div>
-                    <ul className="list-disc pl-8 text-sm text-text-muted space-y-1">
+                    <ul className="list-disc pl-8 text-xs text-text-muted space-y-1">
                       <li>{phone.specs.camera.rear_summary}</li>
                       {phone.specs.camera.video_recording && <li>{phone.specs.camera.video_recording} Video Recording</li>}
                     </ul>
@@ -255,11 +236,11 @@ export default async function PhoneDetailPage({
                 {/* Front Camera */}
                 {phone.specs.camera?.front_summary && (
                   <div>
-                    <div className="flex items-center gap-2 font-semibold text-text-main mb-2">
-                      <span className="material-symbols-outlined text-text-muted text-lg">photo_camera_front</span>
+                    <div className="flex items-center gap-2 text-sm font-semibold text-text-main mb-2">
+                      <span className="material-symbols-outlined text-text-muted text-base">photo_camera_front</span>
                       Front Camera
                     </div>
-                    <ul className="list-disc pl-8 text-sm text-text-muted space-y-1">
+                    <ul className="list-disc pl-8 text-xs text-text-muted space-y-1">
                       <li>{phone.specs.camera.front_summary}</li>
                     </ul>
                   </div>
@@ -268,11 +249,11 @@ export default async function PhoneDetailPage({
                 {/* Battery */}
                 {phone.specs.battery && (
                   <div>
-                    <div className="flex items-center gap-2 font-semibold text-text-main mb-2">
-                      <span className="material-symbols-outlined text-text-muted text-lg">battery_charging_full</span>
+                    <div className="flex items-center gap-2 text-sm font-semibold text-text-main mb-2">
+                      <span className="material-symbols-outlined text-text-muted text-base">battery_charging_full</span>
                       Battery
                     </div>
-                    <ul className="list-disc pl-8 text-sm text-text-muted space-y-1">
+                    <ul className="list-disc pl-8 text-xs text-text-muted space-y-1">
                       {phone.specs.battery.capacity_mah && <li>{phone.specs.battery.capacity_mah} mAh</li>}
                       {phone.specs.battery.charging_watts && <li>{phone.specs.battery.charging_watts}W Fast Charging</li>}
                     </ul>
@@ -282,11 +263,11 @@ export default async function PhoneDetailPage({
                 {/* General */}
                 {phone.specs.connectivity && (
                   <div>
-                    <div className="flex items-center gap-2 font-semibold text-text-main mb-2">
-                      <span className="material-symbols-outlined text-text-muted text-lg">memory</span>
+                    <div className="flex items-center gap-2 text-sm font-semibold text-text-main mb-2">
+                      <span className="material-symbols-outlined text-text-muted text-base">memory</span>
                       General
                     </div>
-                    <ul className="list-disc pl-8 text-sm text-text-muted space-y-1">
+                    <ul className="list-disc pl-8 text-xs text-text-muted space-y-1">
                       {releaseDateStr && <li>Released: {releaseDateStr}</li>}
                       {phone.specs.connectivity.sim && <li>SIM: {phone.specs.connectivity.sim}</li>}
                       {phone.specs.connectivity.network && <li>{phone.specs.connectivity.network} Supported</li>}
@@ -296,6 +277,25 @@ export default async function PhoneDetailPage({
                   </div>
                 )}
               </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex flex-col sm:flex-row gap-4 mt-6">
+              <Link
+                href={`/compare?phone=${phone.slug}`}
+                className="flex-1 bg-surface-white border border-border-subtle text-text-main hover:bg-surface-container-low hover:border-primary font-semibold text-xs px-6 h-12 rounded-lg flex items-center justify-center gap-2 transition-all shadow-sm"
+              >
+                <span className="material-symbols-outlined text-[18px]">
+                  compare_arrows
+                </span>
+                Add to Compare
+              </Link>
+              <button className="flex-1 bg-surface-white border border-border-subtle text-text-main hover:bg-surface-container-low hover:border-primary font-semibold text-xs px-6 h-12 rounded-lg flex items-center justify-center gap-2 transition-all shadow-sm">
+                <span className="material-symbols-outlined text-[18px]">
+                  notifications
+                </span>
+                Set Price Alert
+              </button>
             </div>
           </div>
         </div>
