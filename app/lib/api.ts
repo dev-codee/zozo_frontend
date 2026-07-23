@@ -75,6 +75,7 @@ export interface Phone {
   prices: PhonePrice[];
   price_pkr?: number;
   pta_tax?: number;
+  tags?: string[];
   rating: {
     average: number;
     count: number;

@@ -9,6 +9,22 @@ import PhoneGallery from "@/app/components/PhoneGallery";
 import PhoneSpecs from "@/app/components/PhoneSpecs";
 import PhoneDescriptionClient from "@/app/components/PhoneDescriptionClient";
 
+function getTagColorClass(tag: string) {
+  const hash = Array.from(tag).reduce((acc, char) => acc + char.charCodeAt(0), 0);
+  const colorThemes = [
+    { bg: "bg-emerald-500/10", text: "text-emerald-700 dark:text-emerald-400", border: "border-emerald-500/20" },
+    { bg: "bg-blue-500/10", text: "text-blue-700 dark:text-blue-400", border: "border-blue-500/20" },
+    { bg: "bg-amber-500/10", text: "text-amber-700 dark:text-amber-400", border: "border-amber-500/20" },
+    { bg: "bg-rose-500/10", text: "text-rose-700 dark:text-rose-400", border: "border-rose-500/20" },
+    { bg: "bg-purple-500/10", text: "text-purple-700 dark:text-purple-400", border: "border-purple-500/20" },
+    { bg: "bg-cyan-500/10", text: "text-cyan-700 dark:text-cyan-400", border: "border-cyan-500/20" },
+    { bg: "bg-indigo-500/10", text: "text-indigo-700 dark:text-indigo-400", border: "border-indigo-500/20" },
+    { bg: "bg-orange-500/10", text: "text-orange-700 dark:text-orange-400", border: "border-orange-500/20" },
+    { bg: "bg-teal-500/10", text: "text-teal-700 dark:text-teal-400", border: "border-teal-500/20" }
+  ];
+  return colorThemes[hash % colorThemes.length];
+}
+
 export async function generateMetadata({
   params,
 }: {
@@ -155,11 +171,17 @@ export default async function PhoneDetailPage({
                       Released: {releaseDateStr}
                     </span>
                   )}
-                  {!rating && (
-                    <span className="inline-flex items-center gap-1 bg-primary/10 text-primary rounded-full px-3 py-1 text-xs font-semibold border border-primary/20">
-                      New Release
-                    </span>
-                  )}
+                  {phone.tags?.map((tag) => {
+                    const colors = getTagColorClass(tag);
+                    return (
+                      <span
+                        key={tag}
+                        className={`inline-flex items-center gap-1 ${colors.bg} ${colors.text} rounded-full px-3 py-1 text-xs font-semibold border ${colors.border}`}
+                      >
+                        {tag}
+                      </span>
+                    );
+                  })}
                 </div>
 
                 {/* Rating */}
