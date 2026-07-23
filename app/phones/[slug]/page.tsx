@@ -164,12 +164,12 @@ export default async function PhoneDetailPage({
             <PhoneGallery images={phone.images} altText={phone.name} />
 
             {/* Product Info */}
-            <div className="flex flex-col gap-6">
+            <div className="flex flex-col gap-3">
               <div>
-                <h1 className="font-headline-lg text-2xl md:text-3xl lg:text-4xl text-text-main mb-3 font-bold tracking-tight">
+                <h1 className="font-headline-lg text-2xl md:text-3xl lg:text-4xl text-text-main mb-1.5 font-bold tracking-tight">
                   {phone.name}
                 </h1>
-                <div className="flex flex-wrap items-center gap-2 mb-3">
+                <div className="flex flex-wrap items-center gap-2 mb-0">
                   <span className="inline-flex items-center gap-1 bg-surface-container-low text-text-muted font-label-sm text-xs px-3 py-1 rounded-full capitalize border border-border-subtle">
                     {phone.brand_slug.replace("-", " ")}
                   </span>
@@ -193,7 +193,7 @@ export default async function PhoneDetailPage({
 
                 {/* Rating */}
                 {rating && (
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 mt-1.5">
                     <div className="flex items-center text-yellow-500">
                       <span
                         className="material-symbols-outlined text-[20px]"
@@ -213,14 +213,14 @@ export default async function PhoneDetailPage({
               </div>
 
               {/* Price */}
-              <div className="flex items-baseline gap-2 mt-2">
+              <div className="flex items-baseline gap-2">
                 <span className="font-display-lg text-2xl md:text-3xl font-bold text-price-green tracking-tight">
                   {lowestPrice ? `Rs. ${lowestPrice.toLocaleString()}` : "Price TBA"}
                 </span>
               </div>
 
               {phone.pta_tax && (phone.pta_tax.passport_pkr || phone.pta_tax.cnic_pkr) && (
-                <div className="mt-4 p-4 bg-surface-container-low/50 border border-border-subtle rounded-xl flex flex-col gap-2">
+                <div className="p-4 bg-surface-container-low/50 border border-border-subtle rounded-xl flex flex-col gap-2">
                   <h3 className="text-xs font-bold text-text-main flex items-center gap-1.5 uppercase tracking-wider">
                     <span className="material-symbols-outlined text-primary text-[18px]">gavel</span>
                     PTA Tax Estimate
@@ -246,7 +246,7 @@ export default async function PhoneDetailPage({
               )}
 
               {/* Key Specs */}
-              <div className="mt-4 bg-white p-5 rounded-xl">
+              <div className="bg-white p-5 rounded-xl">
                 <h2 className="text-lg font-bold text-text-main flex items-center gap-2 mb-6">
                   <span className="w-1 h-6 bg-primary rounded-full"></span>
                   Key Specs
@@ -398,129 +398,132 @@ export default async function PhoneDetailPage({
           </div>
         </div>
 
-        {/* Price Comparison Table */}
-        {hasAffiliateUrls && (
-          <section className="bg-surface-white border border-border-subtle rounded-xl overflow-hidden shadow-sm mt-8">
-            <div className="p-4 md:px-6 border-b border-border-subtle bg-surface-container-low/30">
-              <h2 className="font-headline-md text-lg font-bold text-text-main">
-                Price Comparison
-              </h2>
-            </div>
+        {/* Combined Price Comparison & Specs Grid Container with 5px vertical gap */}
+        <div className="flex flex-col gap-[5px]">
+          {/* Price Comparison Table */}
+          {hasAffiliateUrls && (
+            <section className="bg-surface-white border border-border-subtle rounded-xl overflow-hidden shadow-sm">
+              <div className="p-4 md:px-6 border-b border-border-subtle bg-surface-container-low/30">
+                <h2 className="font-headline-md text-lg font-bold text-text-main">
+                  Price Comparison
+                </h2>
+              </div>
 
-            <div className="divide-y divide-border-subtle">
-              {phone.prices && phone.prices.length > 0 ? (
-                phone.prices.map((priceItem, index) => (
-                  <div
-                    key={index}
-                    className="p-3 md:px-6 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:bg-surface-container-lowest transition-colors"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-surface-container-low border border-border-subtle rounded-lg flex items-center justify-center font-bold text-primary text-base uppercase shadow-sm flex-shrink-0">
-                        {priceItem.retailer_name.charAt(0)}
+              <div className="divide-y divide-border-subtle">
+                {phone.prices && phone.prices.length > 0 ? (
+                  phone.prices.map((priceItem, index) => (
+                    <div
+                      key={index}
+                      className="p-3 md:px-6 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:bg-surface-container-lowest transition-colors"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 bg-surface-container-low border border-border-subtle rounded-lg flex items-center justify-center font-bold text-primary text-base uppercase shadow-sm flex-shrink-0">
+                          {priceItem.retailer_name.charAt(0)}
+                        </div>
+                        <div>
+                          <div className="font-label-md text-sm font-semibold text-text-main">
+                            {priceItem.retailer_name}
+                          </div>
+                          <div className="font-body-sm text-xs text-price-green font-medium flex items-center gap-1 mt-0.5">
+                            <span className="w-1.5 h-1.5 rounded-full bg-price-green"></span>
+                            {priceItem.stock_status || "In Stock"}
+                          </div>
+                        </div>
                       </div>
-                      <div>
-                        <div className="font-label-md text-sm font-semibold text-text-main">
-                          {priceItem.retailer_name}
+                      <div className="flex items-center justify-between md:justify-end gap-4 w-full md:w-auto mt-1 md:mt-0 pt-3 md:pt-0 border-t border-border-subtle md:border-0">
+                        <div className="font-headline-md text-lg font-bold text-text-main">
+                          Rs. {priceItem.price_pkr.toLocaleString()}
                         </div>
-                        <div className="font-body-sm text-xs text-price-green font-medium flex items-center gap-1 mt-0.5">
-                          <span className="w-1.5 h-1.5 rounded-full bg-price-green"></span>
-                          {priceItem.stock_status || "In Stock"}
-                        </div>
+                        {priceItem.product_url ? (
+                          <a
+                            href={priceItem.product_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="bg-primary hover:bg-on-primary-fixed-variant text-white font-label-md text-xs px-5 h-9 transition-all shadow-md hover:shadow-lg rounded-lg font-semibold flex items-center justify-center cursor-pointer"
+                          >
+                            Buy Now
+                          </a>
+                        ) : (
+                          <button
+                            className="bg-surface-container-low text-text-muted font-label-md text-xs px-5 h-9 rounded-lg font-semibold flex items-center justify-center cursor-not-allowed border border-border-subtle"
+                            disabled
+                          >
+                            Unavailable
+                          </button>
+                        )}
                       </div>
                     </div>
-                    <div className="flex items-center justify-between md:justify-end gap-4 w-full md:w-auto mt-1 md:mt-0 pt-3 md:pt-0 border-t border-border-subtle md:border-0">
-                      <div className="font-headline-md text-lg font-bold text-text-main">
-                        Rs. {priceItem.price_pkr.toLocaleString()}
-                      </div>
-                      {priceItem.product_url ? (
-                        <a
-                          href={priceItem.product_url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="bg-primary hover:bg-on-primary-fixed-variant text-white font-label-md text-xs px-5 h-9 transition-all shadow-md hover:shadow-lg rounded-lg font-semibold flex items-center justify-center cursor-pointer"
-                        >
-                          Buy Now
-                        </a>
-                      ) : (
-                        <button
-                          className="bg-surface-container-low text-text-muted font-label-md text-xs px-5 h-9 rounded-lg font-semibold flex items-center justify-center cursor-not-allowed border border-border-subtle"
-                          disabled
-                        >
-                          Unavailable
-                        </button>
-                      )}
-                    </div>
+                  ))
+                ) : (
+                  <div className="p-8 text-center">
+                    <span className="material-symbols-outlined text-4xl text-outline mb-2">
+                      storefront
+                    </span>
+                    <p className="text-text-muted font-medium">No prices available for this phone yet.</p>
                   </div>
-                ))
-              ) : (
-                <div className="p-8 text-center">
-                  <span className="material-symbols-outlined text-4xl text-outline mb-2">
-                    storefront
-                  </span>
-                  <p className="text-text-muted font-medium">No prices available for this phone yet.</p>
-                </div>
-              )}
+                )}
+              </div>
+            </section>
+          )}
+
+          {/* Specifications and Competitors Section with 5px gap */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-[5px] items-start">
+            <div className="lg:col-span-2">
+              {/* Full Specifications Table */}
+              <PhoneSpecs specs={phone.specs} />
             </div>
-          </section>
-        )}
 
-        {/* Specifications and Competitors Section */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-          <div className="lg:col-span-2">
-            {/* Full Specifications Table */}
-            <PhoneSpecs specs={phone.specs} />
-          </div>
+            <div className="lg:col-span-1 space-y-6">
+              <div className="bg-white border border-border-subtle rounded-xl p-4 pl-[5px] shadow-sm">
+                <h3 className="font-headline-sm text-sm font-bold text-text-main mb-4 flex items-center gap-1">
+                  <span className="material-symbols-outlined text-primary text-lg">compare_arrows</span>
+                  Competitors for {phone.name}
+                </h3>
 
-          <div className="lg:col-span-1 space-y-6">
-            <div className="bg-white border border-border-subtle rounded-xl p-4 pl-[5px] shadow-sm">
-              <h3 className="font-headline-sm text-sm font-bold text-text-main mb-4 flex items-center gap-1">
-                <span className="material-symbols-outlined text-primary text-lg">compare_arrows</span>
-                Competitors for {phone.name}
-              </h3>
+                {competitorPhones.length > 0 ? (
+                  <div className="flex flex-col gap-3">
+                    {competitorPhones.map((comp) => {
+                      const compLowestPrice = comp.prices?.length
+                        ? Math.min(...comp.prices.map((p) => p.price_pkr))
+                        : null;
+                      const primaryImage = comp.images?.find((img) => img.is_primary) || comp.images?.[0];
 
-              {competitorPhones.length > 0 ? (
-                <div className="flex flex-col gap-3">
-                  {competitorPhones.map((comp) => {
-                    const compLowestPrice = comp.prices?.length
-                      ? Math.min(...comp.prices.map((p) => p.price_pkr))
-                      : null;
-                    const primaryImage = comp.images?.find((img) => img.is_primary) || comp.images?.[0];
-
-                    return (
-                      <Link
-                        key={comp._id}
-                        href={`/phones/${comp.slug}`}
-                        className="flex gap-2 p-2 pl-[5px] rounded-lg border border-border-subtle hover:border-primary hover:shadow-sm transition-all bg-surface-container-lowest/50"
-                      >
-                        <div className="w-12 h-12 bg-white border border-border-subtle rounded flex items-center justify-center overflow-hidden flex-shrink-0">
-                          {primaryImage ? (
-                            <img
-                              src={primaryImage.url}
-                              alt={comp.name}
-                              className="object-contain w-full h-full p-1"
-                            />
-                          ) : (
-                            <span className="material-symbols-outlined text-text-muted text-xl">smartphone</span>
-                          )}
-                        </div>
-                        <div className="flex flex-col justify-center">
-                          <h4 className="font-semibold text-xs text-text-main hover:text-primary transition-colors line-clamp-1">
-                            {comp.name}
-                          </h4>
-                          <span className="text-[10px] text-text-muted capitalize">
-                            {comp.brand_slug.replace("-", " ")}
-                          </span>
-                          <span className="text-[11px] font-bold text-price-green mt-0.5">
-                            {compLowestPrice ? `Rs. ${compLowestPrice.toLocaleString()}` : "Price TBA"}
-                          </span>
-                        </div>
-                      </Link>
-                    );
-                  })}
-                </div>
-              ) : (
-                <p className="text-xs text-text-muted">No competitor devices found.</p>
-              )}
+                      return (
+                        <Link
+                          key={comp._id}
+                          href={`/phones/${comp.slug}`}
+                          className="flex gap-2 p-2 pl-[5px] rounded-lg border border-border-subtle hover:border-primary hover:shadow-sm transition-all bg-surface-container-lowest/50"
+                        >
+                          <div className="w-12 h-12 bg-white border border-border-subtle rounded flex items-center justify-center overflow-hidden flex-shrink-0">
+                            {primaryImage ? (
+                              <img
+                                src={primaryImage.url}
+                                alt={comp.name}
+                                className="object-contain w-full h-full p-1"
+                              />
+                            ) : (
+                              <span className="material-symbols-outlined text-text-muted text-xl">smartphone</span>
+                            )}
+                          </div>
+                          <div className="flex flex-col justify-center">
+                            <h4 className="font-semibold text-xs text-text-main hover:text-primary transition-colors line-clamp-1">
+                              {comp.name}
+                            </h4>
+                            <span className="text-[10px] text-text-muted capitalize">
+                              {comp.brand_slug.replace("-", " ")}
+                            </span>
+                            <span className="text-[11px] font-bold text-price-green mt-0.5">
+                              {compLowestPrice ? `Rs. ${compLowestPrice.toLocaleString()}` : "Price TBA"}
+                            </span>
+                          </div>
+                        </Link>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <p className="text-xs text-text-muted">No competitor devices found.</p>
+                )}
+              </div>
             </div>
           </div>
         </div>
