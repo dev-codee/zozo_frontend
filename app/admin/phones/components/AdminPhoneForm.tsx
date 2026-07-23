@@ -582,7 +582,7 @@ export default function AdminPhoneForm({ initialData, onSubmit, isEditing = fals
                 <div className="mt-4">
                   <label className="block text-xs font-semibold text-gray-600 mb-2">Tags</label>
                   <div className="flex flex-wrap gap-2">
-                    {['Featured', 'Trending', 'Best Seller', 'Recommended', 'Staff Pick', 'Sponsored', 'Editor Choice', 'AI Recommended'].map(tag => (
+                    {['Featured', 'Trending', 'Best Seller', 'Recommended', 'Staff Pick', 'Sponsored', 'Editor Choice', 'AI Recommended', 'Flagship'].map(tag => (
                       <label key={tag} className="flex items-center space-x-1 text-xs bg-gray-50 px-2 py-1 rounded border">
                         <input type="checkbox" checked={formData.tags?.includes(tag) || false} onChange={e => {
                           const newTags = e.target.checked 
