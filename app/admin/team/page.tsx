@@ -145,12 +145,12 @@ export default function TeamManagementPage() {
           <Users className="w-8 h-8 text-indigo-600" />
           <div>
             <h2 className="text-2xl font-bold text-gray-900">Team Management</h2>
-            <p className="text-sm text-gray-500">Manage roles, permissions, and audit staff logs.</p>
+            <p className="text-xs text-gray-500">Manage roles, permissions, and audit staff logs.</p>
           </div>
         </div>
         <button 
           onClick={handleOpenCreate}
-          className="flex items-center px-4 py-2 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 font-semibold text-sm transition"
+          className="flex items-center px-4 py-2 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 font-semibold text-xs transition"
         >
           <Plus className="w-4 h-4 mr-2" />
           Add Member
@@ -180,7 +180,7 @@ export default function TeamManagementPage() {
                         {member.name.charAt(0)}
                       </div>
                       <div className="ml-4">
-                        <div className="text-sm font-semibold text-gray-900">{member.name}</div>
+                        <div className="text-xs font-semibold text-gray-900">{member.name}</div>
                         <div className="text-xs text-gray-500">@{member.username} • {member.email}</div>
                       </div>
                     </div>
@@ -214,7 +214,7 @@ export default function TeamManagementPage() {
                       {member.isActive ? 'Active' : 'Inactive'}
                     </span>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                  <td className="px-6 py-4 whitespace-nowrap text-right text-xs font-medium">
                     <div className="flex items-center justify-end space-x-2">
                       <Link 
                         href={`/admin/team/${member._id}/activity`}
@@ -263,7 +263,7 @@ export default function TeamManagementPage() {
                   required 
                   value={name} 
                   onChange={e => setName(e.target.value)} 
-                  className="w-full px-4 py-2 border rounded-xl text-sm focus:ring-2 focus:ring-indigo-500" 
+                  className="w-full px-4 py-2 border rounded-xl text-xs focus:ring-2 focus:ring-indigo-500" 
                   placeholder="e.g. Faizan Ahmad"
                 />
               </div>
@@ -276,7 +276,7 @@ export default function TeamManagementPage() {
                     required 
                     value={username} 
                     onChange={e => setUsername(e.target.value)} 
-                    className="w-full px-4 py-2 border rounded-xl text-sm" 
+                    className="w-full px-4 py-2 border rounded-xl text-xs" 
                     placeholder="faizan"
                   />
                 </div>
@@ -287,7 +287,7 @@ export default function TeamManagementPage() {
                     required 
                     value={email} 
                     onChange={e => setEmail(e.target.value)} 
-                    className="w-full px-4 py-2 border rounded-xl text-sm" 
+                    className="w-full px-4 py-2 border rounded-xl text-xs" 
                     placeholder="faizan@zozo.pk"
                   />
                 </div>
@@ -301,7 +301,7 @@ export default function TeamManagementPage() {
                     required 
                     value={password} 
                     onChange={e => setPassword(e.target.value)} 
-                    className="w-full px-4 py-2 border rounded-xl text-sm" 
+                    className="w-full px-4 py-2 border rounded-xl text-xs" 
                     placeholder="••••••••"
                   />
                 </div>
@@ -312,7 +312,7 @@ export default function TeamManagementPage() {
                 <select 
                   value={role} 
                   onChange={e => setRole(e.target.value)} 
-                  className="w-full px-4 py-2 border rounded-xl text-sm"
+                  className="w-full px-4 py-2 border rounded-xl text-xs"
                 >
                   <option value="EDITOR">Editor (Can edit/draft mobile pages)</option>
                   <option value="MODERATOR">Moderator (Can review & approve changes)</option>
@@ -325,7 +325,7 @@ export default function TeamManagementPage() {
                   <label className="block text-xs font-semibold text-gray-600 uppercase mb-2">Granular Permissions</label>
                   <div className="space-y-2">
                     {availablePermissions.map(perm => (
-                      <label key={perm.key} className="flex items-center space-x-2 text-sm text-gray-700 cursor-pointer">
+                      <label key={perm.key} className="flex items-center space-x-2 text-xs text-gray-700 cursor-pointer">
                         <input 
                           type="checkbox" 
                           checked={permissions.includes(perm.key)} 
@@ -343,13 +343,13 @@ export default function TeamManagementPage() {
                 <button 
                   type="button" 
                   onClick={() => setShowModal(false)}
-                  className="px-4 py-2 border rounded-xl text-sm font-semibold hover:bg-gray-50 transition"
+                  className="px-4 py-2 border rounded-xl text-xs font-semibold hover:bg-gray-50 transition"
                 >
                   Cancel
                 </button>
                 <button 
                   type="submit"
-                  className="px-4 py-2 bg-indigo-600 text-white rounded-xl text-sm font-semibold hover:bg-indigo-700 transition"
+                  className="px-4 py-2 bg-indigo-600 text-white rounded-xl text-xs font-semibold hover:bg-indigo-700 transition"
                 >
                   {editingMember ? 'Save Changes' : 'Create Account'}
                 </button>

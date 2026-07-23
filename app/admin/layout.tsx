@@ -61,7 +61,7 @@ export default function AdminLayout({
           <div className="space-y-1">
             <Link
               href="/admin"
-              className="flex items-center px-3 py-2 text-sm font-medium text-gray-900 rounded-md hover:bg-gray-50"
+              className="flex items-center px-3 py-2 text-xs font-medium text-gray-900 rounded-md hover:bg-gray-50"
             >
               <LayoutDashboard className="mr-3 h-5 w-5 text-gray-500" />
               Dashboard
@@ -75,7 +75,7 @@ export default function AdminLayout({
 
             <Link
               href="/admin/phones"
-              className="flex items-center px-3 py-2 text-sm font-medium text-gray-700 rounded-md hover:bg-gray-50"
+              className="flex items-center px-3 py-2 text-xs font-medium text-gray-700 rounded-md hover:bg-gray-50"
             >
               <Smartphone className="mr-3 h-5 w-5 text-gray-400" />
               All Mobiles
@@ -83,7 +83,7 @@ export default function AdminLayout({
 
             <Link
               href="/admin/phones/new"
-              className="flex items-center px-3 py-2 text-sm font-medium text-indigo-600 bg-indigo-50 rounded-md animate-pulse"
+              className="flex items-center px-3 py-2 text-xs font-medium text-indigo-600 bg-indigo-50 rounded-md animate-pulse"
             >
               <PlusCircle className="mr-3 h-5 w-5 text-indigo-500" />
               Add Mobile
@@ -99,7 +99,7 @@ export default function AdminLayout({
 
                 <Link
                   href="/admin/team"
-                  className="flex items-center px-3 py-2 text-sm font-medium text-gray-700 rounded-md hover:bg-gray-50"
+                  className="flex items-center px-3 py-2 text-xs font-medium text-gray-700 rounded-md hover:bg-gray-50"
                 >
                   <Users className="mr-3 h-5 w-5 text-gray-400" />
                   Team Management
@@ -107,7 +107,7 @@ export default function AdminLayout({
 
                 <Link
                   href="/admin/activity"
-                  className="flex items-center px-3 py-2 text-sm font-medium text-gray-700 rounded-md hover:bg-gray-50"
+                  className="flex items-center px-3 py-2 text-xs font-medium text-gray-700 rounded-md hover:bg-gray-50"
                 >
                   <Activity className="mr-3 h-5 w-5 text-gray-400" />
                   User Activity Logs
@@ -115,7 +115,7 @@ export default function AdminLayout({
 
                 <Link
                   href="/admin/team-activity"
-                  className="flex items-center px-3 py-2 text-sm font-medium text-gray-700 rounded-md hover:bg-gray-50"
+                  className="flex items-center px-3 py-2 text-xs font-medium text-gray-700 rounded-md hover:bg-gray-50"
                 >
                   <Activity className="mr-3 h-5 w-5 text-gray-400" />
                   Staff Change Logs

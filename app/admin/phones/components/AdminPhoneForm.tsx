@@ -270,17 +270,37 @@ export default function AdminPhoneForm({ initialData, onSubmit, isEditing = fals
   };
 
   const renderInput = (label: string, value: any, onChange: (val: any) => void, type = "text", placeholder = "") => (
-    <div key={label} className="mb-4">
+    <div key={label} className="mb-[5px]">
       <label className="block text-xs font-semibold text-gray-600 mb-1 capitalize">{label.replace(/_/g, ' ')}</label>
       {type === 'checkbox' ? (
         <input type="checkbox" checked={!!value} onChange={e => onChange(e.target.checked)} className="h-4 w-4 text-indigo-600" />
       ) : type === 'textarea' ? (
-        <textarea value={value || ''} onChange={e => onChange(e.target.value)} className="w-full px-3 py-2 border rounded-md text-sm" placeholder={placeholder} rows={4} />
+        <textarea value={value || ''} onChange={e => onChange(e.target.value)} className="w-full px-2 py-1.5 border rounded-md text-xs" placeholder={placeholder} rows={4} />
       ) : (
-        <input type={type} value={value || ''} onChange={e => onChange(e.target.value)} className="w-full px-3 py-2 border rounded-md text-sm" placeholder={placeholder} />
+        <input type={type} value={value || ''} onChange={e => onChange(e.target.value)} className="w-full px-2 py-1.5 border rounded-md text-xs" placeholder={placeholder} />
       )}
     </div>
   );
+
+  const renderTextFields = (specSection: string, defaultSpecs: any, excludeKeys: string[] = []) => {
+    const textKeys = Object.keys(defaultSpecs).filter(k => typeof defaultSpecs[k] !== 'boolean' && !excludeKeys.includes(k));
+    return textKeys.map(key => renderInput(key, (formData.specs.extra_specs as any)[specSection]?.[key], v => handleNestedExtraSpec(specSection, key, v), 'text'));
+  };
+
+  const renderBooleanFields = (specSection: string, defaultSpecs: any, excludeKeys: string[] = []) => {
+    const boolKeys = Object.keys(defaultSpecs).filter(k => typeof defaultSpecs[k] === 'boolean' && !excludeKeys.includes(k));
+    if (boolKeys.length === 0) return null;
+    return (
+      <div className="mt-[5px] flex flex-wrap gap-[5px]">
+        {boolKeys.map(key => (
+          <label key={key} className="flex items-center space-x-1.5 text-xs bg-gray-50 px-2.5 py-1.5 rounded-lg border border-gray-200 cursor-pointer hover:bg-gray-100 transition-colors">
+            <input type="checkbox" checked={!!(formData.specs.extra_specs as any)[specSection]?.[key]} onChange={e => handleNestedExtraSpec(specSection, key, e.target.checked)} className="h-3.5 w-3.5 text-indigo-600 rounded border-gray-300" />
+            <span className="capitalize">{key.replace(/_/g, ' ')}</span>
+          </label>
+        ))}
+      </div>
+    );
+  };
 
   return (
     <div className="p-8 max-w-7xl mx-auto pb-24">
@@ -305,7 +325,7 @@ export default function AdminPhoneForm({ initialData, onSubmit, isEditing = fals
 
       <div className="flex space-x-2 mb-6 overflow-x-auto pb-2">
         {['basic', 'detailed_specs', 'ai_content', 'gaming_benchmarks', 'seo_affiliate', ...(isEditing ? ['history'] : [])].map(tab => (
-          <button key={tab} type="button" onClick={() => setActiveTab(tab)} className={`px-4 py-2 rounded-full text-sm font-semibold capitalize whitespace-nowrap ${activeTab === tab ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}>
+          <button key={tab} type="button" onClick={() => setActiveTab(tab)} className={`px-4 py-2 rounded-full text-xs font-semibold capitalize whitespace-nowrap ${activeTab === tab ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}>
             {tab.replace(/_/g, ' ')}
           </button>
         ))}
@@ -319,7 +339,7 @@ export default function AdminPhoneForm({ initialData, onSubmit, isEditing = fals
             <div className="lg:col-span-2 space-y-6">
               {duplicates.length > 0 && (
                 <div className="bg-amber-50 border border-amber-200 text-amber-900 px-4 py-3 rounded-xl flex flex-col gap-1">
-                  <span className="font-bold text-sm">Warning: Potential Duplicates Detected!</span>
+                  <span className="font-bold text-xs">Warning: Potential Duplicates Detected!</span>
                   <div className="text-xs space-y-1">
                     {duplicates.map(d => (
                       <div key={d._id}>• <span className="font-semibold">{d.name}</span> ({d.model_number || 'No Model No.'}) - Status: {d.status}</div>
@@ -333,7 +353,7 @@ export default function AdminPhoneForm({ initialData, onSubmit, isEditing = fals
                   {renderInput('Phone Name', formData.name, v => setFormData((p: any) => ({ ...p, name: v })))}
                   <div>
                     <label className="block text-xs font-semibold text-gray-600 mb-1">Brand</label>
-                    <select value={formData.brand_slug} onChange={e => setFormData((p: any) => ({ ...p, brand_slug: e.target.value }))} className="w-full px-3 py-2 border rounded-md text-sm">
+                    <select value={formData.brand_slug} onChange={e => setFormData((p: any) => ({ ...p, brand_slug: e.target.value }))} className="w-full px-3 py-2 border rounded-md text-xs">
                       <option value="">Select Brand</option>
                       {brands.map(b => <option key={b.slug} value={b.slug}>{b.name}</option>)}
                     </select>
@@ -374,7 +394,7 @@ export default function AdminPhoneForm({ initialData, onSubmit, isEditing = fals
                 {renderInput('Publish Immediately', formData.is_published, v => setFormData((p: any) => ({ ...p, is_published: v })), 'checkbox')}
                 <div>
                   <label className="block text-xs font-semibold text-gray-600 mb-1">Status</label>
-                  <select value={formData.status} onChange={e => setFormData((p: any) => ({ ...p, status: e.target.value }))} className="w-full px-3 py-2 border rounded-md text-sm">
+                  <select value={formData.status} onChange={e => setFormData((p: any) => ({ ...p, status: e.target.value }))} className="w-full px-3 py-2 border rounded-md text-xs">
                     <option value="available">Available</option>
                     <option value="upcoming">Upcoming</option>
                     <option value="rumored">Rumored</option>
@@ -385,7 +405,7 @@ export default function AdminPhoneForm({ initialData, onSubmit, isEditing = fals
                 </div>
                 <div className="mt-4">
                   <label className="block text-xs font-semibold text-gray-600 mb-1">Approval Workflow Status</label>
-                  <div className="px-3 py-2 bg-gray-50 border rounded-md text-sm font-semibold capitalize text-gray-700">
+                  <div className="px-3 py-2 bg-gray-50 border rounded-md text-xs font-semibold capitalize text-gray-700">
                     {formData.approvalStatus || 'DRAFT'}
                   </div>
                 </div>
@@ -395,7 +415,7 @@ export default function AdminPhoneForm({ initialData, onSubmit, isEditing = fals
                   {renderInput('Last Sync Date', formData.lastSync, v => setFormData((p: any) => ({ ...p, lastSync: v })), 'datetime-local')}
                   <div>
                     <label className="block text-xs font-semibold text-gray-600 mb-1">Sync Status</label>
-                    <select value={formData.syncStatus || ''} onChange={e => setFormData((p: any) => ({ ...p, syncStatus: e.target.value || undefined }))} className="w-full px-3 py-2 border rounded-md text-sm">
+                    <select value={formData.syncStatus || ''} onChange={e => setFormData((p: any) => ({ ...p, syncStatus: e.target.value || undefined }))} className="w-full px-3 py-2 border rounded-md text-xs">
                       <option value="">No Sync / Local Only</option>
                       <option value="SUCCESS">Success</option>
                       <option value="FAILED">Failed</option>
@@ -430,10 +450,9 @@ export default function AdminPhoneForm({ initialData, onSubmit, isEditing = fals
             <section className="bg-white p-5 rounded-xl border shadow-sm">
               <h3 className="font-bold mb-3">Display Extended</h3>
               <div className="space-y-2">
-                {Object.keys(DEFAULT_EXTRA_SPECS.features_listing).filter(k => k !== 'display_features').map(key => (
-                  renderInput(key, (formData.specs.extra_specs as any).features_listing[key], v => handleNestedExtraSpec('features_listing', key, v), typeof DEFAULT_EXTRA_SPECS.features_listing[key as keyof typeof DEFAULT_EXTRA_SPECS.features_listing] === 'boolean' ? 'checkbox' : 'text')
-                ))}
+                {renderTextFields('features_listing', DEFAULT_EXTRA_SPECS.features_listing, ['display_features'])}
               </div>
+              {renderBooleanFields('features_listing', DEFAULT_EXTRA_SPECS.features_listing, ['display_features'])}
               <div className="mt-4">
                 <label className="block text-xs font-semibold text-gray-600 mb-2">Display Features</label>
                 <div className="flex flex-wrap gap-2">
@@ -458,8 +477,9 @@ export default function AdminPhoneForm({ initialData, onSubmit, isEditing = fals
             <section className="bg-white p-5 rounded-xl border shadow-sm">
               <h3 className="font-bold mb-3">Cameras & Video</h3>
               <div className="space-y-2">
-                {Object.keys(DEFAULT_EXTRA_SPECS.cameras_detailed).map(key => renderInput(key, (formData.specs.extra_specs as any).cameras_detailed[key], v => handleNestedExtraSpec('cameras_detailed', key, v), typeof DEFAULT_EXTRA_SPECS.cameras_detailed[key as keyof typeof DEFAULT_EXTRA_SPECS.cameras_detailed] === 'boolean' ? 'checkbox' : 'text'))}
+                {renderTextFields('cameras_detailed', DEFAULT_EXTRA_SPECS.cameras_detailed)}
               </div>
+              {renderBooleanFields('cameras_detailed', DEFAULT_EXTRA_SPECS.cameras_detailed)}
               <div className="mt-4">
                 <label className="block text-xs font-semibold text-gray-600 mb-2">Video Features</label>
                 <div className="flex flex-wrap gap-2">
@@ -476,17 +496,21 @@ export default function AdminPhoneForm({ initialData, onSubmit, isEditing = fals
             <section className="bg-white p-5 rounded-xl border shadow-sm">
               <h3 className="font-bold mb-3">Connectivity & Sensors</h3>
               <div className="space-y-2">
-                {Object.keys(DEFAULT_EXTRA_SPECS.connectivity_detailed).map(key => renderInput(key, (formData.specs.extra_specs as any).connectivity_detailed[key], v => handleNestedExtraSpec('connectivity_detailed', key, v), typeof DEFAULT_EXTRA_SPECS.connectivity_detailed[key as keyof typeof DEFAULT_EXTRA_SPECS.connectivity_detailed] === 'boolean' ? 'checkbox' : 'text'))}
-                {Object.keys(DEFAULT_EXTRA_SPECS.sensors).map(key => renderInput(key, (formData.specs.extra_specs as any).sensors[key], v => handleNestedExtraSpec('sensors', key, v), typeof DEFAULT_EXTRA_SPECS.sensors[key as keyof typeof DEFAULT_EXTRA_SPECS.sensors] === 'boolean' ? 'checkbox' : 'text'))}
+                {renderTextFields('connectivity_detailed', DEFAULT_EXTRA_SPECS.connectivity_detailed)}
+                {renderTextFields('sensors', DEFAULT_EXTRA_SPECS.sensors)}
               </div>
+              {renderBooleanFields('connectivity_detailed', DEFAULT_EXTRA_SPECS.connectivity_detailed)}
+              {renderBooleanFields('sensors', DEFAULT_EXTRA_SPECS.sensors)}
             </section>
 
             <section className="bg-white p-5 rounded-xl border shadow-sm">
               <h3 className="font-bold mb-3">Battery & Body Extended</h3>
               <div className="space-y-2">
-                {Object.keys(DEFAULT_EXTRA_SPECS.battery_detailed).map(key => renderInput(key, (formData.specs.extra_specs as any).battery_detailed[key], v => handleNestedExtraSpec('battery_detailed', key, v), typeof DEFAULT_EXTRA_SPECS.battery_detailed[key as keyof typeof DEFAULT_EXTRA_SPECS.battery_detailed] === 'boolean' ? 'checkbox' : 'text'))}
-                {Object.keys(DEFAULT_EXTRA_SPECS.body_detailed).map(key => renderInput(key, (formData.specs.extra_specs as any).body_detailed[key], v => handleNestedExtraSpec('body_detailed', key, v), typeof DEFAULT_EXTRA_SPECS.body_detailed[key as keyof typeof DEFAULT_EXTRA_SPECS.body_detailed] === 'boolean' ? 'checkbox' : 'text'))}
+                {renderTextFields('battery_detailed', DEFAULT_EXTRA_SPECS.battery_detailed)}
+                {renderTextFields('body_detailed', DEFAULT_EXTRA_SPECS.body_detailed)}
               </div>
+              {renderBooleanFields('battery_detailed', DEFAULT_EXTRA_SPECS.battery_detailed)}
+              {renderBooleanFields('body_detailed', DEFAULT_EXTRA_SPECS.body_detailed)}
             </section>
 
           </div>
@@ -504,8 +528,9 @@ export default function AdminPhoneForm({ initialData, onSubmit, isEditing = fals
             <section className="bg-white p-5 rounded-xl border shadow-sm">
               <h3 className="font-bold mb-3">Gaming</h3>
               <div className="grid grid-cols-2 gap-4">
-                {Object.keys(DEFAULT_EXTRA_SPECS.gaming).map(key => renderInput(key, (formData.specs.extra_specs as any).gaming[key], v => handleNestedExtraSpec('gaming', key, v), typeof DEFAULT_EXTRA_SPECS.gaming[key as keyof typeof DEFAULT_EXTRA_SPECS.gaming] === 'boolean' ? 'checkbox' : 'text'))}
+                {renderTextFields('gaming', DEFAULT_EXTRA_SPECS.gaming)}
               </div>
+              {renderBooleanFields('gaming', DEFAULT_EXTRA_SPECS.gaming)}
             </section>
           </div>
         )}
@@ -517,7 +542,7 @@ export default function AdminPhoneForm({ initialData, onSubmit, isEditing = fals
               <h3 className="font-bold mb-3">AI Features Supported</h3>
               <div className="flex flex-wrap gap-3">
                 {AI_FEATURES_LIST.map(feat => (
-                  <label key={feat} className="flex items-center space-x-2 text-sm bg-purple-50 px-3 py-2 rounded-lg border border-purple-100">
+                  <label key={feat} className="flex items-center space-x-2 text-xs bg-purple-50 px-3 py-2 rounded-lg border border-purple-100">
                     <input type="checkbox" checked={formData.specs.ai_features?.includes(feat) || false} onChange={() => toggleArrayItem(null, 'ai_features', feat)} className="text-purple-600 rounded" />
                     <span>{feat}</span>
                   </label>
@@ -547,14 +572,17 @@ export default function AdminPhoneForm({ initialData, onSubmit, isEditing = fals
               <div className="space-y-4">
                 {renderInput('Meta Title', formData.seo.meta_title, v => setFormData((p: any) => ({ ...p, seo: { ...p.seo, meta_title: v } })))}
                 {renderInput('Meta Description', formData.seo.meta_description, v => setFormData((p: any) => ({ ...p, seo: { ...p.seo, meta_description: v } })), 'textarea')}
-                {Object.keys(DEFAULT_EXTRA_SPECS.seo).map(key => renderInput(key, (formData.specs.extra_specs as any).seo[key], v => handleNestedExtraSpec('seo', key, v), typeof DEFAULT_EXTRA_SPECS.seo[key as keyof typeof DEFAULT_EXTRA_SPECS.seo] === 'boolean' ? 'checkbox' : 'text'))}
+                {renderTextFields('seo', DEFAULT_EXTRA_SPECS.seo)}
+                {renderBooleanFields('seo', DEFAULT_EXTRA_SPECS.seo)}
               </div>
             </section>
             <section className="bg-white p-5 rounded-xl border shadow-sm h-fit">
               <h3 className="font-bold mb-3">Affiliate & Pricing Extra</h3>
               <div className="space-y-4">
-                {Object.keys(DEFAULT_EXTRA_SPECS.affiliate).map(key => renderInput(key, (formData.specs.extra_specs as any).affiliate[key], v => handleNestedExtraSpec('affiliate', key, v), typeof DEFAULT_EXTRA_SPECS.affiliate[key as keyof typeof DEFAULT_EXTRA_SPECS.affiliate] === 'boolean' ? 'checkbox' : 'text'))}
-                {Object.keys(DEFAULT_EXTRA_SPECS.price_section).map(key => renderInput(key, (formData.specs.extra_specs as any).price_section[key], v => handleNestedExtraSpec('price_section', key, v), typeof DEFAULT_EXTRA_SPECS.price_section[key as keyof typeof DEFAULT_EXTRA_SPECS.price_section] === 'boolean' ? 'checkbox' : 'text'))}
+                {renderTextFields('affiliate', DEFAULT_EXTRA_SPECS.affiliate)}
+                {renderBooleanFields('affiliate', DEFAULT_EXTRA_SPECS.affiliate)}
+                {renderTextFields('price_section', DEFAULT_EXTRA_SPECS.price_section)}
+                {renderBooleanFields('price_section', DEFAULT_EXTRA_SPECS.price_section)}
               </div>
             </section>
           </div>
@@ -565,14 +593,14 @@ export default function AdminPhoneForm({ initialData, onSubmit, isEditing = fals
           <div className="bg-white rounded-xl border p-6 space-y-6 shadow-sm">
             <h3 className="text-lg font-bold">Revision History & Change Logs</h3>
             {loadingRevisions ? (
-              <div className="text-gray-500 text-sm">Loading revisions...</div>
+              <div className="text-gray-500 text-xs">Loading revisions...</div>
             ) : revisions.length === 0 ? (
-              <div className="text-gray-500 text-sm">No revisions recorded for this mobile.</div>
+              <div className="text-gray-500 text-xs">No revisions recorded for this mobile.</div>
             ) : (
               <div className="space-y-4">
                 {revisions.map(rev => (
                   <div key={rev._id} className="border border-gray-100 rounded-xl p-4 hover:bg-gray-50/50 transition flex flex-col gap-1">
-                    <div className="flex items-center justify-between text-sm">
+                    <div className="flex items-center justify-between text-xs">
                       <div className="font-semibold text-gray-900">
                         {rev.changedBy?.name || 'System'} ({rev.changedBy?.role || 'SYSTEM'})
                       </div>

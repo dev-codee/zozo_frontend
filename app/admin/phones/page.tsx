@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { PlusCircle, Trash2, Pencil, Copy } from 'lucide-react';
+import { PlusCircle, Trash2, Pencil, Copy, Search } from 'lucide-react';
 import Cookies from 'js-cookie';
 
 export default function PhonesListPage() {
@@ -12,16 +12,25 @@ export default function PhonesListPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
-    fetchPhones(currentPage);
-  }, [currentPage]);
+    const timer = setTimeout(() => {
+      fetchPhones(currentPage, searchQuery);
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [currentPage, searchQuery]);
 
-  const fetchPhones = async (page: number = 1) => {
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
+    setCurrentPage(1); // Reset to first page on search
+  };
+
+  const fetchPhones = async (page: number = 1, search: string = '') => {
     setIsLoading(true);
     const token = Cookies.get('admin_token');
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/phones?page=${page}&limit=20`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/phones?page=${page}&limit=20&search=${encodeURIComponent(search)}`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -61,7 +70,7 @@ export default function PhonesListPage() {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (res.ok) {
-        fetchPhones(currentPage);
+        fetchPhones(currentPage, searchQuery);
       } else {
         const error = await res.json();
         alert(`Failed to approve: ${error.message}`);
@@ -85,7 +94,7 @@ export default function PhonesListPage() {
         body: JSON.stringify({ note })
       });
       if (res.ok) {
-        fetchPhones(currentPage);
+        fetchPhones(currentPage, searchQuery);
       } else {
         const error = await res.json();
         alert(`Failed to reject: ${error.message}`);
@@ -124,15 +133,29 @@ export default function PhonesListPage() {
       <div className="flex items-center justify-between mb-8">
         <div>
           <h2 className="text-3xl font-bold text-gray-900">All Mobiles</h2>
-          <p className="mt-1 text-sm text-gray-500">Manage all your phones here.</p>
+          <p className="mt-1 text-xs text-gray-500">Manage all your phones here.</p>
         </div>
-        <Link 
-          href="/admin/phones/new" 
-          className="flex items-center px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
-        >
-          <PlusCircle className="w-5 h-5 mr-2" />
-          Add Mobile
-        </Link>
+        <div className="flex items-center space-x-4">
+          <div className="relative">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <Search className="h-4 w-4 text-gray-400" />
+            </div>
+            <input
+              type="text"
+              placeholder="Search mobiles..."
+              value={searchQuery}
+              onChange={handleSearchChange}
+              className="pl-9 pr-4 py-2 border border-gray-300 rounded-md text-xs focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:w-64"
+            />
+          </div>
+          <Link 
+            href="/admin/phones/new" 
+            className="flex items-center px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 text-xs font-semibold"
+          >
+            <PlusCircle className="w-4 h-4 mr-2" />
+            Add Mobile
+          </Link>
+        </div>
       </div>
 
       {isLoading ? (
@@ -170,8 +193,8 @@ export default function PhonesListPage() {
                         )}
                       </div>
                       <div className="ml-4">
-                        <div className="text-sm font-medium text-gray-900">{phone.name}</div>
-                        <div className="text-sm text-gray-500">{phone.model_number || 'N/A'}</div>
+                        <div className="text-xs font-medium text-gray-900">{phone.name}</div>
+                        <div className="text-xs text-gray-500">{phone.model_number || 'N/A'}</div>
                       </div>
                     </div>
                   </td>
@@ -180,7 +203,7 @@ export default function PhonesListPage() {
                       {phone.brand_slug}
                     </span>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 capitalize">
+                  <td className="px-6 py-4 whitespace-nowrap text-xs text-gray-500 capitalize">
                     {phone.status.replace('_', ' ')}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
@@ -193,10 +216,10 @@ export default function PhonesListPage() {
                       {phone.approvalStatus || 'DRAFT'}
                     </span>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="px-6 py-4 whitespace-nowrap text-xs text-gray-500">
                     {phone.createdBy?.name || 'Super Admin'}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                  <td className="px-6 py-4 whitespace-nowrap text-right text-xs font-medium">
                     <div className="flex justify-end space-x-2">
                       {canApprove && phone.approvalStatus === 'PENDING_REVIEW' && (
                         <>
@@ -249,21 +272,21 @@ export default function PhonesListPage() {
                 <button
                   onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                   disabled={currentPage === 1}
-                  className="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50"
+                  className="relative inline-flex items-center px-4 py-2 border border-gray-300 text-xs font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50"
                 >
                   Previous
                 </button>
                 <button
                   onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
                   disabled={currentPage === totalPages}
-                  className="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50"
+                  className="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-xs font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50"
                 >
                   Next
                 </button>
               </div>
               <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
                 <div>
-                  <p className="text-sm text-gray-700">
+                  <p className="text-xs text-gray-700">
                     Showing page <span className="font-medium">{currentPage}</span> of <span className="font-medium">{totalPages}</span>
                   </p>
                 </div>
@@ -272,7 +295,7 @@ export default function PhonesListPage() {
                     <button
                       onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                       disabled={currentPage === 1}
-                      className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50"
+                      className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-xs font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50"
                     >
                       <span className="sr-only">Previous</span>
                       <svg className="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
@@ -283,7 +306,7 @@ export default function PhonesListPage() {
                       <button
                         key={page}
                         onClick={() => setCurrentPage(page)}
-                        className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium ${
+                        className={`relative inline-flex items-center px-4 py-2 border text-xs font-medium ${
                           currentPage === page
                             ? 'z-10 bg-indigo-50 border-indigo-500 text-indigo-600'
                             : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50'
@@ -295,7 +318,7 @@ export default function PhonesListPage() {
                     <button
                       onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
                       disabled={currentPage === totalPages}
-                      className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50"
+                      className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-xs font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50"
                     >
                       <span className="sr-only">Next</span>
                       <svg className="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">

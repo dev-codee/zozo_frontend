@@ -77,6 +77,10 @@ export interface Phone {
     average: number;
     count: number;
   };
+  seo?: {
+    meta_title?: string;
+    meta_description?: string;
+  };
 }
 
 export interface Brand {

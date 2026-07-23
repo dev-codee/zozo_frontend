@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { Metadata } from "next";
 import Link from "next/link";
 import { getPhoneBySlug } from "@/app/lib/api";
 import Navbar from "@/app/components/Navbar";
@@ -7,6 +8,27 @@ import Breadcrumb from "@/app/components/Breadcrumb";
 import PhoneGallery from "@/app/components/PhoneGallery";
 import PhoneSpecs from "@/app/components/PhoneSpecs";
 import PhoneDescriptionClient from "@/app/components/PhoneDescriptionClient";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const resolvedParams = await params;
+  const phone = await getPhoneBySlug(resolvedParams.slug);
+
+  if (!phone) {
+    return {
+      title: "Phone Not Found | Zozo",
+      description: "The requested phone could not be found.",
+    };
+  }
+
+  return {
+    title: phone.seo?.meta_title || `${phone.name} Price in Pakistan, Specs & Reviews`,
+    description: phone.seo?.meta_description || `Find the best price for ${phone.name} in Pakistan. Read full specifications, features, and user reviews on Zozo.`,
+  };
+}
 
 export default async function PhoneDetailPage({
   params,

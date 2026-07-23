@@ -37,7 +37,7 @@ export default async function AdminDashboard() {
             <div className="flex items-center">
               <div className="ml-5 w-0 flex-1">
                 <dl>
-                  <dt className="truncate text-sm font-medium text-gray-500">Total Phones</dt>
+                  <dt className="truncate text-xs font-medium text-gray-500">Total Phones</dt>
                   <dd className="mt-1 text-3xl font-semibold tracking-tight text-gray-900">{stats.totalPhones}</dd>
                 </dl>
               </div>
