@@ -48,6 +48,7 @@ export default async function PhoneDetailPage({
     : null;
   const rating = phone.rating?.average;
   const reviewCount = phone.rating?.count || 0;
+  const hasAffiliateUrls = phone.prices?.some((p) => !!p.product_url);
 
   // Format specs for the row
   const specs = phone.specs || {};
@@ -115,7 +116,7 @@ export default async function PhoneDetailPage({
               <span className="inline-flex items-center gap-1 bg-surface-container-low text-text-muted font-label-sm text-xs px-3 py-1 rounded-full mb-3 capitalize border border-border-subtle">
                 {phone.brand_slug.replace("-", " ")}
               </span>
-              <h1 className="font-headline-lg text-3xl md:text-4xl lg:text-5xl text-text-main mb-3 font-bold tracking-tight">
+              <h1 className="font-headline-lg text-2xl md:text-3xl lg:text-4xl text-text-main mb-3 font-bold tracking-tight">
                 {phone.name}
               </h1>
 
@@ -148,7 +149,7 @@ export default async function PhoneDetailPage({
 
             {/* Price */}
             <div className="flex items-baseline gap-2 mt-2">
-              <span className="font-display-lg text-3xl md:text-4xl font-bold text-price-green tracking-tight">
+              <span className="font-display-lg text-2xl md:text-3xl font-bold text-price-green tracking-tight">
                 {lowestPrice ? `Rs. ${lowestPrice.toLocaleString()}` : "Price TBA"}
               </span>
             </div>
@@ -202,161 +203,182 @@ export default async function PhoneDetailPage({
                 Set Price Alert
               </button>
             </div>
-          </div>
-        </div>
 
+            {/* Key Specs */}
+            <div className="mt-8 border-t border-border-subtle pt-6">
+              <h2 className="text-xl font-bold text-text-main flex items-center gap-2 mb-6">
+                <span className="w-1 h-6 bg-primary rounded-full"></span>
+                Key Specs
+              </h2>
+              
+              <div className="flex flex-col gap-6">
+                {/* OS */}
+                {phone.specs.os && (
+                  <div>
+                    <div className="flex items-center gap-2 text-sm text-text-muted font-medium">
+                      <span className="material-symbols-outlined text-primary text-lg">android</span>
+                      {phone.specs.os}
+                    </div>
+                  </div>
+                )}
 
+                {/* Performance */}
+                {phone.specs.performance && (
+                  <div>
+                    <div className="flex items-center gap-2 font-semibold text-text-main mb-2">
+                      <span className="material-symbols-outlined text-text-muted text-lg">speed</span>
+                      Performance
+                    </div>
+                    <ul className="list-disc pl-8 text-sm text-text-muted space-y-1">
+                      {chipsetFull && <li>{chipsetFull}</li>}
+                      {phone.specs.performance.cpu && <li>{phone.specs.performance.cpu}</li>}
+                      {ramDisplay !== "N/A" && <li>{ramDisplay} RAM</li>}
+                    </ul>
+                  </div>
+                )}
 
-        {/* Key Specs Row */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mt-4">
-          <div className="bg-surface-white border border-border-subtle p-4 flex items-center gap-3 hover:shadow-md transition-shadow rounded-xl">
-            <span className="material-symbols-outlined text-primary text-[28px] bg-primary/10 p-2 rounded-lg">
-              memory
-            </span>
-            <div>
-              <div className="font-label-sm text-xs text-text-muted uppercase tracking-wider font-semibold">
-                RAM
-              </div>
-              <div className="font-label-md text-sm text-text-main font-semibold mt-0.5">
-                {ramDisplay}
-              </div>
-            </div>
-          </div>
+                {/* Display */}
+                {phone.specs.display && (
+                  <div>
+                    <div className="flex items-center gap-2 font-semibold text-text-main mb-2">
+                      <span className="material-symbols-outlined text-text-muted text-lg">smartphone</span>
+                      Display
+                    </div>
+                    <ul className="list-disc pl-8 text-sm text-text-muted space-y-1">
+                      {phone.specs.display.size_inches && <li>{phone.specs.display.size_inches} inches ({Math.round(phone.specs.display.size_inches * 2.54)} cm); {phone.specs.display.type || 'Display'}</li>}
+                      {phone.specs.display.resolution && <li>{phone.specs.display.resolution}</li>}
+                      {phone.specs.display.refresh_rate_hz && <li>{phone.specs.display.refresh_rate_hz} Hz Refresh Rate</li>}
+                      {phone.specs.display.protection && <li>{phone.specs.display.protection}</li>}
+                    </ul>
+                  </div>
+                )}
 
-          <div className="bg-surface-white border border-border-subtle p-4 flex items-center gap-3 hover:shadow-md transition-shadow rounded-xl">
-            <span className="material-symbols-outlined text-primary text-[28px] bg-primary/10 p-2 rounded-lg">
-              hard_drive
-            </span>
-            <div>
-              <div className="font-label-sm text-xs text-text-muted uppercase tracking-wider font-semibold">
-                Storage
-              </div>
-              <div className="font-label-md text-sm text-text-main font-semibold mt-0.5">
-                {storageDisplay}
-              </div>
-            </div>
-          </div>
+                {/* Rear Camera */}
+                {phone.specs.camera?.rear_summary && (
+                  <div>
+                    <div className="flex items-center gap-2 font-semibold text-text-main mb-2">
+                      <span className="material-symbols-outlined text-text-muted text-lg">photo_camera</span>
+                      Rear Camera
+                    </div>
+                    <ul className="list-disc pl-8 text-sm text-text-muted space-y-1">
+                      <li>{phone.specs.camera.rear_summary}</li>
+                      {phone.specs.camera.video_recording && <li>{phone.specs.camera.video_recording} Video Recording</li>}
+                    </ul>
+                  </div>
+                )}
 
-          <div className="bg-surface-white border border-border-subtle p-4 flex items-center gap-3 hover:shadow-md transition-shadow rounded-xl">
-            <span className="material-symbols-outlined text-primary text-[28px] bg-primary/10 p-2 rounded-lg">
-              battery_charging_full
-            </span>
-            <div>
-              <div className="font-label-sm text-xs text-text-muted uppercase tracking-wider font-semibold">
-                Battery
-              </div>
-              <div className="font-label-md text-sm text-text-main font-semibold mt-0.5">
-                {batteryDisplay}
-              </div>
-            </div>
-          </div>
+                {/* Front Camera */}
+                {phone.specs.camera?.front_summary && (
+                  <div>
+                    <div className="flex items-center gap-2 font-semibold text-text-main mb-2">
+                      <span className="material-symbols-outlined text-text-muted text-lg">photo_camera_front</span>
+                      Front Camera
+                    </div>
+                    <ul className="list-disc pl-8 text-sm text-text-muted space-y-1">
+                      <li>{phone.specs.camera.front_summary}</li>
+                    </ul>
+                  </div>
+                )}
 
-          <div className="bg-surface-white border border-border-subtle p-4 flex items-center gap-3 hover:shadow-md transition-shadow rounded-xl">
-            <span className="material-symbols-outlined text-primary text-[28px] bg-primary/10 p-2 rounded-lg">
-              photo_camera
-            </span>
-            <div className="overflow-hidden">
-              <div className="font-label-sm text-xs text-text-muted uppercase tracking-wider font-semibold">
-                Camera
-              </div>
-              <div className="font-label-md text-sm text-text-main font-semibold mt-0.5 truncate" title={cameraDisplay}>
-                {cameraDisplay}
-              </div>
-            </div>
-          </div>
+                {/* Battery */}
+                {phone.specs.battery && (
+                  <div>
+                    <div className="flex items-center gap-2 font-semibold text-text-main mb-2">
+                      <span className="material-symbols-outlined text-text-muted text-lg">battery_charging_full</span>
+                      Battery
+                    </div>
+                    <ul className="list-disc pl-8 text-sm text-text-muted space-y-1">
+                      {phone.specs.battery.capacity_mah && <li>{phone.specs.battery.capacity_mah} mAh</li>}
+                      {phone.specs.battery.charging_watts && <li>{phone.specs.battery.charging_watts}W Fast Charging</li>}
+                    </ul>
+                  </div>
+                )}
 
-          <div className="bg-surface-white border border-border-subtle p-4 flex items-center gap-3 hover:shadow-md transition-shadow rounded-xl">
-            <span className="material-symbols-outlined text-primary text-[28px] bg-primary/10 p-2 rounded-lg">
-              smartphone
-            </span>
-            <div>
-              <div className="font-label-sm text-xs text-text-muted uppercase tracking-wider font-semibold">
-                Display
-              </div>
-              <div className="font-label-md text-sm text-text-main font-semibold mt-0.5">
-                {displayString}
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-surface-white border border-border-subtle p-4 flex items-center gap-3 hover:shadow-md transition-shadow rounded-xl">
-            <span className="material-symbols-outlined text-primary text-[28px] bg-primary/10 p-2 rounded-lg">
-              developer_board
-            </span>
-            <div className="overflow-hidden">
-              <div className="font-label-sm text-xs text-text-muted uppercase tracking-wider font-semibold">
-                Chipset
-              </div>
-              <div className="font-label-md text-sm text-text-main font-semibold mt-0.5 truncate" title={chipsetFull}>
-                {chipsetDisplay}
+                {/* General */}
+                {phone.specs.connectivity && (
+                  <div>
+                    <div className="flex items-center gap-2 font-semibold text-text-main mb-2">
+                      <span className="material-symbols-outlined text-text-muted text-lg">memory</span>
+                      General
+                    </div>
+                    <ul className="list-disc pl-8 text-sm text-text-muted space-y-1">
+                      {phone.specs.connectivity.sim && <li>SIM: {phone.specs.connectivity.sim}</li>}
+                      {phone.specs.connectivity.network && <li>{phone.specs.connectivity.network} Supported</li>}
+                      {storageDisplay !== "N/A" && <li>{storageDisplay} internal storage</li>}
+                      {phone.specs.body?.water_resistance && <li>{phone.specs.body.water_resistance}</li>}
+                    </ul>
+                  </div>
+                )}
               </div>
             </div>
           </div>
         </div>
 
         {/* Price Comparison Table */}
-        <section className="bg-surface-white border border-border-subtle rounded-xl overflow-hidden shadow-sm mt-8">
-          <div className="p-6 border-b border-border-subtle bg-surface-container-low/30">
-            <h2 className="font-headline-md text-2xl font-bold text-text-main">
-              Price Comparison
-            </h2>
-          </div>
+        {hasAffiliateUrls && (
+          <section className="bg-surface-white border border-border-subtle rounded-xl overflow-hidden shadow-sm mt-8">
+            <div className="p-6 border-b border-border-subtle bg-surface-container-low/30">
+              <h2 className="font-headline-md text-2xl font-bold text-text-main">
+                Price Comparison
+              </h2>
+            </div>
 
-          <div className="divide-y divide-border-subtle">
-            {phone.prices && phone.prices.length > 0 ? (
-              phone.prices.map((priceItem, index) => (
-                <div
-                  key={index}
-                  className="p-4 md:px-6 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:bg-surface-container-lowest transition-colors"
-                >
-                  <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 bg-surface-container-low border border-border-subtle rounded-lg flex items-center justify-center font-bold text-primary text-xl uppercase shadow-sm">
-                      {priceItem.retailer_name.charAt(0)}
+            <div className="divide-y divide-border-subtle">
+              {phone.prices && phone.prices.length > 0 ? (
+                phone.prices.map((priceItem, index) => (
+                  <div
+                    key={index}
+                    className="p-4 md:px-6 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:bg-surface-container-lowest transition-colors"
+                  >
+                    <div className="flex items-center gap-4">
+                      <div className="w-12 h-12 bg-surface-container-low border border-border-subtle rounded-lg flex items-center justify-center font-bold text-primary text-xl uppercase shadow-sm">
+                        {priceItem.retailer_name.charAt(0)}
+                      </div>
+                      <div>
+                        <div className="font-label-md text-base font-semibold text-text-main">
+                          {priceItem.retailer_name}
+                        </div>
+                        <div className="font-body-sm text-sm text-price-green font-medium flex items-center gap-1 mt-0.5">
+                          <span className="w-2 h-2 rounded-full bg-price-green"></span>
+                          {priceItem.stock_status || "In Stock"}
+                        </div>
+                      </div>
                     </div>
-                    <div>
-                      <div className="font-label-md text-base font-semibold text-text-main">
-                        {priceItem.retailer_name}
+                    <div className="flex items-center justify-between md:justify-end gap-6 w-full md:w-auto mt-2 md:mt-0 pt-4 md:pt-0 border-t border-border-subtle md:border-0">
+                      <div className="font-headline-md text-xl font-bold text-text-main">
+                        Rs. {priceItem.price_pkr.toLocaleString()}
                       </div>
-                      <div className="font-body-sm text-sm text-price-green font-medium flex items-center gap-1 mt-0.5">
-                        <span className="w-2 h-2 rounded-full bg-price-green"></span>
-                        {priceItem.stock_status || "In Stock"}
-                      </div>
+                      {priceItem.product_url ? (
+                        <a
+                          href={priceItem.product_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="bg-primary hover:bg-on-primary-fixed-variant text-white font-label-md text-sm px-8 h-11 transition-all shadow-md hover:shadow-lg rounded-lg font-semibold flex items-center justify-center cursor-pointer"
+                        >
+                          Buy Now
+                        </a>
+                      ) : (
+                        <button
+                          className="bg-surface-container-low text-text-muted font-label-md text-sm px-8 h-11 rounded-lg font-semibold flex items-center justify-center cursor-not-allowed border border-border-subtle"
+                          disabled
+                        >
+                          Unavailable
+                        </button>
+                      )}
                     </div>
                   </div>
-                  <div className="flex items-center justify-between md:justify-end gap-6 w-full md:w-auto mt-2 md:mt-0 pt-4 md:pt-0 border-t border-border-subtle md:border-0">
-                    <div className="font-headline-md text-xl font-bold text-text-main">
-                      Rs. {priceItem.price_pkr.toLocaleString()}
-                    </div>
-                    {priceItem.product_url ? (
-                      <a
-                        href={priceItem.product_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="bg-primary hover:bg-on-primary-fixed-variant text-white font-label-md text-sm px-8 h-11 transition-all shadow-md hover:shadow-lg rounded-lg font-semibold flex items-center justify-center cursor-pointer"
-                      >
-                        Buy Now
-                      </a>
-                    ) : (
-                      <button
-                        className="bg-surface-container-low text-text-muted font-label-md text-sm px-8 h-11 rounded-lg font-semibold flex items-center justify-center cursor-not-allowed border border-border-subtle"
-                        disabled
-                      >
-                        Unavailable
-                      </button>
-                    )}
-                  </div>
+                ))
+              ) : (
+                <div className="p-8 text-center">
+                  <span className="material-symbols-outlined text-4xl text-outline mb-2">
+                    storefront
+                  </span>
+                  <p className="text-text-muted font-medium">No prices available for this phone yet.</p>
                 </div>
-              ))
-            ) : (
-              <div className="p-8 text-center">
-                <span className="material-symbols-outlined text-4xl text-outline mb-2">
-                  storefront
-                </span>
-                <p className="text-text-muted font-medium">No prices available for this phone yet.</p>
-              </div>
-            )}
-          </div>
-        </section>
+              )}
+            </div>
+          </section>
+        )}
 
         {/* Full Specifications Table */}
         <PhoneSpecs specs={phone.specs} />

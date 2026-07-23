@@ -203,13 +203,19 @@ export default function CompareClient({ initialPhones, allPhones }: CompareClien
 
   // Update query parameters in the URL
   const updateUrl = (newSlots: (Phone | null)[]) => {
-    const params = new URLSearchParams();
-    newSlots.forEach((p) => {
-      if (p) {
+    const activePhones = newSlots.filter((p) => p !== null) as Phone[];
+    
+    if (activePhones.length === 2) {
+      // Canonical 2-phone comparison
+      router.push(`/compare/${activePhones[0].slug}/vs/${activePhones[1].slug}`);
+    } else {
+      // 1 or 3 phones fallback to query params
+      const params = new URLSearchParams();
+      activePhones.forEach((p) => {
         params.append("phone", p.slug);
-      }
-    });
-    router.push(`${pathname}?${params.toString()}`);
+      });
+      router.push(`/compare?${params.toString()}`);
+    }
   };
 
   // Add phone to slot

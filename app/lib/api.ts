@@ -166,3 +166,23 @@ export async function getAIComparisonVerdict(slugs: string[]): Promise<string | 
   const data = await apiFetch<{ verdict: string }>(`/compare/ai?slugs=${slugs.join(",")}`);
   return data?.verdict || null;
 }
+
+export async function trackComparison(slugs: string[]): Promise<void> {
+  if (slugs.length < 2) return;
+  try {
+    await fetch(`${API_BASE_URL}/compare/track`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ slugs: slugs.join(",") }),
+    });
+  } catch (error) {
+    console.error("Failed to track comparison:", error);
+  }
+}
+
+export async function getPopularComparisons(limit: number = 5): Promise<any[]> {
+  const data = await apiFetch<any[]>(`/compare/popular?limit=${limit}`);
+  return data || [];
+}
