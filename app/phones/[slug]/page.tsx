@@ -564,7 +564,7 @@ export default async function PhoneDetailPage({
         )}
 
         {/* Product Description */}
-        <PhoneDescriptionClient slug={phone.slug} initialDescription={phone.description} />
+        <PhoneDescriptionClient slug={phone.slug} initialDescription={phone.description} phoneName={phone.name} />
       </main>
       <Footer />
     </>
