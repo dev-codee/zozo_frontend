@@ -102,9 +102,9 @@ export default async function PhoneDetailPage({
 
 
   return (
-    <>
+    <div className="bg-white min-h-screen w-full flex flex-col">
       <Navbar />
-      <main className="w-full max-w-[1280px] mx-auto px-4 md:px-6 py-8 flex flex-col gap-8 bg-surface">
+      <main className="w-full max-w-[1280px] mx-auto px-4 md:px-6 py-8 flex flex-col gap-8 bg-white flex-1">
         {/* Breadcrumb */}
         <Breadcrumb
           items={[
@@ -373,6 +373,6 @@ export default async function PhoneDetailPage({
         <PhoneDescriptionClient slug={phone.slug} initialDescription={phone.description} />
       </main>
       <Footer />
-    </>
+    </div>
   );
 }
