@@ -82,12 +82,12 @@ export default async function PhoneDetailPage({
       const allMatching = await getPhones(`min_price=${minPrice}&max_price=${maxPrice}`);
       competitorPhones = allMatching
         .filter((p) => p.slug !== phone.slug)
-        .slice(0, 5);
+        .slice(0, 10);
     } else {
       const sameBrand = await getPhones(`brand=${phone.brand_slug}`);
       competitorPhones = sameBrand
         .filter((p) => p.slug !== phone.slug)
-        .slice(0, 5);
+        .slice(0, 10);
     }
   } catch (error) {
     console.error("Failed to fetch competitors:", error);
