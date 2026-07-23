@@ -401,8 +401,8 @@ export default async function PhoneDetailPage({
         {/* Price Comparison Table */}
         {hasAffiliateUrls && (
           <section className="bg-surface-white border border-border-subtle rounded-xl overflow-hidden shadow-sm mt-8">
-            <div className="p-6 border-b border-border-subtle bg-surface-container-low/30">
-              <h2 className="font-headline-md text-2xl font-bold text-text-main">
+            <div className="p-4 md:px-6 border-b border-border-subtle bg-surface-container-low/30">
+              <h2 className="font-headline-md text-lg font-bold text-text-main">
                 Price Comparison
               </h2>
             </div>
@@ -412,24 +412,24 @@ export default async function PhoneDetailPage({
                 phone.prices.map((priceItem, index) => (
                   <div
                     key={index}
-                    className="p-4 md:px-6 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:bg-surface-container-lowest transition-colors"
+                    className="p-3 md:px-6 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:bg-surface-container-lowest transition-colors"
                   >
-                    <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 bg-surface-container-low border border-border-subtle rounded-lg flex items-center justify-center font-bold text-primary text-xl uppercase shadow-sm">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 bg-surface-container-low border border-border-subtle rounded-lg flex items-center justify-center font-bold text-primary text-base uppercase shadow-sm flex-shrink-0">
                         {priceItem.retailer_name.charAt(0)}
                       </div>
                       <div>
-                        <div className="font-label-md text-base font-semibold text-text-main">
+                        <div className="font-label-md text-sm font-semibold text-text-main">
                           {priceItem.retailer_name}
                         </div>
-                        <div className="font-body-sm text-sm text-price-green font-medium flex items-center gap-1 mt-0.5">
-                          <span className="w-2 h-2 rounded-full bg-price-green"></span>
+                        <div className="font-body-sm text-xs text-price-green font-medium flex items-center gap-1 mt-0.5">
+                          <span className="w-1.5 h-1.5 rounded-full bg-price-green"></span>
                           {priceItem.stock_status || "In Stock"}
                         </div>
                       </div>
                     </div>
-                    <div className="flex items-center justify-between md:justify-end gap-6 w-full md:w-auto mt-2 md:mt-0 pt-4 md:pt-0 border-t border-border-subtle md:border-0">
-                      <div className="font-headline-md text-xl font-bold text-text-main">
+                    <div className="flex items-center justify-between md:justify-end gap-4 w-full md:w-auto mt-1 md:mt-0 pt-3 md:pt-0 border-t border-border-subtle md:border-0">
+                      <div className="font-headline-md text-lg font-bold text-text-main">
                         Rs. {priceItem.price_pkr.toLocaleString()}
                       </div>
                       {priceItem.product_url ? (
@@ -437,13 +437,13 @@ export default async function PhoneDetailPage({
                           href={priceItem.product_url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="bg-primary hover:bg-on-primary-fixed-variant text-white font-label-md text-sm px-8 h-11 transition-all shadow-md hover:shadow-lg rounded-lg font-semibold flex items-center justify-center cursor-pointer"
+                          className="bg-primary hover:bg-on-primary-fixed-variant text-white font-label-md text-xs px-5 h-9 transition-all shadow-md hover:shadow-lg rounded-lg font-semibold flex items-center justify-center cursor-pointer"
                         >
                           Buy Now
                         </a>
                       ) : (
                         <button
-                          className="bg-surface-container-low text-text-muted font-label-md text-sm px-8 h-11 rounded-lg font-semibold flex items-center justify-center cursor-not-allowed border border-border-subtle"
+                          className="bg-surface-container-low text-text-muted font-label-md text-xs px-5 h-9 rounded-lg font-semibold flex items-center justify-center cursor-not-allowed border border-border-subtle"
                           disabled
                         >
                           Unavailable
