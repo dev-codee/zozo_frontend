@@ -25,6 +25,13 @@ function getTagColorClass(tag: string) {
   return colorThemes[hash % colorThemes.length];
 }
 
+function getYouTubeEmbedId(url: string) {
+  if (!url) return null;
+  const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+  const match = url.match(regExp);
+  return (match && match[2].length === 11) ? match[2] : null;
+}
+
 export async function generateMetadata({
   params,
 }: {
@@ -212,7 +219,31 @@ export default async function PhoneDetailPage({
                 </span>
               </div>
 
-              {/* PTA Tax Box is hidden for now */}
+              {phone.pta_tax && (phone.pta_tax.passport_pkr || phone.pta_tax.cnic_pkr) && (
+                <div className="mt-4 p-4 bg-surface-container-low/50 border border-border-subtle rounded-xl flex flex-col gap-2">
+                  <h3 className="text-xs font-bold text-text-main flex items-center gap-1.5 uppercase tracking-wider">
+                    <span className="material-symbols-outlined text-primary text-[18px]">gavel</span>
+                    PTA Tax Estimate
+                  </h3>
+                  <div className="grid grid-cols-2 gap-4 mt-1">
+                    {phone.pta_tax.passport_pkr ? (
+                      <div>
+                        <span className="text-[10px] text-text-muted block">On Passport</span>
+                        <span className="text-sm font-bold text-text-main mt-0.5">Rs. {phone.pta_tax.passport_pkr.toLocaleString()}</span>
+                      </div>
+                    ) : null}
+                    {phone.pta_tax.cnic_pkr ? (
+                      <div>
+                        <span className="text-[10px] text-text-muted block">On CNIC</span>
+                        <span className="text-sm font-bold text-text-main mt-0.5">Rs. {phone.pta_tax.cnic_pkr.toLocaleString()}</span>
+                      </div>
+                    ) : null}
+                  </div>
+                  {phone.pta_tax.source_note && (
+                    <p className="text-[10px] text-text-muted italic border-t border-border-subtle/50 pt-1.5 mt-1">{phone.pta_tax.source_note}</p>
+                  )}
+                </div>
+              )}
 
               {/* Key Specs */}
               <div className="mt-4 bg-white p-5 rounded-xl">
@@ -320,6 +351,28 @@ export default async function PhoneDetailPage({
                       </ul>
                     </div>
                   )}
+
+                  {/* Core Details */}
+                  {(phone.model_number || phone.series || phone.manufacturer || phone.made_in || phone.carrier_version || phone.region_version || phone.category || phone.subcategory || (phone.country_availability && phone.country_availability.length > 0)) && (
+                    <div>
+                      <div className="flex items-center gap-2 text-sm font-semibold text-text-main mb-2">
+                        <span className="material-symbols-outlined text-text-muted text-base">info</span>
+                        Core Details
+                      </div>
+                      <ul className="list-disc pl-8 text-xs text-text-muted space-y-1">
+                        {phone.model_number && <li><strong>Model:</strong> {phone.model_number}</li>}
+                        {phone.series && <li><strong>Series:</strong> {phone.series}</li>}
+                        {phone.manufacturer && <li><strong>Manufacturer:</strong> {phone.manufacturer}</li>}
+                        {phone.made_in && <li><strong>Made in:</strong> {phone.made_in}</li>}
+                        {phone.carrier_version && <li><strong>Carrier:</strong> {phone.carrier_version}</li>}
+                        {phone.region_version && <li><strong>Region:</strong> {phone.region_version}</li>}
+                        {phone.category && <li><strong>Category:</strong> {phone.category}{phone.subcategory ? ` / ${phone.subcategory}` : ""}</li>}
+                        {phone.country_availability && phone.country_availability.length > 0 && (
+                          <li><strong>Availability:</strong> {phone.country_availability.join(", ")}</li>
+                        )}
+                      </ul>
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -419,14 +472,14 @@ export default async function PhoneDetailPage({
           </div>
 
           <div className="lg:col-span-1 space-y-6">
-            <div className="bg-white border border-border-subtle rounded-xl p-6 shadow-sm">
-              <h3 className="font-headline-sm text-lg font-bold text-text-main mb-4 flex items-center gap-2">
-                <span className="material-symbols-outlined text-primary text-xl">compare_arrows</span>
+            <div className="bg-white border border-border-subtle rounded-xl p-4 pl-[5px] shadow-sm">
+              <h3 className="font-headline-sm text-sm font-bold text-text-main mb-4 flex items-center gap-1">
+                <span className="material-symbols-outlined text-primary text-lg">compare_arrows</span>
                 Competitors for {phone.name}
               </h3>
 
               {competitorPhones.length > 0 ? (
-                <div className="flex flex-col gap-4">
+                <div className="flex flex-col gap-3">
                   {competitorPhones.map((comp) => {
                     const compLowestPrice = comp.prices?.length
                       ? Math.min(...comp.prices.map((p) => p.price_pkr))
@@ -437,9 +490,9 @@ export default async function PhoneDetailPage({
                       <Link
                         key={comp._id}
                         href={`/phones/${comp.slug}`}
-                        className="flex gap-4 p-3 rounded-lg border border-border-subtle hover:border-primary hover:shadow-sm transition-all bg-surface-container-lowest/50"
+                        className="flex gap-2 p-2 pl-[5px] rounded-lg border border-border-subtle hover:border-primary hover:shadow-sm transition-all bg-surface-container-lowest/50"
                       >
-                        <div className="w-16 h-16 bg-white border border-border-subtle rounded flex items-center justify-center overflow-hidden flex-shrink-0">
+                        <div className="w-12 h-12 bg-white border border-border-subtle rounded flex items-center justify-center overflow-hidden flex-shrink-0">
                           {primaryImage ? (
                             <img
                               src={primaryImage.url}
@@ -447,17 +500,17 @@ export default async function PhoneDetailPage({
                               className="object-contain w-full h-full p-1"
                             />
                           ) : (
-                            <span className="material-symbols-outlined text-text-muted text-2xl">smartphone</span>
+                            <span className="material-symbols-outlined text-text-muted text-xl">smartphone</span>
                           )}
                         </div>
                         <div className="flex flex-col justify-center">
-                          <h4 className="font-semibold text-sm text-text-main hover:text-primary transition-colors line-clamp-1">
+                          <h4 className="font-semibold text-xs text-text-main hover:text-primary transition-colors line-clamp-1">
                             {comp.name}
                           </h4>
-                          <span className="text-xs text-text-muted capitalize">
+                          <span className="text-[10px] text-text-muted capitalize">
                             {comp.brand_slug.replace("-", " ")}
                           </span>
-                          <span className="text-xs font-bold text-price-green mt-1">
+                          <span className="text-[11px] font-bold text-price-green mt-0.5">
                             {compLowestPrice ? `Rs. ${compLowestPrice.toLocaleString()}` : "Price TBA"}
                           </span>
                         </div>
@@ -471,6 +524,41 @@ export default async function PhoneDetailPage({
             </div>
           </div>
         </div>
+
+        {/* Video Review Section */}
+        {phone.video_url && (
+          <section className="bg-white border border-border-subtle rounded-xl overflow-hidden shadow-sm">
+            <div className="p-6 border-b border-border-subtle bg-surface-container-low/30 flex items-center gap-2">
+              <span className="material-symbols-outlined text-red-600 text-2xl">smart_display</span>
+              <h2 className="font-headline-md text-xl font-bold text-text-main">
+                Video Review & Hands-on
+              </h2>
+            </div>
+            <div className="p-6 flex justify-center">
+              {getYouTubeEmbedId(phone.video_url) ? (
+                <div className="w-full max-w-3xl aspect-video rounded-lg overflow-hidden border border-border-subtle shadow-sm">
+                  <iframe
+                    className="w-full h-full"
+                    src={`https://www.youtube.com/embed/${getYouTubeEmbedId(phone.video_url)}`}
+                    title={`${phone.name} Video Review`}
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                  />
+                </div>
+              ) : (
+                <a
+                  href={phone.video_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 text-primary hover:underline font-semibold"
+                >
+                  <span className="material-symbols-outlined">open_in_new</span>
+                  Watch Video on YouTube
+                </a>
+              )}
+            </div>
+          </section>
+        )}
 
         {/* Product Description */}
         <PhoneDescriptionClient slug={phone.slug} initialDescription={phone.description} />

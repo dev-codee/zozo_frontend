@@ -25,6 +25,16 @@ export interface Phone {
   description?: string;
   release_date?: string;
   images: PhoneImage[];
+  model_number?: string;
+  series?: string;
+  category?: string;
+  subcategory?: string;
+  country_availability?: string[];
+  carrier_version?: string;
+  region_version?: string;
+  manufacturer?: string;
+  made_in?: string;
+  video_url?: string;
   specs: {
     performance?: {
       ram_options_gb?: number[];
@@ -74,7 +84,12 @@ export interface Phone {
   };
   prices: PhonePrice[];
   price_pkr?: number;
-  pta_tax?: number;
+  pta_tax?: {
+    passport_pkr?: number;
+    cnic_pkr?: number;
+    last_updated?: string;
+    source_note?: string;
+  };
   tags?: string[];
   rating: {
     average: number;
