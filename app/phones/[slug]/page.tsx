@@ -102,9 +102,9 @@ export default async function PhoneDetailPage({
 
 
   return (
-    <div className="bg-white min-h-screen w-full flex flex-col">
+    <>
       <Navbar />
-      <main className="w-full max-w-[1280px] mx-auto px-4 md:px-6 py-8 flex flex-col gap-8 bg-white flex-1">
+      <main className="w-full max-w-[1280px] mx-auto px-4 md:px-6 py-8 flex flex-col gap-8 bg-surface">
         {/* Breadcrumb */}
         <Breadcrumb
           items={[
@@ -121,6 +121,9 @@ export default async function PhoneDetailPage({
           {/* Product Info */}
           <div className="flex flex-col gap-6">
             <div>
+              <h1 className="font-headline-lg text-2xl md:text-3xl lg:text-4xl text-text-main mb-3 font-bold tracking-tight">
+                {phone.name}
+              </h1>
               <div className="flex flex-wrap items-center gap-2 mb-3">
                 <span className="inline-flex items-center gap-1 bg-surface-container-low text-text-muted font-label-sm text-xs px-3 py-1 rounded-full capitalize border border-border-subtle">
                   {phone.brand_slug.replace("-", " ")}
@@ -136,9 +139,6 @@ export default async function PhoneDetailPage({
                   </span>
                 )}
               </div>
-              <h1 className="font-headline-lg text-2xl md:text-3xl lg:text-4xl text-text-main mb-3 font-bold tracking-tight">
-                {phone.name}
-              </h1>
 
               {/* Rating */}
               {rating && (
@@ -171,13 +171,13 @@ export default async function PhoneDetailPage({
             {/* PTA Tax Box is hidden for now */}
 
             {/* Key Specs */}
-            <div className="mt-8 border-t border-border-subtle pt-6">
+            <div className="mt-4 bg-white p-5 rounded-xl border border-border-subtle shadow-sm">
               <h2 className="text-lg font-bold text-text-main flex items-center gap-2 mb-6">
                 <span className="w-1 h-6 bg-primary rounded-full"></span>
                 Key Specs
               </h2>
 
-              <div className="flex flex-col divide-y divide-border-subtle [&>div]:py-4 [&>div:first-child]:pt-0 [&>div:last-child]:pb-0">
+              <div className="flex flex-col divide-y divide-border-subtle [&>div]:py-2 [&>div:first-child]:pt-0 [&>div:last-child]:pb-0">
                 {/* OS */}
                 {phone.specs.os && (
                   <div>
@@ -373,6 +373,6 @@ export default async function PhoneDetailPage({
         <PhoneDescriptionClient slug={phone.slug} initialDescription={phone.description} />
       </main>
       <Footer />
-    </div>
+    </>
   );
 }
