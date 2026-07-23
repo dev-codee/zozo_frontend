@@ -50,6 +50,14 @@ export default async function PhoneDetailPage({
   const reviewCount = phone.rating?.count || 0;
   const hasAffiliateUrls = phone.prices?.some((p) => !!p.product_url);
 
+  const releaseDateStr = phone.release_date && !isNaN(Date.parse(phone.release_date))
+    ? new Date(phone.release_date).toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      })
+    : null;
+
   // Format specs for the row
   const specs = phone.specs || {};
 
@@ -113,9 +121,16 @@ export default async function PhoneDetailPage({
           {/* Product Info */}
           <div className="flex flex-col gap-6">
             <div>
-              <span className="inline-flex items-center gap-1 bg-surface-container-low text-text-muted font-label-sm text-xs px-3 py-1 rounded-full mb-3 capitalize border border-border-subtle">
-                {phone.brand_slug.replace("-", " ")}
-              </span>
+              <div className="flex flex-wrap items-center gap-2 mb-3">
+                <span className="inline-flex items-center gap-1 bg-surface-container-low text-text-muted font-label-sm text-xs px-3 py-1 rounded-full capitalize border border-border-subtle">
+                  {phone.brand_slug.replace("-", " ")}
+                </span>
+                {releaseDateStr && (
+                  <span className="inline-flex items-center gap-1 bg-surface-container-low text-text-muted font-label-sm text-xs px-3 py-1 rounded-full border border-border-subtle">
+                    Released: {releaseDateStr}
+                  </span>
+                )}
+              </div>
               <h1 className="font-headline-lg text-2xl md:text-3xl lg:text-4xl text-text-main mb-3 font-bold tracking-tight">
                 {phone.name}
               </h1>
@@ -302,6 +317,7 @@ export default async function PhoneDetailPage({
                       General
                     </div>
                     <ul className="list-disc pl-8 text-sm text-text-muted space-y-1">
+                      {releaseDateStr && <li>Released: {releaseDateStr}</li>}
                       {phone.specs.connectivity.sim && <li>SIM: {phone.specs.connectivity.sim}</li>}
                       {phone.specs.connectivity.network && <li>{phone.specs.connectivity.network} Supported</li>}
                       {storageDisplay !== "N/A" && <li>{storageDisplay} internal storage</li>}

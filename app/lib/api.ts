@@ -23,6 +23,7 @@ export interface Phone {
   brand_slug: string;
   status: "available" | "upcoming" | "discontinued" | "out_of_stock";
   description?: string;
+  release_date?: string;
   images: PhoneImage[];
   specs: {
     performance?: {
