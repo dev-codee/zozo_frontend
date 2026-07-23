@@ -6,7 +6,11 @@ interface PopularComparisonsProps {
 }
 
 export default function PopularComparisons({ comparisons }: PopularComparisonsProps) {
-  if (!comparisons || comparisons.length === 0) {
+  const validComparisons = comparisons?.filter((comp) => {
+    return comp.phones && comp.phones.length >= 2 && comp.phones[0] && comp.phones[1];
+  }) || [];
+
+  if (validComparisons.length === 0) {
     return null;
   }
 
@@ -16,9 +20,7 @@ export default function PopularComparisons({ comparisons }: PopularComparisonsPr
         Popular Comparisons
       </h2>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {comparisons.map((comp, index) => {
-          if (!comp.phones || comp.phones.length < 2) return null;
-          
+        {validComparisons.map((comp, index) => {
           const phone1 = comp.phones[0];
           const phone2 = comp.phones[1];
           
