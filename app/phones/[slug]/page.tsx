@@ -130,36 +130,35 @@ export default async function PhoneDetailPage({
                     Released: {releaseDateStr}
                   </span>
                 )}
+                {!rating && (
+                  <span className="inline-flex items-center gap-1 bg-primary/10 text-primary rounded-full px-3 py-1 text-xs font-semibold border border-primary/20">
+                    New Release
+                  </span>
+                )}
               </div>
               <h1 className="font-headline-lg text-2xl md:text-3xl lg:text-4xl text-text-main mb-3 font-bold tracking-tight">
                 {phone.name}
               </h1>
 
               {/* Rating */}
-              <div className="flex items-center gap-2">
-                {rating ? (
-                  <>
-                    <div className="flex items-center text-yellow-500">
-                      <span
-                        className="material-symbols-outlined text-[20px]"
-                        style={{ fontVariationSettings: "'FILL' 1" }}
-                      >
-                        star
-                      </span>
-                      <span className="font-label-md text-sm text-text-main ml-1 font-semibold">
-                        {rating.toFixed(1)}
-                      </span>
-                    </div>
-                    <span className="text-text-muted font-body-sm text-sm">
-                      ({reviewCount} reviews)
+              {rating && (
+                <div className="flex items-center gap-2">
+                  <div className="flex items-center text-yellow-500">
+                    <span
+                      className="material-symbols-outlined text-[20px]"
+                      style={{ fontVariationSettings: "'FILL' 1" }}
+                    >
+                      star
                     </span>
-                  </>
-                ) : (
-                  <span className="inline-flex items-center gap-1 bg-primary/10 text-primary rounded-full px-3 py-1 text-xs font-medium">
-                    New Release
+                    <span className="font-label-md text-sm text-text-main ml-1 font-semibold">
+                      {rating.toFixed(1)}
+                    </span>
+                  </div>
+                  <span className="text-text-muted font-body-sm text-sm">
+                    ({reviewCount} reviews)
                   </span>
-                )}
-              </div>
+                </div>
+              )}
             </div>
 
             {/* Price */}
@@ -169,36 +168,7 @@ export default async function PhoneDetailPage({
               </span>
             </div>
 
-            {/* PTA Tax Box */}
-            {phone.pta_tax ? (
-              <div className="bg-surface-container-low rounded-lg p-4 flex items-start gap-3 border border-border-subtle">
-                <span className="material-symbols-outlined text-primary mt-0.5">
-                  info
-                </span>
-                <div>
-                  <h4 className="font-label-md text-sm font-semibold text-text-main">
-                    PTA Tax (Passport): Rs. {phone.pta_tax.toLocaleString()}
-                  </h4>
-                  <p className="font-body-sm text-xs text-text-muted mt-1">
-                    Estimated tax. Subject to change by FBR.
-                  </p>
-                </div>
-              </div>
-            ) : (
-              <div className="bg-surface-container-low rounded-lg p-4 flex items-start gap-3 border border-border-subtle">
-                <span className="material-symbols-outlined text-outline mt-0.5">
-                  info
-                </span>
-                <div>
-                  <h4 className="font-label-md text-sm font-semibold text-text-main">
-                    PTA Tax Info Unavailable
-                  </h4>
-                  <p className="font-body-sm text-xs text-text-muted mt-1">
-                    Tax details for this model are not currently available.
-                  </p>
-                </div>
-              </div>
-            )}
+            {/* PTA Tax Box is hidden for now */}
 
             {/* Action Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 mt-4">
@@ -226,7 +196,7 @@ export default async function PhoneDetailPage({
                 Key Specs
               </h2>
               
-              <div className="flex flex-col gap-6">
+              <div className="flex flex-col divide-y divide-border-subtle [&>div]:py-4 [&>div:first-child]:pt-0 [&>div:last-child]:pb-0">
                 {/* OS */}
                 {phone.specs.os && (
                   <div>
