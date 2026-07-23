@@ -173,7 +173,7 @@ export default async function PhoneDetailPage({
             {/* PTA Tax Box is hidden for now */}
 
             {/* Key Specs */}
-            <div className="mt-4 bg-white p-5 rounded-xl border border-border-subtle shadow-sm">
+            <div className="mt-4 bg-white p-5 rounded-xl">
               <h2 className="text-lg font-bold text-text-main flex items-center gap-2 mb-6">
                 <span className="w-1 h-6 bg-primary rounded-full"></span>
                 Key Specs
