@@ -2,6 +2,7 @@ import { Phone } from "@/app/lib/api";
 
 interface PhoneSpecsProps {
   specs: Phone["specs"];
+  className?: string;
 }
 
 // ─── Rating Calculators ──────────────────────────────────────────────────────
@@ -158,7 +159,7 @@ function getRatingColors(label: string) {
 
 // ─── Component ───────────────────────────────────────────────────────────────
 
-export default function PhoneSpecs({ specs }: PhoneSpecsProps) {
+export default function PhoneSpecs({ specs, className = "" }: PhoneSpecsProps) {
   const ext = specs.extra_specs || {};
 
   const chipset = specs.performance?.chipset || "";
@@ -257,7 +258,7 @@ export default function PhoneSpecs({ specs }: PhoneSpecsProps) {
   };
 
   return (
-    <section className="bg-surface-white border border-border-subtle rounded-xl overflow-hidden shadow-sm mt-8 flex flex-col divide-y divide-border-subtle">
+    <section className={`bg-surface-white border border-border-subtle rounded-xl overflow-hidden shadow-sm flex flex-col divide-y divide-border-subtle ${className}`}>
       {renderSection("performance", "Performance", "memory", (
         <>
           {renderRow("Chipset", chipsetClean || specs.performance?.chipset)}

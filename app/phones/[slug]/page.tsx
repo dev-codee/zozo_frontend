@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
 import Link from "next/link";
-import { getPhoneBySlug, getPhones } from "@/app/lib/api";
+import { getPhoneBySlug, getPhones, Phone } from "@/app/lib/api";
 import Navbar from "@/app/components/Navbar";
 import Footer from "@/app/components/Footer";
 import Breadcrumb from "@/app/components/Breadcrumb";
@@ -51,19 +51,19 @@ export default async function PhoneDetailPage({
   const hasAffiliateUrls = phone.prices?.some((p) => !!p.product_url);
 
   // Fetch competitor phones
-  let competitorPhones: any[] = [];
+  let competitorPhones: Phone[] = [];
   try {
     if (lowestPrice) {
       const minPrice = lowestPrice - 3000;
       const maxPrice = lowestPrice + 3000;
       const allMatching = await getPhones(`min_price=${minPrice}&max_price=${maxPrice}`);
       competitorPhones = allMatching
-        .filter((p: any) => p.slug !== phone.slug)
+        .filter((p) => p.slug !== phone.slug)
         .slice(0, 5);
     } else {
       const sameBrand = await getPhones(`brand=${phone.brand_slug}`);
       competitorPhones = sameBrand
-        .filter((p: any) => p.slug !== phone.slug)
+        .filter((p) => p.slug !== phone.slug)
         .slice(0, 5);
     }
   } catch (error) {
@@ -137,191 +137,191 @@ export default async function PhoneDetailPage({
         <div className="bg-white border border-border-subtle rounded-xl p-6 md:p-8 shadow-sm">
           {/* Hero Section */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
-          {/* Gallery */}
-          <PhoneGallery images={phone.images} altText={phone.name} />
+            {/* Gallery */}
+            <PhoneGallery images={phone.images} altText={phone.name} />
 
-          {/* Product Info */}
-          <div className="flex flex-col gap-6">
-            <div>
-              <h1 className="font-headline-lg text-2xl md:text-3xl lg:text-4xl text-text-main mb-3 font-bold tracking-tight">
-                {phone.name}
-              </h1>
-              <div className="flex flex-wrap items-center gap-2 mb-3">
-                <span className="inline-flex items-center gap-1 bg-surface-container-low text-text-muted font-label-sm text-xs px-3 py-1 rounded-full capitalize border border-border-subtle">
-                  {phone.brand_slug.replace("-", " ")}
-                </span>
-                {releaseDateStr && (
-                  <span className="inline-flex items-center gap-1 bg-surface-container-low text-text-muted font-label-sm text-xs px-3 py-1 rounded-full border border-border-subtle">
-                    Released: {releaseDateStr}
+            {/* Product Info */}
+            <div className="flex flex-col gap-6">
+              <div>
+                <h1 className="font-headline-lg text-2xl md:text-3xl lg:text-4xl text-text-main mb-3 font-bold tracking-tight">
+                  {phone.name}
+                </h1>
+                <div className="flex flex-wrap items-center gap-2 mb-3">
+                  <span className="inline-flex items-center gap-1 bg-surface-container-low text-text-muted font-label-sm text-xs px-3 py-1 rounded-full capitalize border border-border-subtle">
+                    {phone.brand_slug.replace("-", " ")}
                   </span>
-                )}
-                {!rating && (
-                  <span className="inline-flex items-center gap-1 bg-primary/10 text-primary rounded-full px-3 py-1 text-xs font-semibold border border-primary/20">
-                    New Release
-                  </span>
-                )}
-              </div>
-
-              {/* Rating */}
-              {rating && (
-                <div className="flex items-center gap-2">
-                  <div className="flex items-center text-yellow-500">
-                    <span
-                      className="material-symbols-outlined text-[20px]"
-                      style={{ fontVariationSettings: "'FILL' 1" }}
-                    >
-                      star
+                  {releaseDateStr && (
+                    <span className="inline-flex items-center gap-1 bg-surface-container-low text-text-muted font-label-sm text-xs px-3 py-1 rounded-full border border-border-subtle">
+                      Released: {releaseDateStr}
                     </span>
-                    <span className="font-label-md text-sm text-text-main ml-1 font-semibold">
-                      {rating.toFixed(1)}
+                  )}
+                  {!rating && (
+                    <span className="inline-flex items-center gap-1 bg-primary/10 text-primary rounded-full px-3 py-1 text-xs font-semibold border border-primary/20">
+                      New Release
                     </span>
-                  </div>
-                  <span className="text-text-muted font-body-sm text-sm">
-                    ({reviewCount} reviews)
-                  </span>
+                  )}
                 </div>
-              )}
-            </div>
 
-            {/* Price */}
-            <div className="flex items-baseline gap-2 mt-2">
-              <span className="font-display-lg text-2xl md:text-3xl font-bold text-price-green tracking-tight">
-                {lowestPrice ? `Rs. ${lowestPrice.toLocaleString()}` : "Price TBA"}
-              </span>
-            </div>
-
-            {/* PTA Tax Box is hidden for now */}
-
-            {/* Key Specs */}
-            <div className="mt-4 bg-white p-5 rounded-xl">
-              <h2 className="text-lg font-bold text-text-main flex items-center gap-2 mb-6">
-                <span className="w-1 h-6 bg-primary rounded-full"></span>
-                Key Specs
-              </h2>
-
-              <div className="flex flex-col divide-y divide-border-subtle [&>div]:py-2 [&>div:first-child]:pt-0 [&>div:last-child]:pb-0">
-                {/* OS */}
-                {phone.specs.os && (
-                  <div>
-                    <div className="flex items-center gap-2 text-xs text-text-muted font-medium">
-                      <span className="material-symbols-outlined text-primary text-base">android</span>
-                      {phone.specs.os}
+                {/* Rating */}
+                {rating && (
+                  <div className="flex items-center gap-2">
+                    <div className="flex items-center text-yellow-500">
+                      <span
+                        className="material-symbols-outlined text-[20px]"
+                        style={{ fontVariationSettings: "'FILL' 1" }}
+                      >
+                        star
+                      </span>
+                      <span className="font-label-md text-sm text-text-main ml-1 font-semibold">
+                        {rating.toFixed(1)}
+                      </span>
                     </div>
-                  </div>
-                )}
-
-                {/* Performance */}
-                {phone.specs.performance && (
-                  <div>
-                    <div className="flex items-center gap-2 text-sm font-semibold text-text-main mb-2">
-                      <span className="material-symbols-outlined text-text-muted text-base">speed</span>
-                      Performance
-                    </div>
-                    <ul className="list-disc pl-8 text-xs text-text-muted space-y-1">
-                      {chipsetFull && <li>{chipsetFull}</li>}
-                      {phone.specs.performance.cpu && <li>{phone.specs.performance.cpu}</li>}
-                      {ramDisplay !== "N/A" && <li>{ramDisplay} RAM</li>}
-                    </ul>
-                  </div>
-                )}
-
-                {/* Display */}
-                {phone.specs.display && (
-                  <div>
-                    <div className="flex items-center gap-2 text-sm font-semibold text-text-main mb-2">
-                      <span className="material-symbols-outlined text-text-muted text-base">smartphone</span>
-                      Display
-                    </div>
-                    <ul className="list-disc pl-8 text-xs text-text-muted space-y-1">
-                      {phone.specs.display.size_inches && <li>{phone.specs.display.size_inches} inches ({Math.round(phone.specs.display.size_inches * 2.54)} cm); {phone.specs.display.type || 'Display'}</li>}
-                      {phone.specs.display.resolution && <li>{phone.specs.display.resolution}</li>}
-                      {phone.specs.display.refresh_rate_hz && <li>{phone.specs.display.refresh_rate_hz} Hz Refresh Rate</li>}
-                      {phone.specs.display.protection && <li>{phone.specs.display.protection}</li>}
-                    </ul>
-                  </div>
-                )}
-
-                {/* Rear Camera */}
-                {phone.specs.camera?.rear_summary && (
-                  <div>
-                    <div className="flex items-center gap-2 text-sm font-semibold text-text-main mb-2">
-                      <span className="material-symbols-outlined text-text-muted text-base">photo_camera</span>
-                      Rear Camera
-                    </div>
-                    <ul className="list-disc pl-8 text-xs text-text-muted space-y-1">
-                      <li>{phone.specs.camera.rear_summary}</li>
-                      {phone.specs.camera.video_recording && <li>{phone.specs.camera.video_recording} Video Recording</li>}
-                    </ul>
-                  </div>
-                )}
-
-                {/* Front Camera */}
-                {phone.specs.camera?.front_summary && (
-                  <div>
-                    <div className="flex items-center gap-2 text-sm font-semibold text-text-main mb-2">
-                      <span className="material-symbols-outlined text-text-muted text-base">photo_camera_front</span>
-                      Front Camera
-                    </div>
-                    <ul className="list-disc pl-8 text-xs text-text-muted space-y-1">
-                      <li>{phone.specs.camera.front_summary}</li>
-                    </ul>
-                  </div>
-                )}
-
-                {/* Battery */}
-                {phone.specs.battery && (
-                  <div>
-                    <div className="flex items-center gap-2 text-sm font-semibold text-text-main mb-2">
-                      <span className="material-symbols-outlined text-text-muted text-base">battery_charging_full</span>
-                      Battery
-                    </div>
-                    <ul className="list-disc pl-8 text-xs text-text-muted space-y-1">
-                      {phone.specs.battery.capacity_mah && <li>{phone.specs.battery.capacity_mah} mAh</li>}
-                      {phone.specs.battery.charging_watts && <li>{phone.specs.battery.charging_watts}W Fast Charging</li>}
-                    </ul>
-                  </div>
-                )}
-
-                {/* General */}
-                {phone.specs.connectivity && (
-                  <div>
-                    <div className="flex items-center gap-2 text-sm font-semibold text-text-main mb-2">
-                      <span className="material-symbols-outlined text-text-muted text-base">memory</span>
-                      General
-                    </div>
-                    <ul className="list-disc pl-8 text-xs text-text-muted space-y-1">
-                      {releaseDateStr && <li>Released: {releaseDateStr}</li>}
-                      {phone.specs.connectivity.sim && <li>SIM: {phone.specs.connectivity.sim}</li>}
-                      {phone.specs.connectivity.network && <li>{phone.specs.connectivity.network} Supported</li>}
-                      {storageDisplay !== "N/A" && <li>{storageDisplay} internal storage</li>}
-                      {phone.specs.body?.water_resistance && <li>{phone.specs.body.water_resistance}</li>}
-                    </ul>
+                    <span className="text-text-muted font-body-sm text-sm">
+                      ({reviewCount} reviews)
+                    </span>
                   </div>
                 )}
               </div>
-            </div>
 
-            {/* Action Buttons */}
-            <div className="flex flex-col sm:flex-row gap-4 mt-6">
-              <Link
-                href={`/compare?phone=${phone.slug}`}
-                className="flex-1 bg-surface-white border border-border-subtle text-text-main hover:bg-surface-container-low hover:border-primary font-semibold text-xs px-6 h-12 rounded-lg flex items-center justify-center gap-2 transition-all shadow-sm"
-              >
-                <span className="material-symbols-outlined text-[18px]">
-                  compare_arrows
+              {/* Price */}
+              <div className="flex items-baseline gap-2 mt-2">
+                <span className="font-display-lg text-2xl md:text-3xl font-bold text-price-green tracking-tight">
+                  {lowestPrice ? `Rs. ${lowestPrice.toLocaleString()}` : "Price TBA"}
                 </span>
-                Add to Compare
-              </Link>
-              <button className="flex-1 bg-surface-white border border-border-subtle text-text-main hover:bg-surface-container-low hover:border-primary font-semibold text-xs px-6 h-12 rounded-lg flex items-center justify-center gap-2 transition-all shadow-sm">
-                <span className="material-symbols-outlined text-[18px]">
-                  notifications
-                </span>
-                Set Price Alert
-              </button>
+              </div>
+
+              {/* PTA Tax Box is hidden for now */}
+
+              {/* Key Specs */}
+              <div className="mt-4 bg-white p-5 rounded-xl">
+                <h2 className="text-lg font-bold text-text-main flex items-center gap-2 mb-6">
+                  <span className="w-1 h-6 bg-primary rounded-full"></span>
+                  Key Specs
+                </h2>
+
+                <div className="flex flex-col divide-y divide-border-subtle [&>div]:py-2 [&>div:first-child]:pt-0 [&>div:last-child]:pb-0">
+                  {/* OS */}
+                  {phone.specs.os && (
+                    <div>
+                      <div className="flex items-center gap-2 text-xs text-text-muted font-medium">
+                        <span className="material-symbols-outlined text-primary text-base">android</span>
+                        {phone.specs.os}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Performance */}
+                  {phone.specs.performance && (
+                    <div>
+                      <div className="flex items-center gap-2 text-sm font-semibold text-text-main mb-2">
+                        <span className="material-symbols-outlined text-text-muted text-base">speed</span>
+                        Performance
+                      </div>
+                      <ul className="list-disc pl-8 text-xs text-text-muted space-y-1">
+                        {chipsetFull && <li>{chipsetFull}</li>}
+                        {phone.specs.performance.cpu && <li>{phone.specs.performance.cpu}</li>}
+                        {ramDisplay !== "N/A" && <li>{ramDisplay} RAM</li>}
+                      </ul>
+                    </div>
+                  )}
+
+                  {/* Display */}
+                  {phone.specs.display && (
+                    <div>
+                      <div className="flex items-center gap-2 text-sm font-semibold text-text-main mb-2">
+                        <span className="material-symbols-outlined text-text-muted text-base">smartphone</span>
+                        Display
+                      </div>
+                      <ul className="list-disc pl-8 text-xs text-text-muted space-y-1">
+                        {phone.specs.display.size_inches && <li>{phone.specs.display.size_inches} inches ({Math.round(phone.specs.display.size_inches * 2.54)} cm); {phone.specs.display.type || 'Display'}</li>}
+                        {phone.specs.display.resolution && <li>{phone.specs.display.resolution}</li>}
+                        {phone.specs.display.refresh_rate_hz && <li>{phone.specs.display.refresh_rate_hz} Hz Refresh Rate</li>}
+                        {phone.specs.display.protection && <li>{phone.specs.display.protection}</li>}
+                      </ul>
+                    </div>
+                  )}
+
+                  {/* Rear Camera */}
+                  {phone.specs.camera?.rear_summary && (
+                    <div>
+                      <div className="flex items-center gap-2 text-sm font-semibold text-text-main mb-2">
+                        <span className="material-symbols-outlined text-text-muted text-base">photo_camera</span>
+                        Rear Camera
+                      </div>
+                      <ul className="list-disc pl-8 text-xs text-text-muted space-y-1">
+                        <li>{phone.specs.camera.rear_summary}</li>
+                        {phone.specs.camera.video_recording && <li>{phone.specs.camera.video_recording} Video Recording</li>}
+                      </ul>
+                    </div>
+                  )}
+
+                  {/* Front Camera */}
+                  {phone.specs.camera?.front_summary && (
+                    <div>
+                      <div className="flex items-center gap-2 text-sm font-semibold text-text-main mb-2">
+                        <span className="material-symbols-outlined text-text-muted text-base">photo_camera_front</span>
+                        Front Camera
+                      </div>
+                      <ul className="list-disc pl-8 text-xs text-text-muted space-y-1">
+                        <li>{phone.specs.camera.front_summary}</li>
+                      </ul>
+                    </div>
+                  )}
+
+                  {/* Battery */}
+                  {phone.specs.battery && (
+                    <div>
+                      <div className="flex items-center gap-2 text-sm font-semibold text-text-main mb-2">
+                        <span className="material-symbols-outlined text-text-muted text-base">battery_charging_full</span>
+                        Battery
+                      </div>
+                      <ul className="list-disc pl-8 text-xs text-text-muted space-y-1">
+                        {phone.specs.battery.capacity_mah && <li>{phone.specs.battery.capacity_mah} mAh</li>}
+                        {phone.specs.battery.charging_watts && <li>{phone.specs.battery.charging_watts}W Fast Charging</li>}
+                      </ul>
+                    </div>
+                  )}
+
+                  {/* General */}
+                  {phone.specs.connectivity && (
+                    <div>
+                      <div className="flex items-center gap-2 text-sm font-semibold text-text-main mb-2">
+                        <span className="material-symbols-outlined text-text-muted text-base">memory</span>
+                        General
+                      </div>
+                      <ul className="list-disc pl-8 text-xs text-text-muted space-y-1">
+                        {releaseDateStr && <li>Released: {releaseDateStr}</li>}
+                        {phone.specs.connectivity.sim && <li>SIM: {phone.specs.connectivity.sim}</li>}
+                        {phone.specs.connectivity.network && <li>{phone.specs.connectivity.network} Supported</li>}
+                        {storageDisplay !== "N/A" && <li>{storageDisplay} internal storage</li>}
+                        {phone.specs.body?.water_resistance && <li>{phone.specs.body.water_resistance}</li>}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex flex-col sm:flex-row gap-4 mt-6">
+                <Link
+                  href={`/compare?phone=${phone.slug}`}
+                  className="flex-1 bg-surface-white border border-border-subtle text-text-main hover:bg-surface-container-low hover:border-primary font-semibold text-xs px-6 h-12 rounded-lg flex items-center justify-center gap-2 transition-all shadow-sm"
+                >
+                  <span className="material-symbols-outlined text-[18px]">
+                    compare_arrows
+                  </span>
+                  Add to Compare
+                </Link>
+                <button className="flex-1 bg-surface-white border border-border-subtle text-text-main hover:bg-surface-container-low hover:border-primary font-semibold text-xs px-6 h-12 rounded-lg flex items-center justify-center gap-2 transition-all shadow-sm">
+                  <span className="material-symbols-outlined text-[18px]">
+                    notifications
+                  </span>
+                  Set Price Alert
+                </button>
+              </div>
             </div>
           </div>
         </div>
-      </div>
 
         {/* Price Comparison Table */}
         {hasAffiliateUrls && (
@@ -400,16 +400,16 @@ export default async function PhoneDetailPage({
             <div className="bg-white border border-border-subtle rounded-xl p-6 shadow-sm">
               <h3 className="font-headline-sm text-lg font-bold text-text-main mb-4 flex items-center gap-2">
                 <span className="material-symbols-outlined text-primary text-xl">compare_arrows</span>
-                Competitors
+                Competitors for {phone.name}
               </h3>
-              
+
               {competitorPhones.length > 0 ? (
                 <div className="flex flex-col gap-4">
                   {competitorPhones.map((comp) => {
                     const compLowestPrice = comp.prices?.length
                       ? Math.min(...comp.prices.map((p) => p.price_pkr))
                       : null;
-                    const primaryImage = comp.images?.find((img: any) => img.is_primary) || comp.images?.[0];
+                    const primaryImage = comp.images?.find((img) => img.is_primary) || comp.images?.[0];
 
                     return (
                       <Link
