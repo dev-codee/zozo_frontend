@@ -55,7 +55,7 @@ function parseMarkdownToJSX(text: string, phoneName: string) {
   let currentFAQ: { question: string, answer: string } | null = null;
   let normalBlockLines: string[] = [];
 
-  const sectionHeaderRegex = /^(?:1?\d\.\s*)?(?:##\s*)?(Quick Verdict|Design|Display|Performance|Camera|Battery|Software|Audio|Connectivity|Gaming|Benchmarks|FAQs|Pros\s*&\s*Cons)(?:\s+(?:of|for)\s+.*)?$/i;
+  const sectionHeaderRegex = /^(?:1?\d\.\s*)?(?:##\s*)?(?:.*\s+)?(Quick Verdict|Design|Display|Performance|Camera|Battery|Software|Audio|Connectivity|Gaming|Benchmarks|FAQs|Pros\s*&\s*Cons|Best\s*(?:suited)?\s*For)(?:\s+(?:of|for|is|to|suitability)?\s+.*)?$/i;
 
   const flushNormalBlock = (key: string | number) => {
     if (normalBlockLines.length === 0) return;
