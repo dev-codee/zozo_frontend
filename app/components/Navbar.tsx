@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import { usePathname, useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 import Link from "next/link";
-import Image from "next/image";
 
 const navLinks = [
   { label: "Latest", href: "/phones?sort=latest" },
@@ -10,6 +11,104 @@ const navLinks = [
   { label: "Brands", href: "/phones" },
   { label: "Compare", href: "/compare" },
 ];
+
+function NavLinksDesktop() {
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  const isActive = (href: string) => {
+    const [path, query] = href.split('?');
+    
+    // For compare route, highlight if we are anywhere in /compare
+    if (href === '/compare' && pathname.startsWith('/compare')) {
+      return true;
+    }
+    
+    if (path !== pathname) return false;
+    
+    if (query) {
+       const params = new URLSearchParams(query);
+       for (const [key, value] of params.entries()) {
+         if (searchParams.get(key) !== value) return false;
+       }
+       return true;
+    }
+    
+    if (href === '/phones' && searchParams.get('sort')) return false;
+    
+    return true;
+  };
+
+  return (
+    <nav className="hidden md:flex items-center gap-1 h-full">
+      {navLinks.map((link) => {
+        const active = isActive(link.href);
+        return (
+          <Link
+            key={link.label}
+            href={link.href}
+            className={`h-full flex items-center transition-colors text-sm font-semibold tracking-wide uppercase px-4 border-b-2 ${
+              active 
+                ? "text-primary border-primary bg-surface-container-low/50" 
+                : "text-on-surface-variant hover:text-primary hover:bg-surface-container-low border-transparent"
+            }`}
+          >
+            {link.label}
+          </Link>
+        );
+      })}
+    </nav>
+  );
+}
+
+function NavLinksMobile({ closeMenu }: { closeMenu: () => void }) {
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  const isActive = (href: string) => {
+    const [path, query] = href.split('?');
+    if (href === '/compare' && pathname.startsWith('/compare')) return true;
+    if (path !== pathname) return false;
+    if (query) {
+       const params = new URLSearchParams(query);
+       for (const [key, value] of params.entries()) {
+         if (searchParams.get(key) !== value) return false;
+       }
+       return true;
+    }
+    if (href === '/phones' && searchParams.get('sort')) return false;
+    return true;
+  };
+
+  return (
+    <nav className="flex flex-col p-4 gap-1">
+      {navLinks.map((link) => {
+        const active = isActive(link.href);
+        return (
+          <Link
+            key={link.label}
+            href={link.href}
+            onClick={closeMenu}
+            className={`flex items-center px-4 py-3 rounded-lg transition-colors text-sm font-semibold tracking-wide uppercase border-l-4 ${
+              active
+                ? "text-primary bg-surface-container-low border-primary"
+                : "text-on-surface-variant hover:text-primary hover:bg-surface-container-low border-transparent"
+            }`}
+          >
+            {link.label}
+          </Link>
+        );
+      })}
+      <Link
+        href="/login"
+        onClick={closeMenu}
+        className="mt-2 flex items-center justify-center bg-surface-white border border-border-subtle text-on-surface px-6 py-3 rounded-full text-sm font-semibold tracking-wide hover:bg-surface-container-low transition-colors"
+      >
+        Login
+      </Link>
+    </nav>
+  );
+}
 
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -25,17 +124,9 @@ export default function Navbar() {
         </Link>
 
         {/* Desktop Nav */}
-        <nav className="hidden md:flex items-center gap-1 h-full">
-          {navLinks.map((link) => (
-            <Link
-              key={link.label}
-              href={link.href}
-              className="h-full flex items-center text-on-surface-variant hover:text-primary transition-colors text-sm font-semibold tracking-wide uppercase px-4 hover:bg-surface-container-low"
-            >
-              {link.label}
-            </Link>
-          ))}
-        </nav>
+        <Suspense fallback={<nav className="hidden md:flex items-center gap-1 h-full"></nav>}>
+          <NavLinksDesktop />
+        </Suspense>
 
         {/* Actions */}
         <div className="flex items-center gap-3">
@@ -69,25 +160,9 @@ export default function Navbar() {
       {/* Mobile Nav Drawer */}
       {mobileOpen && (
         <div className="md:hidden bg-surface-white border-t border-border-subtle animate-[slideDown_0.2s_ease-out]">
-          <nav className="flex flex-col p-4 gap-1">
-            {navLinks.map((link) => (
-              <Link
-                key={link.label}
-                href={link.href}
-                onClick={() => setMobileOpen(false)}
-                className="flex items-center px-4 py-3 text-on-surface-variant hover:text-primary hover:bg-surface-container-low rounded-lg transition-colors text-sm font-semibold tracking-wide uppercase"
-              >
-                {link.label}
-              </Link>
-            ))}
-            <Link
-              href="/login"
-              onClick={() => setMobileOpen(false)}
-              className="mt-2 flex items-center justify-center bg-surface-white border border-border-subtle text-on-surface px-6 py-3 rounded-full text-sm font-semibold tracking-wide hover:bg-surface-container-low transition-colors"
-            >
-              Login
-            </Link>
-          </nav>
+          <Suspense fallback={<nav className="flex flex-col p-4 gap-1"></nav>}>
+            <NavLinksMobile closeMenu={() => setMobileOpen(false)} />
+          </Suspense>
         </div>
       )}
     </header>
