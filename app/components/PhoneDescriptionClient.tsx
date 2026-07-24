@@ -55,7 +55,8 @@ function parseMarkdownToJSX(text: string, phoneName: string) {
   let currentFAQ: { question: string, answer: string } | null = null;
   let normalBlockLines: string[] = [];
 
-  const sectionHeaderRegex = /^(?:1?\d\.\s*)?(?:##\s*)?(?:.*\s+)?(Quick Verdict|Design|Display|Performance|Camera|Battery|Software|Audio|Connectivity|Gaming|Benchmarks|FAQs|Pros\s*&\s*Cons|Best\s*(?:suited)?\s*For)(?:\s+(?:of|for|is|to|suitability)?\s+.*)?$/i;
+  const sectionHeaderRegex = /^(?:1?\d\.\s*)?(?:##?\s*)?(?:.*\s+)?(Quick Verdict|Design|Display|Performance|Camera|Battery|Software|Audio|Connectivity|Gaming|Benchmarks|FAQs|Pros\s*&\s*Cons|Best\s*(?:suited)?\s*For)(?:\s+(?:of|for|is|to|suitability)?\s+.*)?$/i;
+  const ignoredIcons = new Set(['help_outline', 'thumbs_up_down', 'check_circle', 'done', 'cancel', 'close', 'smartphone', 'speed', 'memory', 'battery_charging_full', 'photo_camera', 'developer_board', 'info', 'android']);
 
   const flushNormalBlock = (key: string | number) => {
     if (normalBlockLines.length === 0) return;
@@ -83,9 +84,11 @@ function parseMarkdownToJSX(text: string, phoneName: string) {
         </ol>
       );
     } else {
+      // Remove any leading hashes for clean paragraphs if any leaked through
+      const cleanContent = content.replace(/^#+\s*/, '');
       renderedElements.push(
         <p key={`p-${key}`} className="text-text-muted leading-relaxed mb-4 text-sm md:text-base">
-          {boldPhoneName(content, phoneName)}
+          {boldPhoneName(cleanContent, phoneName)}
         </p>
       );
     }
@@ -167,9 +170,9 @@ function parseMarkdownToJSX(text: string, phoneName: string) {
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i].trim();
     
-    // Detect empty line
-    if (!line) {
-      if (currentSection === 'normal') {
+    // Detect empty line or raw material icon text
+    if (!line || ignoredIcons.has(line)) {
+      if (!line && currentSection === 'normal') {
         flushNormalBlock(i);
       }
       continue;
@@ -195,6 +198,14 @@ function parseMarkdownToJSX(text: string, phoneName: string) {
         currentSection = 'normal';
       }
 
+      // Skip the next line if it's just the phone name (often split across lines)
+      if (i + 1 < lines.length) {
+        const nextLine = lines[i + 1].trim();
+        if (nextLine.toLowerCase() === phoneName.toLowerCase() || nextLine.toLowerCase() === `of ${phoneName.toLowerCase()}`) {
+          i++; // skip next line
+        }
+      }
+
       // Render the heading
       renderedElements.push(
         <h2 key={`heading-${i}`} className="font-headline-md text-xl font-bold text-text-main mt-8 mb-4 border-b border-border-subtle/50 pb-2 flex items-center gap-2">
@@ -210,42 +221,39 @@ function parseMarkdownToJSX(text: string, phoneName: string) {
     if (currentSection === 'pros-cons') {
       const lowerLine = line.toLowerCase();
       // Check if we hit subheadings like "Pros" or "Cons"
-      if (lowerLine.includes('pros') && !lowerLine.startsWith('+') && !lowerLine.startsWith('-') && !lowerLine.startsWith('*') && !lowerLine.startsWith('•')) {
+      if (lowerLine === 'pros' || lowerLine === 'pros:') {
         prosConsSubState = 'pros';
         continue;
       }
-      if (lowerLine.includes('cons') && !lowerLine.startsWith('+') && !lowerLine.startsWith('-') && !lowerLine.startsWith('*') && !lowerLine.startsWith('•')) {
+      if (lowerLine === 'cons' || lowerLine === 'cons:') {
         prosConsSubState = 'cons';
         continue;
       }
 
-      if (line.startsWith('+') || line.startsWith('-') || line.startsWith('*') || line.startsWith('•')) {
-        const cleanLine = line.replace(/^[+\-*•]\s*/, '').trim();
-        if (line.startsWith('+')) {
-          pros.push(cleanLine);
-        } else if (line.startsWith('-') && prosConsSubState === 'cons') {
-          cons.push(cleanLine);
-        } else if (line.startsWith('-') && prosConsSubState === 'pros') {
-          pros.push(cleanLine);
+      const cleanLine = line.replace(/^[+\-*•]\s*/, '').trim();
+      if (cleanLine && cleanLine !== '-' && cleanLine !== '+' && cleanLine !== '*') {
+        const targetArray = prosConsSubState === 'pros' ? pros : cons;
+        if (cleanLine.startsWith(':') && targetArray.length > 0) {
+          targetArray[targetArray.length - 1] += ' ' + cleanLine;
         } else {
-          if (prosConsSubState === 'pros') {
-            pros.push(cleanLine);
-          } else {
-            cons.push(cleanLine);
-          }
+          targetArray.push(cleanLine);
         }
       }
     } else if (currentSection === 'faqs') {
-      // Look for Q: and A: or numbered Qs
+      // Look for Q: and A: or numbered Qs or ending with ?
       const qMatch = line.match(/^(?:Q|Question|Q\d+):\s*(.*)$/i);
       const aMatch = line.match(/^(?:A|Answer):\s*(.*)$/i);
       const numQMatch = line.match(/^\d+\.\s*(.*\?)$/i);
+      const boldQMatch = line.match(/^\*\*(.*\?)\*\*$/);
+      const endsWithQuestion = line.endsWith('?');
 
-      if (qMatch || numQMatch) {
+      if (qMatch || numQMatch || boldQMatch || endsWithQuestion) {
         if (currentFAQ) {
           faqs.push(currentFAQ);
         }
-        currentFAQ = { question: qMatch ? qMatch[1] : numQMatch![1], answer: '' };
+        let questionText = qMatch ? qMatch[1] : (numQMatch ? numQMatch[1] : (boldQMatch ? boldQMatch[1] : line));
+        questionText = questionText.replace(/^\*\*/, '').replace(/\*\*$/, '');
+        currentFAQ = { question: questionText, answer: '' };
       } else if (aMatch) {
         if (currentFAQ) {
           currentFAQ.answer = aMatch[1];
