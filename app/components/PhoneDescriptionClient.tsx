@@ -178,9 +178,9 @@ function parseMarkdownToJSX(text: string, phoneName: string) {
       continue;
     }
 
-    // Detect section headers
+    // Detect section headers (headers should be relatively short, < 100 chars)
     const headerMatch = line.match(sectionHeaderRegex);
-    if (headerMatch) {
+    if (headerMatch && line.length < 100) {
       // Flush previous content
       flushNormalBlock(i);
       flushSection(i);

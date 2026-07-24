@@ -31,7 +31,7 @@ function formatDate(dateStr?: string) {
 }
 
 function getFirstProAndCon(description?: string) {
-  if (!description) return { pro: "Excellent battery life and great performance.", con: "Camera could be better in low light." };
+  if (!description) return null;
   
   const lines = description.split('\n').map(l => l.trim()).filter(Boolean);
   let pro = "";
@@ -63,10 +63,9 @@ function getFirstProAndCon(description?: string) {
     if (pro && con) break;
   }
 
-  return {
-    pro: pro || "Excellent battery life and great performance.",
-    con: con || "Camera could be better in low light."
-  };
+  if (!pro && !con) return null;
+
+  return { pro, con };
 }
 
 export default function PhoneCard({ phone }: PhoneCardProps) {
@@ -189,10 +188,6 @@ export default function PhoneCard({ phone }: PhoneCardProps) {
                 <span className="material-symbols-outlined text-[20px] text-text-muted shrink-0 mt-0.5">smartphone</span>
                 {display}
               </li>
-              <li className="flex items-start gap-3 text-sm text-text-main">
-                <span className="material-symbols-outlined text-[20px] text-text-muted shrink-0 mt-0.5">speed</span>
-                AnTuTu Score {antutuScore}
-              </li>
               
               {/* Ellipsis button for extra menu */}
               <button className="absolute top-0 right-0 text-text-muted hover:text-text-main">
@@ -216,23 +211,22 @@ export default function PhoneCard({ phone }: PhoneCardProps) {
                     {userRating.toFixed(1)}/5
                   </div>
                 </div>
-                <div className="flex items-center gap-6">
-                  <span className="text-xs text-text-muted w-20">Expert Rating</span>
-                  <div className="flex items-center gap-1 font-bold text-sm text-text-main">
-                    <span className="material-symbols-outlined text-[16px] text-[#FF9800]" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
-                    {expertRating.toFixed(1)}/10
-                  </div>
-                </div>
               </div>
               
-              <div className="flex flex-col gap-2">
-                <p className="text-xs text-text-main line-clamp-2">
-                  <span className="font-bold text-[#8BC34A]">Pros:</span> {phoneData.pro}
-                </p>
-                <p className="text-xs text-text-main line-clamp-2">
-                  <span className="font-bold text-[#F44336]">Cons:</span> {phoneData.con}
-                </p>
-              </div>
+              {phoneData && (
+                <div className="flex flex-col gap-2">
+                  {phoneData.pro && (
+                    <p className="text-xs text-text-main line-clamp-2">
+                      <span className="font-bold text-[#8BC34A]">Pros:</span> {phoneData.pro}
+                    </p>
+                  )}
+                  {phoneData.con && (
+                    <p className="text-xs text-text-main line-clamp-2">
+                      <span className="font-bold text-[#F44336]">Cons:</span> {phoneData.con}
+                    </p>
+                  )}
+                </div>
+              )}
             </div>
             
             <div className="flex justify-end mt-2">
