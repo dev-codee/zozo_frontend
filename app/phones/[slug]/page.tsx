@@ -141,6 +141,20 @@ export default async function PhoneDetailPage({
     if (match) chipsetDisplay = match[1].trim();
   }
 
+  // Network processing
+  const network = specs.connectivity?.network || "";
+  let networkDisplay = "N/A";
+  if (network.includes("5G")) {
+    networkDisplay = "5G Supported";
+  } else if (network.includes("4G") || network.includes("LTE")) {
+    networkDisplay = "4G Supported";
+  } else if (network) {
+    networkDisplay = "Network Supported";
+  }
+
+  // OS processing
+  const osDisplay = specs.os || "N/A";
+
 
   return (
     <>
@@ -273,7 +287,18 @@ export default async function PhoneDetailPage({
                     </div>
                   </div>
 
-                  {/* Box 3: BATTERY */}
+                  {/* Box 3: NETWORK */}
+                  <div className="flex items-center gap-3 p-3 sm:p-4 rounded-xl border border-border-subtle bg-surface-white hover:border-primary/50 transition-colors shadow-sm">
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-blue-50 text-primary flex items-center justify-center flex-shrink-0">
+                      <span className="material-symbols-outlined text-[20px] sm:text-[24px]">signal_cellular_alt</span>
+                    </div>
+                    <div className="flex flex-col overflow-hidden">
+                      <span className="text-[11px] sm:text-xs font-bold text-text-muted uppercase tracking-wider mb-0.5">Network</span>
+                      <span className="text-sm sm:text-base font-bold text-text-main leading-tight line-clamp-2">{networkDisplay}</span>
+                    </div>
+                  </div>
+
+                  {/* Box 4: BATTERY */}
                   <div className="flex items-center gap-3 p-3 sm:p-4 rounded-xl border border-border-subtle bg-surface-white hover:border-primary/50 transition-colors shadow-sm">
                     <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-blue-50 text-primary flex items-center justify-center flex-shrink-0">
                       <span className="material-symbols-outlined text-[20px] sm:text-[24px]">battery_charging_full</span>
@@ -314,6 +339,16 @@ export default async function PhoneDetailPage({
                     <div className="flex flex-col overflow-hidden">
                       <span className="text-[11px] sm:text-xs font-bold text-text-muted uppercase tracking-wider mb-0.5">Chipset</span>
                       <span className="text-sm sm:text-base font-bold text-text-main leading-tight line-clamp-2">{chipsetDisplay}</span>
+                    </div>
+                  </div>
+                  {/* Box 8: OS */}
+                  <div className="flex items-center gap-3 p-3 sm:p-4 rounded-xl border border-border-subtle bg-surface-white hover:border-primary/50 transition-colors shadow-sm">
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-blue-50 text-primary flex items-center justify-center flex-shrink-0">
+                      <span className="material-symbols-outlined text-[20px] sm:text-[24px]">widgets</span>
+                    </div>
+                    <div className="flex flex-col overflow-hidden">
+                      <span className="text-[11px] sm:text-xs font-bold text-text-muted uppercase tracking-wider mb-0.5">OS</span>
+                      <span className="text-sm sm:text-base font-bold text-text-main leading-tight line-clamp-2">{osDisplay}</span>
                     </div>
                   </div>
                 </div>
