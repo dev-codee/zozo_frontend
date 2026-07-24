@@ -424,7 +424,7 @@ export default async function PhoneDetailPage({
                 </h3>
 
                 {competitorPhones.length > 0 ? (
-                  <div className="flex flex-col gap-3">
+                  <div className="grid grid-cols-2 gap-3">
                     {competitorPhones.map((comp) => {
                       const compLowestPrice = comp.prices?.length
                         ? Math.min(...comp.prices.map((p) => p.price_pkr))
@@ -435,28 +435,29 @@ export default async function PhoneDetailPage({
                         <Link
                           key={comp._id}
                           href={`/phones/${comp.slug}`}
-                          className="flex gap-2 p-2 rounded-lg border border-border-subtle hover:border-primary hover:shadow-sm transition-all bg-surface-container-lowest/50"
+                          className="flex flex-col rounded-lg border border-border-subtle hover:border-primary hover:shadow-sm transition-all bg-white overflow-hidden group"
                         >
-                          <div className="w-12 h-12 bg-white border border-border-subtle rounded flex items-center justify-center overflow-hidden flex-shrink-0">
+                          <div className="relative aspect-[4/5] bg-surface-container-low flex items-center justify-center p-3">
+                            <div className="absolute top-2 left-2 bg-[#8BC34A] text-white text-[10px] font-bold px-1.5 py-1 rounded flex flex-col items-center shadow-sm z-10 leading-tight">
+                              <span>85%</span>
+                              <span className="text-[7px] font-medium opacity-90 text-center uppercase tracking-wider">Spec<br/>Score</span>
+                            </div>
                             {primaryImage ? (
                               <img
                                 src={primaryImage.url}
                                 alt={comp.name}
-                                className="object-contain w-full h-full p-1"
+                                className="object-contain w-full h-full mix-blend-darken group-hover:scale-105 transition-transform duration-300"
                               />
                             ) : (
-                              <span className="material-symbols-outlined text-text-muted text-xl">smartphone</span>
+                              <span className="material-symbols-outlined text-text-muted text-3xl">smartphone</span>
                             )}
                           </div>
-                          <div className="flex flex-col justify-center">
-                            <h4 className="font-semibold text-xs text-text-main hover:text-primary transition-colors line-clamp-1">
+                          <div className="flex flex-col p-3 bg-white">
+                            <h4 className="font-semibold text-xs text-text-main group-hover:text-primary transition-colors line-clamp-2 min-h-[32px]">
                               {comp.name}
                             </h4>
-                            <span className="text-[10px] text-text-muted capitalize">
-                              {comp.brand_slug.replace("-", " ")}
-                            </span>
-                            <span className="text-[11px] font-bold text-price-green mt-0.5">
-                              {compLowestPrice ? `Rs. ${compLowestPrice.toLocaleString()}` : "Price TBA"}
+                            <span className="text-sm font-bold text-text-main mt-1">
+                              {compLowestPrice ? `Rs. ${compLowestPrice.toLocaleString()}` : <span className="text-text-muted font-medium text-[10px]">(Upcoming)</span>}
                             </span>
                           </div>
                         </Link>
