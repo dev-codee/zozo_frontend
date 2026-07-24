@@ -139,15 +139,13 @@ export default async function PhoneDetailPage({
   } else if (chipsetFull?.includes("Apple")) {
     const match = chipsetFull.match(/(Apple[^(\n]+)/);
     if (match) chipsetDisplay = match[1].trim();
-  } else if (chipsetDisplay.length > 20) {
-    chipsetDisplay = chipsetDisplay.substring(0, 20) + "...";
   }
 
 
   return (
     <>
       <Navbar />
-      <main className="w-full max-w-[1280px] mx-auto px-4 md:px-6 py-8 flex flex-col gap-8 bg-surface">
+      <main className="w-full max-w-[1280px] mx-auto px-4 md:px-6 py-8 flex flex-col gap-[15px] bg-surface">
         {/* Breadcrumb */}
         <Breadcrumb
           items={[
@@ -246,133 +244,78 @@ export default async function PhoneDetailPage({
               )}
 
               {/* Key Specs */}
-              <div className="bg-white p-5 rounded-xl">
-                <h2 className="text-lg font-bold text-text-main flex items-center gap-2 mb-6">
+              <div className="bg-white p-5 rounded-xl mt-2">
+                <h2 className="text-lg font-bold text-text-main flex items-center gap-2 mb-5">
                   <span className="w-1 h-6 bg-primary rounded-full"></span>
                   Key Specs
                 </h2>
 
-                <div className="flex flex-col divide-y divide-border-subtle [&>div]:py-2 [&>div:first-child]:pt-0 [&>div:last-child]:pb-0">
-                  {/* OS */}
-                  {phone.specs.os && (
-                    <div>
-                      <div className="flex items-center gap-2 text-xs text-text-muted font-medium">
-                        <span className="material-symbols-outlined text-primary text-base">android</span>
-                        {phone.specs.os}
-                      </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                  {/* Box 1: RAM */}
+                  <div className="flex items-center gap-3 p-3 sm:p-4 rounded-xl border border-border-subtle bg-surface-white hover:border-primary/50 transition-colors shadow-sm">
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-blue-50 text-primary flex items-center justify-center flex-shrink-0">
+                      <span className="material-symbols-outlined text-[20px] sm:text-[24px]">memory</span>
                     </div>
-                  )}
+                    <div className="flex flex-col overflow-hidden">
+                      <span className="text-[11px] sm:text-xs font-bold text-text-muted uppercase tracking-wider mb-0.5">RAM</span>
+                      <span className="text-sm sm:text-base font-bold text-text-main leading-tight line-clamp-2">{ramDisplay}</span>
+                    </div>
+                  </div>
 
-                  {/* Performance */}
-                  {phone.specs.performance && (
-                    <div>
-                      <div className="flex items-center gap-2 text-sm font-semibold text-text-main mb-2">
-                        <span className="material-symbols-outlined text-text-muted text-base">speed</span>
-                        Performance
-                      </div>
-                      <ul className="list-disc pl-8 text-xs text-text-muted space-y-1">
-                        {chipsetFull && <li>{chipsetFull}</li>}
-                        {phone.specs.performance.cpu && <li>{phone.specs.performance.cpu}</li>}
-                        {ramDisplay !== "N/A" && <li>{ramDisplay} RAM</li>}
-                      </ul>
+                  {/* Box 2: STORAGE */}
+                  <div className="flex items-center gap-3 p-3 sm:p-4 rounded-xl border border-border-subtle bg-surface-white hover:border-primary/50 transition-colors shadow-sm">
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-blue-50 text-primary flex items-center justify-center flex-shrink-0">
+                      <span className="material-symbols-outlined text-[20px] sm:text-[24px]">storage</span>
                     </div>
-                  )}
+                    <div className="flex flex-col overflow-hidden">
+                      <span className="text-[11px] sm:text-xs font-bold text-text-muted uppercase tracking-wider mb-0.5">Storage</span>
+                      <span className="text-sm sm:text-base font-bold text-text-main leading-tight line-clamp-2">{storageDisplay}</span>
+                    </div>
+                  </div>
 
-                  {/* Display */}
-                  {phone.specs.display && (
-                    <div>
-                      <div className="flex items-center gap-2 text-sm font-semibold text-text-main mb-2">
-                        <span className="material-symbols-outlined text-text-muted text-base">smartphone</span>
-                        Display
-                      </div>
-                      <ul className="list-disc pl-8 text-xs text-text-muted space-y-1">
-                        {phone.specs.display.size_inches && <li>{phone.specs.display.size_inches} inches ({Math.round(phone.specs.display.size_inches * 2.54)} cm); {phone.specs.display.type || 'Display'}</li>}
-                        {phone.specs.display.resolution && <li>{phone.specs.display.resolution}</li>}
-                        {phone.specs.display.refresh_rate_hz && <li>{phone.specs.display.refresh_rate_hz} Hz Refresh Rate</li>}
-                        {phone.specs.display.protection && <li>{phone.specs.display.protection}</li>}
-                      </ul>
+                  {/* Box 3: BATTERY */}
+                  <div className="flex items-center gap-3 p-3 sm:p-4 rounded-xl border border-border-subtle bg-surface-white hover:border-primary/50 transition-colors shadow-sm">
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-blue-50 text-primary flex items-center justify-center flex-shrink-0">
+                      <span className="material-symbols-outlined text-[20px] sm:text-[24px]">battery_charging_full</span>
                     </div>
-                  )}
+                    <div className="flex flex-col overflow-hidden">
+                      <span className="text-[11px] sm:text-xs font-bold text-text-muted uppercase tracking-wider mb-0.5">Battery</span>
+                      <span className="text-sm sm:text-base font-bold text-text-main leading-tight line-clamp-2">{batteryDisplay}</span>
+                    </div>
+                  </div>
 
-                  {/* Rear Camera */}
-                  {phone.specs.camera?.rear_summary && (
-                    <div>
-                      <div className="flex items-center gap-2 text-sm font-semibold text-text-main mb-2">
-                        <span className="material-symbols-outlined text-text-muted text-base">photo_camera</span>
-                        Rear Camera
-                      </div>
-                      <ul className="list-disc pl-8 text-xs text-text-muted space-y-1">
-                        <li>{phone.specs.camera.rear_summary}</li>
-                        {phone.specs.camera.video_recording && <li>{phone.specs.camera.video_recording} Video Recording</li>}
-                      </ul>
+                  {/* Box 4: CAMERA */}
+                  <div className="flex items-center gap-3 p-3 sm:p-4 rounded-xl border border-border-subtle bg-surface-white hover:border-primary/50 transition-colors shadow-sm">
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-blue-50 text-primary flex items-center justify-center flex-shrink-0">
+                      <span className="material-symbols-outlined text-[20px] sm:text-[24px]">photo_camera</span>
                     </div>
-                  )}
+                    <div className="flex flex-col overflow-hidden">
+                      <span className="text-[11px] sm:text-xs font-bold text-text-muted uppercase tracking-wider mb-0.5">Camera</span>
+                      <span className="text-sm sm:text-base font-bold text-text-main leading-tight line-clamp-2">{cameraDisplay}</span>
+                    </div>
+                  </div>
 
-                  {/* Front Camera */}
-                  {phone.specs.camera?.front_summary && (
-                    <div>
-                      <div className="flex items-center gap-2 text-sm font-semibold text-text-main mb-2">
-                        <span className="material-symbols-outlined text-text-muted text-base">photo_camera_front</span>
-                        Front Camera
-                      </div>
-                      <ul className="list-disc pl-8 text-xs text-text-muted space-y-1">
-                        <li>{phone.specs.camera.front_summary}</li>
-                      </ul>
+                  {/* Box 5: DISPLAY */}
+                  <div className="flex items-center gap-3 p-3 sm:p-4 rounded-xl border border-border-subtle bg-surface-white hover:border-primary/50 transition-colors shadow-sm">
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-blue-50 text-primary flex items-center justify-center flex-shrink-0">
+                      <span className="material-symbols-outlined text-[20px] sm:text-[24px]">smartphone</span>
                     </div>
-                  )}
+                    <div className="flex flex-col overflow-hidden">
+                      <span className="text-[11px] sm:text-xs font-bold text-text-muted uppercase tracking-wider mb-0.5">Display</span>
+                      <span className="text-sm sm:text-base font-bold text-text-main leading-tight line-clamp-2">{displayString}</span>
+                    </div>
+                  </div>
 
-                  {/* Battery */}
-                  {phone.specs.battery && (
-                    <div>
-                      <div className="flex items-center gap-2 text-sm font-semibold text-text-main mb-2">
-                        <span className="material-symbols-outlined text-text-muted text-base">battery_charging_full</span>
-                        Battery
-                      </div>
-                      <ul className="list-disc pl-8 text-xs text-text-muted space-y-1">
-                        {phone.specs.battery.capacity_mah && <li>{phone.specs.battery.capacity_mah} mAh</li>}
-                        {phone.specs.battery.charging_watts && <li>{phone.specs.battery.charging_watts}W Fast Charging</li>}
-                      </ul>
+                  {/* Box 6: CHIPSET */}
+                  <div className="flex items-center gap-3 p-3 sm:p-4 rounded-xl border border-border-subtle bg-surface-white hover:border-primary/50 transition-colors shadow-sm">
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-blue-50 text-primary flex items-center justify-center flex-shrink-0">
+                      <span className="material-symbols-outlined text-[20px] sm:text-[24px]">developer_board</span>
                     </div>
-                  )}
-
-                  {/* General */}
-                  {phone.specs.connectivity && (
-                    <div>
-                      <div className="flex items-center gap-2 text-sm font-semibold text-text-main mb-2">
-                        <span className="material-symbols-outlined text-text-muted text-base">memory</span>
-                        General
-                      </div>
-                      <ul className="list-disc pl-8 text-xs text-text-muted space-y-1">
-                        {releaseDateStr && <li>Released: {releaseDateStr}</li>}
-                        {phone.specs.connectivity.sim && <li>SIM: {phone.specs.connectivity.sim}</li>}
-                        {phone.specs.connectivity.network && <li>{phone.specs.connectivity.network} Supported</li>}
-                        {storageDisplay !== "N/A" && <li>{storageDisplay} internal storage</li>}
-                        {phone.specs.body?.water_resistance && <li>{phone.specs.body.water_resistance}</li>}
-                      </ul>
+                    <div className="flex flex-col overflow-hidden">
+                      <span className="text-[11px] sm:text-xs font-bold text-text-muted uppercase tracking-wider mb-0.5">Chipset</span>
+                      <span className="text-sm sm:text-base font-bold text-text-main leading-tight line-clamp-2">{chipsetDisplay}</span>
                     </div>
-                  )}
-
-                  {/* Core Details */}
-                  {(phone.model_number || phone.series || phone.manufacturer || phone.made_in || phone.carrier_version || phone.region_version || phone.category || phone.subcategory || (phone.country_availability && phone.country_availability.length > 0)) && (
-                    <div>
-                      <div className="flex items-center gap-2 text-sm font-semibold text-text-main mb-2">
-                        <span className="material-symbols-outlined text-text-muted text-base">info</span>
-                        Core Details
-                      </div>
-                      <ul className="list-disc pl-8 text-xs text-text-muted space-y-1">
-                        {phone.model_number && <li><strong>Model:</strong> {phone.model_number}</li>}
-                        {phone.series && <li><strong>Series:</strong> {phone.series}</li>}
-                        {phone.manufacturer && <li><strong>Manufacturer:</strong> {phone.manufacturer}</li>}
-                        {phone.made_in && <li><strong>Made in:</strong> {phone.made_in}</li>}
-                        {phone.carrier_version && <li><strong>Carrier:</strong> {phone.carrier_version}</li>}
-                        {phone.region_version && <li><strong>Region:</strong> {phone.region_version}</li>}
-                        {phone.category && <li><strong>Category:</strong> {phone.category}{phone.subcategory ? ` / ${phone.subcategory}` : ""}</li>}
-                        {phone.country_availability && phone.country_availability.length > 0 && (
-                          <li><strong>Availability:</strong> {phone.country_availability.join(", ")}</li>
-                        )}
-                      </ul>
-                    </div>
-                  )}
+                  </div>
                 </div>
               </div>
 
@@ -398,8 +341,8 @@ export default async function PhoneDetailPage({
           </div>
         </div>
 
-        {/* Combined Price Comparison & Specs Grid Container with 5px vertical gap */}
-        <div className="flex flex-col gap-[5px]">
+        {/* Combined Price Comparison & Specs Grid Container with equal vertical gap */}
+        <div className="flex flex-col gap-[15px]">
           {/* Price Comparison Table */}
           {hasAffiliateUrls && (
             <section className="bg-surface-white border border-border-subtle rounded-xl overflow-hidden shadow-sm">
@@ -466,15 +409,15 @@ export default async function PhoneDetailPage({
             </section>
           )}
 
-          {/* Specifications and Competitors Section with 5px gap */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-[5px] items-start">
+          {/* Specifications and Competitors Section with equal gap */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-[15px] items-start">
             <div className="lg:col-span-2">
               {/* Full Specifications Table */}
               <PhoneSpecs specs={phone.specs} />
             </div>
 
             <div className="lg:col-span-1 space-y-6">
-              <div className="bg-white border border-border-subtle rounded-xl p-4 pl-[5px] shadow-sm">
+              <div className="bg-white border border-border-subtle rounded-xl p-4 shadow-sm">
                 <h3 className="font-headline-sm text-sm font-bold text-text-main mb-4 flex items-center gap-1">
                   <span className="material-symbols-outlined text-primary text-lg">compare_arrows</span>
                   Competitors for {phone.name}
@@ -492,7 +435,7 @@ export default async function PhoneDetailPage({
                         <Link
                           key={comp._id}
                           href={`/phones/${comp.slug}`}
-                          className="flex gap-2 p-2 pl-[5px] rounded-lg border border-border-subtle hover:border-primary hover:shadow-sm transition-all bg-surface-container-lowest/50"
+                          className="flex gap-2 p-2 rounded-lg border border-border-subtle hover:border-primary hover:shadow-sm transition-all bg-surface-container-lowest/50"
                         >
                           <div className="w-12 h-12 bg-white border border-border-subtle rounded flex items-center justify-center overflow-hidden flex-shrink-0">
                             {primaryImage ? (
