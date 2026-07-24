@@ -219,13 +219,12 @@ function parseMarkdownToJSX(text: string, phoneName: string) {
 
     // Process line depending on the current section
     if (currentSection === 'pros-cons') {
-      const lowerLine = line.toLowerCase();
       // Check if we hit subheadings like "Pros" or "Cons"
-      if (lowerLine === 'pros' || lowerLine === 'pros:') {
+      if (/^[\s#*\-+]*pros[\s:*]*$/i.test(line)) {
         prosConsSubState = 'pros';
         continue;
       }
-      if (lowerLine === 'cons' || lowerLine === 'cons:') {
+      if (/^[\s#*\-+]*cons[\s:*]*$/i.test(line)) {
         prosConsSubState = 'cons';
         continue;
       }
