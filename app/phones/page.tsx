@@ -15,6 +15,10 @@ export default async function PhonesPage({
   const minPrice = resolvedParams.min_price as string;
   const sort = resolvedParams.sort as string;
   const brand = resolvedParams.brand as string;
+  const ram = resolvedParams.ram as string;
+  const processor = resolvedParams.processor as string;
+  const display = resolvedParams.display as string;
+  const camera = resolvedParams.camera as string;
 
   // Build the query string
   let queryParts = [];
@@ -22,6 +26,10 @@ export default async function PhonesPage({
   if (maxPrice) queryParts.push(`max_price=${maxPrice}`);
   if (sort) queryParts.push(`sort=${sort}`);
   if (brand) queryParts.push(`brand=${brand}`);
+  if (ram) queryParts.push(`ram=${ram}`);
+  if (processor) queryParts.push(`processor=${processor}`);
+  if (display) queryParts.push(`display=${display}`);
+  if (camera) queryParts.push(`camera=${camera}`);
   
   const query = queryParts.length > 0 ? queryParts.join("&") : undefined;
   
@@ -69,7 +77,7 @@ export default async function PhonesPage({
           </div>
 
           {phones.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <div className="flex flex-col gap-6">
               {phones.map((phone) => (
                 <PhoneCard key={phone._id} phone={phone} />
               ))}

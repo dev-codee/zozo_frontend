@@ -6,6 +6,69 @@ interface PhoneCardProps {
   phone: Phone;
 }
 
+// Helper to extract a short snippet from markdown description
+function getShortDescription(description?: string) {
+  if (!description) return "A solid smartphone choice offering great value and performance for its price segment.";
+  // Remove markdown headers, bolding, and icons
+  let text = description.replace(/#/g, "").replace(/\*/g, "");
+  text = text.replace(/help_outline|thumbs_up_down|check_circle|done|cancel|close/gi, "");
+  // Get first 150 chars, up to a space
+  if (text.length > 200) {
+    return text.substring(0, 200).trim() + "...";
+  }
+  return text.trim();
+}
+
+function formatDate(dateStr?: string) {
+  if (!dateStr) return "TBA";
+  try {
+    const d = new Date(dateStr);
+    if (isNaN(d.getTime())) return dateStr;
+    return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+  } catch {
+    return dateStr;
+  }
+}
+
+function getFirstProAndCon(description?: string) {
+  if (!description) return { pro: "Excellent battery life and great performance.", con: "Camera could be better in low light." };
+  
+  const lines = description.split('\n').map(l => l.trim()).filter(Boolean);
+  let pro = "";
+  let con = "";
+  let inPros = false;
+  let inCons = false;
+
+  for (let i = 0; i < lines.length; i++) {
+    const lower = lines[i].toLowerCase();
+    
+    if (lower === 'pros' || lower === 'pros:') {
+      inPros = true; inCons = false; continue;
+    }
+    if (lower === 'cons' || lower === 'cons:') {
+      inCons = true; inPros = false; continue;
+    }
+    
+    if (lower.startsWith('##') || lower.match(/^(design|display|performance|camera|battery|software)/)) {
+      inPros = false; inCons = false;
+    }
+
+    if (inPros && !pro && !['thumbs_up_down', 'check_circle', 'done', 'cancel', 'close', '+', '-', '*'].includes(lower)) {
+      pro = lines[i].replace(/^[+\-*•]\s*/, '').replace(/^:/, '').trim();
+    }
+    if (inCons && !con && !['thumbs_up_down', 'check_circle', 'done', 'cancel', 'close', '+', '-', '*'].includes(lower)) {
+      con = lines[i].replace(/^[+\-*•]\s*/, '').replace(/^:/, '').trim();
+    }
+    
+    if (pro && con) break;
+  }
+
+  return {
+    pro: pro || "Excellent battery life and great performance.",
+    con: con || "Camera could be better in low light."
+  };
+}
+
 export default function PhoneCard({ phone }: PhoneCardProps) {
   // Get primary image or first image
   const primaryImage = phone.images?.find((img) => img.is_primary) || phone.images?.[0];
@@ -17,67 +80,190 @@ export default function PhoneCard({ phone }: PhoneCardProps) {
     ? Math.min(...phone.prices.map((p) => p.price_pkr))
     : null);
 
-  // Build spec summary
-  const ram = phone.specs?.performance?.ram_options_gb;
-  const storage = phone.specs?.performance?.storage_options_gb;
-  const specParts: string[] = [];
-  if (ram?.length) specParts.push(`${Math.max(...ram)}GB RAM`);
-  if (storage?.length) specParts.push(`${Math.max(...storage)}GB Storage`);
-  const specSummary = specParts.join(", ") || "Specs TBA";
+  const chipset = phone.specs?.performance?.chipset || "Chipset TBA";
+  const ramOptions = phone.specs?.performance?.ram_options_gb;
+  const storageOptions = phone.specs?.performance?.storage_options_gb;
+  const ramStorage = `${ramOptions ? Math.max(...ramOptions) : '??'} GB RAM | ${storageOptions ? Math.max(...storageOptions) : '??'} GB Storage`;
+  
+  const rearCamera = phone.specs?.camera?.rear_summary || "Rear Camera TBA";
+  const frontCamera = phone.specs?.camera?.front_summary || "Front Camera TBA";
+  const battery = `${phone.specs?.battery?.capacity_mah || '??'} mAh | ${phone.specs?.battery?.charging_watts || '??'}W Charging`;
+  const display = `${phone.specs?.display?.size_inches || '??'} Inches | ${phone.specs?.display?.type || 'Display'}`;
+  
+  // Dummy Antutu score since we don't have it structured in DB yet
+  const antutuScore = "Approx. 1,000,000";
 
-  // Rating or "New" badge
-  const rating = phone.rating?.average;
-  const isNew = phone.status === "upcoming" || !rating;
+  // Ratings
+  const userRating = phone.rating?.average || 4.5;
+  const expertRating = 8.5; // Placeholder
+  const phoneData = getFirstProAndCon(phone.description);
 
   return (
-    <Link
-      href={`/phones/${phone.slug}`}
-      className="group block bg-surface-white border border-border-subtle overflow-hidden hover:shadow-[0_10px_15px_-3px_rgba(15,23,42,0.08)] transition-all duration-300 relative rounded-xl shadow-sm"
-    >
-      {/* Badge */}
-      {isNew ? (
-        <div className="absolute top-3 left-3 bg-primary/10 text-primary rounded-full px-3 py-1 text-xs font-medium z-10 flex items-center gap-1 backdrop-blur-sm">
-          New
+    <div className="bg-white border border-border-subtle rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300">
+      
+      {/* Top Section */}
+      <div className="p-5 md:p-6 pb-4">
+        {/* Header */}
+        <div className="flex justify-between items-start mb-2">
+          <div className="flex items-center gap-3">
+            <div className="w-1 h-6 bg-primary rounded-full"></div>
+            <Link href={`/phones/${phone.slug}`} className="hover:text-primary transition-colors">
+              <h2 className="font-headline-md text-xl md:text-2xl font-bold text-text-main leading-tight">
+                {phone.name}
+              </h2>
+            </Link>
+          </div>
+          <button className="flex items-center gap-1 text-primary text-sm font-semibold hover:bg-primary/5 px-2 py-1 rounded transition-colors">
+            <span className="material-symbols-outlined text-[18px]">add</span>
+            Compare
+          </button>
         </div>
-      ) : rating ? (
-        <div className="absolute top-3 left-3 bg-tertiary-container/10 text-tertiary-container rounded-full px-3 py-1 text-xs font-medium z-10 flex items-center gap-1 backdrop-blur-sm">
-          <span
-            className="material-symbols-outlined text-[14px]"
-            style={{ fontVariationSettings: "'FILL' 1" }}
+
+        <div className="text-xs text-text-muted mb-4 pl-4">
+          Release Date: <span className="font-medium text-text-main">{formatDate(phone.release_date)}</span>
+        </div>
+
+        <p className="text-sm text-text-muted leading-relaxed line-clamp-2 pl-4 mb-6">
+          {getShortDescription(phone.description)} <Link href={`/phones/${phone.slug}`} className="font-bold text-text-main hover:text-primary">read more</Link>
+        </p>
+
+        {/* Grid for Image and Specs */}
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-6 pl-4">
+          
+          {/* Left Column (Image) */}
+          <div className="md:col-span-4 lg:col-span-3 flex flex-col items-center">
+            <Link href={`/phones/${phone.slug}`} className="relative w-full aspect-[3/4] bg-surface-container-low rounded-xl p-4 flex items-center justify-center group overflow-hidden">
+              <div className="absolute top-2 left-2 bg-[#8BC34A] text-white text-[10px] font-bold px-1.5 py-1 rounded flex flex-col items-center shadow-sm z-10 leading-tight">
+                <span>97%</span>
+                <span className="text-[7px] font-medium opacity-90 text-center uppercase tracking-wider">Spec<br/>Score</span>
+              </div>
+              <div className="relative w-full h-full">
+                <Image
+                  src={imageUrl}
+                  alt={imageAlt}
+                  fill
+                  sizes="(max-width: 768px) 100vw, 33vw"
+                  className="object-contain mix-blend-darken group-hover:scale-105 transition-transform duration-500"
+                />
+              </div>
+            </Link>
+            
+            <div className="flex gap-4 mt-3">
+              <button className="w-8 h-8 rounded border border-border-subtle flex items-center justify-center text-text-muted hover:border-primary hover:text-primary transition-colors">
+                <span className="material-symbols-outlined text-[18px]">compare_arrows</span>
+              </button>
+              <button className="w-8 h-8 rounded border border-border-subtle flex items-center justify-center text-text-muted hover:border-primary hover:text-primary transition-colors">
+                <span className="material-symbols-outlined text-[18px]">photo_camera</span>
+              </button>
+            </div>
+            
+            <Link href={`/phones/${phone.slug}`} className="text-xs font-bold text-text-main underline underline-offset-2 mt-2 hover:text-primary">
+              View Photos ({phone.images?.length || 0})
+            </Link>
+          </div>
+
+          {/* Right Column (Specs) */}
+          <div className="md:col-span-8 lg:col-span-9 flex flex-col justify-between">
+            <ul className="space-y-3 mb-6 relative">
+              <li className="flex items-start gap-3 text-sm text-text-main">
+                <span className="material-symbols-outlined text-[20px] text-text-muted shrink-0 mt-0.5">developer_board</span>
+                {chipset}
+              </li>
+              <li className="flex items-start gap-3 text-sm text-text-main">
+                <span className="material-symbols-outlined text-[20px] text-text-muted shrink-0 mt-0.5">memory</span>
+                {ramStorage}
+              </li>
+              <li className="flex items-start gap-3 text-sm text-text-main">
+                <span className="material-symbols-outlined text-[20px] text-text-muted shrink-0 mt-0.5">photo_camera</span>
+                {rearCamera}
+              </li>
+              <li className="flex items-start gap-3 text-sm text-text-main">
+                <span className="material-symbols-outlined text-[20px] text-text-muted shrink-0 mt-0.5">camera_front</span>
+                {frontCamera}
+              </li>
+              <li className="flex items-start gap-3 text-sm text-text-main">
+                <span className="material-symbols-outlined text-[20px] text-text-muted shrink-0 mt-0.5">battery_charging_full</span>
+                {battery}
+              </li>
+              <li className="flex items-start gap-3 text-sm text-text-main">
+                <span className="material-symbols-outlined text-[20px] text-text-muted shrink-0 mt-0.5">smartphone</span>
+                {display}
+              </li>
+              <li className="flex items-start gap-3 text-sm text-text-main">
+                <span className="material-symbols-outlined text-[20px] text-text-muted shrink-0 mt-0.5">speed</span>
+                AnTuTu Score {antutuScore}
+              </li>
+              
+              {/* Ellipsis button for extra menu */}
+              <button className="absolute top-0 right-0 text-text-muted hover:text-text-main">
+                <span className="material-symbols-outlined">more_vert</span>
+              </button>
+            </ul>
+            
+            <div className="flex justify-end border-b border-border-subtle/50 pb-4 mb-4">
+              <Link href={`/phones/${phone.slug}`} className="text-xs font-bold text-text-main underline underline-offset-2 hover:text-primary">
+                View All Specs
+              </Link>
+            </div>
+
+            {/* Ratings & Pros/Cons */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div className="flex flex-col gap-3">
+                <div className="flex items-center gap-6">
+                  <span className="text-xs text-text-muted w-20">User Rating</span>
+                  <div className="flex items-center gap-1 font-bold text-sm text-text-main">
+                    <span className="material-symbols-outlined text-[16px] text-[#FF9800]" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
+                    {userRating.toFixed(1)}/5
+                  </div>
+                </div>
+                <div className="flex items-center gap-6">
+                  <span className="text-xs text-text-muted w-20">Expert Rating</span>
+                  <div className="flex items-center gap-1 font-bold text-sm text-text-main">
+                    <span className="material-symbols-outlined text-[16px] text-[#FF9800]" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
+                    {expertRating.toFixed(1)}/10
+                  </div>
+                </div>
+              </div>
+              
+              <div className="flex flex-col gap-2">
+                <p className="text-xs text-text-main line-clamp-2">
+                  <span className="font-bold text-[#8BC34A]">Pros:</span> {phoneData.pro}
+                </p>
+                <p className="text-xs text-text-main line-clamp-2">
+                  <span className="font-bold text-[#F44336]">Cons:</span> {phoneData.con}
+                </p>
+              </div>
+            </div>
+            
+            <div className="flex justify-end mt-2">
+              <Link href={`/phones/${phone.slug}`} className="text-xs font-bold text-text-main underline underline-offset-2 hover:text-primary">
+                Read Full Review
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Pricing Strip */}
+      <div className="bg-surface-container-lowest border-t border-border-subtle p-3 px-6 flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          {/* Mock Amazon Logo */}
+          <span className="font-bold text-text-main text-lg tracking-tighter">amazon</span>
+        </div>
+        
+        <div className="flex items-center gap-6">
+          <span className="font-bold text-text-main text-lg">
+            {lowestPrice ? `Rs. ${lowestPrice.toLocaleString()}` : "Price TBA"}
+          </span>
+          <Link 
+            href={`/phones/${phone.slug}`}
+            className="text-[#FF9800] font-bold text-sm hover:underline"
           >
-            star
-          </span>
-          {rating.toFixed(1)}
-        </div>
-      ) : null}
-
-      {/* Image */}
-      <div className="h-56 bg-surface-container-lowest p-6 flex items-center justify-center border-b border-border-subtle">
-        <div className="relative h-full w-full">
-          <Image
-            src={imageUrl}
-            alt={imageAlt}
-            fill
-            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-            className="object-contain group-hover:scale-105 transition-transform duration-500"
-          />
+            Go To Store
+          </Link>
         </div>
       </div>
 
-      {/* Content */}
-      <div className="p-5">
-        <h3 className="text-sm font-semibold text-on-surface mb-1 truncate">
-          {phone.name}
-        </h3>
-        <p className="text-sm text-text-muted mb-4 truncate">{specSummary}</p>
-        <div className="flex justify-between items-center">
-          <span className="text-lg text-price-green font-bold">
-            {lowestPrice
-              ? `Rs. ${lowestPrice.toLocaleString()}`
-              : "Price TBA"}
-          </span>
-        </div>
-      </div>
-    </Link>
+    </div>
   );
 }
