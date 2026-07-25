@@ -8,7 +8,7 @@ import Breadcrumb from "@/app/components/Breadcrumb";
 import PhoneGallery from "@/app/components/PhoneGallery";
 import PhoneSpecs from "@/app/components/PhoneSpecs";
 import PhoneDescriptionClient from "@/app/components/PhoneDescriptionClient";
-
+import UserFeedbackWidget from "@/app/components/UserFeedbackWidget";
 function getTagColorClass(tag: string) {
   const hash = Array.from(tag).reduce((acc, char) => acc + char.charCodeAt(0), 0);
   const colorThemes = [
@@ -541,6 +541,9 @@ export default async function PhoneDetailPage({
             </div>
           </section>
         )}
+
+        {/* User Feedback Widget */}
+        <UserFeedbackWidget phoneId={phone._id} phoneName={phone.name} />
 
         {/* Product Description */}
         <PhoneDescriptionClient slug={phone.slug} initialDescription={phone.description} phoneName={phone.name} />

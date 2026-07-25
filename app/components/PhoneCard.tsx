@@ -245,22 +245,16 @@ export default function PhoneCard({ phone, variant = "list" }: PhoneCardProps) {
 
       {/* Pricing Strip */}
       <div className="bg-surface-container-lowest border-t border-border-subtle p-3 px-6 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          {/* Mock Amazon Logo */}
-          <span className="font-bold text-text-main text-lg tracking-tighter">amazon</span>
-        </div>
+        <span className="font-bold text-text-main text-lg">
+          {lowestPrice ? `Rs. ${lowestPrice.toLocaleString()}` : "Price TBA"}
+        </span>
         
-        <div className="flex items-center gap-6">
-          <span className="font-bold text-text-main text-lg">
-            {lowestPrice ? `Rs. ${lowestPrice.toLocaleString()}` : "Price TBA"}
-          </span>
-          <Link 
-            href={`/phones/${phone.slug}`}
-            className="text-[#FF9800] font-bold text-sm hover:underline"
-          >
-            Go To Store
-          </Link>
-        </div>
+        <Link 
+          href={`/phones/${phone.slug}`}
+          className="text-[#FF9800] font-bold text-sm hover:underline"
+        >
+          View Details
+        </Link>
       </div>
 
     </div>

@@ -204,3 +204,31 @@ export async function getPopularComparisons(limit: number = 5): Promise<any[]> {
   const data = await apiFetch<any[]>(`/compare/popular?limit=${limit}`);
   return data || [];
 }
+
+export async function getVoteStats(phoneId: string): Promise<any> {
+  const data = await apiFetch<any>(`/votes/${phoneId}/stats`);
+  return data || null;
+}
+
+export async function castVote(payload: { phoneId: string; sessionId: string; pollType: string; value: any }): Promise<any> {
+  try {
+    const res = await fetch(`${API_BASE_URL}/votes`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
+    
+    if (!res.ok) {
+      const errorData = await res.json().catch(() => null);
+      throw new Error(errorData?.message || "Failed to cast vote");
+    }
+
+    const json = await res.json();
+    return json.data;
+  } catch (error) {
+    console.error("Error casting vote:", error);
+    throw error;
+  }
+}
