@@ -4,6 +4,7 @@ import type { Phone } from "@/app/lib/api";
 
 interface PhoneCardProps {
   phone: Phone;
+  variant?: "list" | "grid";
 }
 
 // Helper to extract a short snippet from markdown description
@@ -68,7 +69,7 @@ function getFirstProAndCon(description?: string) {
   return { pro, con };
 }
 
-export default function PhoneCard({ phone }: PhoneCardProps) {
+export default function PhoneCard({ phone, variant = "list" }: PhoneCardProps) {
   // Get primary image or first image
   const primaryImage = phone.images?.find((img) => img.is_primary) || phone.images?.[0];
   const imageUrl = primaryImage?.url || "/placeholder-phone.svg";
@@ -107,30 +108,34 @@ export default function PhoneCard({ phone }: PhoneCardProps) {
           <div className="flex items-center gap-3">
             <div className="w-1 h-6 bg-primary rounded-full"></div>
             <Link href={`/phones/${phone.slug}`} className="hover:text-primary transition-colors">
-              <h2 className="font-headline-md text-xl md:text-2xl font-bold text-text-main leading-tight">
+              <h2 className={`font-headline-md font-bold text-text-main leading-tight ${variant === 'list' ? 'text-xl md:text-2xl' : 'text-lg'}`}>
                 {phone.name}
               </h2>
             </Link>
           </div>
-          <button className="flex items-center gap-1 text-primary text-sm font-semibold hover:bg-primary/5 px-2 py-1 rounded transition-colors">
-            <span className="material-symbols-outlined text-[18px]">add</span>
-            Compare
-          </button>
+          {variant === "list" && (
+            <button className="flex items-center gap-1 text-primary text-sm font-semibold hover:bg-primary/5 px-2 py-1 rounded transition-colors shrink-0">
+              <span className="material-symbols-outlined text-[18px]">add</span>
+              Compare
+            </button>
+          )}
         </div>
 
         <div className="text-xs text-text-muted mb-4 pl-4">
           Release Date: <span className="font-medium text-text-main">{formatDate(phone.release_date)}</span>
         </div>
 
-        <p className="text-sm text-text-muted leading-relaxed line-clamp-2 pl-4 mb-6">
-          {getShortDescription(phone.description)} <Link href={`/phones/${phone.slug}`} className="font-bold text-text-main hover:text-primary">read more</Link>
-        </p>
+        {variant === "list" && (
+          <p className="text-sm text-text-muted leading-relaxed line-clamp-2 pl-4 mb-6">
+            {getShortDescription(phone.description)} <Link href={`/phones/${phone.slug}`} className="font-bold text-text-main hover:text-primary">read more</Link>
+          </p>
+        )}
 
         {/* Grid for Image and Specs */}
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-6 pl-4">
+        <div className={`grid grid-cols-1 ${variant === 'list' ? 'md:grid-cols-12 pl-4' : 'px-2'} gap-6`}>
           
           {/* Left Column (Image) */}
-          <div className="md:col-span-4 lg:col-span-3 flex flex-col items-center">
+          <div className={`${variant === 'list' ? 'md:col-span-4 lg:col-span-3' : 'w-full max-w-[200px] mx-auto'} flex flex-col items-center`}>
             <Link href={`/phones/${phone.slug}`} className="relative w-full aspect-[3/4] bg-surface-container-low rounded-xl p-4 flex items-center justify-center group overflow-hidden">
               <div className="absolute top-2 left-2 bg-[#8BC34A] text-white text-[10px] font-bold px-1.5 py-1 rounded flex flex-col items-center shadow-sm z-10 leading-tight">
                 <span>97%</span>
@@ -162,7 +167,7 @@ export default function PhoneCard({ phone }: PhoneCardProps) {
           </div>
 
           {/* Right Column (Specs) */}
-          <div className="md:col-span-8 lg:col-span-9 flex flex-col justify-between">
+          <div className={`${variant === 'list' ? 'md:col-span-8 lg:col-span-9' : 'w-full'} flex flex-col justify-between`}>
             <ul className="space-y-3 mb-6 relative">
               <li className="flex items-start gap-3 text-sm text-text-main">
                 <span className="material-symbols-outlined text-[20px] text-text-muted shrink-0 mt-0.5">developer_board</span>
@@ -202,7 +207,7 @@ export default function PhoneCard({ phone }: PhoneCardProps) {
             </div>
 
             {/* Ratings & Pros/Cons */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className={`grid grid-cols-1 ${variant === 'list' ? 'lg:grid-cols-2' : ''} gap-6`}>
               <div className="flex flex-col gap-3">
                 <div className="flex items-center gap-6">
                   <span className="text-xs text-text-muted w-20">User Rating</span>
@@ -213,7 +218,7 @@ export default function PhoneCard({ phone }: PhoneCardProps) {
                 </div>
               </div>
               
-              {phoneData && (
+              {phoneData && variant === "list" && (
                 <div className="flex flex-col gap-2">
                   {phoneData.pro && (
                     <p className="text-xs text-text-main line-clamp-2">

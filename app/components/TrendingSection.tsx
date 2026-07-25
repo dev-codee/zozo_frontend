@@ -39,7 +39,7 @@ export default function TrendingSection({ phones }: TrendingSectionProps) {
         {displayPhones.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {displayPhones.map((phone) => (
-              <PhoneCard key={phone._id} phone={phone} />
+              <PhoneCard key={phone._id} phone={phone} variant="grid" />
             ))}
           </div>
         ) : (
