@@ -32,7 +32,7 @@ export default async function SearchPage({
         {phones.length > 0 ? (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
             {phones.map((phone) => (
-              <PhoneCard key={phone._id} phone={phone} />
+              <PhoneCard key={phone._id} phone={phone} variant="grid" />
             ))}
           </div>
         ) : (
