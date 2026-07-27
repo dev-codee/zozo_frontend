@@ -281,8 +281,8 @@ export default async function PhoneDetailPage({
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
                   {/* Box 1: RAM */}
-                  <div className="flex items-center gap-2 p-1.5 sm:p-2 rounded-lg border border-border-subtle bg-surface-white hover:border-primary/50 transition-colors shadow-sm">
-                    <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-md bg-blue-50 text-primary flex items-center justify-center flex-shrink-0">
+                  <div className="flex items-center gap-2 p-1.5 sm:p-2 rounded-sm border border-border-subtle bg-surface-white hover:border-primary/50 transition-colors">
+                    <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-sm bg-blue-50 text-primary flex items-center justify-center flex-shrink-0">
                       <span className="material-symbols-outlined text-[14px] sm:text-[18px]">memory</span>
                     </div>
                     <div className="flex flex-col overflow-hidden">
@@ -292,8 +292,8 @@ export default async function PhoneDetailPage({
                   </div>
 
                   {/* Box 2: STORAGE */}
-                  <div className="flex items-center gap-2 p-1.5 sm:p-2 rounded-lg border border-border-subtle bg-surface-white hover:border-primary/50 transition-colors shadow-sm">
-                    <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-md bg-blue-50 text-primary flex items-center justify-center flex-shrink-0">
+                  <div className="flex items-center gap-2 p-1.5 sm:p-2 rounded-sm border border-border-subtle bg-surface-white hover:border-primary/50 transition-colors">
+                    <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-sm bg-blue-50 text-primary flex items-center justify-center flex-shrink-0">
                       <span className="material-symbols-outlined text-[14px] sm:text-[18px]">storage</span>
                     </div>
                     <div className="flex flex-col overflow-hidden">
@@ -303,8 +303,8 @@ export default async function PhoneDetailPage({
                   </div>
 
                   {/* Box 3: NETWORK */}
-                  <div className="flex items-center gap-2 p-1.5 sm:p-2 rounded-lg border border-border-subtle bg-surface-white hover:border-primary/50 transition-colors shadow-sm">
-                    <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-md bg-blue-50 text-primary flex items-center justify-center flex-shrink-0">
+                  <div className="flex items-center gap-2 p-1.5 sm:p-2 rounded-sm border border-border-subtle bg-surface-white hover:border-primary/50 transition-colors">
+                    <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-sm bg-blue-50 text-primary flex items-center justify-center flex-shrink-0">
                       <span className="material-symbols-outlined text-[14px] sm:text-[18px]">signal_cellular_alt</span>
                     </div>
                     <div className="flex flex-col overflow-hidden">
@@ -314,8 +314,8 @@ export default async function PhoneDetailPage({
                   </div>
 
                   {/* Box 4: BATTERY */}
-                  <div className="flex items-center gap-2 p-1.5 sm:p-2 rounded-lg border border-border-subtle bg-surface-white hover:border-primary/50 transition-colors shadow-sm">
-                    <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-md bg-blue-50 text-primary flex items-center justify-center flex-shrink-0">
+                  <div className="flex items-center gap-2 p-1.5 sm:p-2 rounded-sm border border-border-subtle bg-surface-white hover:border-primary/50 transition-colors">
+                    <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-sm bg-blue-50 text-primary flex items-center justify-center flex-shrink-0">
                       <span className="material-symbols-outlined text-[14px] sm:text-[18px]">battery_charging_full</span>
                     </div>
                     <div className="flex flex-col overflow-hidden">
@@ -325,8 +325,8 @@ export default async function PhoneDetailPage({
                   </div>
 
                   {/* Box 5: CAMERA */}
-                  <div className="flex items-center gap-2 p-1.5 sm:p-2 rounded-lg border border-border-subtle bg-surface-white hover:border-primary/50 transition-colors shadow-sm">
-                    <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-md bg-blue-50 text-primary flex items-center justify-center flex-shrink-0">
+                  <div className="flex items-center gap-2 p-1.5 sm:p-2 rounded-sm border border-border-subtle bg-surface-white hover:border-primary/50 transition-colors">
+                    <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-sm bg-blue-50 text-primary flex items-center justify-center flex-shrink-0">
                       <span className="material-symbols-outlined text-[14px] sm:text-[18px]">photo_camera</span>
                     </div>
                     <div className="flex flex-col overflow-hidden">
@@ -336,8 +336,8 @@ export default async function PhoneDetailPage({
                   </div>
 
                   {/* Box 6: DISPLAY */}
-                  <div className="flex items-center gap-2 p-1.5 sm:p-2 rounded-lg border border-border-subtle bg-surface-white hover:border-primary/50 transition-colors shadow-sm">
-                    <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-md bg-blue-50 text-primary flex items-center justify-center flex-shrink-0">
+                  <div className="flex items-center gap-2 p-1.5 sm:p-2 rounded-sm border border-border-subtle bg-surface-white hover:border-primary/50 transition-colors">
+                    <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-sm bg-blue-50 text-primary flex items-center justify-center flex-shrink-0">
                       <span className="material-symbols-outlined text-[14px] sm:text-[18px]">smartphone</span>
                     </div>
                     <div className="flex flex-col overflow-hidden">
@@ -347,8 +347,8 @@ export default async function PhoneDetailPage({
                   </div>
 
                   {/* Box 7: CHIPSET */}
-                  <div className="flex items-center gap-2 p-1.5 sm:p-2 rounded-lg border border-border-subtle bg-surface-white hover:border-primary/50 transition-colors shadow-sm">
-                    <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-md bg-blue-50 text-primary flex items-center justify-center flex-shrink-0">
+                  <div className="flex items-center gap-2 p-1.5 sm:p-2 rounded-sm border border-border-subtle bg-surface-white hover:border-primary/50 transition-colors">
+                    <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-sm bg-blue-50 text-primary flex items-center justify-center flex-shrink-0">
                       <span className="material-symbols-outlined text-[14px] sm:text-[18px]">developer_board</span>
                     </div>
                     <div className="flex flex-col overflow-hidden">
@@ -358,8 +358,8 @@ export default async function PhoneDetailPage({
                   </div>
 
                   {/* Box 8: OS */}
-                  <div className="flex items-center gap-2 p-1.5 sm:p-2 rounded-lg border border-border-subtle bg-surface-white hover:border-primary/50 transition-colors shadow-sm">
-                    <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-md bg-blue-50 text-primary flex items-center justify-center flex-shrink-0">
+                  <div className="flex items-center gap-2 p-1.5 sm:p-2 rounded-sm border border-border-subtle bg-surface-white hover:border-primary/50 transition-colors">
+                    <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-sm bg-blue-50 text-primary flex items-center justify-center flex-shrink-0">
                       <span className="material-symbols-outlined text-[14px] sm:text-[18px]">widgets</span>
                     </div>
                     <div className="flex flex-col overflow-hidden">
@@ -368,20 +368,24 @@ export default async function PhoneDetailPage({
                     </div>
                   </div>
 
+                </div>
+
+                {/* Actions */}
+                <div className="flex items-center justify-center sm:justify-start gap-2 mt-3">
                   {/* Action 1: Compare */}
                   <Link
                     href={`/compare?phone=${phone.slug}`}
-                    className="flex items-center justify-center gap-2 p-1.5 sm:p-2 rounded-lg border border-border-subtle bg-surface-white hover:bg-surface-container-low hover:border-primary font-medium text-[10px] sm:text-[11px] text-text-main transition-colors shadow-sm"
+                    className="flex items-center justify-center gap-1.5 py-1 px-3 sm:py-1.5 sm:px-4 rounded-sm border border-border-subtle bg-surface-white hover:bg-surface-container-low hover:border-primary font-medium text-[10px] sm:text-[11px] text-text-main transition-colors"
                   >
-                    <span className="material-symbols-outlined text-[14px] sm:text-[16px]">
+                    <span className="material-symbols-outlined text-[13px] sm:text-[14px]">
                       compare_arrows
                     </span>
                     Compare
                   </Link>
 
                   {/* Action 2: Price Alert */}
-                  <button className="flex items-center justify-center gap-2 p-1.5 sm:p-2 rounded-lg border border-border-subtle bg-surface-white hover:bg-surface-container-low hover:border-primary font-medium text-[10px] sm:text-[11px] text-text-main transition-colors shadow-sm">
-                    <span className="material-symbols-outlined text-[14px] sm:text-[16px]">
+                  <button className="flex items-center justify-center gap-1.5 py-1 px-3 sm:py-1.5 sm:px-4 rounded-sm border border-border-subtle bg-surface-white hover:bg-surface-container-low hover:border-primary font-medium text-[10px] sm:text-[11px] text-text-main transition-colors">
+                    <span className="material-symbols-outlined text-[13px] sm:text-[14px]">
                       notifications
                     </span>
                     Price Alert
