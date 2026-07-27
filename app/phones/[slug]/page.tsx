@@ -324,14 +324,14 @@ export default async function PhoneDetailPage({
                     </div>
                   </div>
 
-                  {/* Box 5: CAMERA */}
+                  {/* Box 8: OS */}
                   <div className="flex items-center gap-2 p-1.5 sm:p-2 rounded-sm border border-border-subtle bg-surface-white hover:border-primary/50 transition-colors">
                     <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-sm bg-blue-50 text-primary flex items-center justify-center flex-shrink-0">
-                      <span className="material-symbols-outlined text-[14px] sm:text-[18px]">photo_camera</span>
+                      <span className="material-symbols-outlined text-[14px] sm:text-[18px]">widgets</span>
                     </div>
                     <div className="flex flex-col overflow-hidden">
-                      <span className="text-[9px] sm:text-[10px] font-medium text-text-muted uppercase tracking-wider mb-0.5">Camera</span>
-                      <span className="text-[11px] sm:text-xs font-medium text-text-main leading-tight line-clamp-2">{cameraDisplay}</span>
+                      <span className="text-[9px] sm:text-[10px] font-medium text-text-muted uppercase tracking-wider mb-0.5">OS</span>
+                      <span className="text-[11px] sm:text-xs font-medium text-text-main leading-tight line-clamp-2">{osDisplay}</span>
                     </div>
                   </div>
 
@@ -346,6 +346,17 @@ export default async function PhoneDetailPage({
                     </div>
                   </div>
 
+                  {/* Box 5: CAMERA */}
+                  <div className="flex items-center gap-2 p-1.5 sm:p-2 rounded-sm border border-border-subtle bg-surface-white hover:border-primary/50 transition-colors">
+                    <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-sm bg-blue-50 text-primary flex items-center justify-center flex-shrink-0">
+                      <span className="material-symbols-outlined text-[14px] sm:text-[18px]">photo_camera</span>
+                    </div>
+                    <div className="flex flex-col overflow-hidden">
+                      <span className="text-[9px] sm:text-[10px] font-medium text-text-muted uppercase tracking-wider mb-0.5">Camera</span>
+                      <span className="text-[11px] sm:text-xs font-medium text-text-main leading-tight line-clamp-2">{cameraDisplay}</span>
+                    </div>
+                  </div>
+
                   {/* Box 7: CHIPSET */}
                   <div className="flex items-center gap-2 p-1.5 sm:p-2 rounded-sm border border-border-subtle bg-surface-white hover:border-primary/50 transition-colors">
                     <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-sm bg-blue-50 text-primary flex items-center justify-center flex-shrink-0">
@@ -354,17 +365,6 @@ export default async function PhoneDetailPage({
                     <div className="flex flex-col overflow-hidden">
                       <span className="text-[9px] sm:text-[10px] font-medium text-text-muted uppercase tracking-wider mb-0.5">Chipset</span>
                       <span className="text-[11px] sm:text-xs font-medium text-text-main leading-tight line-clamp-2">{chipsetDisplay}</span>
-                    </div>
-                  </div>
-
-                  {/* Box 8: OS */}
-                  <div className="flex items-center gap-2 p-1.5 sm:p-2 rounded-sm border border-border-subtle bg-surface-white hover:border-primary/50 transition-colors">
-                    <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-sm bg-blue-50 text-primary flex items-center justify-center flex-shrink-0">
-                      <span className="material-symbols-outlined text-[14px] sm:text-[18px]">widgets</span>
-                    </div>
-                    <div className="flex flex-col overflow-hidden">
-                      <span className="text-[9px] sm:text-[10px] font-medium text-text-muted uppercase tracking-wider mb-0.5">OS</span>
-                      <span className="text-[11px] sm:text-xs font-medium text-text-main leading-tight line-clamp-2">{osDisplay}</span>
                     </div>
                   </div>
 
@@ -495,7 +495,7 @@ export default async function PhoneDetailPage({
                           <div className="relative aspect-[4/5] bg-surface-container-low flex items-center justify-center p-3">
                             <div className="absolute top-2 left-2 bg-[#8BC34A] text-white text-[10px] font-bold px-1.5 py-1 rounded flex flex-col items-center shadow-sm z-10 leading-tight">
                               <span>85%</span>
-                              <span className="text-[7px] font-medium opacity-90 text-center uppercase tracking-wider">Spec<br/>Score</span>
+                              <span className="text-[7px] font-medium opacity-90 text-center uppercase tracking-wider">Spec<br />Score</span>
                             </div>
                             {primaryImage ? (
                               <img
@@ -538,7 +538,7 @@ export default async function PhoneDetailPage({
                     </li>
                   ))}
                   {brandPhones.length === 0 && (
-                     <li className="text-xs text-text-muted">No other phones found.</li>
+                    <li className="text-xs text-text-muted">No other phones found.</li>
                   )}
                 </ul>
               </div>
