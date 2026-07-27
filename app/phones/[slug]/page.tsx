@@ -93,6 +93,21 @@ export default async function PhoneDetailPage({
     console.error("Failed to fetch competitors:", error);
   }
 
+  // Fetch brand phones for the sidebar list
+  let brandPhones: Phone[] = [];
+  try {
+    if (!lowestPrice) {
+      brandPhones = competitorPhones;
+    } else {
+      const sameBrand = await getPhones(`brand=${phone.brand_slug}`);
+      brandPhones = sameBrand
+        .filter((p) => p.slug !== phone.slug)
+        .slice(0, 10);
+    }
+  } catch (error) {
+    console.error("Failed to fetch brand phones:", error);
+  }
+
   const releaseDateStr = phone.release_date && !isNaN(Date.parse(phone.release_date))
     ? new Date(phone.release_date).toLocaleDateString("en-US", {
       year: "numeric",
@@ -173,7 +188,7 @@ export default async function PhoneDetailPage({
           {/* Hero Section */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
             {/* Gallery */}
-            <PhoneGallery images={phone.images} altText={phone.name} />
+            <PhoneGallery images={phone.images} altText={`${phone.name.replace(/\s+/g, '-')}-Price-in-Pakistan-ZOZO`} />
 
             {/* Product Info */}
             <div className="flex flex-col gap-3">
@@ -258,119 +273,120 @@ export default async function PhoneDetailPage({
               )}
 
               {/* Key Specs */}
-              <div className="bg-white p-5 rounded-xl mt-2">
-                <h2 className="text-lg font-bold text-text-main flex items-center gap-2 mb-5">
-                  <span className="w-1 h-6 bg-primary rounded-full"></span>
-                  Key Specs
+              <div className="bg-white p-4 sm:p-5 rounded-xl mt-2">
+                <h2 className="text-base sm:text-lg font-bold text-text-main flex items-center gap-2 mb-4">
+                  <span className="w-1 h-5 sm:h-6 bg-primary rounded-full"></span>
+                  Top Features of {phone.name}
                 </h2>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
                   {/* Box 1: RAM */}
-                  <div className="flex items-center gap-3 p-3 sm:p-4 rounded-xl border border-border-subtle bg-surface-white hover:border-primary/50 transition-colors shadow-sm">
-                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-blue-50 text-primary flex items-center justify-center flex-shrink-0">
-                      <span className="material-symbols-outlined text-[20px] sm:text-[24px]">memory</span>
+                  <div className="flex items-center gap-2 p-1.5 sm:p-2 rounded-xl border border-border-subtle bg-surface-white hover:border-primary/50 transition-colors shadow-sm">
+                    <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-blue-50 text-primary flex items-center justify-center flex-shrink-0">
+                      <span className="material-symbols-outlined text-[14px] sm:text-[18px]">memory</span>
                     </div>
                     <div className="flex flex-col overflow-hidden">
-                      <span className="text-[11px] sm:text-xs font-bold text-text-muted uppercase tracking-wider mb-0.5">RAM</span>
-                      <span className="text-sm sm:text-base font-bold text-text-main leading-tight line-clamp-2">{ramDisplay}</span>
+                      <span className="text-[9px] sm:text-[10px] font-medium text-text-muted uppercase tracking-wider mb-0.5">RAM</span>
+                      <span className="text-[11px] sm:text-xs font-medium text-text-main leading-tight line-clamp-2">{ramDisplay}</span>
                     </div>
                   </div>
 
                   {/* Box 2: STORAGE */}
-                  <div className="flex items-center gap-3 p-3 sm:p-4 rounded-xl border border-border-subtle bg-surface-white hover:border-primary/50 transition-colors shadow-sm">
-                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-blue-50 text-primary flex items-center justify-center flex-shrink-0">
-                      <span className="material-symbols-outlined text-[20px] sm:text-[24px]">storage</span>
+                  <div className="flex items-center gap-2 p-1.5 sm:p-2 rounded-xl border border-border-subtle bg-surface-white hover:border-primary/50 transition-colors shadow-sm">
+                    <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-blue-50 text-primary flex items-center justify-center flex-shrink-0">
+                      <span className="material-symbols-outlined text-[14px] sm:text-[18px]">storage</span>
                     </div>
                     <div className="flex flex-col overflow-hidden">
-                      <span className="text-[11px] sm:text-xs font-bold text-text-muted uppercase tracking-wider mb-0.5">Storage</span>
-                      <span className="text-sm sm:text-base font-bold text-text-main leading-tight line-clamp-2">{storageDisplay}</span>
+                      <span className="text-[9px] sm:text-[10px] font-medium text-text-muted uppercase tracking-wider mb-0.5">Storage</span>
+                      <span className="text-[11px] sm:text-xs font-medium text-text-main leading-tight line-clamp-2">{storageDisplay}</span>
                     </div>
                   </div>
 
                   {/* Box 3: NETWORK */}
-                  <div className="flex items-center gap-3 p-3 sm:p-4 rounded-xl border border-border-subtle bg-surface-white hover:border-primary/50 transition-colors shadow-sm">
-                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-blue-50 text-primary flex items-center justify-center flex-shrink-0">
-                      <span className="material-symbols-outlined text-[20px] sm:text-[24px]">signal_cellular_alt</span>
+                  <div className="flex items-center gap-2 p-1.5 sm:p-2 rounded-xl border border-border-subtle bg-surface-white hover:border-primary/50 transition-colors shadow-sm">
+                    <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-blue-50 text-primary flex items-center justify-center flex-shrink-0">
+                      <span className="material-symbols-outlined text-[14px] sm:text-[18px]">signal_cellular_alt</span>
                     </div>
                     <div className="flex flex-col overflow-hidden">
-                      <span className="text-[11px] sm:text-xs font-bold text-text-muted uppercase tracking-wider mb-0.5">Network</span>
-                      <span className="text-sm sm:text-base font-bold text-text-main leading-tight line-clamp-2">{networkDisplay}</span>
+                      <span className="text-[9px] sm:text-[10px] font-medium text-text-muted uppercase tracking-wider mb-0.5">Network</span>
+                      <span className="text-[11px] sm:text-xs font-medium text-text-main leading-tight line-clamp-2">{networkDisplay}</span>
                     </div>
                   </div>
 
                   {/* Box 4: BATTERY */}
-                  <div className="flex items-center gap-3 p-3 sm:p-4 rounded-xl border border-border-subtle bg-surface-white hover:border-primary/50 transition-colors shadow-sm">
-                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-blue-50 text-primary flex items-center justify-center flex-shrink-0">
-                      <span className="material-symbols-outlined text-[20px] sm:text-[24px]">battery_charging_full</span>
+                  <div className="flex items-center gap-2 p-1.5 sm:p-2 rounded-xl border border-border-subtle bg-surface-white hover:border-primary/50 transition-colors shadow-sm">
+                    <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-blue-50 text-primary flex items-center justify-center flex-shrink-0">
+                      <span className="material-symbols-outlined text-[14px] sm:text-[18px]">battery_charging_full</span>
                     </div>
                     <div className="flex flex-col overflow-hidden">
-                      <span className="text-[11px] sm:text-xs font-bold text-text-muted uppercase tracking-wider mb-0.5">Battery</span>
-                      <span className="text-sm sm:text-base font-bold text-text-main leading-tight line-clamp-2">{batteryDisplay}</span>
+                      <span className="text-[9px] sm:text-[10px] font-medium text-text-muted uppercase tracking-wider mb-0.5">Battery</span>
+                      <span className="text-[11px] sm:text-xs font-medium text-text-main leading-tight line-clamp-2">{batteryDisplay}</span>
                     </div>
                   </div>
 
-                  {/* Box 4: CAMERA */}
-                  <div className="flex items-center gap-3 p-3 sm:p-4 rounded-xl border border-border-subtle bg-surface-white hover:border-primary/50 transition-colors shadow-sm">
-                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-blue-50 text-primary flex items-center justify-center flex-shrink-0">
-                      <span className="material-symbols-outlined text-[20px] sm:text-[24px]">photo_camera</span>
+                  {/* Box 5: CAMERA */}
+                  <div className="flex items-center gap-2 p-1.5 sm:p-2 rounded-xl border border-border-subtle bg-surface-white hover:border-primary/50 transition-colors shadow-sm">
+                    <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-blue-50 text-primary flex items-center justify-center flex-shrink-0">
+                      <span className="material-symbols-outlined text-[14px] sm:text-[18px]">photo_camera</span>
                     </div>
                     <div className="flex flex-col overflow-hidden">
-                      <span className="text-[11px] sm:text-xs font-bold text-text-muted uppercase tracking-wider mb-0.5">Camera</span>
-                      <span className="text-sm sm:text-base font-bold text-text-main leading-tight line-clamp-2">{cameraDisplay}</span>
+                      <span className="text-[9px] sm:text-[10px] font-medium text-text-muted uppercase tracking-wider mb-0.5">Camera</span>
+                      <span className="text-[11px] sm:text-xs font-medium text-text-main leading-tight line-clamp-2">{cameraDisplay}</span>
                     </div>
                   </div>
 
-                  {/* Box 5: DISPLAY */}
-                  <div className="flex items-center gap-3 p-3 sm:p-4 rounded-xl border border-border-subtle bg-surface-white hover:border-primary/50 transition-colors shadow-sm">
-                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-blue-50 text-primary flex items-center justify-center flex-shrink-0">
-                      <span className="material-symbols-outlined text-[20px] sm:text-[24px]">smartphone</span>
+                  {/* Box 6: DISPLAY */}
+                  <div className="flex items-center gap-2 p-1.5 sm:p-2 rounded-xl border border-border-subtle bg-surface-white hover:border-primary/50 transition-colors shadow-sm">
+                    <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-blue-50 text-primary flex items-center justify-center flex-shrink-0">
+                      <span className="material-symbols-outlined text-[14px] sm:text-[18px]">smartphone</span>
                     </div>
                     <div className="flex flex-col overflow-hidden">
-                      <span className="text-[11px] sm:text-xs font-bold text-text-muted uppercase tracking-wider mb-0.5">Display</span>
-                      <span className="text-sm sm:text-base font-bold text-text-main leading-tight line-clamp-2">{displayString}</span>
+                      <span className="text-[9px] sm:text-[10px] font-medium text-text-muted uppercase tracking-wider mb-0.5">Display</span>
+                      <span className="text-[11px] sm:text-xs font-medium text-text-main leading-tight line-clamp-2">{displayString}</span>
                     </div>
                   </div>
 
-                  {/* Box 6: CHIPSET */}
-                  <div className="flex items-center gap-3 p-3 sm:p-4 rounded-xl border border-border-subtle bg-surface-white hover:border-primary/50 transition-colors shadow-sm">
-                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-blue-50 text-primary flex items-center justify-center flex-shrink-0">
-                      <span className="material-symbols-outlined text-[20px] sm:text-[24px]">developer_board</span>
+                  {/* Box 7: CHIPSET */}
+                  <div className="flex items-center gap-2 p-1.5 sm:p-2 rounded-xl border border-border-subtle bg-surface-white hover:border-primary/50 transition-colors shadow-sm">
+                    <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-blue-50 text-primary flex items-center justify-center flex-shrink-0">
+                      <span className="material-symbols-outlined text-[14px] sm:text-[18px]">developer_board</span>
                     </div>
                     <div className="flex flex-col overflow-hidden">
-                      <span className="text-[11px] sm:text-xs font-bold text-text-muted uppercase tracking-wider mb-0.5">Chipset</span>
-                      <span className="text-sm sm:text-base font-bold text-text-main leading-tight line-clamp-2">{chipsetDisplay}</span>
+                      <span className="text-[9px] sm:text-[10px] font-medium text-text-muted uppercase tracking-wider mb-0.5">Chipset</span>
+                      <span className="text-[11px] sm:text-xs font-medium text-text-main leading-tight line-clamp-2">{chipsetDisplay}</span>
                     </div>
                   </div>
+
                   {/* Box 8: OS */}
-                  <div className="flex items-center gap-3 p-3 sm:p-4 rounded-xl border border-border-subtle bg-surface-white hover:border-primary/50 transition-colors shadow-sm">
-                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg bg-blue-50 text-primary flex items-center justify-center flex-shrink-0">
-                      <span className="material-symbols-outlined text-[20px] sm:text-[24px]">widgets</span>
+                  <div className="flex items-center gap-2 p-1.5 sm:p-2 rounded-xl border border-border-subtle bg-surface-white hover:border-primary/50 transition-colors shadow-sm">
+                    <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-blue-50 text-primary flex items-center justify-center flex-shrink-0">
+                      <span className="material-symbols-outlined text-[14px] sm:text-[18px]">widgets</span>
                     </div>
                     <div className="flex flex-col overflow-hidden">
-                      <span className="text-[11px] sm:text-xs font-bold text-text-muted uppercase tracking-wider mb-0.5">OS</span>
-                      <span className="text-sm sm:text-base font-bold text-text-main leading-tight line-clamp-2">{osDisplay}</span>
+                      <span className="text-[9px] sm:text-[10px] font-medium text-text-muted uppercase tracking-wider mb-0.5">OS</span>
+                      <span className="text-[11px] sm:text-xs font-medium text-text-main leading-tight line-clamp-2">{osDisplay}</span>
                     </div>
                   </div>
-                </div>
-              </div>
 
-              {/* Action Buttons */}
-              <div className="flex flex-col sm:flex-row gap-4 mt-6">
-                <Link
-                  href={`/compare?phone=${phone.slug}`}
-                  className="flex-1 bg-surface-white border border-border-subtle text-text-main hover:bg-surface-container-low hover:border-primary font-semibold text-xs px-6 h-12 rounded-lg flex items-center justify-center gap-2 transition-all shadow-sm"
-                >
-                  <span className="material-symbols-outlined text-[18px]">
-                    compare_arrows
-                  </span>
-                  Add to Compare
-                </Link>
-                <button className="flex-1 bg-surface-white border border-border-subtle text-text-main hover:bg-surface-container-low hover:border-primary font-semibold text-xs px-6 h-12 rounded-lg flex items-center justify-center gap-2 transition-all shadow-sm">
-                  <span className="material-symbols-outlined text-[18px]">
-                    notifications
-                  </span>
-                  Set Price Alert
-                </button>
+                  {/* Action 1: Compare */}
+                  <Link
+                    href={`/compare?phone=${phone.slug}`}
+                    className="flex items-center justify-center gap-2 p-1.5 sm:p-2 rounded-xl border border-border-subtle bg-surface-white hover:bg-surface-container-low hover:border-primary font-medium text-[10px] sm:text-[11px] text-text-main transition-colors shadow-sm"
+                  >
+                    <span className="material-symbols-outlined text-[14px] sm:text-[16px]">
+                      compare_arrows
+                    </span>
+                    Compare
+                  </Link>
+
+                  {/* Action 2: Price Alert */}
+                  <button className="flex items-center justify-center gap-2 p-1.5 sm:p-2 rounded-xl border border-border-subtle bg-surface-white hover:bg-surface-container-low hover:border-primary font-medium text-[10px] sm:text-[11px] text-text-main transition-colors shadow-sm">
+                    <span className="material-symbols-outlined text-[14px] sm:text-[16px]">
+                      notifications
+                    </span>
+                    Price Alert
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -502,6 +518,41 @@ export default async function PhoneDetailPage({
                 ) : (
                   <p className="text-xs text-text-muted">No competitor devices found.</p>
                 )}
+              </div>
+
+              {/* Other Brand Phones */}
+              <div className="bg-white border border-border-subtle rounded-xl p-4 shadow-sm mt-6">
+                <h3 className="font-headline-sm text-sm font-bold text-text-main mb-3">
+                  Other {phone.brand_slug.charAt(0).toUpperCase() + phone.brand_slug.slice(1).replace("-", " ")} Mobile Prices in Pakistan
+                </h3>
+                <ul className="flex flex-col gap-2">
+                  {brandPhones.map(bp => (
+                    <li key={bp._id}>
+                      <Link href={`/phones/${bp.slug}`} className="text-sm text-primary hover:underline line-clamp-1">
+                        {bp.name} Price in Pakistan
+                      </Link>
+                    </li>
+                  ))}
+                  {brandPhones.length === 0 && (
+                     <li className="text-xs text-text-muted">No other phones found.</li>
+                  )}
+                </ul>
+              </div>
+
+              {/* Best Phones by Price */}
+              <div className="bg-white border border-border-subtle rounded-xl p-4 shadow-sm mt-6">
+                <h3 className="font-headline-sm text-sm font-bold text-red-600 mb-3">
+                  Best Phones List with Price
+                </h3>
+                <ul className="flex flex-col gap-2">
+                  {[10000, 15000, 20000, 30000, 40000, 50000, 80000, 100000].map(price => (
+                    <li key={price}>
+                      <Link href={`/phones?max_price=${price}`} className="text-sm text-primary hover:underline">
+                        Mobile phone price under {price.toLocaleString()}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
               </div>
             </div>
           </div>
