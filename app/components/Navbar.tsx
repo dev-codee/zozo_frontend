@@ -10,6 +10,7 @@ const navLinks = [
   { label: "Trending", href: "/phones?sort=trending" },
   { label: "Brands", href: "/phones" },
   { label: "Compare", href: "/compare" },
+  { label: "News", href: "/news" },
 ];
 
 function NavLinksDesktop() {
