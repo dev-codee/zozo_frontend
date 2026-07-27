@@ -148,8 +148,12 @@ function parseMarkdownToJSX(text: string, phoneName: string) {
                     <span className="pr-4">{faq.question}</span>
                   </span>
                   <div className="w-7 h-7 rounded-full bg-surface-container-low flex items-center justify-center flex-shrink-0 text-text-muted group-hover:bg-primary/10 group-hover:text-primary transition-colors">
-                    <span className="material-symbols-outlined text-[20px] group-open:hidden">add</span>
-                    <span className="material-symbols-outlined text-[20px] hidden group-open:block">remove</span>
+                    <span className="group-open:hidden flex items-center justify-center">
+                      <span className="material-symbols-outlined text-[20px]">add</span>
+                    </span>
+                    <span className="hidden group-open:flex items-center justify-center">
+                      <span className="material-symbols-outlined text-[20px]">remove</span>
+                    </span>
                   </div>
                 </summary>
                 <div className="p-4 pt-0 text-sm md:text-base text-text-muted border-t border-border-subtle/30 bg-surface-white/50">
