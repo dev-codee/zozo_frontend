@@ -67,7 +67,7 @@ export default async function CompareCanonicalPage({
           />
         </div>
         
-        <CompareClient initialPhones={comparisonPhones} allPhones={allPhones} />
+        <CompareClient initialPhones={comparisonPhones} allPhones={allPhones.phones} />
         
         <div className="max-w-[1280px] mx-auto px-4 md:px-6 py-12">
           <PopularComparisons comparisons={popularComparisons} />
