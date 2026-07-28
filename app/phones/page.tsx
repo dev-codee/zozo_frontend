@@ -4,6 +4,7 @@ import Footer from "@/app/components/Footer";
 import PhoneCard from "@/app/components/PhoneCard";
 import Breadcrumb from "@/app/components/Breadcrumb";
 import SidebarFilter from "@/app/components/SidebarFilter";
+import Pagination from "@/app/components/Pagination";
 
 export default async function PhonesPage({
   searchParams,
@@ -19,9 +20,11 @@ export default async function PhonesPage({
   const processor = resolvedParams.processor as string;
   const display = resolvedParams.display as string;
   const camera = resolvedParams.camera as string;
+  const page = resolvedParams.page as string;
 
   // Build the query string
   let queryParts = [];
+  if (page) queryParts.push(`page=${page}`);
   if (minPrice) queryParts.push(`min_price=${minPrice}`);
   if (maxPrice) queryParts.push(`max_price=${maxPrice}`);
   if (sort) queryParts.push(`sort=${sort}`);
@@ -33,10 +36,12 @@ export default async function PhonesPage({
   
   const query = queryParts.length > 0 ? queryParts.join("&") : undefined;
   
-  const [phones, brands] = await Promise.all([
+  const [paginatedData, brands] = await Promise.all([
     getPhones(query),
     getBrands()
   ]);
+
+  const { phones, pagination } = paginatedData;
 
   let title = "All Phones";
   if (brand && !brand.includes(",")) {
@@ -64,7 +69,7 @@ export default async function PhonesPage({
             
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <p className="font-body-sm text-body-sm text-text-muted">
-                Showing <span className="font-semibold text-text-main">{phones.length}</span> results
+                Showing <span className="font-semibold text-text-main">{phones.length}</span> of <span className="font-semibold text-text-main">{pagination.total}</span> results
               </p>
               <div className="flex items-center gap-3">
                 <label htmlFor="sort" className="font-label-sm text-label-sm text-text-muted whitespace-nowrap">Sort by:</label>
@@ -81,6 +86,11 @@ export default async function PhonesPage({
               {phones.map((phone) => (
                 <PhoneCard key={phone._id} phone={phone} />
               ))}
+              
+              <Pagination 
+                currentPage={pagination.page} 
+                totalPages={pagination.totalPages} 
+              />
             </div>
           ) : (
             <div className="bg-surface-white rounded-xl border border-border-subtle p-12 flex flex-col items-center justify-center text-center mt-6">

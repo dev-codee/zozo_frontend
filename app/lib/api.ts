@@ -114,6 +114,18 @@ export interface HomeData {
   brands: Brand[];
 }
 
+export interface PaginationInfo {
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+}
+
+export interface PaginatedPhones {
+  phones: Phone[];
+  pagination: PaginationInfo;
+}
+
 export interface ApiResponse<T> {
   statusCode: number;
   data: T;
@@ -153,10 +165,16 @@ export async function getHomeData(): Promise<HomeData | null> {
   return apiFetch<HomeData>("/home");
 }
 
-export async function getPhones(query?: string): Promise<Phone[]> {
+export async function getPhones(query?: string): Promise<PaginatedPhones> {
   const endpoint = query ? `/phones?${query}` : "/phones";
-  const data = await apiFetch<Phone[]>(endpoint);
-  return data || [];
+  const data = await apiFetch<any>(endpoint);
+  
+  // Handle cached responses from before the pagination update
+  if (Array.isArray(data)) {
+    return { phones: data, pagination: { total: data.length, page: 1, limit: 15, totalPages: 1 } };
+  }
+  
+  return data || { phones: [], pagination: { total: 0, page: 1, limit: 15, totalPages: 1 } };
 }
 
 export async function searchPhones(q: string): Promise<Phone[]> {

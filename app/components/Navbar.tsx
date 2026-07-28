@@ -4,6 +4,7 @@ import { useState } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 import Link from "next/link";
+import SearchBar from "./SearchBar";
 
 const navLinks = [
   { label: "Latest", href: "/phones?sort=latest" },
@@ -131,9 +132,10 @@ export default function Navbar() {
 
         {/* Actions */}
         <div className="flex items-center gap-3">
+          <SearchBar />
           <Link
             href="/search"
-            className="text-on-surface hover:text-primary transition-colors p-2 rounded-full hover:bg-surface-container-low"
+            className="md:hidden text-on-surface hover:text-primary transition-colors p-2 rounded-full hover:bg-surface-container-low"
             aria-label="Search"
           >
             <span className="material-symbols-outlined">search</span>

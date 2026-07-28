@@ -83,12 +83,22 @@ export default function PhoneCard({ phone, variant = "list" }: PhoneCardProps) {
   const chipset = phone.specs?.performance?.chipset || "Chipset TBA";
   const ramOptions = phone.specs?.performance?.ram_options_gb;
   const storageOptions = phone.specs?.performance?.storage_options_gb;
-  const ramStorage = `${ramOptions ? Math.max(...ramOptions) : '??'} GB RAM | ${storageOptions ? Math.max(...storageOptions) : '??'} GB Storage`;
+  const ramStorage = (ramOptions || storageOptions)
+    ? `${ramOptions ? Math.max(...ramOptions) : '??'} GB RAM | ${storageOptions ? Math.max(...storageOptions) : '??'} GB Storage`
+    : "RAM & Storage TBA";
   
-  const rearCamera = phone.specs?.camera?.rear_summary || "Rear Camera TBA";
-  const frontCamera = phone.specs?.camera?.front_summary || "Front Camera TBA";
-  const battery = `${phone.specs?.battery?.capacity_mah || '??'} mAh | ${phone.specs?.battery?.charging_watts || '??'}W Charging`;
-  const display = `${phone.specs?.display?.size_inches || '??'} Inches | ${phone.specs?.display?.type || 'Display'}`;
+  const ext = phone.specs?.extra_specs || {};
+  
+  const rearCamera = phone.specs?.camera?.rear_summary || ext.cameras_detailed?.mp || "Rear Camera TBA";
+  const frontCamera = phone.specs?.camera?.front_summary || ext.cameras_detailed?.front_mp || "Front Camera TBA";
+  
+  const battery = (phone.specs?.battery?.capacity_mah || phone.specs?.battery?.charging_watts)
+    ? `${phone.specs?.battery?.capacity_mah || '??'} mAh | ${phone.specs?.battery?.charging_watts || '??'}W Charging`
+    : ext.battery_detailed?.capacity ? `${ext.battery_detailed.capacity} mAh` : "Battery TBA";
+    
+  const display = (phone.specs?.display?.size_inches || phone.specs?.display?.type)
+    ? `${phone.specs?.display?.size_inches || '??'} Inches | ${phone.specs?.display?.type || 'Display'}`
+    : ext.features_listing?.screen_size ? `${ext.features_listing.screen_size} | Display` : "Display TBA";
   
   // Dummy Antutu score since we don't have it structured in DB yet
   const antutuScore = "Approx. 1,000,000";
@@ -114,10 +124,13 @@ export default function PhoneCard({ phone, variant = "list" }: PhoneCardProps) {
             </Link>
           </div>
           {variant === "list" && (
-            <button className="flex items-center gap-1 text-primary text-sm font-semibold hover:bg-primary/5 px-2 py-1 rounded transition-colors shrink-0">
+            <Link 
+              href={`/compare?phone=${phone.slug}`}
+              className="flex items-center gap-1 text-primary text-sm font-semibold hover:bg-primary/5 px-2 py-1 rounded transition-colors shrink-0"
+            >
               <span className="material-symbols-outlined text-[18px]">add</span>
               Compare
-            </button>
+            </Link>
           )}
         </div>
 
@@ -153,9 +166,13 @@ export default function PhoneCard({ phone, variant = "list" }: PhoneCardProps) {
             </Link>
             
             <div className="flex gap-4 mt-3">
-              <button className="w-8 h-8 rounded border border-border-subtle flex items-center justify-center text-text-muted hover:border-primary hover:text-primary transition-colors">
+              <Link 
+                href={`/compare?phone=${phone.slug}`}
+                className="w-8 h-8 rounded border border-border-subtle flex items-center justify-center text-text-muted hover:border-primary hover:text-primary transition-colors"
+                title="Compare"
+              >
                 <span className="material-symbols-outlined text-[18px]">compare_arrows</span>
-              </button>
+              </Link>
               <button className="w-8 h-8 rounded border border-border-subtle flex items-center justify-center text-text-muted hover:border-primary hover:text-primary transition-colors">
                 <span className="material-symbols-outlined text-[18px]">photo_camera</span>
               </button>
@@ -168,76 +185,88 @@ export default function PhoneCard({ phone, variant = "list" }: PhoneCardProps) {
 
           {/* Right Column (Specs) */}
           <div className={`${variant === 'list' ? 'md:col-span-8 lg:col-span-9' : 'w-full'} flex flex-col justify-between`}>
-            <ul className="space-y-3 mb-6 relative">
-              <li className="flex items-start gap-3 text-sm text-text-main">
-                <span className="material-symbols-outlined text-[20px] text-text-muted shrink-0 mt-0.5">developer_board</span>
-                {chipset}
-              </li>
-              <li className="flex items-start gap-3 text-sm text-text-main">
-                <span className="material-symbols-outlined text-[20px] text-text-muted shrink-0 mt-0.5">memory</span>
-                {ramStorage}
-              </li>
-              <li className="flex items-start gap-3 text-sm text-text-main">
-                <span className="material-symbols-outlined text-[20px] text-text-muted shrink-0 mt-0.5">photo_camera</span>
-                {rearCamera}
-              </li>
-              <li className="flex items-start gap-3 text-sm text-text-main">
-                <span className="material-symbols-outlined text-[20px] text-text-muted shrink-0 mt-0.5">camera_front</span>
-                {frontCamera}
-              </li>
-              <li className="flex items-start gap-3 text-sm text-text-main">
-                <span className="material-symbols-outlined text-[20px] text-text-muted shrink-0 mt-0.5">battery_charging_full</span>
-                {battery}
-              </li>
-              <li className="flex items-start gap-3 text-sm text-text-main">
-                <span className="material-symbols-outlined text-[20px] text-text-muted shrink-0 mt-0.5">smartphone</span>
-                {display}
-              </li>
+            <div>
+              <ul className="space-y-3 mb-4 relative">
+                <li className="flex items-start gap-3 text-sm text-text-main">
+                  <span className="material-symbols-outlined text-[20px] text-text-muted shrink-0 mt-0.5">developer_board</span>
+                  {chipset}
+                </li>
+                <li className="flex items-start gap-3 text-sm text-text-main">
+                  <span className="material-symbols-outlined text-[20px] text-text-muted shrink-0 mt-0.5">memory</span>
+                  {ramStorage}
+                </li>
+                <li className="flex items-start gap-3 text-sm text-text-main">
+                  <span className="material-symbols-outlined text-[20px] text-text-muted shrink-0 mt-0.5">photo_camera</span>
+                  {rearCamera}
+                </li>
+                <li className="flex items-start gap-3 text-sm text-text-main">
+                  <span className="material-symbols-outlined text-[20px] text-text-muted shrink-0 mt-0.5">camera_front</span>
+                  {frontCamera}
+                </li>
+                <li className="flex items-start gap-3 text-sm text-text-main">
+                  <span className="material-symbols-outlined text-[20px] text-text-muted shrink-0 mt-0.5">battery_charging_full</span>
+                  {battery}
+                </li>
+                <li className="flex items-start gap-3 text-sm text-text-main">
+                  <span className="material-symbols-outlined text-[20px] text-text-muted shrink-0 mt-0.5">smartphone</span>
+                  {display}
+                </li>
+                
+                {/* Ellipsis button for extra menu */}
+                <button className="absolute top-0 right-0 text-text-muted hover:text-text-main">
+                  <span className="material-symbols-outlined">more_vert</span>
+                </button>
+              </ul>
               
-              {/* Ellipsis button for extra menu */}
-              <button className="absolute top-0 right-0 text-text-muted hover:text-text-main">
-                <span className="material-symbols-outlined">more_vert</span>
-              </button>
-            </ul>
-            
-            <div className="flex justify-end border-b border-border-subtle/50 pb-4 mb-4">
-              <Link href={`/phones/${phone.slug}`} className="text-xs font-bold text-text-main underline underline-offset-2 hover:text-primary">
-                View All Specs
-              </Link>
+              <div className="flex justify-end border-b border-border-subtle/50 pb-4 mb-4">
+                <Link href={`/phones/${phone.slug}`} className="text-xs font-bold text-text-main underline underline-offset-2 hover:text-primary">
+                  View All Specs
+                </Link>
+              </div>
             </div>
 
-            {/* Ratings & Pros/Cons */}
-            <div className={`grid grid-cols-1 ${variant === 'list' ? 'lg:grid-cols-2' : ''} gap-6`}>
-              <div className="flex flex-col gap-3">
-                <div className="flex items-center gap-6">
-                  <span className="text-xs text-text-muted w-20">User Rating</span>
-                  <div className="flex items-center gap-1 font-bold text-sm text-text-main">
-                    <span className="material-symbols-outlined text-[16px] text-[#FF9800]" style={{ fontVariationSettings: "'FILL' 1" }}>star</span>
-                    {userRating.toFixed(1)}/5
+            <div>
+              {/* Ratings & Pros/Cons */}
+              <div className={`grid grid-cols-1 ${variant === 'list' ? 'lg:grid-cols-2' : ''} gap-6`}>
+                <div className="flex flex-col gap-3">
+                  <div className="flex items-center gap-6">
+                    <span className="text-xs text-text-muted w-20">User Rating</span>
+                    <div className="flex items-center gap-0.5 text-[#FF9800]">
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <span 
+                          key={star} 
+                          className="material-symbols-outlined text-[16px]" 
+                          style={{ fontVariationSettings: star <= userRating ? "'FILL' 1" : star - 0.5 <= userRating ? "'FILL' 1" : "'FILL' 0" }}
+                        >
+                          {star <= userRating ? 'star' : star - 0.5 <= userRating ? 'star_half' : 'star'}
+                        </span>
+                      ))}
+                      <span className="ml-1 text-sm font-bold text-text-main">{userRating.toFixed(1)}/5</span>
+                    </div>
                   </div>
                 </div>
+                
+                {phoneData && variant === "list" && (
+                  <div className="flex flex-col gap-2">
+                    {phoneData.pro && (
+                      <p className="text-xs text-text-main line-clamp-2">
+                        <span className="font-bold text-[#8BC34A]">Pros:</span> {phoneData.pro}
+                      </p>
+                    )}
+                    {phoneData.con && (
+                      <p className="text-xs text-text-main line-clamp-2">
+                        <span className="font-bold text-[#F44336]">Cons:</span> {phoneData.con}
+                      </p>
+                    )}
+                  </div>
+                )}
               </div>
               
-              {phoneData && variant === "list" && (
-                <div className="flex flex-col gap-2">
-                  {phoneData.pro && (
-                    <p className="text-xs text-text-main line-clamp-2">
-                      <span className="font-bold text-[#8BC34A]">Pros:</span> {phoneData.pro}
-                    </p>
-                  )}
-                  {phoneData.con && (
-                    <p className="text-xs text-text-main line-clamp-2">
-                      <span className="font-bold text-[#F44336]">Cons:</span> {phoneData.con}
-                    </p>
-                  )}
-                </div>
-              )}
-            </div>
-            
-            <div className="flex justify-end mt-2">
-              <Link href={`/phones/${phone.slug}`} className="text-xs font-bold text-text-main underline underline-offset-2 hover:text-primary">
-                Read Full Review
-              </Link>
+              <div className="flex justify-end mt-2">
+                <Link href={`/phones/${phone.slug}`} className="text-xs font-bold text-text-main underline underline-offset-2 hover:text-primary">
+                  Read Full Review
+                </Link>
+              </div>
             </div>
           </div>
         </div>
