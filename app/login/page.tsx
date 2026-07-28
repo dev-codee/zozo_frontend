@@ -29,7 +29,7 @@ export default function LoginPage() {
       
       if (res.ok && data.data?.user) {
         setUser(data.data.user);
-        router.push('/profile');
+        router.push('/');
       } else {
         setError(data.message || 'Login failed');
       }
