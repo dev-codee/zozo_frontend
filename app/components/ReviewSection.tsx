@@ -2,38 +2,58 @@
 
 import { useState, useEffect } from "react";
 import { Review, getReviews, postReview } from "@/app/lib/api";
+import { useAuth } from "../context/AuthContext";
+import Link from "next/link";
 
 export default function ReviewSection({ phoneId }: { phoneId: string }) {
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const [error, setError] = useState<string | null>(null);
 
-  const [userName, setUserName] = useState("");
+  const { user } = useAuth();
+  
   const [rating, setRating] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);
   const [comment, setComment] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
-    fetchReviews();
+    fetchReviews(1);
   }, [phoneId]);
 
-  const fetchReviews = async () => {
+  const fetchReviews = async (pageNum = 1) => {
     try {
-      const data = await getReviews(phoneId);
-      setReviews(data);
+      pageNum === 1 ? setLoading(true) : setLoadingMore(true);
+      const data = await getReviews(phoneId, pageNum, 6);
+      if (pageNum === 1) {
+        setReviews(data.reviews);
+      } else {
+        setReviews((prev) => [...prev, ...data.reviews]);
+      }
+      setTotalPages(data.pagination.totalPages);
+      setPage(data.pagination.page);
     } catch (err) {
       console.error(err);
       setError("Failed to load reviews.");
     } finally {
       setLoading(false);
+      setLoadingMore(false);
     }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!userName.trim() || !comment.trim() || rating === 0) {
-      alert("Please provide a name, rating, and comment.");
+    if (!comment.trim() || rating === 0) {
+      alert("Please provide a rating and comment.");
+      return;
+    }
+
+    const linkRegex = /(https?:\/\/[^\s]+)|(www\.[^\s]+)|([a-zA-Z0-9.-]+\.(com|org|net|pk|co|us|io|me)(\/[^\s]*)?)/i;
+    if (linkRegex.test(comment)) {
+      alert("Links are not allowed in the review comment.");
       return;
     }
 
@@ -41,12 +61,10 @@ export default function ReviewSection({ phoneId }: { phoneId: string }) {
     try {
       const newReview = await postReview({
         phoneId,
-        userName,
         rating,
         comment
       });
       setReviews([newReview, ...reviews]);
-      setUserName("");
       setRating(0);
       setComment("");
     } catch (err) {
@@ -70,18 +88,17 @@ export default function ReviewSection({ phoneId }: { phoneId: string }) {
         {/* Write a Review Form */}
         <div className="md:col-span-1 bg-surface-container-lowest p-5 rounded-lg border border-border-subtle h-fit">
           <h3 className="font-bold text-lg text-text-main mb-4">Write a Review</h3>
-          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-            <div>
-              <label className="block text-sm font-semibold text-text-main mb-1">Your Name</label>
-              <input
-                type="text"
-                value={userName}
-                onChange={(e) => setUserName(e.target.value)}
-                placeholder="Zozo User"
-                className="w-full p-2 border border-border-subtle rounded-md focus:border-primary focus:ring-1 focus:ring-primary outline-none"
-                required
-              />
-            </div>
+          {user ? (
+            <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+              <div>
+                <label className="block text-sm font-semibold text-text-main mb-1">Your Name</label>
+                <input
+                  type="text"
+                  value={user.name}
+                  disabled
+                  className="w-full p-2 border border-border-subtle rounded-md bg-surface-container-low text-text-muted cursor-not-allowed"
+                />
+              </div>
 
             <div>
               <label className="block text-sm font-semibold text-text-main mb-1">Rating</label>
@@ -118,14 +135,23 @@ export default function ReviewSection({ phoneId }: { phoneId: string }) {
               ></textarea>
             </div>
 
-            <button
-              type="submit"
-              disabled={submitting || rating === 0}
-              className="bg-primary hover:bg-on-primary-fixed-variant text-white font-bold py-2 px-4 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed mt-2"
-            >
-              {submitting ? "Submitting..." : "Submit Review"}
-            </button>
-          </form>
+              <button
+                type="submit"
+                disabled={submitting || rating === 0}
+                className="bg-primary hover:bg-on-primary-fixed-variant text-white font-bold py-2 px-4 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed mt-2"
+              >
+                {submitting ? "Submitting..." : "Submit Review"}
+              </button>
+            </form>
+          ) : (
+            <div className="flex flex-col items-center justify-center p-6 bg-surface-container-low/50 rounded-lg border border-border-subtle/50 text-center">
+              <span className="material-symbols-outlined text-4xl text-text-muted mb-2">lock</span>
+              <p className="text-text-main font-medium mb-4">You must be logged in to write a review.</p>
+              <Link href="/login" className="bg-primary text-white px-6 py-2 rounded-md font-semibold hover:bg-on-primary-fixed-variant transition-colors">
+                Login
+              </Link>
+            </div>
+          )}
         </div>
 
         {/* Reviews List */}
@@ -142,40 +168,55 @@ export default function ReviewSection({ phoneId }: { phoneId: string }) {
               <p>No reviews yet. Be the first to share your thoughts!</p>
             </div>
           ) : (
-            <div className="flex flex-col gap-4">
-              {reviews.map((review) => (
-                <div key={review._id} className="border border-border-subtle rounded-lg p-4">
-                  <div className="flex justify-between items-start mb-2">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-primary/10 text-primary font-bold flex items-center justify-center rounded-full uppercase">
-                        {review.userName.charAt(0)}
+            <div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {reviews.map((review) => (
+                  <div key={review._id} className="border border-border-subtle rounded-lg p-3 bg-surface-container-lowest">
+                    <div className="flex justify-between items-start mb-2">
+                      <div className="flex items-center gap-2">
+                        <div className="w-8 h-8 bg-primary/10 text-primary font-bold flex items-center justify-center rounded-full uppercase text-sm">
+                          {review.userName.charAt(0)}
+                        </div>
+                        <div>
+                          <h4 className="font-bold text-text-main text-sm leading-tight">{review.userName}</h4>
+                          <span className="text-[11px] text-text-muted">
+                            {new Date(review.createdAt).toLocaleDateString('en-US', {
+                              year: 'numeric',
+                              month: 'short',
+                              day: 'numeric'
+                            })}
+                          </span>
+                        </div>
                       </div>
-                      <div>
-                        <h4 className="font-bold text-text-main leading-tight">{review.userName}</h4>
-                        <span className="text-xs text-text-muted">
-                          {new Date(review.createdAt).toLocaleDateString('en-US', {
-                            year: 'numeric',
-                            month: 'long',
-                            day: 'numeric'
-                          })}
-                        </span>
+                      <div className="flex text-yellow-500">
+                        {[1, 2, 3, 4, 5].map((star) => (
+                          <span
+                            key={star}
+                            className="material-symbols-outlined text-[12px]"
+                            style={{ fontVariationSettings: star <= review.rating ? "'FILL' 1" : "'FILL' 0" }}
+                          >
+                            star
+                          </span>
+                        ))}
                       </div>
                     </div>
-                    <div className="flex text-yellow-500">
-                      {[1, 2, 3, 4, 5].map((star) => (
-                        <span
-                          key={star}
-                          className="material-symbols-outlined text-sm"
-                          style={{ fontVariationSettings: star <= review.rating ? "'FILL' 1" : "'FILL' 0" }}
-                        >
-                          star
-                        </span>
-                      ))}
-                    </div>
+                    <p className="text-text-main text-xs mt-1.5 line-clamp-3">{review.comment}</p>
                   </div>
-                  <p className="text-text-main text-sm mt-2">{review.comment}</p>
+                ))}
+              </div>
+              
+              {page < totalPages && (
+                <div className="flex justify-center mt-6">
+                  <button
+                    onClick={() => fetchReviews(page + 1)}
+                    disabled={loadingMore}
+                    className="px-6 py-2 border border-border-subtle rounded-full text-text-main hover:bg-surface-container-low transition-colors disabled:opacity-50 flex items-center gap-2 font-medium text-sm"
+                  >
+                    {loadingMore && <span className="material-symbols-outlined animate-spin text-sm">progress_activity</span>}
+                    {loadingMore ? "Loading..." : "Load More"}
+                  </button>
                 </div>
-              ))}
+              )}
             </div>
           )}
         </div>

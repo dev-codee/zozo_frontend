@@ -110,6 +110,11 @@ export interface Review {
   createdAt: string;
 }
 
+export interface PaginatedReviews {
+  reviews: Review[];
+  pagination: PaginationInfo;
+}
+
 export interface Brand {
   _id: string;
   slug: string;
@@ -177,12 +182,12 @@ export async function getHomeData(): Promise<HomeData | null> {
 export async function getPhones(query?: string): Promise<PaginatedPhones> {
   const endpoint = query ? `/phones?${query}` : "/phones";
   const data = await apiFetch<any>(endpoint);
-  
+
   // Handle cached responses from before the pagination update
   if (Array.isArray(data)) {
     return { phones: data, pagination: { total: data.length, page: 1, limit: 15, totalPages: 1 } };
   }
-  
+
   return data || { phones: [], pagination: { total: 0, page: 1, limit: 15, totalPages: 1 } };
 }
 
@@ -253,7 +258,7 @@ export async function castVote(payload: { phoneId: string; sessionId: string; po
       },
       body: JSON.stringify(payload),
     });
-    
+
     if (!res.ok) {
       const errorData = await res.json().catch(() => null);
       throw new Error(errorData?.message || "Failed to cast vote");
@@ -267,21 +272,27 @@ export async function castVote(payload: { phoneId: string; sessionId: string; po
   }
 }
 
-export async function getReviews(phoneId: string): Promise<Review[]> {
-  const data = await apiFetch<Review[]>(`/reviews/${phoneId}`);
-  return data || [];
+export async function getReviews(phoneId: string, page = 1, limit = 6): Promise<PaginatedReviews> {
+  const data = await apiFetch<any>(`/reviews/${phoneId}?page=${page}&limit=${limit}`);
+
+  if (Array.isArray(data)) {
+    return { reviews: data, pagination: { total: data.length, page: 1, limit: 6, totalPages: 1 } };
+  }
+
+  return data || { reviews: [], pagination: { total: 0, page: 1, limit: 6, totalPages: 1 } };
 }
 
-export async function postReview(payload: { phoneId: string; userName: string; rating: number; comment: string }): Promise<Review> {
+export async function postReview(payload: { phoneId: string; rating: number; comment: string }): Promise<Review> {
   try {
     const res = await fetch(`${API_BASE_URL}/reviews`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
+      credentials: "include",
       body: JSON.stringify(payload),
     });
-    
+
     if (!res.ok) {
       const errorData = await res.json().catch(() => null);
       throw new Error(errorData?.message || "Failed to submit review");
