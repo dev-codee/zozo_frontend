@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { getPages } from "@/app/lib/api";
 
 export default async function Footer() {
@@ -14,9 +15,7 @@ export default async function Footer() {
         {/* Brand */}
         <div className="flex items-center gap-2">
           <Link href="/" className="flex items-center gap-2">
-            <span className="text-2xl font-bold text-on-surface tracking-tight">
-              zozo<span className="text-primary-container">.pk</span>
-            </span>
+            <Image src="/ZOZO-Logo.png" alt="zozo.pk" width={180} height={56} className="h-14 w-auto object-contain" />
           </Link>
         </div>
 

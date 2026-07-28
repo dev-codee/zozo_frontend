@@ -33,7 +33,7 @@ function formatDate(dateStr?: string) {
 
 function getFirstProAndCon(description?: string) {
   if (!description) return null;
-  
+
   const lines = description.split('\n').map(l => l.trim()).filter(Boolean);
   let pro = "";
   let con = "";
@@ -42,14 +42,14 @@ function getFirstProAndCon(description?: string) {
 
   for (let i = 0; i < lines.length; i++) {
     const lower = lines[i].toLowerCase();
-    
+
     if (lower === 'pros' || lower === 'pros:') {
       inPros = true; inCons = false; continue;
     }
     if (lower === 'cons' || lower === 'cons:') {
       inCons = true; inPros = false; continue;
     }
-    
+
     if (lower.startsWith('##') || lower.match(/^(design|display|performance|camera|battery|software)/)) {
       inPros = false; inCons = false;
     }
@@ -60,7 +60,7 @@ function getFirstProAndCon(description?: string) {
     if (inCons && !con && !['thumbs_up_down', 'check_circle', 'done', 'cancel', 'close', '+', '-', '*'].includes(lower)) {
       con = lines[i].replace(/^[+\-*•]\s*/, '').replace(/^:/, '').trim();
     }
-    
+
     if (pro && con) break;
   }
 
@@ -85,20 +85,20 @@ export default function PhoneCard({ phone, variant = "list" }: PhoneCardProps) {
   const ramStorage = (ramOptions || storageOptions)
     ? `${ramOptions ? Math.max(...ramOptions) : '??'} GB RAM | ${storageOptions ? Math.max(...storageOptions) : '??'} GB Storage`
     : "RAM & Storage TBA";
-  
+
   const ext = phone.specs?.extra_specs || {};
-  
+
   const rearCamera = phone.specs?.camera?.rear_summary || ext.cameras_detailed?.mp || "Rear Camera TBA";
   const frontCamera = phone.specs?.camera?.front_summary || ext.cameras_detailed?.front_mp || "Front Camera TBA";
-  
+
   const battery = (phone.specs?.battery?.capacity_mah || phone.specs?.battery?.charging_watts)
     ? `${phone.specs?.battery?.capacity_mah || '??'} mAh | ${phone.specs?.battery?.charging_watts || '??'}W Charging`
     : ext.battery_detailed?.capacity ? `${ext.battery_detailed.capacity} mAh` : "Battery TBA";
-    
+
   const display = (phone.specs?.display?.size_inches || phone.specs?.display?.type)
     ? `${phone.specs?.display?.size_inches || '??'} Inches | ${phone.specs?.display?.type || 'Display'}`
     : ext.features_listing?.screen_size ? `${ext.features_listing.screen_size} | Display` : "Display TBA";
-  
+
   // Dummy Antutu score since we don't have it structured in DB yet
   const antutuScore = "Approx. 1,000,000";
 
@@ -109,7 +109,7 @@ export default function PhoneCard({ phone, variant = "list" }: PhoneCardProps) {
 
   return (
     <div className="bg-white border border-border-subtle rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300">
-      
+
       {/* Top Section */}
       <div className="p-5 md:p-6 pb-4">
         {/* Header */}
@@ -123,7 +123,7 @@ export default function PhoneCard({ phone, variant = "list" }: PhoneCardProps) {
             </Link>
           </div>
           {variant === "list" && (
-            <Link 
+            <Link
               href={`/compare?phone=${phone.slug}`}
               className="flex items-center gap-1 text-primary text-sm font-semibold hover:bg-primary/5 px-2 py-1 rounded transition-colors shrink-0"
             >
@@ -145,13 +145,13 @@ export default function PhoneCard({ phone, variant = "list" }: PhoneCardProps) {
 
         {/* Grid for Image and Specs */}
         <div className={`grid grid-cols-1 ${variant === 'list' ? 'md:grid-cols-12 pl-4' : 'px-2'} gap-6`}>
-          
+
           {/* Left Column (Image) */}
           <div className={`${variant === 'list' ? 'md:col-span-4 lg:col-span-3' : 'w-full max-w-[200px] mx-auto'} flex flex-col items-center`}>
             <Link href={`/phones/${phone.slug}`} className="relative w-full aspect-[3/4] bg-surface-container-low rounded-xl p-4 flex items-center justify-center group overflow-hidden">
               <div className="absolute top-2 left-2 bg-[#8BC34A] text-white text-[10px] font-bold px-1.5 py-1 rounded flex flex-col items-center shadow-sm z-10 leading-tight">
                 <span>97%</span>
-                <span className="text-[7px] font-medium opacity-90 text-center uppercase tracking-wider">Spec<br/>Score</span>
+                <span className="text-[7px] font-medium opacity-90 text-center uppercase tracking-wider">Spec<br />Score</span>
               </div>
               <div className="relative w-full h-full">
                 <Image
@@ -163,9 +163,9 @@ export default function PhoneCard({ phone, variant = "list" }: PhoneCardProps) {
                 />
               </div>
             </Link>
-            
+
             <div className="flex gap-4 mt-3">
-              <Link 
+              <Link
                 href={`/compare?phone=${phone.slug}`}
                 className="w-8 h-8 rounded border border-border-subtle flex items-center justify-center text-text-muted hover:border-primary hover:text-primary transition-colors"
                 title="Compare"
@@ -176,7 +176,7 @@ export default function PhoneCard({ phone, variant = "list" }: PhoneCardProps) {
                 <span className="material-symbols-outlined text-[18px]">photo_camera</span>
               </button>
             </div>
-            
+
             <Link href={`/phones/${phone.slug}`} className="text-xs font-bold text-text-main underline underline-offset-2 mt-2 hover:text-primary">
               View Photos ({phone.images?.length || 0})
             </Link>
@@ -210,13 +210,13 @@ export default function PhoneCard({ phone, variant = "list" }: PhoneCardProps) {
                   <span className="material-symbols-outlined text-[20px] text-text-muted shrink-0 mt-0.5">smartphone</span>
                   {display}
                 </li>
-                
+
                 {/* Ellipsis button for extra menu */}
                 <button className="absolute top-0 right-0 text-text-muted hover:text-text-main">
                   <span className="material-symbols-outlined">more_vert</span>
                 </button>
               </ul>
-              
+
               <div className="flex justify-end border-b border-border-subtle/50 pb-4 mb-4">
                 <Link href={`/phones/${phone.slug}`} className="text-xs font-bold text-text-main underline underline-offset-2 hover:text-primary">
                   View All Specs
@@ -229,12 +229,12 @@ export default function PhoneCard({ phone, variant = "list" }: PhoneCardProps) {
               <div className={`grid grid-cols-1 ${variant === 'list' ? 'lg:grid-cols-2' : ''} gap-6`}>
                 <div className="flex flex-col gap-3">
                   <div className="flex items-center gap-6">
-                    <span className="text-xs text-text-muted w-20">User Rating</span>
+                    <span className="text-xs text-text-muted w-20">Rating</span>
                     <div className="flex items-center gap-0.5 text-[#FF9800]">
                       {[1, 2, 3, 4, 5].map((star) => (
-                        <span 
-                          key={star} 
-                          className="material-symbols-outlined text-[16px]" 
+                        <span
+                          key={star}
+                          className="material-symbols-outlined text-[16px]"
                           style={{ fontVariationSettings: star <= userRating ? "'FILL' 1" : star - 0.5 <= userRating ? "'FILL' 1" : "'FILL' 0" }}
                         >
                           {star <= userRating ? 'star' : star - 0.5 <= userRating ? 'star_half' : 'star'}
@@ -244,7 +244,7 @@ export default function PhoneCard({ phone, variant = "list" }: PhoneCardProps) {
                     </div>
                   </div>
                 </div>
-                
+
                 {phoneData && variant === "list" && (
                   <div className="flex flex-col gap-2">
                     {phoneData.pro && (
@@ -260,7 +260,7 @@ export default function PhoneCard({ phone, variant = "list" }: PhoneCardProps) {
                   </div>
                 )}
               </div>
-              
+
               <div className="flex justify-end mt-2">
                 <Link href={`/phones/${phone.slug}`} className="text-xs font-bold text-text-main underline underline-offset-2 hover:text-primary">
                   Read Full Review
@@ -276,8 +276,8 @@ export default function PhoneCard({ phone, variant = "list" }: PhoneCardProps) {
         <span className="font-bold text-text-main text-lg">
           {lowestPrice ? `Rs. ${lowestPrice.toLocaleString()}` : "Price TBA"}
         </span>
-        
-        <Link 
+
+        <Link
           href={`/phones/${phone.slug}`}
           className="text-[#FF9800] font-bold text-sm hover:underline"
         >

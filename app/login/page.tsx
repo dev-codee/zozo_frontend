@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { GoogleLogin } from '@react-oauth/google';
 import { useAuth } from '../context/AuthContext';
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -44,8 +45,11 @@ export default function LoginPage() {
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8 bg-[url('/bg-pattern.svg')]">
       <div className="max-w-md w-full space-y-8 bg-white/80 backdrop-blur-xl p-10 rounded-3xl shadow-xl border border-white/50">
         <div>
-          <h2 className="mt-2 text-center text-3xl font-extrabold text-gray-900">
-            Sign in to zozo.pk
+          <div className="flex justify-center">
+            <Image src="/ZOZO-Logo.png" alt="zozo.pk" width={240} height={80} className="h-20 w-auto object-contain" />
+          </div>
+          <h2 className="mt-4 text-center text-3xl font-extrabold text-gray-900">
+            Sign in
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600">
             Compare prices, save your favorites, and manage your account.

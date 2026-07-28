@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { LayoutDashboard, Smartphone, PlusCircle, Users, Activity, FileText, Tags, FileEdit } from 'lucide-react';
 import LogoutButton from '../components/LogoutButton';
 import Cookies from 'js-cookie';
+import Image from 'next/image';
 
 export default function AdminLayout({
   children,
@@ -44,8 +45,11 @@ export default function AdminLayout({
     <div className="min-h-screen bg-gray-50 flex">
       {/* Sidebar */}
       <aside className="w-64 bg-white border-r border-gray-200 flex flex-col h-screen sticky top-0">
-        <div className="h-16 flex flex-col justify-center px-6 border-b border-gray-200 shrink-0">
-          <h1 className="text-base font-bold text-gray-900">Zozo Admin</h1>
+        <div className="h-16 flex flex-col justify-center px-6 border-b border-gray-200 shrink-0 py-2">
+          <div className="flex items-center">
+            <Image src="/ZOZO-Logo.png" alt="Zozo Admin" width={180} height={56} className="h-14 w-auto object-contain" />
+            <span className="ml-2 text-sm font-semibold text-gray-700">Admin</span>
+          </div>
           {role ? (
             <span className="text-[10px] uppercase font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded w-fit mt-0.5">
               {role.replace('_', ' ')}

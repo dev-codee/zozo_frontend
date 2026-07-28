@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Cookies from 'js-cookie';
+import Image from 'next/image';
 
 export default function AdminLoginPage() {
   const [username, setUsername] = useState('');
@@ -44,8 +45,11 @@ export default function AdminLoginPage() {
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-xl shadow-lg">
         <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Zozo Admin Login
+          <div className="flex justify-center">
+            <Image src="/ZOZO-Logo.png" alt="Zozo Admin" width={240} height={80} className="h-20 w-auto object-contain" />
+          </div>
+          <h2 className="mt-4 text-center text-3xl font-extrabold text-gray-900">
+            Admin Login
           </h2>
         </div>
         <form className="mt-8 space-y-6" onSubmit={handleLogin}>
