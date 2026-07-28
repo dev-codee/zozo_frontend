@@ -98,6 +98,17 @@ export default function SidebarFilter({ brands }: { brands: Brand[] }) {
     // Reset page if pagination exists
     params.delete("page");
 
+    // Check if ONLY a single brand is selected and no other filters
+    const filterKeys = Array.from(params.keys());
+    if (
+      filterKeys.length === 1 &&
+      filterKeys[0] === "brand" &&
+      params.get("brand")?.split(",").length === 1
+    ) {
+      router.push(`/${params.get("brand")}-phone-price-pakistan`);
+      return;
+    }
+
     router.push(`/phones?${params.toString()}`);
   };
 

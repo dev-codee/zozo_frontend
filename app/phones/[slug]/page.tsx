@@ -80,12 +80,12 @@ export default async function PhoneDetailPage({
       const minPrice = lowestPrice - 3000;
       const maxPrice = lowestPrice + 3000;
       const allMatching = await getPhones(`min_price=${minPrice}&max_price=${maxPrice}`);
-      competitorPhones = allMatching
+      competitorPhones = allMatching.phones
         .filter((p) => p.slug !== phone.slug)
         .slice(0, 10);
     } else {
       const sameBrand = await getPhones(`brand=${phone.brand_slug}`);
-      competitorPhones = sameBrand
+      competitorPhones = sameBrand.phones
         .filter((p) => p.slug !== phone.slug)
         .slice(0, 10);
     }
@@ -100,7 +100,7 @@ export default async function PhoneDetailPage({
       brandPhones = competitorPhones;
     } else {
       const sameBrand = await getPhones(`brand=${phone.brand_slug}`);
-      brandPhones = sameBrand
+      brandPhones = sameBrand.phones
         .filter((p) => p.slug !== phone.slug)
         .slice(0, 10);
     }
@@ -178,7 +178,7 @@ export default async function PhoneDetailPage({
         {/* Breadcrumb */}
         <Breadcrumb
           items={[
-            { label: phone.brand_slug.replace("-", " "), href: `/phones?brand=${phone.brand_slug}` },
+            { label: phone.brand_slug.replace("-", " "), href: `/${phone.brand_slug}-phone-price-pakistan` },
             { label: phone.name },
           ]}
         />

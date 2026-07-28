@@ -27,6 +27,14 @@ const nextConfig: NextConfig = {
       },
     ];
   },
+  async rewrites() {
+    return [
+      {
+        source: "/:brand-phone-price-pakistan",
+        destination: "/phones?brand=:brand",
+      },
+    ];
+  },
 };
 
 export default nextConfig;
