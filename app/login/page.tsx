@@ -35,8 +35,9 @@ export default function LoginPage() {
       } else {
         setError(data.message || 'Login failed');
       }
-    } catch (err) {
-      setError('An error occurred during sign in');
+    } catch (err: any) {
+      console.error("Login fetch error:", err);
+      setError('An error occurred during sign in: ' + (err.message || ''));
     } finally {
       setLoading(false);
     }
