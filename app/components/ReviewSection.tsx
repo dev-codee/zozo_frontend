@@ -67,9 +67,9 @@ export default function ReviewSection({ phoneId }: { phoneId: string }) {
       setReviews([newReview, ...reviews]);
       setRating(0);
       setComment("");
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      alert("Failed to submit review.");
+      alert(err.message || "Failed to submit review.");
     } finally {
       setSubmitting(false);
     }
