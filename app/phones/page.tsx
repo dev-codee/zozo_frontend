@@ -33,9 +33,9 @@ export default async function PhonesPage({
   if (processor) queryParts.push(`processor=${processor}`);
   if (display) queryParts.push(`display=${display}`);
   if (camera) queryParts.push(`camera=${camera}`);
-  
+
   const query = queryParts.length > 0 ? queryParts.join("&") : undefined;
-  
+
   const [paginatedData, brands] = await Promise.all([
     getPhones(query),
     getBrands()
@@ -62,11 +62,11 @@ export default async function PhonesPage({
       <Navbar />
       <main className="w-full max-w-[1280px] mx-auto px-4 md:px-6 py-8 flex flex-col md:flex-row gap-8 bg-surface min-h-[60vh]">
         <SidebarFilter brands={brands} />
-        
+
         <section className="flex-1">
           <div className="mb-6 space-y-4">
             <Breadcrumb items={[{ label: title }]} />
-            
+
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <p className="font-body-sm text-body-sm text-text-muted">
                 Showing <span className="font-semibold text-text-main">{phones.length}</span> of <span className="font-semibold text-text-main">{pagination.total}</span> results
@@ -86,10 +86,10 @@ export default async function PhonesPage({
               {phones.map((phone) => (
                 <PhoneCard key={phone._id} phone={phone} />
               ))}
-              
-              <Pagination 
-                currentPage={pagination.page} 
-                totalPages={pagination.totalPages} 
+
+              <Pagination
+                currentPage={pagination.page}
+                totalPages={pagination.totalPages}
               />
             </div>
           ) : (

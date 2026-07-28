@@ -1,0 +1,214 @@
+"use client";
+
+import { useState } from "react";
+import { usePathname, useSearchParams } from "next/navigation";
+import { Suspense } from "react";
+import Link from "next/link";
+import SearchBar from "./SearchBar";
+
+export default function NavbarClient({ dynamicPages = [] }: { dynamicPages?: any[] }) {
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  const baseNavLinks = [
+    { label: "Latest", href: "/phones?sort=latest" },
+    { label: "Trending", href: "/phones?sort=trending" },
+    { label: "Brands", href: "/phones" },
+    { label: "Compare", href: "/compare" },
+    { label: "News", href: "/news" },
+  ];
+
+  const isActive = (href: string) => {
+    const [path, query] = href.split('?');
+    if (href === '/compare' && pathname.startsWith('/compare')) return true;
+    if (path !== pathname) return false;
+    if (query) {
+       const params = new URLSearchParams(query);
+       for (const [key, value] of params.entries()) {
+         if (searchParams.get(key) !== value) return false;
+       }
+       return true;
+    }
+    if (href === '/phones' && searchParams.get('sort')) return false;
+    return true;
+  };
+
+  return (
+    <header className="sticky top-0 z-50 border-b border-border-subtle shadow-sm bg-surface-white/95 backdrop-blur-md">
+      <div className="flex justify-between items-center px-4 md:px-6 h-16 w-full max-w-[1280px] mx-auto">
+        <Link href="/" className="flex items-center gap-2 shrink-0">
+          <span className="text-2xl font-bold text-on-surface tracking-tight">
+            zozo<span className="text-primary-container">.pk</span>
+          </span>
+        </Link>
+
+        {/* Desktop Nav */}
+        <Suspense fallback={<nav className="hidden md:flex items-center gap-1 h-full"></nav>}>
+          <nav className="hidden md:flex items-center gap-1 h-full">
+            {baseNavLinks.map((link) => {
+              const active = isActive(link.href);
+              return (
+                <Link
+                  key={link.label}
+                  href={link.href}
+                  className={`h-full flex items-center transition-colors text-sm font-semibold tracking-wide uppercase px-4 border-b-2 ${
+                    active 
+                      ? "text-primary border-primary bg-surface-container-low/50" 
+                      : "text-on-surface-variant hover:text-primary hover:bg-surface-container-low border-transparent"
+                  }`}
+                >
+                  {link.label}
+                </Link>
+              );
+            })}
+            
+            {/* Dynamic Parent/Child Pages */}
+            {dynamicPages.filter(p => p.pageType === 'PARENT' || (p.pageType === 'STANDALONE')).map((page) => {
+              if (page.pageType === 'STANDALONE') {
+                const active = isActive(`/pages/${page.slug}`);
+                return (
+                  <Link
+                    key={page._id}
+                    href={`/pages/${page.slug}`}
+                    className={`h-full flex items-center transition-colors text-sm font-semibold tracking-wide uppercase px-4 border-b-2 ${
+                      active ? "text-primary border-primary bg-surface-container-low/50" : "text-on-surface-variant hover:text-primary hover:bg-surface-container-low border-transparent"
+                    }`}
+                  >
+                    {page.title}
+                  </Link>
+                );
+              }
+
+              // PARENT PAGE with dropdown
+              const children = dynamicPages.filter(p => p.pageType === 'CHILD' && p.parentPage === page._id);
+              return (
+                <div key={page._id} className="relative h-full group flex items-center">
+                  <button className="h-full flex items-center gap-1 transition-colors text-sm font-semibold tracking-wide uppercase px-4 border-b-2 text-on-surface-variant hover:text-primary hover:bg-surface-container-low border-transparent">
+                    {page.title}
+                    <span className="material-symbols-outlined text-[16px]">expand_more</span>
+                  </button>
+                  {children.length > 0 && (
+                    <div className="absolute top-full left-0 hidden group-hover:flex flex-col bg-surface-white border border-border-subtle shadow-lg rounded-xl py-2 min-w-[200px] z-50">
+                      {children.map(child => (
+                        <Link
+                          key={child._id}
+                          href={`/pages/${child.slug}`}
+                          className="px-4 py-2 text-sm font-semibold text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors"
+                        >
+                          {child.title}
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </nav>
+        </Suspense>
+
+        {/* Actions */}
+        <div className="flex items-center gap-3">
+          <SearchBar />
+          <Link
+            href="/search"
+            className="md:hidden text-on-surface hover:text-primary transition-colors p-2 rounded-full hover:bg-surface-container-low"
+            aria-label="Search"
+          >
+            <span className="material-symbols-outlined">search</span>
+          </Link>
+          <Link
+            href="/login"
+            className="hidden md:inline-flex items-center justify-center bg-surface-white border border-border-subtle text-on-surface px-6 py-2 rounded-full text-sm font-semibold tracking-wide hover:bg-surface-container-low transition-colors h-11"
+          >
+            Login
+          </Link>
+
+          <button
+            onClick={() => setMobileOpen(!mobileOpen)}
+            className="md:hidden text-on-surface p-2 rounded-full hover:bg-surface-container-low transition-colors"
+            aria-label="Toggle menu"
+          >
+            <span className="material-symbols-outlined">
+              {mobileOpen ? "close" : "menu"}
+            </span>
+          </button>
+        </div>
+      </div>
+
+      {/* Mobile Nav Drawer */}
+      {mobileOpen && (
+        <div className="md:hidden bg-surface-white border-t border-border-subtle animate-[slideDown_0.2s_ease-out]">
+          <Suspense fallback={<nav className="flex flex-col p-4 gap-1"></nav>}>
+            <nav className="flex flex-col p-4 gap-1">
+              {baseNavLinks.map((link) => {
+                const active = isActive(link.href);
+                return (
+                  <Link
+                    key={link.label}
+                    href={link.href}
+                    onClick={() => setMobileOpen(false)}
+                    className={`flex items-center px-4 py-3 rounded-lg transition-colors text-sm font-semibold tracking-wide uppercase border-l-4 ${
+                      active ? "text-primary bg-surface-container-low border-primary" : "text-on-surface-variant hover:text-primary hover:bg-surface-container-low border-transparent"
+                    }`}
+                  >
+                    {link.label}
+                  </Link>
+                );
+              })}
+              
+              {/* Mobile Dynamic Pages */}
+              {dynamicPages.filter(p => p.pageType === 'PARENT' || (p.pageType === 'STANDALONE')).map((page) => {
+                if (page.pageType === 'STANDALONE') {
+                  const active = isActive(`/pages/${page.slug}`);
+                  return (
+                    <Link
+                      key={page._id}
+                      href={`/pages/${page.slug}`}
+                      onClick={() => setMobileOpen(false)}
+                      className={`flex items-center px-4 py-3 rounded-lg transition-colors text-sm font-semibold tracking-wide uppercase border-l-4 ${
+                        active ? "text-primary bg-surface-container-low border-primary" : "text-on-surface-variant hover:text-primary hover:bg-surface-container-low border-transparent"
+                      }`}
+                    >
+                      {page.title}
+                    </Link>
+                  );
+                }
+
+                const children = dynamicPages.filter(p => p.pageType === 'CHILD' && p.parentPage === page._id);
+                return (
+                  <div key={page._id} className="flex flex-col gap-1 pl-2">
+                    <span className="px-2 py-2 text-xs font-bold text-text-muted uppercase tracking-widest">{page.title}</span>
+                    {children.map(child => {
+                      const active = isActive(`/pages/${child.slug}`);
+                      return (
+                        <Link
+                          key={child._id}
+                          href={`/pages/${child.slug}`}
+                          onClick={() => setMobileOpen(false)}
+                          className={`flex items-center px-4 py-2 rounded-lg transition-colors text-sm font-semibold border-l-4 ${
+                            active ? "text-primary bg-surface-container-low border-primary" : "text-on-surface-variant hover:text-primary hover:bg-surface-container-low border-transparent"
+                          }`}
+                        >
+                          {child.title}
+                        </Link>
+                      );
+                    })}
+                  </div>
+                );
+              })}
+
+              <Link
+                href="/login"
+                onClick={() => setMobileOpen(false)}
+                className="mt-2 flex items-center justify-center bg-surface-white border border-border-subtle text-on-surface px-6 py-3 rounded-full text-sm font-semibold tracking-wide hover:bg-surface-container-low transition-colors"
+              >
+                Login
+              </Link>
+            </nav>
+          </Suspense>
+        </div>
+      )}
+    </header>
+  );
+}
