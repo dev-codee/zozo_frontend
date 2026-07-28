@@ -40,9 +40,8 @@ export default function CompareClient({ initialPhones, allPhones }: CompareClien
         {
           label: "Price (lowest)",
           getValue: (p: Phone) => {
-            const lowest = p.prices?.length
-              ? Math.min(...p.prices.map((pr) => pr.price_pkr))
-              : null;
+            const validPrices = (p.prices || []).map(pr => pr.price_pkr).filter(pr => typeof pr === 'number' && pr > 0);
+            const lowest = p.price_pkr || (validPrices.length ? Math.min(...validPrices) : null);
             return lowest ? `Rs. ${lowest.toLocaleString()}` : "Price TBA";
           },
         },
@@ -298,8 +297,11 @@ export default function CompareClient({ initialPhones, allPhones }: CompareClien
                         {phone.name}
                       </h3>
                       <p className="font-headline-md text-sm font-bold text-price-green mt-1">
-                        {phone.prices?.length
-                          ? `Rs. ${Math.min(...phone.prices.map((pr) => pr.price_pkr)).toLocaleString()}`
+                        {phone.price_pkr || (phone.prices || []).filter(pr => typeof pr.price_pkr === 'number' && pr.price_pkr > 0).length > 0
+                          ? `Rs. ${Math.min(
+                              ...(phone.price_pkr ? [phone.price_pkr] : []),
+                              ...(phone.prices || []).map(pr => pr.price_pkr).filter(pr => typeof pr === 'number' && pr > 0)
+                            ).toLocaleString()}`
                           : "Price TBA"}
                       </p>
                     </div>

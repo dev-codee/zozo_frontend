@@ -75,10 +75,9 @@ export default function PhoneCard({ phone, variant = "list" }: PhoneCardProps) {
   const imageUrl = primaryImage?.url || "/placeholder-phone.svg";
   const imageAlt = primaryImage?.alt_text || phone.name;
 
-  // Get lowest price
-  const lowestPrice = phone.price_pkr || (phone.prices?.length
-    ? Math.min(...phone.prices.map((p) => p.price_pkr))
-    : null);
+  // Get lowest price safely
+  const validPrices = (phone.prices || []).map((p) => p.price_pkr).filter(p => typeof p === 'number' && p > 0);
+  const lowestPrice = phone.price_pkr || (validPrices.length ? Math.min(...validPrices) : null);
 
   const chipset = phone.specs?.performance?.chipset || "Chipset TBA";
   const ramOptions = phone.specs?.performance?.ram_options_gb;
@@ -104,7 +103,7 @@ export default function PhoneCard({ phone, variant = "list" }: PhoneCardProps) {
   const antutuScore = "Approx. 1,000,000";
 
   // Ratings
-  const userRating = phone.rating?.average || 4.5;
+  const userRating = phone.rating?.average || 0;
   const expertRating = 8.5; // Placeholder
   const phoneData = getFirstProAndCon(phone.description);
 
@@ -241,7 +240,7 @@ export default function PhoneCard({ phone, variant = "list" }: PhoneCardProps) {
                           {star <= userRating ? 'star' : star - 0.5 <= userRating ? 'star_half' : 'star'}
                         </span>
                       ))}
-                      <span className="ml-1 text-sm font-bold text-text-main">{userRating.toFixed(1)}/5</span>
+                      <span className="ml-1 text-sm font-bold text-text-main">{userRating > 0 ? userRating.toFixed(1) : "0"}/5</span>
                     </div>
                   </div>
                 </div>

@@ -101,6 +101,15 @@ export interface Phone {
   };
 }
 
+export interface Review {
+  _id: string;
+  phoneId: string;
+  userName: string;
+  rating: number;
+  comment: string;
+  createdAt: string;
+}
+
 export interface Brand {
   _id: string;
   slug: string;
@@ -247,6 +256,34 @@ export async function castVote(payload: { phoneId: string; sessionId: string; po
     return json.data;
   } catch (error) {
     console.error("Error casting vote:", error);
+    throw error;
+  }
+}
+
+export async function getReviews(phoneId: string): Promise<Review[]> {
+  const data = await apiFetch<Review[]>(`/reviews/${phoneId}`);
+  return data || [];
+}
+
+export async function postReview(payload: { phoneId: string; userName: string; rating: number; comment: string }): Promise<Review> {
+  try {
+    const res = await fetch(`${API_BASE_URL}/reviews`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
+    
+    if (!res.ok) {
+      const errorData = await res.json().catch(() => null);
+      throw new Error(errorData?.message || "Failed to submit review");
+    }
+
+    const json = await res.json();
+    return json.data;
+  } catch (error) {
+    console.error("Error submitting review:", error);
     throw error;
   }
 }

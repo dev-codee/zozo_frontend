@@ -1,4 +1,6 @@
 import Link from 'next/link';
+import Navbar from '@/app/components/Navbar';
+import Footer from '@/app/components/Footer';
 
 export const metadata = {
   title: 'Tech News & Reviews - zozo.pk',
@@ -25,7 +27,9 @@ export default async function NewsPage() {
   const regularBlogs = blogs.filter((b: any) => !b.featured);
 
   return (
-    <div className="max-w-[1280px] mx-auto px-4 md:px-6 py-8">
+    <>
+      <Navbar />
+      <div className="max-w-[1280px] mx-auto px-4 md:px-6 py-8 flex-1">
       <div className="mb-8 border-b border-border-subtle pb-6">
         <h1 className="text-3xl font-bold text-on-surface">Tech News & Reviews</h1>
         <p className="text-text-muted mt-2">The latest updates, leaks, and deep dives from the mobile world.</p>
@@ -91,6 +95,8 @@ export default async function NewsPage() {
           </div>
         )}
       </div>
-    </div>
+      </div>
+      <Footer />
+    </>
   );
 }

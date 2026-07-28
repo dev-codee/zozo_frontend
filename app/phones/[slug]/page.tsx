@@ -9,6 +9,7 @@ import PhoneGallery from "@/app/components/PhoneGallery";
 import PhoneSpecs from "@/app/components/PhoneSpecs";
 import PhoneDescriptionClient from "@/app/components/PhoneDescriptionClient";
 import UserFeedbackWidget from "@/app/components/UserFeedbackWidget";
+import ReviewSection from "@/app/components/ReviewSection";
 function getTagColorClass(tag: string) {
   const hash = Array.from(tag).reduce((acc, char) => acc + char.charCodeAt(0), 0);
   const colorThemes = [
@@ -66,9 +67,8 @@ export default async function PhoneDetailPage({
   }
 
   // Derived values
-  const lowestPrice = phone.price_pkr || (phone.prices?.length
-    ? Math.min(...phone.prices.map((p) => p.price_pkr))
-    : null);
+  const validPrices = (phone.prices || []).map((p) => p.price_pkr).filter(p => typeof p === 'number' && p > 0);
+  const lowestPrice = phone.price_pkr || (validPrices.length ? Math.min(...validPrices) : null);
   const rating = phone.rating?.average;
   const reviewCount = phone.rating?.count || 0;
   const hasAffiliateUrls = phone.prices?.some((p) => !!p.product_url);
@@ -602,6 +602,9 @@ export default async function PhoneDetailPage({
 
         {/* Product Description */}
         <PhoneDescriptionClient slug={phone.slug} initialDescription={phone.description} phoneName={phone.name} />
+
+        {/* User Reviews Section */}
+        <ReviewSection phoneId={phone._id} />
       </main>
       <Footer />
     </>
