@@ -36,7 +36,7 @@ export default function ReviewSection({ phoneId }: { phoneId: string }) {
       alert("Please provide a name, rating, and comment.");
       return;
     }
-    
+
     setSubmitting(true);
     try {
       const newReview = await postReview({
@@ -77,12 +77,12 @@ export default function ReviewSection({ phoneId }: { phoneId: string }) {
                 type="text"
                 value={userName}
                 onChange={(e) => setUserName(e.target.value)}
-                placeholder="John Doe"
+                placeholder="Zozo User"
                 className="w-full p-2 border border-border-subtle rounded-md focus:border-primary focus:ring-1 focus:ring-primary outline-none"
                 required
               />
             </div>
-            
+
             <div>
               <label className="block text-sm font-semibold text-text-main mb-1">Rating</label>
               <div className="flex gap-1">
@@ -95,7 +95,7 @@ export default function ReviewSection({ phoneId }: { phoneId: string }) {
                     onMouseLeave={() => setHoverRating(0)}
                     onClick={() => setRating(star)}
                   >
-                    <span 
+                    <span
                       className="material-symbols-outlined text-2xl"
                       style={{ fontVariationSettings: star <= (hoverRating || rating) ? "'FILL' 1" : "'FILL' 0" }}
                     >
@@ -163,8 +163,8 @@ export default function ReviewSection({ phoneId }: { phoneId: string }) {
                     </div>
                     <div className="flex text-yellow-500">
                       {[1, 2, 3, 4, 5].map((star) => (
-                        <span 
-                          key={star} 
+                        <span
+                          key={star}
                           className="material-symbols-outlined text-sm"
                           style={{ fontVariationSettings: star <= review.rating ? "'FILL' 1" : "'FILL' 0" }}
                         >

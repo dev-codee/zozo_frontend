@@ -232,6 +232,13 @@ export async function getPopularComparisons(limit: number = 5): Promise<any[]> {
   return data || [];
 }
 
+export async function getPages(): Promise<any[]> {
+  const data = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/pages`, {
+    next: { revalidate: 60 }
+  }).then(res => res.json()).catch(() => []);
+  return Array.isArray(data) ? data : [];
+}
+
 export async function getVoteStats(phoneId: string): Promise<any> {
   const data = await apiFetch<any>(`/votes/${phoneId}/stats`);
   return data || null;

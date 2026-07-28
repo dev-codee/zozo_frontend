@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import Navbar from '@/app/components/Navbar';
 import Footer from '@/app/components/Footer';
+import StaticSidebar from '@/app/components/StaticSidebar';
 
 export const metadata = {
   title: 'Tech News & Reviews - zozo.pk',
@@ -29,10 +30,13 @@ export default async function NewsPage() {
   return (
     <>
       <Navbar />
-      <div className="max-w-[1280px] mx-auto px-4 md:px-6 py-8 flex-1">
-      <div className="mb-8 border-b border-border-subtle pb-6">
-        <h1 className="text-3xl font-bold text-on-surface">Tech News & Reviews</h1>
-        <p className="text-text-muted mt-2">The latest updates, leaks, and deep dives from the mobile world.</p>
+      <div className="w-full flex flex-col md:flex-row bg-surface">
+        <StaticSidebar activeSlug="news" />
+        
+        <main className="flex-1 bg-surface-white p-8 md:p-12 min-h-[calc(100vh-64px)]">
+          <div className="mb-8 border-b border-border-subtle pb-6 max-w-4xl">
+        <h1 className="text-2xl md:text-3xl font-bold text-on-surface leading-tight">Tech News & Reviews</h1>
+        <p className="text-text-muted text-sm md:text-base mt-2">The latest updates, leaks, and deep dives from the mobile world.</p>
       </div>
 
       {featuredBlogs.length > 0 && (
@@ -49,7 +53,7 @@ export default async function NewsPage() {
                   <span key={c._id} className="text-xs font-bold uppercase tracking-wider text-primary">{c.name}</span>
                 ))}
               </div>
-              <h3 className="text-2xl font-bold text-on-surface mb-3">
+              <h3 className="text-xl font-bold text-on-surface mb-3 leading-snug">
                 <Link href={`/news/${featuredBlogs[0].slug}`} className="hover:text-primary transition-colors">
                   {featuredBlogs[0].title}
                 </Link>
@@ -80,7 +84,7 @@ export default async function NewsPage() {
                       <span key={c._id} className="text-[10px] font-bold uppercase tracking-wider text-primary">{c.name}</span>
                     ))}
                   </div>
-                  <h3 className="text-lg font-bold text-on-surface mb-2 line-clamp-2">
+                  <h3 className="text-base md:text-lg font-bold text-on-surface mb-2 line-clamp-2 leading-snug">
                     <Link href={`/news/${blog.slug}`} className="hover:text-primary transition-colors">
                       {blog.title}
                     </Link>
@@ -95,6 +99,7 @@ export default async function NewsPage() {
           </div>
         )}
       </div>
+        </main>
       </div>
       <Footer />
     </>
