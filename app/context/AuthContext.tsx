@@ -33,7 +33,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     // Fetch user on mount if they have an active session
     const fetchUser = async () => {
       try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/me`);
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/me`, {
+          credentials: 'include'
+        });
         const data = await res.json();
         if (res.ok && data.data) {
           setUser(data.data);
@@ -49,7 +51,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const logout = async () => {
     try {
-      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/logout`, { method: 'POST' });
+      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/logout`, { 
+        method: 'POST',
+        credentials: 'include'
+      });
     } catch (e) {
       console.error(e);
     } finally {
