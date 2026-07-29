@@ -43,7 +43,7 @@ const DEFAULT_EXTRA_SPECS = {
   seo: { slug: "", canonical: "", og_title: "", og_image: "", twitter_card: "", schema: "", breadcrumb: "", faq_schema: false, review_schema: false },
   affiliate: { commission_percent: "", geo_redirect: false, deep_link: "" },
   moderation: { fact_checked: false, verified_specs: false, ai_verified: true, editor_approved: false },
-  ai_automation: { auto_summary: true, auto_pros_cons: true, auto_buying_advice: true, auto_faqs: true, auto_comparison: true, auto_seo_title: true, auto_meta_description: true, auto_alt_text: true, auto_tag: true, auto_categorize: true, auto_link_related: true, auto_detect_duplicate: true, auto_translate: false, auto_create_news: false, auto_create_buying_guide: false, auto_calc_value: true, auto_update_price: false, auto_recalc_score: true, auto_monitor_competitors: false, auto_summarize_reviews: false, auto_extract_specs: true, auto_schema: true },
+  ai_automation: { auto_summary: true, auto_pros_cons: true, auto_buying_advice: true, auto_faqs: true, auto_comparison: true, auto_seo_title: true, auto_meta_description: true, auto_alt_text: true, auto_tag: true, auto_categorize: true, auto_link_related: true, auto_detect_duplicate: true, auto_calc_value: true, auto_recalc_score: true, auto_extract_specs: true, auto_schema: true },
   colors: ""
 };
 
