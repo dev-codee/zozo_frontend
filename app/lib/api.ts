@@ -98,7 +98,19 @@ export interface Phone {
   seo?: {
     meta_title?: string;
     meta_description?: string;
+    ai_seo_title?: string;
+    ai_meta_description?: string;
+    ai_faq?: { question: string; answer: string }[];
+    ai_summary?: string;
+    ai_pros?: string[];
+    ai_cons?: string[];
+    ai_buying_advice?: string;
+    ai_snippet?: string;
+    ai_suggested_tags?: string[];
+    ai_keywords?: string[];
   };
+  updated_at?: string;
+  updatedAt?: string;
 }
 
 export interface Review {
@@ -203,6 +215,10 @@ export async function getBrands(): Promise<Brand[]> {
 
 export async function getPhoneBySlug(slug: string): Promise<Phone | null> {
   return apiFetch<Phone>(`/phones/${slug}`);
+}
+
+export async function getRelatedPhones(slug: string): Promise<any> {
+  return apiFetch<any>(`/phones/${slug}/related`);
 }
 
 export async function getComparisonData(slugs: string[]): Promise<Phone[]> {

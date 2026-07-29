@@ -5,6 +5,7 @@ import CompareWidget from "./components/CompareWidget";
 import Footer from "./components/Footer";
 import { getHomeData } from "./lib/api";
 import AdSlot from "./components/AdSlot";
+import { generateOrganizationSchema, generateWebSiteSchema } from "./lib/schema";
 
 export default async function Home() {
   // Fetch home data from backend (server component)
@@ -12,6 +13,8 @@ export default async function Home() {
 
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(generateOrganizationSchema()) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(generateWebSiteSchema()) }} />
       <Navbar />
       <main className="w-full flex-1">
         <HeroSection />

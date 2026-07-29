@@ -52,6 +52,7 @@ export default function AdminPhoneForm({ initialData, onSubmit, isEditing = fals
   const [brands, setBrands] = useState<{ slug: string, name: string }[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isAIFilling, setIsAIFilling] = useState(false);
+  const [isAIFillingSEO, setIsAIFillingSEO] = useState(false);
   const [activeTab, setActiveTab] = useState('basic'); // 'basic', 'ai_content', 'detailed_specs', 'seo'
 
   const [newPrice, setNewPrice] = useState({
@@ -118,7 +119,7 @@ export default function AdminPhoneForm({ initialData, onSubmit, isEditing = fals
         ai_features: [],
         extra_specs: { ...EXTRA_SPEC_FIELDS.reduce((acc, field) => ({ ...acc, [field]: '' }), {}), ...DEFAULT_EXTRA_SPECS }
       },
-      prices: [] as any[], seo: { meta_title: '', meta_description: '' }, is_published: false
+      prices: [] as any[], seo: { meta_title: '', meta_description: '', meta_keywords: '', focus_keyword: '', long_tail_keywords: [] as string[], canonical_url: '', og_title: '', og_description: '', og_image: '', ai_seo_title: '', ai_meta_description: '', ai_faq: [] as any[], ai_summary: '', ai_pros: [] as string[], ai_cons: [] as string[], ai_buying_advice: '', ai_snippet: '', ai_suggested_tags: [] as string[], ai_keywords: [] as string[] }, is_published: false
     };
 
     if (initialData) {
@@ -267,6 +268,7 @@ export default function AdminPhoneForm({ initialData, onSubmit, isEditing = fals
           model_number: ai.model_number || prev.model_number,
           release_date: ai.release_date || prev.release_date,
           status: ai.status || prev.status,
+          tags: ai.tags && ai.tags.length > 0 ? ai.tags : prev.tags,
           specs: {
             ...prev.specs,
             display: { ...prev.specs.display, ...ai.specs?.display },
@@ -291,6 +293,56 @@ export default function AdminPhoneForm({ initialData, onSubmit, isEditing = fals
       alert("Error occurred during AI auto-fill.");
     } finally {
       setIsAIFilling(false);
+    }
+  };
+
+  const handleAIFillSEO = async () => {
+    if (!formData.name) {
+      alert("Please enter a Phone Name first (e.g. 'iPhone 15 Pro Max')");
+      return;
+    }
+    setIsAIFillingSEO(true);
+    try {
+      const token = Cookies.get('admin_token');
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+      const res = await fetch(`${apiUrl}/admin/phones/ai-fill-seo`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        body: JSON.stringify({ 
+          phoneName: formData.name,
+          brand_slug: formData.brand_slug,
+          price_pkr: formData.price_pkr,
+          specs: formData.specs
+        })
+      });
+      const data = await res.json();
+      if (res.ok && data.data) {
+        const aiSEO = data.data;
+        setFormData((prev: any) => ({
+          ...prev,
+          seo: {
+            ...prev.seo,
+            ai_seo_title: aiSEO.ai_seo_title || prev.seo.ai_seo_title,
+            ai_meta_description: aiSEO.ai_meta_description || prev.seo.ai_meta_description,
+            ai_faq: aiSEO.ai_faq || prev.seo.ai_faq,
+            ai_summary: aiSEO.ai_summary || prev.seo.ai_summary,
+            ai_pros: aiSEO.ai_pros || prev.seo.ai_pros,
+            ai_cons: aiSEO.ai_cons || prev.seo.ai_cons,
+            ai_buying_advice: aiSEO.ai_buying_advice || prev.seo.ai_buying_advice,
+            ai_snippet: aiSEO.ai_snippet || prev.seo.ai_snippet,
+            ai_suggested_tags: aiSEO.ai_suggested_tags || prev.seo.ai_suggested_tags,
+            ai_keywords: aiSEO.ai_keywords || prev.seo.ai_keywords
+          }
+        }));
+        alert("AI successfully generated SEO content!");
+      } else {
+        alert("Failed to auto-fill SEO: " + data.message);
+      }
+    } catch (error) {
+      console.error(error);
+      alert("Error occurred during AI SEO generation.");
+    } finally {
+      setIsAIFillingSEO(false);
     }
   };
 
@@ -731,23 +783,169 @@ export default function AdminPhoneForm({ initialData, onSubmit, isEditing = fals
 
         {/* SEO & AFFILIATE TAB */}
         {activeTab === 'seo_affiliate' && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <section className="bg-white p-5 rounded-xl border shadow-sm">
-              <h3 className="font-bold mb-3">SEO</h3>
-              <div className="space-y-4">
-                {renderInput('Meta Title', formData.seo.meta_title, v => setFormData((p: any) => ({ ...p, seo: { ...p.seo, meta_title: v } })))}
-                {renderInput('Meta Description', formData.seo.meta_description, v => setFormData((p: any) => ({ ...p, seo: { ...p.seo, meta_description: v } })), 'textarea')}
-                {renderTextFields('seo', DEFAULT_EXTRA_SPECS.seo)}
-                {renderBooleanFields('seo', DEFAULT_EXTRA_SPECS.seo)}
+          <div className="space-y-6">
+            {/* Manual SEO Fields */}
+            <section className="bg-white p-6 rounded-xl border shadow-sm">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-bold text-gray-900">📝 Manual SEO Fields</h3>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-600 mb-1">Meta Title</label>
+                    <input type="text" value={formData.seo.meta_title || ''} onChange={e => setFormData((p: any) => ({ ...p, seo: { ...p.seo, meta_title: e.target.value } }))} className="w-full px-3 py-2 border rounded-md text-xs" placeholder="e.g. Samsung Galaxy S25 Ultra Price in Pakistan | Specs & Reviews" />
+                    <div className={`text-[10px] mt-1 ${(formData.seo.meta_title || '').length > 60 ? 'text-red-500 font-bold' : 'text-gray-400'}`}>
+                      {(formData.seo.meta_title || '').length}/60 characters
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-600 mb-1">Meta Description</label>
+                    <textarea value={formData.seo.meta_description || ''} onChange={e => setFormData((p: any) => ({ ...p, seo: { ...p.seo, meta_description: e.target.value } }))} className="w-full px-3 py-2 border rounded-md text-xs" rows={3} placeholder="Compelling description for search results..." />
+                    <div className={`text-[10px] mt-1 ${(formData.seo.meta_description || '').length > 160 ? 'text-red-500 font-bold' : 'text-gray-400'}`}>
+                      {(formData.seo.meta_description || '').length}/160 characters
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-600 mb-1">Meta Keywords</label>
+                    <input type="text" value={formData.seo.meta_keywords || ''} onChange={e => setFormData((p: any) => ({ ...p, seo: { ...p.seo, meta_keywords: e.target.value } }))} className="w-full px-3 py-2 border rounded-md text-xs" placeholder="samsung galaxy s25, price in pakistan, specs" />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-600 mb-1">Focus Keyword</label>
+                    <input type="text" value={formData.seo.focus_keyword || ''} onChange={e => setFormData((p: any) => ({ ...p, seo: { ...p.seo, focus_keyword: e.target.value } }))} className="w-full px-3 py-2 border rounded-md text-xs border-indigo-300 bg-indigo-50/30" placeholder="samsung galaxy s25 ultra price in pakistan" />
+                  </div>
+                </div>
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-600 mb-1">Long-tail Keywords (comma-separated)</label>
+                    <textarea value={(formData.seo.long_tail_keywords || []).join(', ')} onChange={e => setFormData((p: any) => ({ ...p, seo: { ...p.seo, long_tail_keywords: e.target.value.split(',').map((k: string) => k.trim()).filter(Boolean) } }))} className="w-full px-3 py-2 border rounded-md text-xs" rows={2} placeholder="samsung galaxy s25 ultra price in pakistan 2025, best samsung phone under 300000" />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-600 mb-1">Canonical URL</label>
+                    <input type="text" value={formData.seo.canonical_url || ''} onChange={e => setFormData((p: any) => ({ ...p, seo: { ...p.seo, canonical_url: e.target.value } }))} className="w-full px-3 py-2 border rounded-md text-xs" placeholder="https://zozo.pk/phones/samsung-galaxy-s25-ultra" />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-600 mb-1">OG Title</label>
+                    <input type="text" value={formData.seo.og_title || ''} onChange={e => setFormData((p: any) => ({ ...p, seo: { ...p.seo, og_title: e.target.value } }))} className="w-full px-3 py-2 border rounded-md text-xs" placeholder="Social media share title" />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-600 mb-1">OG Description</label>
+                    <textarea value={formData.seo.og_description || ''} onChange={e => setFormData((p: any) => ({ ...p, seo: { ...p.seo, og_description: e.target.value } }))} className="w-full px-3 py-2 border rounded-md text-xs" rows={2} placeholder="Social media share description" />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-600 mb-1">OG Image URL</label>
+                    <input type="text" value={formData.seo.og_image || ''} onChange={e => setFormData((p: any) => ({ ...p, seo: { ...p.seo, og_image: e.target.value } }))} className="w-full px-3 py-2 border rounded-md text-xs" placeholder="https://..." />
+                  </div>
+                </div>
               </div>
             </section>
-            <section className="bg-white p-5 rounded-xl border shadow-sm h-fit">
+
+            {/* AI-Generated SEO Fields */}
+            <section className="bg-gradient-to-r from-indigo-50 to-purple-50 p-6 rounded-xl border border-indigo-200 shadow-sm">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-bold text-indigo-900">🤖 AI-Generated SEO Content</h3>
+                <div className="flex gap-2">
+                  <button type="button" onClick={handleAIFillSEO} disabled={isAIFillingSEO} className="px-3 py-1.5 bg-gradient-to-r from-purple-500 to-indigo-600 text-white rounded-md text-xs font-semibold hover:from-purple-600 hover:to-indigo-700 disabled:opacity-50 flex items-center">
+                    <Wand2 className="w-3 h-3 mr-1" />
+                    {isAIFillingSEO ? 'Generating...' : 'Generate AI SEO'}
+                  </button>
+                  <button type="button" onClick={() => {
+                    setFormData((p: any) => ({ ...p, seo: {
+                      ...p.seo,
+                      meta_title: p.seo.ai_seo_title || p.seo.meta_title,
+                      meta_description: p.seo.ai_meta_description || p.seo.meta_description,
+                      meta_keywords: (p.seo.ai_keywords || []).join(', ') || p.seo.meta_keywords,
+                    }}));
+                    alert('AI content copied to manual fields!');
+                  }} className="px-3 py-1.5 bg-white border border-indigo-300 text-indigo-700 rounded-md text-xs font-semibold hover:bg-indigo-100">
+                    📋 Copy AI → Manual
+                  </button>
+                </div>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-xs font-semibold text-indigo-700 mb-1">AI SEO Title</label>
+                    <input type="text" value={formData.seo.ai_seo_title || ''} onChange={e => setFormData((p: any) => ({ ...p, seo: { ...p.seo, ai_seo_title: e.target.value } }))} className="w-full px-3 py-2 border border-indigo-200 rounded-md text-xs bg-white" />
+                    <div className={`text-[10px] mt-1 ${(formData.seo.ai_seo_title || '').length > 60 ? 'text-red-500' : 'text-indigo-400'}`}>{(formData.seo.ai_seo_title || '').length}/60</div>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-indigo-700 mb-1">AI Meta Description</label>
+                    <textarea value={formData.seo.ai_meta_description || ''} onChange={e => setFormData((p: any) => ({ ...p, seo: { ...p.seo, ai_meta_description: e.target.value } }))} className="w-full px-3 py-2 border border-indigo-200 rounded-md text-xs bg-white" rows={3} />
+                    <div className={`text-[10px] mt-1 ${(formData.seo.ai_meta_description || '').length > 160 ? 'text-red-500' : 'text-indigo-400'}`}>{(formData.seo.ai_meta_description || '').length}/160</div>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-indigo-700 mb-1">AI Summary</label>
+                    <textarea value={formData.seo.ai_summary || ''} onChange={e => setFormData((p: any) => ({ ...p, seo: { ...p.seo, ai_summary: e.target.value } }))} className="w-full px-3 py-2 border border-indigo-200 rounded-md text-xs bg-white" rows={4} />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-indigo-700 mb-1">AI Buying Advice</label>
+                    <textarea value={formData.seo.ai_buying_advice || ''} onChange={e => setFormData((p: any) => ({ ...p, seo: { ...p.seo, ai_buying_advice: e.target.value } }))} className="w-full px-3 py-2 border border-indigo-200 rounded-md text-xs bg-white" rows={3} />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-indigo-700 mb-1">AI Snippet</label>
+                    <textarea value={formData.seo.ai_snippet || ''} onChange={e => setFormData((p: any) => ({ ...p, seo: { ...p.seo, ai_snippet: e.target.value } }))} className="w-full px-3 py-2 border border-indigo-200 rounded-md text-xs bg-white" rows={2} />
+                  </div>
+                </div>
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-xs font-semibold text-indigo-700 mb-1">AI Pros (one per line)</label>
+                    <textarea value={(formData.seo.ai_pros || []).join('\n')} onChange={e => setFormData((p: any) => ({ ...p, seo: { ...p.seo, ai_pros: e.target.value.split('\n').filter(Boolean) } }))} className="w-full px-3 py-2 border border-indigo-200 rounded-md text-xs bg-white" rows={4} placeholder="Great camera\nLong battery life\nPowerful processor" />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-indigo-700 mb-1">AI Cons (one per line)</label>
+                    <textarea value={(formData.seo.ai_cons || []).join('\n')} onChange={e => setFormData((p: any) => ({ ...p, seo: { ...p.seo, ai_cons: e.target.value.split('\n').filter(Boolean) } }))} className="w-full px-3 py-2 border border-indigo-200 rounded-md text-xs bg-white" rows={4} placeholder="Expensive\nNo headphone jack\nHeavy" />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-indigo-700 mb-1">AI Keywords (comma-separated)</label>
+                    <textarea value={(formData.seo.ai_keywords || []).join(', ')} onChange={e => setFormData((p: any) => ({ ...p, seo: { ...p.seo, ai_keywords: e.target.value.split(',').map((k: string) => k.trim()).filter(Boolean) } }))} className="w-full px-3 py-2 border border-indigo-200 rounded-md text-xs bg-white" rows={2} />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-indigo-700 mb-1">AI Suggested Tags (comma-separated)</label>
+                    <textarea value={(formData.seo.ai_suggested_tags || []).join(', ')} onChange={e => setFormData((p: any) => ({ ...p, seo: { ...p.seo, ai_suggested_tags: e.target.value.split(',').map((k: string) => k.trim()).filter(Boolean) } }))} className="w-full px-3 py-2 border border-indigo-200 rounded-md text-xs bg-white" rows={2} />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-indigo-700 mb-1">AI FAQ (Question → Answer pairs)</label>
+                    <div className="space-y-2">
+                      {(formData.seo.ai_faq || []).map((faq: any, idx: number) => (
+                        <div key={idx} className="flex flex-col gap-1 p-2 bg-white rounded border border-indigo-100">
+                          <input type="text" value={faq.question || ''} onChange={e => {
+                            const faqs = [...(formData.seo.ai_faq || [])];
+                            faqs[idx] = { ...faqs[idx], question: e.target.value };
+                            setFormData((p: any) => ({ ...p, seo: { ...p.seo, ai_faq: faqs } }));
+                          }} className="w-full px-2 py-1 border rounded text-xs" placeholder="Question" />
+                          <textarea value={faq.answer || ''} onChange={e => {
+                            const faqs = [...(formData.seo.ai_faq || [])];
+                            faqs[idx] = { ...faqs[idx], answer: e.target.value };
+                            setFormData((p: any) => ({ ...p, seo: { ...p.seo, ai_faq: faqs } }));
+                          }} className="w-full px-2 py-1 border rounded text-xs" rows={2} placeholder="Answer" />
+                          <button type="button" onClick={() => {
+                            const faqs = (formData.seo.ai_faq || []).filter((_: any, i: number) => i !== idx);
+                            setFormData((p: any) => ({ ...p, seo: { ...p.seo, ai_faq: faqs } }));
+                          }} className="text-red-500 text-[10px] font-bold self-end">Remove</button>
+                        </div>
+                      ))}
+                      <button type="button" onClick={() => {
+                        const faqs = [...(formData.seo.ai_faq || []), { question: '', answer: '' }];
+                        setFormData((p: any) => ({ ...p, seo: { ...p.seo, ai_faq: faqs } }));
+                      }} className="text-xs text-indigo-600 font-semibold hover:underline">+ Add FAQ</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            {/* Affiliate & Extra Pricing (kept from original) */}
+            <section className="bg-white p-6 rounded-xl border shadow-sm">
               <h3 className="font-bold mb-3">Affiliate & Pricing Extra</h3>
-              <div className="space-y-4">
-                {renderTextFields('affiliate', DEFAULT_EXTRA_SPECS.affiliate)}
-                {renderBooleanFields('affiliate', DEFAULT_EXTRA_SPECS.affiliate)}
-                {renderTextFields('price_section', DEFAULT_EXTRA_SPECS.price_section)}
-                {renderBooleanFields('price_section', DEFAULT_EXTRA_SPECS.price_section)}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-4">
+                  {renderTextFields('affiliate', DEFAULT_EXTRA_SPECS.affiliate)}
+                  {renderBooleanFields('affiliate', DEFAULT_EXTRA_SPECS.affiliate)}
+                </div>
+                <div className="space-y-4">
+                  {renderTextFields('price_section', DEFAULT_EXTRA_SPECS.price_section)}
+                  {renderBooleanFields('price_section', DEFAULT_EXTRA_SPECS.price_section)}
+                </div>
               </div>
             </section>
           </div>

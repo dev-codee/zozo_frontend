@@ -33,6 +33,14 @@ export default function NavbarClient({ dynamicPages = [] }: { dynamicPages?: any
     { label: "News", href: "/news" },
   ];
 
+  const bestPhonesLinks = [
+    { label: "Best for Students", href: "/phones?category=students" },
+    { label: "Best for Gamers", href: "/phones?category=gaming" },
+    { label: "Best Camera Phones", href: "/phones?category=camera" },
+    { label: "Best Battery Life", href: "/phones?category=battery" },
+    { label: "Best 5G Phones", href: "/phones?network=5g" },
+  ];
+
   const isActive = (href: string) => {
     const [path, query] = href.split('?');
     if (href === '/compare' && pathname.startsWith('/compare')) return true;
@@ -58,6 +66,24 @@ export default function NavbarClient({ dynamicPages = [] }: { dynamicPages?: any
         {/* Desktop Nav */}
         <Suspense fallback={<nav className="hidden md:flex items-center gap-1 h-full"></nav>}>
           <nav className="hidden md:flex items-center gap-1 h-full">
+            {/* Best Phones Dropdown */}
+            <div className="relative h-full group flex items-center">
+              <button className="h-full flex items-center gap-1 transition-colors text-sm font-semibold tracking-wide uppercase px-4 border-b-2 text-on-surface-variant hover:text-primary hover:bg-surface-container-low border-transparent">
+                Best Phones
+                <span className="material-symbols-outlined text-[16px]">expand_more</span>
+              </button>
+              <div className="absolute top-full left-0 hidden group-hover:flex flex-col bg-surface-white border border-border-subtle shadow-lg rounded-xl py-2 min-w-[200px] z-50">
+                {bestPhonesLinks.map(child => (
+                  <Link
+                    key={child.label}
+                    href={child.href}
+                    className="px-4 py-2 text-sm font-semibold text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors"
+                  >
+                    {child.label}
+                  </Link>
+                ))}
+              </div>
+            </div>
             {baseNavLinks.map((link) => {
               const active = isActive(link.href);
               return (
@@ -192,6 +218,23 @@ export default function NavbarClient({ dynamicPages = [] }: { dynamicPages?: any
         <div className="md:hidden bg-surface-white border-t border-border-subtle animate-[slideDown_0.2s_ease-out]">
           <Suspense fallback={<nav className="flex flex-col p-4 gap-1"></nav>}>
             <nav className="flex flex-col p-4 gap-1">
+              {/* Mobile Best Phones */}
+              <div className="flex flex-col mb-2 pb-2 border-b border-border-subtle">
+                <span className="px-4 py-2 text-xs font-bold text-text-muted uppercase tracking-wider">
+                  Best Phones
+                </span>
+                {bestPhonesLinks.map(link => (
+                  <Link
+                    key={link.label}
+                    href={link.href}
+                    onClick={() => setMobileOpen(false)}
+                    className="flex items-center px-4 py-2 rounded-lg transition-colors text-sm font-semibold text-on-surface-variant hover:text-primary hover:bg-surface-container-low"
+                  >
+                    {link.label}
+                  </Link>
+                ))}
+              </div>
+
               {baseNavLinks.map((link) => {
                 const active = isActive(link.href);
                 return (

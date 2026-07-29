@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
 import Link from "next/link";
-import { getPhoneBySlug, getPhones, Phone } from "@/app/lib/api";
+import { getPhoneBySlug, getPhones, getRelatedPhones, Phone } from "@/app/lib/api";
 import Navbar from "@/app/components/Navbar";
 import Footer from "@/app/components/Footer";
 import Breadcrumb from "@/app/components/Breadcrumb";
@@ -11,6 +11,8 @@ import PhoneDescriptionClient from "@/app/components/PhoneDescriptionClient";
 import UserFeedbackWidget from "@/app/components/UserFeedbackWidget";
 import ReviewSection from "@/app/components/ReviewSection";
 import AdSlot from "@/app/components/AdSlot";
+import { generateProductSchema, generateBreadcrumbSchema, generateFAQSchema, generateVideoSchema, generateWebPageSchema } from "@/app/lib/schema";
+
 function getTagColorClass(tag: string) {
   const hash = Array.from(tag).reduce((acc, char) => acc + char.charCodeAt(0), 0);
   const colorThemes = [
@@ -109,6 +111,19 @@ export default async function PhoneDetailPage({
     console.error("Failed to fetch brand phones:", error);
   }
 
+  // Fetch related phones (processor & network)
+  let relatedByProcessor: Phone[] = [];
+  let relatedByNetwork: Phone[] = [];
+  try {
+    const relatedData = await getRelatedPhones(phone.slug);
+    if (relatedData) {
+      relatedByProcessor = relatedData.by_processor || [];
+      relatedByNetwork = relatedData.by_network || [];
+    }
+  } catch (error) {
+    console.error("Failed to fetch related phones:", error);
+  }
+
   const releaseDateStr = phone.release_date && !isNaN(Date.parse(phone.release_date))
     ? new Date(phone.release_date).toLocaleDateString("en-US", {
       year: "numeric",
@@ -174,6 +189,24 @@ export default async function PhoneDetailPage({
 
   return (
     <>
+      {/* JSON-LD Schemas */}
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(generateProductSchema(phone as any)) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(generateBreadcrumbSchema([
+        { label: phone.brand_slug.replace("-", " "), href: `/${phone.brand_slug}-phone-price-pakistan` },
+        { label: phone.name }
+      ])) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(generateWebPageSchema(
+        phone.seo?.meta_title || `${phone.name} Price in Pakistan, Specs & Reviews`,
+        phone.seo?.meta_description || `Find the best price for ${phone.name} in Pakistan. Read full specifications, features, and user reviews on Zozo.`,
+        `/phones/${phone.slug}`
+      )) }} />
+      {phone.seo?.ai_faq && phone.seo.ai_faq.length > 0 && (
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(generateFAQSchema(phone.seo.ai_faq)) }} />
+      )}
+      {phone.video_url && generateVideoSchema(phone as any) && (
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(generateVideoSchema(phone as any)) }} />
+      )}
+
       <Navbar />
       <main className="w-full max-w-[1280px] mx-auto px-4 md:px-6 py-8 flex flex-col gap-[15px] bg-surface">
         {/* Breadcrumb */}
@@ -559,6 +592,42 @@ export default async function PhoneDetailPage({
                   ))}
                 </ul>
               </div>
+
+              {/* Related by Processor */}
+              {relatedByProcessor.length > 0 && (
+                <div className="bg-white border border-border-subtle rounded-xl p-4 shadow-sm mt-6">
+                  <h3 className="font-headline-sm text-sm font-bold text-text-main mb-3">
+                    Phones with Same Processor
+                  </h3>
+                  <ul className="flex flex-col gap-2">
+                    {relatedByProcessor.map(p => (
+                      <li key={p._id}>
+                        <Link href={`/phones/${p.slug}`} className="text-sm text-primary hover:underline">
+                          {p.name}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {/* Related by Network */}
+              {relatedByNetwork.length > 0 && (
+                <div className="bg-white border border-border-subtle rounded-xl p-4 shadow-sm mt-6">
+                  <h3 className="font-headline-sm text-sm font-bold text-text-main mb-3">
+                    Similar Network Phones
+                  </h3>
+                  <ul className="flex flex-col gap-2">
+                    {relatedByNetwork.map(p => (
+                      <li key={p._id}>
+                        <Link href={`/phones/${p.slug}`} className="text-sm text-primary hover:underline">
+                          {p.name}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
 
               {/* Sidebar Ad Slot */}
               <div className="mt-6">

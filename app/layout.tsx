@@ -9,13 +9,22 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://zozo.pk'),
   title: "zozo.pk — Compare Mobile Phone Prices in Pakistan",
-  description:
-    "Compare latest mobile phone prices in Pakistan across all top retailers. Find the best deals on Samsung, Apple, Xiaomi, Vivo, and more.",
-  keywords: "mobile phones, prices, Pakistan, compare, Samsung, Apple, Xiaomi",
-  robots: {
-    index: false,
-    follow: false,
+  description: "Compare latest mobile phone prices in Pakistan across all top retailers. Find the best deals on Samsung, Apple, Xiaomi, Vivo, and more.",
+  keywords: "mobile phones, prices, Pakistan, compare, Samsung, Apple, Xiaomi, Vivo, Oppo, Infinix, Tecno",
+  openGraph: {
+    type: "website",
+    locale: "en_PK",
+    url: "https://zozo.pk",
+    title: "zozo.pk — Compare Mobile Phone Prices in Pakistan",
+    description: "Compare latest mobile phone prices in Pakistan across all top retailers. Find the best deals on Samsung, Apple, Xiaomi, Vivo, and more.",
+    siteName: "zozo.pk",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "zozo.pk — Compare Mobile Phone Prices in Pakistan",
+    description: "Compare latest mobile phone prices in Pakistan across all top retailers.",
   },
 };
 
