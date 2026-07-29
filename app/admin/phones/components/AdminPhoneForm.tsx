@@ -278,6 +278,7 @@ export default function AdminPhoneForm({ initialData, onSubmit, isEditing = fals
             body: { ...prev.specs.body, ...ai.specs?.body },
             connectivity: { ...prev.specs.connectivity, ...ai.specs?.connectivity },
             os: ai.specs?.os || prev.specs.os,
+            ai_features: ai.specs?.ai_features || prev.specs.ai_features,
             extra_specs: {
               ...prev.specs.extra_specs,
               ...(ai.specs?.extra_specs || {})
