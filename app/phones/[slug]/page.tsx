@@ -10,6 +10,7 @@ import PhoneSpecs from "@/app/components/PhoneSpecs";
 import PhoneDescriptionClient from "@/app/components/PhoneDescriptionClient";
 import UserFeedbackWidget from "@/app/components/UserFeedbackWidget";
 import ReviewSection from "@/app/components/ReviewSection";
+import AdSlot from "@/app/components/AdSlot";
 function getTagColorClass(tag: string) {
   const hash = Array.from(tag).reduce((acc, char) => acc + char.charCodeAt(0), 0);
   const colorThemes = [
@@ -558,6 +559,11 @@ export default async function PhoneDetailPage({
                   ))}
                 </ul>
               </div>
+
+              {/* Sidebar Ad Slot */}
+              <div className="mt-6">
+                <AdSlot placement="SIDEBAR" layout="col" />
+              </div>
             </div>
           </div>
         </div>
@@ -602,6 +608,11 @@ export default async function PhoneDetailPage({
 
         {/* Product Description */}
         <PhoneDescriptionClient slug={phone.slug} initialDescription={phone.description} phoneName={phone.name} />
+
+        {/* Product Area Ad Slot */}
+        <div className="mt-2 mb-4">
+          <AdSlot placement="PRODUCT_AREA" layout="row" />
+        </div>
 
         {/* User Reviews Section */}
         <ReviewSection phoneId={phone._id} />

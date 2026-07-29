@@ -116,6 +116,14 @@ export default function AdminLayout({
             </Link>
 
             <Link
+              href="/admin/ads"
+              className="flex items-center px-3 py-2 text-xs font-medium text-gray-700 rounded-md hover:bg-gray-50"
+            >
+              <FileEdit className="mr-3 h-5 w-5 text-gray-400" />
+              Ads Management
+            </Link>
+
+            <Link
               href="/admin/pages"
               className="flex items-center px-3 py-2 text-xs font-medium text-gray-700 rounded-md hover:bg-gray-50"
             >
