@@ -766,81 +766,9 @@ export default function AdminPhoneForm({ initialData, onSubmit, isEditing = fals
                 ))}
               </div>
             </section>
-            <section className="bg-white p-5 rounded-xl border shadow-sm md:col-span-2">
-              <h3 className="font-bold mb-3">AI Generated Content</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {Object.keys(DEFAULT_EXTRA_SPECS.ai_generated_content).map(key => renderInput(key, (formData.specs.extra_specs as any).ai_generated_content[key], v => handleNestedExtraSpec('ai_generated_content', key, v), 'textarea'))}
-              </div>
-            </section>
-            <section className="bg-white p-5 rounded-xl border shadow-sm md:col-span-2">
-              <h3 className="font-bold mb-3">AI Automations (Moderation Flags)</h3>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                {Object.keys(DEFAULT_EXTRA_SPECS.ai_automation).map(key => renderInput(key, (formData.specs.extra_specs as any).ai_automation[key], v => handleNestedExtraSpec('ai_automation', key, v), 'checkbox'))}
-              </div>
-            </section>
-          </div>
-        )}
-
-        {/* SEO & AFFILIATE TAB */}
-        {activeTab === 'seo_affiliate' && (
-          <div className="space-y-6">
-            {/* Manual SEO Fields */}
-            <section className="bg-white p-6 rounded-xl border shadow-sm">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-bold text-gray-900">📝 Manual SEO Fields</h3>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-xs font-semibold text-gray-600 mb-1">Meta Title</label>
-                    <input type="text" value={formData.seo.meta_title || ''} onChange={e => setFormData((p: any) => ({ ...p, seo: { ...p.seo, meta_title: e.target.value } }))} className="w-full px-3 py-2 border rounded-md text-xs" placeholder="e.g. Samsung Galaxy S25 Ultra Price in Pakistan | Specs & Reviews" />
-                    <div className={`text-[10px] mt-1 ${(formData.seo.meta_title || '').length > 60 ? 'text-red-500 font-bold' : 'text-gray-400'}`}>
-                      {(formData.seo.meta_title || '').length}/60 characters
-                    </div>
-                  </div>
-                  <div>
-                    <label className="block text-xs font-semibold text-gray-600 mb-1">Meta Description</label>
-                    <textarea value={formData.seo.meta_description || ''} onChange={e => setFormData((p: any) => ({ ...p, seo: { ...p.seo, meta_description: e.target.value } }))} className="w-full px-3 py-2 border rounded-md text-xs" rows={3} placeholder="Compelling description for search results..." />
-                    <div className={`text-[10px] mt-1 ${(formData.seo.meta_description || '').length > 160 ? 'text-red-500 font-bold' : 'text-gray-400'}`}>
-                      {(formData.seo.meta_description || '').length}/160 characters
-                    </div>
-                  </div>
-                  <div>
-                    <label className="block text-xs font-semibold text-gray-600 mb-1">Meta Keywords</label>
-                    <input type="text" value={formData.seo.meta_keywords || ''} onChange={e => setFormData((p: any) => ({ ...p, seo: { ...p.seo, meta_keywords: e.target.value } }))} className="w-full px-3 py-2 border rounded-md text-xs" placeholder="samsung galaxy s25, price in pakistan, specs" />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-semibold text-gray-600 mb-1">Focus Keyword</label>
-                    <input type="text" value={formData.seo.focus_keyword || ''} onChange={e => setFormData((p: any) => ({ ...p, seo: { ...p.seo, focus_keyword: e.target.value } }))} className="w-full px-3 py-2 border rounded-md text-xs border-indigo-300 bg-indigo-50/30" placeholder="samsung galaxy s25 ultra price in pakistan" />
-                  </div>
-                </div>
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-xs font-semibold text-gray-600 mb-1">Long-tail Keywords (comma-separated)</label>
-                    <textarea value={(formData.seo.long_tail_keywords || []).join(', ')} onChange={e => setFormData((p: any) => ({ ...p, seo: { ...p.seo, long_tail_keywords: e.target.value.split(',').map((k: string) => k.trim()).filter(Boolean) } }))} className="w-full px-3 py-2 border rounded-md text-xs" rows={2} placeholder="samsung galaxy s25 ultra price in pakistan 2025, best samsung phone under 300000" />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-semibold text-gray-600 mb-1">Canonical URL</label>
-                    <input type="text" value={formData.seo.canonical_url || ''} onChange={e => setFormData((p: any) => ({ ...p, seo: { ...p.seo, canonical_url: e.target.value } }))} className="w-full px-3 py-2 border rounded-md text-xs" placeholder="https://zozo.pk/phones/samsung-galaxy-s25-ultra" />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-semibold text-gray-600 mb-1">OG Title</label>
-                    <input type="text" value={formData.seo.og_title || ''} onChange={e => setFormData((p: any) => ({ ...p, seo: { ...p.seo, og_title: e.target.value } }))} className="w-full px-3 py-2 border rounded-md text-xs" placeholder="Social media share title" />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-semibold text-gray-600 mb-1">OG Description</label>
-                    <textarea value={formData.seo.og_description || ''} onChange={e => setFormData((p: any) => ({ ...p, seo: { ...p.seo, og_description: e.target.value } }))} className="w-full px-3 py-2 border rounded-md text-xs" rows={2} placeholder="Social media share description" />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-semibold text-gray-600 mb-1">OG Image URL</label>
-                    <input type="text" value={formData.seo.og_image || ''} onChange={e => setFormData((p: any) => ({ ...p, seo: { ...p.seo, og_image: e.target.value } }))} className="w-full px-3 py-2 border rounded-md text-xs" placeholder="https://..." />
-                  </div>
-                </div>
-              </div>
-            </section>
 
             {/* AI-Generated SEO Fields */}
-            <section className="bg-gradient-to-r from-indigo-50 to-purple-50 p-6 rounded-xl border border-indigo-200 shadow-sm">
+            <section className="bg-gradient-to-r from-indigo-50 to-purple-50 p-6 rounded-xl border border-indigo-200 shadow-sm md:col-span-2">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-bold text-indigo-900">🤖 AI-Generated SEO Content</h3>
                 <div className="flex gap-2">
@@ -933,6 +861,73 @@ export default function AdminPhoneForm({ initialData, onSubmit, isEditing = fals
                 </div>
               </div>
             </section>
+            <section className="bg-white p-5 rounded-xl border shadow-sm md:col-span-2">
+              <h3 className="font-bold mb-3">AI Automations (Moderation Flags)</h3>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {Object.keys(DEFAULT_EXTRA_SPECS.ai_automation).map(key => renderInput(key, (formData.specs.extra_specs as any).ai_automation[key], v => handleNestedExtraSpec('ai_automation', key, v), 'checkbox'))}
+              </div>
+            </section>
+          </div>
+        )}
+
+        {/* SEO & AFFILIATE TAB */}
+        {activeTab === 'seo_affiliate' && (
+          <div className="space-y-6">
+            {/* Manual SEO Fields */}
+            <section className="bg-white p-6 rounded-xl border shadow-sm">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-bold text-gray-900">📝 Manual SEO Fields</h3>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-600 mb-1">Meta Title</label>
+                    <input type="text" value={formData.seo.meta_title || ''} onChange={e => setFormData((p: any) => ({ ...p, seo: { ...p.seo, meta_title: e.target.value } }))} className="w-full px-3 py-2 border rounded-md text-xs" placeholder="e.g. Samsung Galaxy S25 Ultra Price in Pakistan | Specs & Reviews" />
+                    <div className={`text-[10px] mt-1 ${(formData.seo.meta_title || '').length > 60 ? 'text-red-500 font-bold' : 'text-gray-400'}`}>
+                      {(formData.seo.meta_title || '').length}/60 characters
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-600 mb-1">Meta Description</label>
+                    <textarea value={formData.seo.meta_description || ''} onChange={e => setFormData((p: any) => ({ ...p, seo: { ...p.seo, meta_description: e.target.value } }))} className="w-full px-3 py-2 border rounded-md text-xs" rows={3} placeholder="Compelling description for search results..." />
+                    <div className={`text-[10px] mt-1 ${(formData.seo.meta_description || '').length > 160 ? 'text-red-500 font-bold' : 'text-gray-400'}`}>
+                      {(formData.seo.meta_description || '').length}/160 characters
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-600 mb-1">Meta Keywords</label>
+                    <input type="text" value={formData.seo.meta_keywords || ''} onChange={e => setFormData((p: any) => ({ ...p, seo: { ...p.seo, meta_keywords: e.target.value } }))} className="w-full px-3 py-2 border rounded-md text-xs" placeholder="samsung galaxy s25, price in pakistan, specs" />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-600 mb-1">Focus Keyword</label>
+                    <input type="text" value={formData.seo.focus_keyword || ''} onChange={e => setFormData((p: any) => ({ ...p, seo: { ...p.seo, focus_keyword: e.target.value } }))} className="w-full px-3 py-2 border rounded-md text-xs border-indigo-300 bg-indigo-50/30" placeholder="samsung galaxy s25 ultra price in pakistan" />
+                  </div>
+                </div>
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-600 mb-1">Long-tail Keywords (comma-separated)</label>
+                    <textarea value={(formData.seo.long_tail_keywords || []).join(', ')} onChange={e => setFormData((p: any) => ({ ...p, seo: { ...p.seo, long_tail_keywords: e.target.value.split(',').map((k: string) => k.trim()).filter(Boolean) } }))} className="w-full px-3 py-2 border rounded-md text-xs" rows={2} placeholder="samsung galaxy s25 ultra price in pakistan 2025, best samsung phone under 300000" />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-600 mb-1">Canonical URL</label>
+                    <input type="text" value={formData.seo.canonical_url || ''} onChange={e => setFormData((p: any) => ({ ...p, seo: { ...p.seo, canonical_url: e.target.value } }))} className="w-full px-3 py-2 border rounded-md text-xs" placeholder="https://zozo.pk/phones/samsung-galaxy-s25-ultra" />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-600 mb-1">OG Title</label>
+                    <input type="text" value={formData.seo.og_title || ''} onChange={e => setFormData((p: any) => ({ ...p, seo: { ...p.seo, og_title: e.target.value } }))} className="w-full px-3 py-2 border rounded-md text-xs" placeholder="Social media share title" />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-600 mb-1">OG Description</label>
+                    <textarea value={formData.seo.og_description || ''} onChange={e => setFormData((p: any) => ({ ...p, seo: { ...p.seo, og_description: e.target.value } }))} className="w-full px-3 py-2 border rounded-md text-xs" rows={2} placeholder="Social media share description" />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-600 mb-1">OG Image URL</label>
+                    <input type="text" value={formData.seo.og_image || ''} onChange={e => setFormData((p: any) => ({ ...p, seo: { ...p.seo, og_image: e.target.value } }))} className="w-full px-3 py-2 border rounded-md text-xs" placeholder="https://..." />
+                  </div>
+                </div>
+              </div>
+            </section>
+
 
             {/* Affiliate & Extra Pricing (kept from original) */}
             <section className="bg-white p-6 rounded-xl border shadow-sm">
