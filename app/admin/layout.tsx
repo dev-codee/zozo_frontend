@@ -95,6 +95,20 @@ export default function AdminLayout({
 
             <div className="pt-4 pb-2">
               <p className="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                User Content
+              </p>
+            </div>
+
+            <Link
+              href="/admin/benchmarks"
+              className="flex items-center px-3 py-2 text-xs font-medium text-gray-700 rounded-md hover:bg-gray-50"
+            >
+              <Activity className="mr-3 h-5 w-5 text-gray-400" />
+              User Benchmarks
+            </Link>
+
+            <div className="pt-4 pb-2">
+              <p className="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">
                 CMS Content
               </p>
             </div>
