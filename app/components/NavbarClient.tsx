@@ -27,9 +27,9 @@ export default function NavbarClient({ dynamicPages = [] }: { dynamicPages?: any
 
   const baseNavLinks = [
     { label: "Home", href: "/" },
-    { label: "Top 10 Phones", href: "/phones?sort=top10" },
-    { label: "Best 10 Phones By Price", href: "/phones?sort=price" },
-    { label: "Up Coming Phones", href: "/phones?sort=upcoming" },
+    { label: "Top 10 Phones", href: "/phones?sort=trending&limit=10" },
+    { label: "Best 10 Phones By Price", href: "/phones?sort=price_asc&limit=10" },
+    { label: "Up Coming Phones", href: "/phones?status=upcoming" },
     { label: "Compare", href: "/compare" },
     { label: "Brands", href: "/brands" },
   ];
