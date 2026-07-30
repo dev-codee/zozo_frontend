@@ -493,7 +493,7 @@ export default function CompareClient({ initialPhones, allPhones }: CompareClien
                     {aiKeyDifferences?.[phone.slug] && (
                       <div className="mt-4 text-left w-full border-t border-border-subtle/50 pt-3">
                         <h4 className="text-xs font-bold text-primary mb-2 flex items-center gap-1.5">
-                          <span className="material-symbols-outlined text-[16px]">psychiatry</span> AI Highlights
+                          <span className="material-symbols-outlined text-[16px]">psychiatry</span> Key Differences
                         </h4>
                         <ul className="space-y-2">
                           {aiKeyDifferences[phone.slug].map((diff, i) => (
