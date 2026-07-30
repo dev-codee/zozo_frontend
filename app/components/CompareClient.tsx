@@ -32,8 +32,8 @@ export default function CompareClient({ initialPhones, allPhones }: CompareClien
   const searchParams = useSearchParams();
   const { user } = useAuth();
 
-  // Support up to 3 comparison slots
-  const maxSlots = 3;
+  // Support up to 2 comparison slots
+  const maxSlots = 2;
   const slots: (Phone | null)[] = Array.from({ length: maxSlots }, (_, i) => initialPhones[i] || null);
 
   const [aiVerdict, setAiVerdict] = useState<string | null>(null);
@@ -434,10 +434,9 @@ export default function CompareClient({ initialPhones, allPhones }: CompareClien
 
       {/* Responsive Scrollable Container */}
       <div className="w-full overflow-x-auto relative rounded-xl border border-border-subtle bg-surface-white shadow-sm scrollbar-thin">
-        {/* Comparison Table Grid */}
-        <div className="min-w-[850px] md:min-w-full grid grid-cols-[180px_1fr_1fr_1fr] divide-x divide-border-subtle">
+        <div className="min-w-[700px] md:min-w-full grid grid-cols-[180px_1fr_1fr] divide-x divide-border-subtle">
           
-          {/* ── Sticky Header: Label Column Placeholder ── */}
+          {/* ── Sticky Header: Label Column ── */}
           <div className="sticky left-0 bg-surface-white z-20 flex flex-col justify-end p-6 border-b border-border-subtle shadow-[4px_0_8px_-4px_rgba(0,0,0,0.06)] min-h-[300px]">
             <div className="font-headline-sm text-sm font-bold text-text-main uppercase tracking-wider mb-2">
               Devices
@@ -490,6 +489,22 @@ export default function CompareClient({ initialPhones, allPhones }: CompareClien
                           : "Price TBA"}
                       </p>
                     </div>
+                    {/* Key Differences AI section */}
+                    {aiKeyDifferences?.[phone.slug] && (
+                      <div className="mt-4 text-left w-full border-t border-border-subtle/50 pt-3">
+                        <h4 className="text-xs font-bold text-primary mb-2 flex items-center gap-1.5">
+                          <span className="material-symbols-outlined text-[16px]">psychiatry</span> AI Highlights
+                        </h4>
+                        <ul className="space-y-2">
+                          {aiKeyDifferences[phone.slug].map((diff, i) => (
+                            <li key={i} className="text-xs text-text-muted leading-tight flex items-start gap-1.5">
+                              <span className="material-symbols-outlined text-green-500 text-[14px] shrink-0 mt-0.5">check_circle</span>
+                              {diff}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
                   </div>
 
                   {/* Action Link to Details */}
@@ -513,9 +528,9 @@ export default function CompareClient({ initialPhones, allPhones }: CompareClien
 
           {/* ── Table Spec Rows ── */}
           {categories.map((category, catIdx) => (
-            <div key={catIdx} className="col-span-4 grid grid-cols-[180px_1fr_1fr_1fr] divide-x divide-border-subtle">
+            <div key={catIdx} className="col-span-3 grid grid-cols-[180px_1fr_1fr] divide-x divide-border-subtle">
               {/* Category Header Bar */}
-              <div className="col-span-4 bg-surface-container-low/40 py-3 px-6 flex items-center gap-2 border-b border-t border-border-subtle">
+              <div className="col-span-3 bg-surface-container-low/40 py-3 px-6 flex items-center gap-2 border-b border-t border-border-subtle">
                 <span className="material-symbols-outlined text-text-muted text-[18px]">{category.icon}</span>
                 <h3 className="font-headline-sm text-sm font-bold text-text-main uppercase tracking-wider">
                   {category.name}
@@ -540,7 +555,7 @@ export default function CompareClient({ initialPhones, allPhones }: CompareClien
                 }
 
                 return (
-                <div key={fieldIdx} className="col-span-4 grid grid-cols-[180px_1fr_1fr_1fr] divide-x divide-border-subtle border-b border-border-subtle/50 last:border-b-0 hover:bg-surface-container-lowest/30 transition-colors">
+                <div key={fieldIdx} className="col-span-3 grid grid-cols-[180px_1fr_1fr] divide-x divide-border-subtle border-b border-border-subtle/50 last:border-b-0 hover:bg-surface-container-lowest/30 transition-colors">
                   {/* Label (Sticky left) */}
                   <div className="sticky left-0 bg-surface-white z-10 py-3 px-5 text-xs font-semibold text-text-muted flex items-center border-r border-border-subtle shadow-[4px_0_8px_-4px_rgba(0,0,0,0.06)] min-h-[48px]">
                     {field.label}
@@ -562,7 +577,7 @@ export default function CompareClient({ initialPhones, allPhones }: CompareClien
 
               {/* Special row for Benchmark Submissions */}
               {category.name === "Benchmarks & Gaming" && (
-                <div className="col-span-4 flex justify-center py-5 bg-surface-white border-t border-border-subtle/50">
+                <div className="col-span-3 flex justify-center py-5 bg-surface-white border-t border-border-subtle/50">
                   <button 
                     onClick={() => {
                       if (!user) {
