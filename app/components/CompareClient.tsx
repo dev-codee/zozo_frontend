@@ -490,7 +490,7 @@ export default function CompareClient({ initialPhones, allPhones }: CompareClien
 
                   {/* Action Link to Details */}
                   <Link
-                    href={`/phones/${phone.slug}`}
+                    href={`/${phone.slug}-price-in-pakistan`}
                     className="w-full mt-4 bg-surface-container-low hover:bg-primary/10 hover:text-primary text-text-main font-semibold text-xs py-2 px-4 rounded-lg text-center transition-colors border border-border-subtle"
                   >
                     View Details

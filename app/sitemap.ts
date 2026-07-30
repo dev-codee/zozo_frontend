@@ -37,7 +37,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const phonesData = await getPhones('limit=1000'); // Fetch up to 1000 phones for sitemap
     if (phonesData && phonesData.phones) {
       const phoneRoutes: MetadataRoute.Sitemap = phonesData.phones.map((phone) => ({
-        url: `${baseUrl}/phones/${phone.slug}`,
+        url: `${baseUrl}/${phone.slug}-price-in-pakistan`,
         lastModified: phone.updated_at ? new Date(phone.updated_at) : new Date(),
         changeFrequency: 'daily',
         priority: 0.8,

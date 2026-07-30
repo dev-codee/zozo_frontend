@@ -1,4 +1,4 @@
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { Metadata } from "next";
 import Link from "next/link";
 import { getPhoneBySlug, getPhones, getRelatedPhones, Phone } from "@/app/lib/api";
@@ -42,7 +42,11 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const resolvedParams = await params;
-  const phone = await getPhoneBySlug(resolvedParams.slug);
+  let slug = resolvedParams.slug;
+  if (slug.endsWith('-price-in-pakistan')) {
+    slug = slug.replace('-price-in-pakistan', '');
+  }
+  const phone = await getPhoneBySlug(slug);
 
   if (!phone) {
     return {
@@ -63,7 +67,18 @@ export default async function PhoneDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const resolvedParams = await params;
-  const phone = await getPhoneBySlug(resolvedParams.slug);
+  let slug = resolvedParams.slug;
+
+  if (!slug.endsWith('-price-in-pakistan')) {
+    const phoneCheck = await getPhoneBySlug(slug);
+    if (phoneCheck) {
+      redirect(`/${slug}-price-price-in-pakistan`);
+    }
+  } else {
+    slug = slug.replace('-price-in-pakistan', '');
+  }
+
+  const phone = await getPhoneBySlug(slug);
 
   if (!phone) {
     notFound();
@@ -191,15 +206,19 @@ export default async function PhoneDetailPage({
     <>
       {/* JSON-LD Schemas */}
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(generateProductSchema(phone as any)) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(generateBreadcrumbSchema([
-        { label: phone.brand_slug.toUpperCase().replace("-", " "), href: `/${phone.brand_slug}-phone-price-pakistan` },
-        { label: phone.name }
-      ])) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(generateWebPageSchema(
-        phone.seo?.meta_title || `${phone.name} Price in Pakistan, Specs & Reviews`,
-        phone.seo?.meta_description || `Find the best price for ${phone.name} in Pakistan. Read full specifications, features, and user reviews on Zozo.`,
-        `/phones/${phone.slug}`
-      )) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{
+        __html: JSON.stringify(generateBreadcrumbSchema([
+          { label: phone.brand_slug.toUpperCase().replace("-", " "), href: `/${phone.brand_slug}-phone-price-pakistan` },
+          { label: phone.name }
+        ]))
+      }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{
+        __html: JSON.stringify(generateWebPageSchema(
+          phone.seo?.meta_title || `${phone.name} Price in Pakistan, Specs & Reviews`,
+          phone.seo?.meta_description || `Find the best price for ${phone.name} in Pakistan. Read full specifications, features, and user reviews on Zozo.`,
+          `/${phone.slug}-price-in-pakistan`
+        ))
+      }} />
       {phone.seo?.ai_faq && phone.seo.ai_faq.length > 0 && (
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(generateFAQSchema(phone.seo.ai_faq)) }} />
       )}
@@ -523,7 +542,7 @@ export default async function PhoneDetailPage({
                       return (
                         <Link
                           key={comp._id}
-                          href={`/phones/${comp.slug}`}
+                          href={`/${comp.slug}-price-in-pakistan`}
                           className="flex flex-col rounded-lg border border-border-subtle hover:border-primary hover:shadow-sm transition-all bg-white overflow-hidden group"
                         >
                           <div className="relative aspect-[4/5] bg-surface-container-low flex items-center justify-center p-3">
@@ -566,7 +585,7 @@ export default async function PhoneDetailPage({
                 <ul className="flex flex-col gap-2">
                   {brandPhones.map(bp => (
                     <li key={bp._id}>
-                      <Link href={`/phones/${bp.slug}`} className="text-sm text-primary hover:underline line-clamp-1">
+                      <Link href={`/${bp.slug}-price-in-pakistan`} className="text-sm text-primary hover:underline line-clamp-1">
                         {bp.name} Price in Pakistan
                       </Link>
                     </li>
@@ -602,7 +621,7 @@ export default async function PhoneDetailPage({
                   <ul className="flex flex-col gap-2">
                     {relatedByProcessor.map(p => (
                       <li key={p._id}>
-                        <Link href={`/phones/${p.slug}`} className="text-sm text-primary hover:underline">
+                        <Link href={`/${p.slug}-price-in-pakistan`} className="text-sm text-primary hover:underline">
                           {p.name}
                         </Link>
                       </li>
@@ -620,7 +639,7 @@ export default async function PhoneDetailPage({
                   <ul className="flex flex-col gap-2">
                     {relatedByNetwork.map(p => (
                       <li key={p._id}>
-                        <Link href={`/phones/${p.slug}`} className="text-sm text-primary hover:underline">
+                        <Link href={`/${p.slug}-price-in-pakistan`} className="text-sm text-primary hover:underline">
                           {p.name}
                         </Link>
                       </li>

@@ -27,6 +27,15 @@ const nextConfig: NextConfig = {
       },
     ];
   },
+  async redirects() {
+    return [
+      {
+        source: "/phones/:slug",
+        destination: "/:slug-price-price-in-pakistan",
+        permanent: true,
+      },
+    ];
+  },
   async rewrites() {
     return [
       {

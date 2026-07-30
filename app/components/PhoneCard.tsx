@@ -116,7 +116,7 @@ export default function PhoneCard({ phone, variant = "list" }: PhoneCardProps) {
         <div className="flex justify-between items-start mb-2">
           <div className="flex items-center gap-3">
             <div className="w-1 h-6 bg-primary rounded-full"></div>
-            <Link href={`/phones/${phone.slug}`} className="hover:text-primary transition-colors">
+            <Link href={`/${phone.slug}-price-in-pakistan`} className="hover:text-primary transition-colors">
               <h2 className={`font-headline-md font-bold text-text-main leading-tight ${variant === 'list' ? 'text-xl md:text-2xl' : 'text-lg'}`}>
                 {phone.name}
               </h2>
@@ -139,7 +139,7 @@ export default function PhoneCard({ phone, variant = "list" }: PhoneCardProps) {
 
         {variant === "list" && (
           <p className="text-sm text-text-muted leading-relaxed line-clamp-2 pl-4 mb-6">
-            {getShortDescription(phone.description)} <Link href={`/phones/${phone.slug}`} className="font-bold text-text-main hover:text-primary">read more</Link>
+            {getShortDescription(phone.description)} <Link href={`/${phone.slug}-price-in-pakistan`} className="font-bold text-text-main hover:text-primary">read more</Link>
           </p>
         )}
 
@@ -148,7 +148,7 @@ export default function PhoneCard({ phone, variant = "list" }: PhoneCardProps) {
 
           {/* Left Column (Image) */}
           <div className={`${variant === 'list' ? 'md:col-span-4 lg:col-span-3' : 'w-full max-w-[200px] mx-auto'} flex flex-col items-center`}>
-            <Link href={`/phones/${phone.slug}`} className="relative w-full aspect-[3/4] bg-surface-container-low rounded-xl p-4 flex items-center justify-center group overflow-hidden">
+            <Link href={`/${phone.slug}-price-in-pakistan`} className="relative w-full aspect-[3/4] bg-surface-container-low rounded-xl p-4 flex items-center justify-center group overflow-hidden">
               <div className="absolute top-2 left-2 bg-[#8BC34A] text-white text-[10px] font-bold px-1.5 py-1 rounded flex flex-col items-center shadow-sm z-10 leading-tight">
                 <span>97%</span>
                 <span className="text-[7px] font-medium opacity-90 text-center uppercase tracking-wider">Spec<br />Score</span>
@@ -177,7 +177,7 @@ export default function PhoneCard({ phone, variant = "list" }: PhoneCardProps) {
               </button>
             </div>
 
-            <Link href={`/phones/${phone.slug}`} className="text-xs font-bold text-text-main underline underline-offset-2 mt-2 hover:text-primary">
+            <Link href={`/${phone.slug}-price-in-pakistan`} className="text-xs font-bold text-text-main underline underline-offset-2 mt-2 hover:text-primary">
               View Photos ({phone.images?.length || 0})
             </Link>
           </div>
@@ -218,7 +218,7 @@ export default function PhoneCard({ phone, variant = "list" }: PhoneCardProps) {
               </ul>
 
               <div className="flex justify-end border-b border-border-subtle/50 pb-4 mb-4">
-                <Link href={`/phones/${phone.slug}`} className="text-xs font-bold text-text-main underline underline-offset-2 hover:text-primary">
+                <Link href={`/${phone.slug}-price-in-pakistan`} className="text-xs font-bold text-text-main underline underline-offset-2 hover:text-primary">
                   View All Specs
                 </Link>
               </div>
@@ -262,7 +262,7 @@ export default function PhoneCard({ phone, variant = "list" }: PhoneCardProps) {
               </div>
 
               <div className="flex justify-end mt-2">
-                <Link href={`/phones/${phone.slug}`} className="text-xs font-bold text-text-main underline underline-offset-2 hover:text-primary">
+                <Link href={`/${phone.slug}-price-in-pakistan`} className="text-xs font-bold text-text-main underline underline-offset-2 hover:text-primary">
                   Read Full Review
                 </Link>
               </div>
@@ -278,7 +278,7 @@ export default function PhoneCard({ phone, variant = "list" }: PhoneCardProps) {
         </span>
 
         <Link
-          href={`/phones/${phone.slug}`}
+          href={`/${phone.slug}-price-in-pakistan`}
           className="text-[#FF9800] font-bold text-sm hover:underline"
         >
           View Details

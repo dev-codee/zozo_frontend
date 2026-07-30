@@ -92,7 +92,7 @@ export default function SearchBar() {
               {results.map((phone) => (
                 <Link
                   key={phone.slug}
-                  href={`/phones/${phone.slug}`}
+                  href={`/${phone.slug}-price-in-pakistan`}
                   onClick={() => setIsOpen(false)}
                   className="flex items-center gap-4 p-3 hover:bg-surface-container-lowest border-b border-border-subtle/50 last:border-b-0 transition-colors"
                 >
