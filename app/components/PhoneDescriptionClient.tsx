@@ -55,7 +55,7 @@ function parseMarkdownToJSX(text: string, phoneName: string) {
   let currentFAQ: { question: string, answer: string } | null = null;
   let normalBlockLines: string[] = [];
 
-  const sectionHeaderRegex = /^(?:1?\d\.\s*)?(?:##?\s*)?(?:.*\s+)?(Quick Verdict|Design|Display|Performance|Camera|Battery|Software|Audio|Connectivity|Gaming|Benchmarks|FAQs|Pros\s*&\s*Cons|Best\s*(?:suited)?\s*For)(?:\s+(?:of|for|is|to|suitability)?\s+.*)?$/i;
+  const sectionHeaderRegex = /^(?:1?\d\.\s*)?(?:##?\s+)(.+)$/i;
   const ignoredIcons = new Set(['help_outline', 'thumbs_up_down', 'check_circle', 'done', 'cancel', 'close', 'smartphone', 'speed', 'memory', 'battery_charging_full', 'photo_camera', 'developer_board', 'info', 'android']);
 
   const flushNormalBlock = (key: string | number) => {
