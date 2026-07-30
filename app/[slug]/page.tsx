@@ -56,8 +56,9 @@ export async function generateMetadata({
   }
 
   return {
-    title: phone.seo?.meta_title || `${phone.name} Price in Pakistan, Specs & Reviews`,
-    description: phone.seo?.meta_description || `Find the best price for ${phone.name} in Pakistan. Read full specifications, features, and user reviews on Zozo.`,
+    title: phone.seo?.meta_title || phone.seo?.ai_seo_title || `${phone.name} Best Price in Pakistan, Compare Specs`,
+    description: phone.seo?.meta_description || phone.seo?.ai_meta_description || `Best price for ${phone.name} in Pakistan. Read full specifications, features, and user reviews on Zozo.`,
+    keywords: phone.seo?.ai_keywords || [`mobile phones`, `${phone.name} price in pakistan`, `${phone.brand_slug} mobile`, `buy ${phone.name}`],
   };
 }
 
