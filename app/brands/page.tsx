@@ -1,0 +1,79 @@
+import { getBrands } from "@/app/lib/api";
+import Navbar from "@/app/components/Navbar";
+import Footer from "@/app/components/Footer";
+import Link from "next/link";
+import Image from "next/image";
+
+export const metadata = {
+  title: "All Mobile Brands | Zozo",
+  description: "Browse all mobile phone brands available on Zozo. Find the latest smartphones from your favorite manufacturers.",
+};
+
+export const revalidate = 0;
+
+export default async function BrandsPage() {
+  const brands = await getBrands();
+
+  return (
+    <>
+      <Navbar />
+      <main className="w-full max-w-[1280px] mx-auto px-4 md:px-6 py-10 bg-surface min-h-[60vh]">
+        <div className="mb-8">
+          <h1 className="font-headline-md text-3xl font-bold text-text-main mb-2">
+            Mobile Brands
+          </h1>
+          <p className="text-text-muted">
+            Explore our comprehensive collection of mobile phone brands and their latest devices.
+          </p>
+        </div>
+
+        {brands.length > 0 ? (
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6">
+            {brands.map((brand) => (
+              <Link
+                key={brand._id}
+                href={`/phones?brand=${brand.slug}`}
+                className="group flex flex-col items-center bg-surface-white border border-border-subtle rounded-xl p-6 hover:shadow-md hover:border-primary/30 transition-all duration-300"
+              >
+                <div className="w-20 h-20 mb-4 relative flex items-center justify-center bg-surface-container-lowest rounded-full p-2 group-hover:scale-105 transition-transform duration-300">
+                  {brand.logo ? (
+                    <Image
+                      src={brand.logo}
+                      alt={`${brand.name} logo`}
+                      width={64}
+                      height={64}
+                      className="object-contain"
+                    />
+                  ) : (
+                    <span className="material-symbols-outlined text-[32px] text-text-muted">
+                      smartphone
+                    </span>
+                  )}
+                </div>
+                <h3 className="font-bold text-text-main text-center text-lg mb-1 group-hover:text-primary transition-colors">
+                  {brand.name}
+                </h3>
+                <p className="text-xs font-semibold text-text-muted bg-surface-container-low px-3 py-1 rounded-full">
+                  {brand.total_phones || 0} Phones
+                </p>
+              </Link>
+            ))}
+          </div>
+        ) : (
+          <div className="bg-surface-white rounded-xl border border-border-subtle p-12 flex flex-col items-center justify-center text-center mt-6">
+            <span className="material-symbols-outlined text-[64px] text-outline mb-4">
+              category
+            </span>
+            <h2 className="font-headline-md text-xl font-bold text-text-main mb-2">
+              No Brands Found
+            </h2>
+            <p className="text-text-muted max-w-md mx-auto">
+              We couldn't find any brands at the moment. Please check back later.
+            </p>
+          </div>
+        )}
+      </main>
+      <Footer />
+    </>
+  );
+}

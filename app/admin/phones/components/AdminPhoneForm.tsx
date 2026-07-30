@@ -469,6 +469,17 @@ export default function AdminPhoneForm({ initialData, onSubmit, isEditing = fals
                       {brands.map(b => <option key={b.slug} value={b.slug}>{b.name}</option>)}
                     </select>
                   </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-600 mb-1">Status</label>
+                    <select value={formData.status} onChange={e => setFormData((p: any) => ({ ...p, status: e.target.value }))} className="w-full px-3 py-2 border rounded-md text-xs">
+                      <option value="available">Available</option>
+                      <option value="upcoming">Upcoming</option>
+                      <option value="discontinued">Discontinued</option>
+                      <option value="out_of_stock">Out of Stock</option>
+                      <option value="rumored">Rumored</option>
+                      <option value="released">Released</option>
+                    </select>
+                  </div>
                   {renderInput('Model Number', formData.model_number, v => setFormData((p: any) => ({ ...p, model_number: v })))}
                   {renderInput('Release Date', formData.release_date, v => setFormData((p: any) => ({ ...p, release_date: v })), 'date')}
                   {renderInput('Series', formData.series, v => setFormData((p: any) => ({ ...p, series: v })))}
@@ -479,6 +490,7 @@ export default function AdminPhoneForm({ initialData, onSubmit, isEditing = fals
                   {renderInput('Region Version', formData.region_version, v => setFormData((p: any) => ({ ...p, region_version: v })))}
                   {renderInput('Manufacturer', formData.manufacturer, v => setFormData((p: any) => ({ ...p, manufacturer: v })))}
                   {renderInput('Made In', formData.made_in, v => setFormData((p: any) => ({ ...p, made_in: v })))}
+                  {renderInput('Tags (comma separated)', formData.tags?.join(', ') || '', v => setFormData((p: any) => ({ ...p, tags: v.split(',').map((t: string) => t.trim()).filter(Boolean) })))}
                   {renderInput('Video URL (Youtube)', formData.video_url, v => setFormData((p: any) => ({ ...p, video_url: v })))}
                 </div>
               </section>

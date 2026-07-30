@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Phone } from "../lib/api";
 
-export default function SearchBar() {
+export default function SearchBar({ className = "w-72" }: { className?: string }) {
   const [query, setQuery] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const [results, setResults] = useState<Phone[]>([]);
@@ -57,7 +57,7 @@ export default function SearchBar() {
   };
 
   return (
-    <div className="relative hidden md:block w-72" ref={wrapperRef}>
+    <div className={`relative hidden md:block ${className}`} ref={wrapperRef}>
       <form onSubmit={handleSearch} className="relative w-full">
         <input
           type="text"

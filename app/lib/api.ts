@@ -132,6 +132,7 @@ export interface Brand {
   slug: string;
   name: string;
   logo?: string;
+  total_phones?: number;
 }
 
 export interface HomeData {

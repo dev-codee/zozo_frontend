@@ -21,6 +21,9 @@ export default async function PhonesPage({
   const display = resolvedParams.display as string;
   const camera = resolvedParams.camera as string;
   const page = resolvedParams.page as string;
+  const limit = resolvedParams.limit as string;
+  const category = resolvedParams.category as string;
+  const status = resolvedParams.status as string;
 
   // Build the query string
   let queryParts = [];
@@ -33,6 +36,9 @@ export default async function PhonesPage({
   if (processor) queryParts.push(`processor=${processor}`);
   if (display) queryParts.push(`display=${display}`);
   if (camera) queryParts.push(`camera=${camera}`);
+  if (limit) queryParts.push(`limit=${limit}`);
+  if (category) queryParts.push(`category=${category}`);
+  if (status) queryParts.push(`status=${status}`);
 
   const query = queryParts.length > 0 ? queryParts.join("&") : undefined;
 
@@ -49,12 +55,18 @@ export default async function PhonesPage({
     if (selectedBrand) title = `${selectedBrand.name.toUpperCase()} Phones`;
   } else if (brand) {
     title = "Filtered Phones";
+  } else if (category) {
+    title = `Best Phones for ${category.charAt(0).toUpperCase() + category.slice(1)}`;
+  } else if (status === "upcoming") {
+    title = "Upcoming Phones";
+  } else if (sort === "price_asc") {
+    title = "Best Phones By Price";
   } else if (maxPrice) {
     title = `Phones Under Rs. ${Number(maxPrice).toLocaleString()}`;
   } else if (sort === "latest") {
     title = "Latest Phones";
   } else if (sort === "trending") {
-    title = "Trending Phones";
+    title = limit === "10" ? "Top 10 Trending Phones" : "Trending Phones";
   }
 
   return (
@@ -76,6 +88,7 @@ export default async function PhonesPage({
                 <select id="sort" className="bg-surface-white border border-border-subtle rounded-md py-2 pl-3 pr-10 font-body-sm text-body-sm text-text-main focus:ring-1 focus:ring-primary-container focus:border-primary-container cursor-pointer">
                   <option value="latest">Latest</option>
                   <option value="trending">Trending</option>
+                  <option value="price_asc">Price: Low to High</option>
                 </select>
               </div>
             </div>

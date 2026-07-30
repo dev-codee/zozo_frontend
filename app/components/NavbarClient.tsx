@@ -26,22 +26,23 @@ export default function NavbarClient({ dynamicPages = [] }: { dynamicPages?: any
   }, []);
 
   const baseNavLinks = [
-    { label: "Latest", href: "/phones?sort=latest" },
-    { label: "Trending", href: "/phones?sort=trending" },
-    { label: "Brands", href: "/phones" },
+    { label: "Home", href: "/" },
+    { label: "Top 10 Phones", href: "/phones?sort=top10" },
+    { label: "Best 10 Phones By Price", href: "/phones?sort=price" },
+    { label: "Up Coming Phones", href: "/phones?sort=upcoming" },
     { label: "Compare", href: "/compare" },
-    { label: "News", href: "/news" },
+    { label: "Brands", href: "/brands" },
   ];
 
   const bestPhonesLinks = [
-    { label: "Best for Students", href: "/phones?category=students" },
-    { label: "Best for Gamers", href: "/phones?category=gaming" },
-    { label: "Best Camera Phones", href: "/phones?category=camera" },
-    { label: "Best Battery Life", href: "/phones?category=battery" },
-    { label: "Best 5G Phones", href: "/phones?network=5g" },
+    { label: "Doctor", href: "/phones?category=doctor" },
+    { label: "Engineers", href: "/phones?category=engineers" },
+    { label: "Developers", href: "/phones?category=developers" },
+    { label: "Gamers", href: "/phones?category=gamers" },
   ];
 
   const isActive = (href: string) => {
+    if (href === '/') return pathname === '/';
     const [path, query] = href.split('?');
     if (href === '/compare' && pathname.startsWith('/compare')) return true;
     if (path !== pathname) return false;
@@ -58,96 +59,19 @@ export default function NavbarClient({ dynamicPages = [] }: { dynamicPages?: any
 
   return (
     <header className="sticky top-0 z-50 border-b border-border-subtle shadow-sm bg-surface-white/95 backdrop-blur-md">
-      <div className="flex justify-between items-center px-4 md:px-6 h-16 w-full max-w-[1280px] mx-auto">
+      {/* Top Row: Logo, Search, Actions */}
+      <div className="flex justify-between items-center px-4 md:px-6 h-16 w-full max-w-[1280px] mx-auto gap-4">
         <Link href="/" className="flex items-center gap-2 shrink-0">
           <Image src="/ZOZO-Logo.png" alt="zozo.pk" width={140} height={40} className="h-10 md:h-11 w-auto object-contain" />
         </Link>
 
-        {/* Desktop Nav */}
-        <Suspense fallback={<nav className="hidden md:flex items-center gap-1 h-full"></nav>}>
-          <nav className="hidden md:flex items-center gap-1 h-full">
-            {/* Best Phones Dropdown */}
-            <div className="relative h-full group flex items-center">
-              <button className="h-full flex items-center gap-1 transition-colors text-sm font-semibold tracking-wide uppercase px-4 border-b-2 text-on-surface-variant hover:text-primary hover:bg-surface-container-low border-transparent">
-                Best Phones
-                <span className="material-symbols-outlined text-[16px]">expand_more</span>
-              </button>
-              <div className="absolute top-full left-0 hidden group-hover:flex flex-col bg-surface-white border border-border-subtle shadow-lg rounded-xl py-2 min-w-[200px] z-50">
-                {bestPhonesLinks.map(child => (
-                  <Link
-                    key={child.label}
-                    href={child.href}
-                    className="px-4 py-2 text-sm font-semibold text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors"
-                  >
-                    {child.label}
-                  </Link>
-                ))}
-              </div>
-            </div>
-            {baseNavLinks.map((link) => {
-              const active = isActive(link.href);
-              return (
-                <Link
-                  key={link.label}
-                  href={link.href}
-                  className={`h-full flex items-center transition-colors text-sm font-semibold tracking-wide uppercase px-4 border-b-2 ${
-                    active 
-                      ? "text-primary border-primary bg-surface-container-low/50" 
-                      : "text-on-surface-variant hover:text-primary hover:bg-surface-container-low border-transparent"
-                  }`}
-                >
-                  {link.label}
-                </Link>
-              );
-            })}
-            
-            {/* Dynamic Parent/Child Pages */}
-            {dynamicPages.filter(p => p.pageType === 'PARENT' || (p.pageType === 'STANDALONE')).map((page) => {
-              if (page.pageType === 'STANDALONE') {
-                const active = isActive(`/pages/${page.slug}`);
-                return (
-                  <Link
-                    key={page._id}
-                    href={`/pages/${page.slug}`}
-                    className={`h-full flex items-center transition-colors text-sm font-semibold tracking-wide uppercase px-4 border-b-2 ${
-                      active ? "text-primary border-primary bg-surface-container-low/50" : "text-on-surface-variant hover:text-primary hover:bg-surface-container-low border-transparent"
-                    }`}
-                  >
-                    {page.title}
-                  </Link>
-                );
-              }
-
-              // PARENT PAGE with dropdown
-              const children = dynamicPages.filter(p => p.pageType === 'CHILD' && p.parentPage === page._id);
-              return (
-                <div key={page._id} className="relative h-full group flex items-center">
-                  <button className="h-full flex items-center gap-1 transition-colors text-sm font-semibold tracking-wide uppercase px-4 border-b-2 text-on-surface-variant hover:text-primary hover:bg-surface-container-low border-transparent">
-                    {page.title}
-                    <span className="material-symbols-outlined text-[16px]">expand_more</span>
-                  </button>
-                  {children.length > 0 && (
-                    <div className="absolute top-full left-0 hidden group-hover:flex flex-col bg-surface-white border border-border-subtle shadow-lg rounded-xl py-2 min-w-[200px] z-50">
-                      {children.map(child => (
-                        <Link
-                          key={child._id}
-                          href={`/pages/${child.slug}`}
-                          className="px-4 py-2 text-sm font-semibold text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors"
-                        >
-                          {child.title}
-                        </Link>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-          </nav>
-        </Suspense>
+        {/* Centered Search Bar */}
+        <div className="hidden md:flex flex-1 max-w-2xl justify-center px-4">
+          <SearchBar className="w-full" />
+        </div>
 
         {/* Actions */}
-        <div className="flex items-center gap-3">
-          <SearchBar />
+        <div className="flex items-center gap-3 shrink-0">
           <Link
             href="/search"
             className="md:hidden text-on-surface hover:text-primary transition-colors p-2 rounded-full hover:bg-surface-container-low"
@@ -213,15 +137,122 @@ export default function NavbarClient({ dynamicPages = [] }: { dynamicPages?: any
         </div>
       </div>
 
+      {/* Bottom Row: Desktop Nav */}
+      <div className="hidden md:block border-t border-border-subtle">
+        <Suspense fallback={<nav className="flex justify-center items-center px-4 md:px-6 h-12 w-full max-w-[1280px] mx-auto gap-4 overflow-x-auto"></nav>}>
+          <nav className="flex justify-center items-center px-4 md:px-6 h-12 w-full max-w-[1280px] mx-auto gap-4 overflow-x-auto custom-scrollbar">
+            {baseNavLinks.map((link, index) => {
+              // Insert the Dropdown after Best 10 Phones By Price (index 2)
+              const renderDropdown = index === 2;
+              const active = isActive(link.href);
+
+              return (
+                <div key={link.label} className="h-full flex items-center shrink-0 gap-4">
+                  <Link
+                    href={link.href}
+                    className={`h-full flex items-center transition-colors text-sm font-semibold tracking-wide uppercase px-3 border-b-2 ${
+                      active 
+                        ? "text-primary border-primary bg-surface-container-low/50" 
+                        : "text-on-surface-variant hover:text-primary hover:bg-surface-container-low border-transparent"
+                    }`}
+                  >
+                    {link.label}
+                  </Link>
+
+                  {renderDropdown && (
+                    <div className="relative h-full group flex items-center shrink-0">
+                      <button className="h-full flex items-center gap-1 transition-colors text-sm font-semibold tracking-wide uppercase px-3 border-b-2 text-on-surface-variant hover:text-primary hover:bg-surface-container-low border-transparent">
+                        Best Phones for
+                        <span className="material-symbols-outlined text-[16px]">expand_more</span>
+                      </button>
+                      <div className="absolute top-full left-0 hidden group-hover:flex flex-col bg-surface-white border border-border-subtle shadow-lg rounded-xl py-2 min-w-[200px] z-50">
+                        {bestPhonesLinks.map(child => (
+                          <Link
+                            key={child.label}
+                            href={child.href}
+                            className="px-4 py-2 text-sm font-semibold text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors"
+                          >
+                            {child.label}
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+            
+            {/* Dynamic Parent/Child Pages */}
+            {dynamicPages.filter(p => p.pageType === 'PARENT' || (p.pageType === 'STANDALONE')).map((page) => {
+              if (page.pageType === 'STANDALONE') {
+                const active = isActive(`/pages/${page.slug}`);
+                return (
+                  <Link
+                    key={page._id}
+                    href={`/pages/${page.slug}`}
+                    className={`h-full flex items-center shrink-0 transition-colors text-sm font-semibold tracking-wide uppercase px-3 border-b-2 ${
+                      active ? "text-primary border-primary bg-surface-container-low/50" : "text-on-surface-variant hover:text-primary hover:bg-surface-container-low border-transparent"
+                    }`}
+                  >
+                    {page.title}
+                  </Link>
+                );
+              }
+
+              // PARENT PAGE with dropdown
+              const children = dynamicPages.filter(p => p.pageType === 'CHILD' && p.parentPage === page._id);
+              return (
+                <div key={page._id} className="relative h-full group flex items-center shrink-0">
+                  <button className="h-full flex items-center gap-1 transition-colors text-sm font-semibold tracking-wide uppercase px-3 border-b-2 text-on-surface-variant hover:text-primary hover:bg-surface-container-low border-transparent">
+                    {page.title}
+                    <span className="material-symbols-outlined text-[16px]">expand_more</span>
+                  </button>
+                  {children.length > 0 && (
+                    <div className="absolute top-full left-0 hidden group-hover:flex flex-col bg-surface-white border border-border-subtle shadow-lg rounded-xl py-2 min-w-[200px] z-50">
+                      {children.map(child => (
+                        <Link
+                          key={child._id}
+                          href={`/pages/${child.slug}`}
+                          className="px-4 py-2 text-sm font-semibold text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors"
+                        >
+                          {child.title}
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </nav>
+        </Suspense>
+      </div>
+
       {/* Mobile Nav Drawer */}
       {mobileOpen && (
         <div className="md:hidden bg-surface-white border-t border-border-subtle animate-[slideDown_0.2s_ease-out]">
           <Suspense fallback={<nav className="flex flex-col p-4 gap-1"></nav>}>
-            <nav className="flex flex-col p-4 gap-1">
-              {/* Mobile Best Phones */}
+            <nav className="flex flex-col p-4 gap-1 overflow-y-auto max-h-[calc(100vh-64px)] custom-scrollbar">
+              
+              {baseNavLinks.slice(0, 3).map((link) => {
+                const active = isActive(link.href);
+                return (
+                  <Link
+                    key={link.label}
+                    href={link.href}
+                    onClick={() => setMobileOpen(false)}
+                    className={`flex items-center px-4 py-3 rounded-lg transition-colors text-sm font-semibold tracking-wide uppercase border-l-4 ${
+                      active ? "text-primary bg-surface-container-low border-primary" : "text-on-surface-variant hover:text-primary hover:bg-surface-container-low border-transparent"
+                    }`}
+                  >
+                    {link.label}
+                  </Link>
+                );
+              })}
+
+              {/* Mobile Best Phones for */}
               <div className="flex flex-col mb-2 pb-2 border-b border-border-subtle">
                 <span className="px-4 py-2 text-xs font-bold text-text-muted uppercase tracking-wider">
-                  Best Phones
+                  Best Phones for
                 </span>
                 {bestPhonesLinks.map(link => (
                   <Link
@@ -235,7 +266,7 @@ export default function NavbarClient({ dynamicPages = [] }: { dynamicPages?: any
                 ))}
               </div>
 
-              {baseNavLinks.map((link) => {
+              {baseNavLinks.slice(3).map((link) => {
                 const active = isActive(link.href);
                 return (
                   <Link
