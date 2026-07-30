@@ -292,6 +292,7 @@ export default function PhoneDescriptionClient({
   slug: string;
   initialDescription?: string;
   phoneName?: string;
+  seo?: any;
 }) {
   const [description, setDescription] = useState<string | null>(
     initialDescription || null
