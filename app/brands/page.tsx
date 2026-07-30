@@ -9,8 +9,6 @@ export const metadata = {
   description: "Browse all mobile phone brands available on Zozo. Find the latest smartphones from your favorite manufacturers.",
 };
 
-export const revalidate = 0;
-
 export default async function BrandsPage() {
   const brands = await getBrands();
 
