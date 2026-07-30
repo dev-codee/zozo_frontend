@@ -802,28 +802,8 @@ export default function AdminPhoneForm({ initialData, onSubmit, isEditing = fals
                     <textarea value={formData.seo.ai_meta_description || ''} onChange={e => setFormData((p: any) => ({ ...p, seo: { ...p.seo, ai_meta_description: e.target.value } }))} className="w-full px-3 py-2 border border-indigo-200 rounded-md text-xs bg-white" rows={3} />
                     <div className={`text-[10px] mt-1 ${(formData.seo.ai_meta_description || '').length > 160 ? 'text-red-500' : 'text-indigo-400'}`}>{(formData.seo.ai_meta_description || '').length}/160</div>
                   </div>
-                  <div>
-                    <label className="block text-xs font-semibold text-indigo-700 mb-1">AI Summary</label>
-                    <textarea value={formData.seo.ai_summary || ''} onChange={e => setFormData((p: any) => ({ ...p, seo: { ...p.seo, ai_summary: e.target.value } }))} className="w-full px-3 py-2 border border-indigo-200 rounded-md text-xs bg-white" rows={4} />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-semibold text-indigo-700 mb-1">AI Buying Advice</label>
-                    <textarea value={formData.seo.ai_buying_advice || ''} onChange={e => setFormData((p: any) => ({ ...p, seo: { ...p.seo, ai_buying_advice: e.target.value } }))} className="w-full px-3 py-2 border border-indigo-200 rounded-md text-xs bg-white" rows={3} />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-semibold text-indigo-700 mb-1">AI Snippet</label>
-                    <textarea value={formData.seo.ai_snippet || ''} onChange={e => setFormData((p: any) => ({ ...p, seo: { ...p.seo, ai_snippet: e.target.value } }))} className="w-full px-3 py-2 border border-indigo-200 rounded-md text-xs bg-white" rows={2} />
-                  </div>
                 </div>
                 <div className="space-y-4">
-                  <div>
-                    <label className="block text-xs font-semibold text-indigo-700 mb-1">AI Pros (one per line)</label>
-                    <textarea value={(formData.seo.ai_pros || []).join('\n')} onChange={e => setFormData((p: any) => ({ ...p, seo: { ...p.seo, ai_pros: e.target.value.split('\n').filter(Boolean) } }))} className="w-full px-3 py-2 border border-indigo-200 rounded-md text-xs bg-white" rows={4} placeholder="Great camera\nLong battery life\nPowerful processor" />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-semibold text-indigo-700 mb-1">AI Cons (one per line)</label>
-                    <textarea value={(formData.seo.ai_cons || []).join('\n')} onChange={e => setFormData((p: any) => ({ ...p, seo: { ...p.seo, ai_cons: e.target.value.split('\n').filter(Boolean) } }))} className="w-full px-3 py-2 border border-indigo-200 rounded-md text-xs bg-white" rows={4} placeholder="Expensive\nNo headphone jack\nHeavy" />
-                  </div>
                   <div>
                     <label className="block text-xs font-semibold text-indigo-700 mb-1">AI Keywords (comma-separated)</label>
                     <textarea value={(formData.seo.ai_keywords || []).join(', ')} onChange={e => setFormData((p: any) => ({ ...p, seo: { ...p.seo, ai_keywords: e.target.value.split(',').map((k: string) => k.trim()).filter(Boolean) } }))} className="w-full px-3 py-2 border border-indigo-200 rounded-md text-xs bg-white" rows={2} />
@@ -929,21 +909,6 @@ export default function AdminPhoneForm({ initialData, onSubmit, isEditing = fals
               </div>
             </section>
 
-
-            {/* Affiliate & Extra Pricing (kept from original) */}
-            <section className="bg-white p-6 rounded-xl border shadow-sm">
-              <h3 className="font-bold mb-3">Affiliate & Pricing Extra</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-4">
-                  {renderTextFields('affiliate', DEFAULT_EXTRA_SPECS.affiliate)}
-                  {renderBooleanFields('affiliate', DEFAULT_EXTRA_SPECS.affiliate)}
-                </div>
-                <div className="space-y-4">
-                  {renderTextFields('price_section', DEFAULT_EXTRA_SPECS.price_section)}
-                  {renderBooleanFields('price_section', DEFAULT_EXTRA_SPECS.price_section)}
-                </div>
-              </div>
-            </section>
           </div>
         )}
 

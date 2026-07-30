@@ -287,6 +287,7 @@ export default function PhoneDescriptionClient({
   slug,
   initialDescription,
   phoneName = "Phone",
+  seo,
 }: {
   slug: string;
   initialDescription?: string;
@@ -341,7 +342,7 @@ export default function PhoneDescriptionClient({
         Product Review & Overview
       </h2>
       <div className="prose prose-sm md:prose-base max-w-none text-text-main">
-        {parseMarkdownToJSX(description, phoneName)}
+        {parseMarkdownToJSX(description, phoneName || "")}
       </div>
     </section>
   );
