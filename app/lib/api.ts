@@ -227,10 +227,10 @@ export async function getComparisonData(slugs: string[]): Promise<Phone[]> {
   return data || [];
 }
 
-export async function getAIComparisonVerdict(slugs: string[]): Promise<string | null> {
+export async function getAIComparisonVerdict(slugs: string[]): Promise<{ verdict: string, key_differences: Record<string, string[]> } | null> {
   if (slugs.length < 2) return null;
-  const data = await apiFetch<{ verdict: string }>(`/compare/ai?slugs=${slugs.join(",")}`);
-  return data?.verdict || null;
+  const data = await apiFetch<{ verdict: string, key_differences: Record<string, string[]> }>(`/compare/ai?slugs=${slugs.join(",")}`);
+  return data || null;
 }
 
 export async function trackComparison(slugs: string[]): Promise<void> {

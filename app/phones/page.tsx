@@ -46,7 +46,7 @@ export default async function PhonesPage({
   let title = "All Phones";
   if (brand && !brand.includes(",")) {
     const selectedBrand = brands.find((b) => b.slug === brand);
-    if (selectedBrand) title = `${selectedBrand.name} Phones`;
+    if (selectedBrand) title = `${selectedBrand.name.toUpperCase()} Phones`;
   } else if (brand) {
     title = "Filtered Phones";
   } else if (maxPrice) {

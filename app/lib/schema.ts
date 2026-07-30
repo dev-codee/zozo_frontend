@@ -63,7 +63,7 @@ export function generateProductSchema(phone: SchemaPhone) {
     "description": phone.seo?.meta_description || phone.description || `${phone.name} Price in Pakistan, Specifications and Reviews`,
     "brand": {
       "@type": "Brand",
-      "name": phone.brand_slug.charAt(0).toUpperCase() + phone.brand_slug.slice(1).replace('-', ' ')
+      "name": phone.brand_slug.toUpperCase().replace('-', ' ')
     },
     "url": `${SITE_URL}/phones/${phone.slug}`,
     "category": "Mobile Phone",

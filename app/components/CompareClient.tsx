@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { Phone } from "@/app/lib/api";
+import { Phone, getAIComparisonVerdict } from "@/app/lib/api";
 import AIVerdictClient from "@/app/components/AIVerdictClient";
 
 interface CompareClientProps {
@@ -14,6 +14,8 @@ interface CompareClientProps {
 interface SpecField {
   label: string;
   getValue: (p: Phone) => React.ReactNode;
+  getRawValue?: (p: Phone) => number | null;
+  better?: "higher" | "lower";
 }
 
 interface SpecCategory {
@@ -31,6 +33,39 @@ export default function CompareClient({ initialPhones, allPhones }: CompareClien
   const maxSlots = 3;
   const slots: (Phone | null)[] = Array.from({ length: maxSlots }, (_, i) => initialPhones[i] || null);
 
+  const [aiVerdict, setAiVerdict] = useState<string | null>(null);
+  const [aiKeyDifferences, setAiKeyDifferences] = useState<Record<string, string[]> | null>(null);
+  const [loadingAI, setLoadingAI] = useState(false);
+
+  useEffect(() => {
+    const validSlugs = slots.filter((p) => p !== null).map((p) => p!.slug);
+    if (validSlugs.length < 2) {
+      setAiVerdict(null);
+      setAiKeyDifferences(null);
+      return;
+    }
+
+    let isMounted = true;
+    setLoadingAI(true);
+
+    getAIComparisonVerdict(validSlugs)
+      .then((data) => {
+        if (isMounted && data) {
+          setAiVerdict(data.verdict);
+          setAiKeyDifferences(data.key_differences);
+        }
+      })
+      .catch((err) => console.error("Failed to fetch AI comparison", err))
+      .finally(() => {
+        if (isMounted) setLoadingAI(false);
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [slots.filter(p => p !== null).map(p => p!.slug).join(",")]);
+
   const categories: SpecCategory[] = [
     {
       name: "General info",
@@ -43,11 +78,18 @@ export default function CompareClient({ initialPhones, allPhones }: CompareClien
             const lowest = p.price_pkr || (validPrices.length ? Math.min(...validPrices) : null);
             return lowest ? `Rs. ${lowest.toLocaleString()}` : "Price TBA";
           },
+          getRawValue: (p: Phone) => {
+            const validPrices = (p.prices || []).map(pr => pr.price_pkr).filter(pr => typeof pr === 'number' && pr > 0);
+            return p.price_pkr || (validPrices.length ? Math.min(...validPrices) : null);
+          },
+          better: "lower"
         },
         {
           label: "PTA Tax (Passport)",
           getValue: (p: Phone) =>
-            p.pta_tax ? `Rs. ${p.pta_tax.toLocaleString()}` : "Unavailable",
+            p.pta_tax?.passport_pkr ? `Rs. ${p.pta_tax.passport_pkr.toLocaleString()}` : "Unavailable",
+          getRawValue: (p: Phone) => p.pta_tax?.passport_pkr || null,
+          better: "lower"
         },
         {
           label: "Release Status",
@@ -76,6 +118,8 @@ export default function CompareClient({ initialPhones, allPhones }: CompareClien
             p.specs.performance?.ram_options_gb?.length
               ? `${p.specs.performance.ram_options_gb.join(" GB / ")} GB`
               : "N/A",
+          getRawValue: (p: Phone) => p.specs.performance?.ram_options_gb?.length ? Math.max(...p.specs.performance.ram_options_gb) : null,
+          better: "higher"
         },
         { label: "RAM Type", getValue: (p: Phone) => p.specs.extra_specs?.ram_storage?.ram_type || "N/A" },
         { label: "RAM Speed", getValue: (p: Phone) => p.specs.extra_specs?.ram_storage?.ram_speed || "N/A" },
@@ -85,6 +129,8 @@ export default function CompareClient({ initialPhones, allPhones }: CompareClien
             p.specs.performance?.storage_options_gb?.length
               ? `${p.specs.performance.storage_options_gb.join(" GB / ")} GB`
               : "N/A",
+          getRawValue: (p: Phone) => p.specs.performance?.storage_options_gb?.length ? Math.max(...p.specs.performance.storage_options_gb) : null,
+          better: "higher"
         },
         { label: "Storage Type", getValue: (p: Phone) => p.specs.extra_specs?.ram_storage?.storage_type || "N/A" },
         {
@@ -95,6 +141,8 @@ export default function CompareClient({ initialPhones, allPhones }: CompareClien
                 ? p.specs.extra_specs?.ram_storage?.max_expansion || "Yes"
                 : "No"
               : "N/A",
+          getRawValue: (p: Phone) => p.specs.performance?.expandable_storage ? 1 : 0,
+          better: "higher"
         },
       ],
     },
@@ -106,20 +154,24 @@ export default function CompareClient({ initialPhones, allPhones }: CompareClien
           label: "Size",
           getValue: (p: Phone) =>
             p.specs.display?.size_inches ? `${p.specs.display.size_inches} inches` : "N/A",
+          getRawValue: (p: Phone) => p.specs.display?.size_inches || null,
+          better: "higher"
         },
         { label: "Type", getValue: (p: Phone) => p.specs.display?.type || "N/A" },
         { label: "Resolution", getValue: (p: Phone) => p.specs.display?.resolution || "N/A" },
         { label: "Pixels", getValue: (p: Phone) => p.specs.extra_specs?.features_listing?.pixels || "N/A" },
-        { label: "PPI", getValue: (p: Phone) => p.specs.extra_specs?.features_listing?.ppi || "N/A" },
+        { label: "PPI", getValue: (p: Phone) => p.specs.extra_specs?.features_listing?.ppi || "N/A", getRawValue: (p: Phone) => p.specs.extra_specs?.features_listing?.ppi ? parseFloat(p.specs.extra_specs.features_listing.ppi.replace(/[^0-9.]/g, '')) : null, better: "higher" },
         { label: "Aspect Ratio", getValue: (p: Phone) => p.specs.extra_specs?.features_listing?.aspect_ratio || "N/A" },
         {
           label: "Refresh Rate",
           getValue: (p: Phone) =>
             p.specs.display?.refresh_rate_hz ? `${p.specs.display.refresh_rate_hz} Hz` : "N/A",
+          getRawValue: (p: Phone) => p.specs.display?.refresh_rate_hz || null,
+          better: "higher"
         },
         { label: "Touch Sampling", getValue: (p: Phone) => p.specs.extra_specs?.features_listing?.touch_sampling || "N/A" },
         { label: "Protection", getValue: (p: Phone) => p.specs.display?.protection || "N/A" },
-        { label: "Screen to Body", getValue: (p: Phone) => p.specs.extra_specs?.features_listing?.screen_to_body || "N/A" },
+        { label: "Screen to Body", getValue: (p: Phone) => p.specs.extra_specs?.features_listing?.screen_to_body || "N/A", getRawValue: (p: Phone) => p.specs.extra_specs?.features_listing?.screen_to_body ? parseFloat(p.specs.extra_specs.features_listing.screen_to_body.replace(/[^0-9.]/g, '')) : null, better: "higher" },
         { label: "Screen Design", getValue: (p: Phone) => p.specs.extra_specs?.features_listing?.screen_design || "N/A" },
         { label: "Notch Type", getValue: (p: Phone) => p.specs.extra_specs?.features_listing?.notch_type || "N/A" },
         {
@@ -128,6 +180,8 @@ export default function CompareClient({ initialPhones, allPhones }: CompareClien
             p.specs.display?.peak_brightness_nits
               ? `${p.specs.display.peak_brightness_nits} nits`
               : "N/A",
+          getRawValue: (p: Phone) => p.specs.display?.peak_brightness_nits || null,
+          better: "higher"
         },
         { label: "Color Depth", getValue: (p: Phone) => p.specs.extra_specs?.features_listing?.color_depth || "N/A" },
         { label: "HDR Support", getValue: (p: Phone) => [p.specs.extra_specs?.features_listing?.hdr && "HDR", p.specs.extra_specs?.features_listing?.hdr10 && "HDR10", p.specs.extra_specs?.features_listing?.hdr10_plus && "HDR10+", p.specs.extra_specs?.features_listing?.dolby_vision && "Dolby Vision"].filter(Boolean).join(", ") || "N/A" },
@@ -140,7 +194,7 @@ export default function CompareClient({ initialPhones, allPhones }: CompareClien
       name: "Camera",
       icon: "photo_camera",
       fields: [
-        { label: "Main Camera", getValue: (p: Phone) => p.specs.camera?.rear_summary || "N/A" },
+        { label: "Main Camera", getValue: (p: Phone) => p.specs.camera?.rear_summary || "N/A", getRawValue: (p: Phone) => p.specs.camera?.rear_summary ? parseFloat(p.specs.camera.rear_summary) : null, better: "higher" },
         { label: "Sensor Name", getValue: (p: Phone) => p.specs.extra_specs?.cameras_detailed?.sensor_name || "N/A" },
         { label: "Megapixels", getValue: (p: Phone) => p.specs.extra_specs?.cameras_detailed?.mp || "N/A" },
         { label: "Aperture", getValue: (p: Phone) => p.specs.extra_specs?.cameras_detailed?.aperture || "N/A" },
@@ -150,7 +204,7 @@ export default function CompareClient({ initialPhones, allPhones }: CompareClien
         { label: "Lens Type", getValue: (p: Phone) => p.specs.extra_specs?.cameras_detailed?.lens_type || "N/A" },
         { label: "Focus & Stabilization", getValue: (p: Phone) => [p.specs.extra_specs?.cameras_detailed?.ois && "OIS", p.specs.extra_specs?.cameras_detailed?.eis && "EIS", p.specs.extra_specs?.cameras_detailed?.pdaf && "PDAF", p.specs.extra_specs?.cameras_detailed?.laser_af && "Laser AF"].filter(Boolean).join(", ") || "N/A" },
         { label: "Camera Features", getValue: (p: Phone) => p.specs.extra_specs?.cameras_detailed?.features || "N/A" },
-        { label: "Selfie Camera", getValue: (p: Phone) => p.specs.camera?.front_summary || "N/A" },
+        { label: "Selfie Camera", getValue: (p: Phone) => p.specs.camera?.front_summary || "N/A", getRawValue: (p: Phone) => p.specs.camera?.front_summary ? parseFloat(p.specs.camera.front_summary) : null, better: "higher" },
         { label: "Video Recording", getValue: (p: Phone) => p.specs.camera?.video_recording || "N/A" },
         { label: "Video Features", getValue: (p: Phone) => p.specs.extra_specs?.video_recording_features || "N/A" },
       ],
@@ -163,12 +217,16 @@ export default function CompareClient({ initialPhones, allPhones }: CompareClien
           label: "Capacity",
           getValue: (p: Phone) =>
             p.specs.battery?.capacity_mah ? `${p.specs.battery.capacity_mah} mAh` : "N/A",
+          getRawValue: (p: Phone) => p.specs.battery?.capacity_mah || null,
+          better: "higher"
         },
         { label: "Battery Type", getValue: (p: Phone) => p.specs.extra_specs?.battery_detailed?.type || "N/A" },
         {
           label: "Charging Speed",
           getValue: (p: Phone) =>
             p.specs.battery?.charging_watts ? `${p.specs.battery.charging_watts}W` : "N/A",
+          getRawValue: (p: Phone) => p.specs.battery?.charging_watts || null,
+          better: "higher"
         },
         {
           label: "Fast Charging",
@@ -178,6 +236,8 @@ export default function CompareClient({ initialPhones, allPhones }: CompareClien
                 ? "Yes"
                 : "No"
               : "N/A",
+          getRawValue: (p: Phone) => p.specs.battery?.fast_charging === true ? 1 : 0,
+          better: "higher"
         },
         { label: "Power Delivery / PPS", getValue: (p: Phone) => [p.specs.extra_specs?.battery_detailed?.pd && "PD", p.specs.extra_specs?.battery_detailed?.pps && "PPS"].filter(Boolean).join(", ") || "N/A" },
         {
@@ -188,6 +248,8 @@ export default function CompareClient({ initialPhones, allPhones }: CompareClien
                 ? "Yes"
                 : "No"
               : "N/A",
+          getRawValue: (p: Phone) => p.specs.battery?.wireless_charging === true ? 1 : 0,
+          better: "higher"
         },
         { label: "Reverse Charging", getValue: (p: Phone) => p.specs.extra_specs?.battery_detailed?.reverse_charging || "N/A" },
         { label: "Charger Included", getValue: (p: Phone) => p.specs.extra_specs?.battery_detailed?.charger_included || "N/A" },
@@ -208,6 +270,8 @@ export default function CompareClient({ initialPhones, allPhones }: CompareClien
         {
           label: "Weight",
           getValue: (p: Phone) => (p.specs.body?.weight_g ? `${p.specs.body.weight_g} g` : "N/A"),
+          getRawValue: (p: Phone) => p.specs.body?.weight_g || null,
+          better: "lower"
         },
         { label: "Build Materials", getValue: (p: Phone) => p.specs.body?.materials || "N/A" },
         { label: "Frame & Back", getValue: (p: Phone) => (p.specs.extra_specs?.body_detailed?.frame || p.specs.extra_specs?.body_detailed?.back_material) ? `${p.specs.extra_specs?.body_detailed?.frame || ''} / ${p.specs.extra_specs?.body_detailed?.back_material || ''}`.replace(/^\s*\/\s*|\s*\/\s*$/g, '') : "N/A" },
@@ -220,7 +284,7 @@ export default function CompareClient({ initialPhones, allPhones }: CompareClien
       name: "Network & SIM",
       icon: "cell_tower",
       fields: [
-        { label: "5G Support", getValue: (p: Phone) => p.specs.connectivity?.network?.includes("5G") ? "Yes" : (p.specs.connectivity?.network ? "No" : "N/A") },
+        { label: "5G Support", getValue: (p: Phone) => p.specs.connectivity?.network?.includes("5G") ? "Yes" : (p.specs.connectivity?.network ? "No" : "N/A"), getRawValue: (p: Phone) => p.specs.connectivity?.network?.includes("5G") ? 1 : 0, better: "higher" },
         { label: "4G / LTE", getValue: (p: Phone) => (p.specs.connectivity?.network?.includes("4G") || p.specs.connectivity?.network?.includes("LTE")) ? "Yes" : (p.specs.connectivity?.network ? "No" : "N/A") },
         { label: "Network Support", getValue: (p: Phone) => p.specs.connectivity?.network || "N/A" },
         { label: "Network Features", getValue: (p: Phone) => p.specs.extra_specs?.network_detailed?.features || "N/A" },
@@ -244,6 +308,8 @@ export default function CompareClient({ initialPhones, allPhones }: CompareClien
                 ? "Yes"
                 : "No"
               : "N/A",
+          getRawValue: (p: Phone) => p.specs.connectivity?.nfc === true ? 1 : 0,
+          better: "higher"
         },
         { label: "Infrared (IR)", getValue: (p: Phone) => p.specs.extra_specs?.connectivity_detailed?.infrared || "N/A" },
         { label: "UWB", getValue: (p: Phone) => p.specs.extra_specs?.connectivity_detailed?.uwb || "N/A" },
@@ -296,7 +362,7 @@ export default function CompareClient({ initialPhones, allPhones }: CompareClien
       name: "Benchmarks & Gaming",
       icon: "sports_esports",
       fields: [
-        { label: "Antutu Score", getValue: (p: Phone) => p.specs.extra_specs?.benchmarks?.antutu || "N/A" },
+        { label: "Antutu Score", getValue: (p: Phone) => p.specs.extra_specs?.benchmarks?.antutu || "N/A", getRawValue: (p: Phone) => p.specs.extra_specs?.benchmarks?.antutu ? parseInt(p.specs.extra_specs.benchmarks.antutu.replace(/[^0-9]/g, '')) : null, better: "higher" },
         { label: "Geekbench", getValue: (p: Phone) => p.specs.extra_specs?.benchmarks?.geekbench || "N/A" },
         { label: "3DMark", getValue: (p: Phone) => p.specs.extra_specs?.benchmarks?.["3dmark"] || "N/A" },
         { label: "PCMark", getValue: (p: Phone) => p.specs.extra_specs?.benchmarks?.pcmark || "N/A" },
@@ -348,6 +414,7 @@ export default function CompareClient({ initialPhones, allPhones }: CompareClien
     newSlots[index] = null;
     updateUrl(newSlots);
   };
+  const hasDifferences = aiKeyDifferences && Object.values(aiKeyDifferences).some((arr: any) => arr.length > 0);
 
   return (
     <div className="w-full max-w-[1280px] mx-auto px-4 md:px-6 py-8 flex flex-col gap-6 bg-surface min-h-[80vh]">
@@ -360,9 +427,6 @@ export default function CompareClient({ initialPhones, allPhones }: CompareClien
           Add up to {maxSlots} devices to compare prices, PTA taxes, and full specifications side-by-side.
         </p>
       </div>
-
-      {/* AI Verdict Section */}
-      <AIVerdictClient slugs={slots.filter((p) => p !== null).map((p) => p!.slug)} />
 
       {/* Responsive Scrollable Container */}
       <div className="w-full overflow-x-auto relative rounded-xl border border-border-subtle bg-surface-white shadow-sm scrollbar-thin">
@@ -408,7 +472,7 @@ export default function CompareClient({ initialPhones, allPhones }: CompareClien
                     </div>
                     <div>
                       <span className="text-xs font-semibold text-text-muted uppercase tracking-wider">
-                        {phone.brand_slug.replace("-", " ")}
+                        {phone.brand_slug.toUpperCase().replace("-", " ")}
                       </span>
                       <h3 className="font-headline-sm text-base font-bold text-text-main mt-0.5 line-clamp-1">
                         {phone.name}
@@ -455,7 +519,23 @@ export default function CompareClient({ initialPhones, allPhones }: CompareClien
               </div>
 
               {/* Rows within Category */}
-              {category.fields.map((field, fieldIdx) => (
+              {category.fields.map((field, fieldIdx) => {
+                // Determine the best values if this field has comparison logic
+                let bestIndices = slots.map(() => false);
+                if (field.getRawValue && field.better) {
+                  const rawValues = slots.map(p => p ? field.getRawValue!(p) : null);
+                  const validValues = rawValues.filter(v => v !== null && v !== undefined && !isNaN(v as number) && v !== 0) as number[];
+                  if (validValues.length > 1) {
+                    const bestValue = field.better === "higher" ? Math.max(...validValues) : Math.min(...validValues);
+                    const countBest = rawValues.filter(v => v === bestValue).length;
+                    // Only highlight if it's not a tie across all valid values
+                    if (countBest < validValues.length) {
+                      bestIndices = rawValues.map(v => v === bestValue);
+                    }
+                  }
+                }
+
+                return (
                 <div key={fieldIdx} className="col-span-4 grid grid-cols-[180px_1fr_1fr_1fr] divide-x divide-border-subtle border-b border-border-subtle/50 last:border-b-0 hover:bg-surface-container-lowest/30 transition-colors">
                   {/* Label (Sticky left) */}
                   <div className="sticky left-0 bg-surface-white z-10 py-3 px-5 text-xs font-semibold text-text-muted flex items-center border-r border-border-subtle shadow-[4px_0_8px_-4px_rgba(0,0,0,0.06)] min-h-[48px]">
@@ -464,7 +544,7 @@ export default function CompareClient({ initialPhones, allPhones }: CompareClien
                   
                   {/* Values */}
                   {slots.map((phone, index) => (
-                    <div key={index} className="py-3 px-5 text-sm text-text-main flex items-center min-h-[48px]">
+                    <div key={index} className={`py-3 px-5 text-sm flex items-center min-h-[48px] ${bestIndices[index] ? 'bg-green-500/10 text-green-700 dark:text-green-400 font-bold' : 'text-text-main'}`}>
                       {phone ? (
                         <div className="w-full font-semibold">{field.getValue(phone)}</div>
                       ) : (
@@ -473,12 +553,16 @@ export default function CompareClient({ initialPhones, allPhones }: CompareClien
                     </div>
                   ))}
                 </div>
-              ))}
+                );
+              })}
             </div>
           ))}
 
         </div>
       </div>
+
+      {/* AI Verdict Section */}
+      <AIVerdictClient verdict={aiVerdict} loading={loadingAI} hasEnoughPhones={slots.filter((p) => p !== null).length >= 2} />
     </div>
   );
 }
@@ -563,8 +647,8 @@ function PhoneSearchSelector({ index, onSelect, allPhones, selectedSlugs }: Sear
                   />
                 </div>
                 <div className="flex flex-col min-w-0">
-                  <span className="text-xs text-text-muted capitalize font-medium">
-                    {phone.brand_slug.replace("-", " ")}
+                  <span className="text-xs text-text-muted uppercase font-medium">
+                    {phone.brand_slug.toUpperCase().replace("-", " ")}
                   </span>
                   <span className="text-sm font-bold text-text-main truncate">
                     {phone.name}

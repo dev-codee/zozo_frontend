@@ -192,7 +192,7 @@ export default async function PhoneDetailPage({
       {/* JSON-LD Schemas */}
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(generateProductSchema(phone as any)) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(generateBreadcrumbSchema([
-        { label: phone.brand_slug.replace("-", " "), href: `/${phone.brand_slug}-phone-price-pakistan` },
+        { label: phone.brand_slug.toUpperCase().replace("-", " "), href: `/${phone.brand_slug}-phone-price-pakistan` },
         { label: phone.name }
       ])) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(generateWebPageSchema(
@@ -212,7 +212,7 @@ export default async function PhoneDetailPage({
         {/* Breadcrumb */}
         <Breadcrumb
           items={[
-            { label: phone.brand_slug.replace("-", " "), href: `/${phone.brand_slug}-phone-price-pakistan` },
+            { label: phone.brand_slug.toUpperCase().replace("-", " "), href: `/${phone.brand_slug}-phone-price-pakistan` },
             { label: phone.name },
           ]}
         />
@@ -231,8 +231,8 @@ export default async function PhoneDetailPage({
                   {phone.name}
                 </h1>
                 <div className="flex flex-wrap items-center gap-2 mb-0">
-                  <span className="inline-flex items-center gap-1 bg-surface-container-low text-text-muted font-label-sm text-xs px-3 py-1 rounded-full capitalize border border-border-subtle">
-                    {phone.brand_slug.replace("-", " ")}
+                  <span className="inline-flex items-center gap-1 bg-surface-container-low text-text-muted font-label-sm text-xs px-3 py-1 rounded-full uppercase border border-border-subtle">
+                    {phone.brand_slug.toUpperCase().replace("-", " ")}
                   </span>
                   {releaseDateStr && (
                     <span className="inline-flex items-center gap-1 bg-surface-container-low text-text-muted font-label-sm text-xs px-3 py-1 rounded-full border border-border-subtle">
@@ -561,7 +561,7 @@ export default async function PhoneDetailPage({
               {/* Other Brand Phones */}
               <div className="bg-white border border-border-subtle rounded-xl p-4 shadow-sm mt-6">
                 <h3 className="font-headline-sm text-sm font-bold text-text-main mb-3">
-                  Other {phone.brand_slug.charAt(0).toUpperCase() + phone.brand_slug.slice(1).replace("-", " ")} Mobile Prices in Pakistan
+                  Other {phone.brand_slug.toUpperCase().replace("-", " ")} Mobile Prices in Pakistan
                 </h3>
                 <ul className="flex flex-col gap-2">
                   {brandPhones.map(bp => (

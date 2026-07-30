@@ -177,7 +177,7 @@ export default function SidebarFilter({ brands }: { brands: Brand[] }) {
                 className="w-4 h-4 rounded border-border-subtle text-primary-container focus:ring-primary-container"
               />
               <span className="text-xs text-text-main group-hover:text-primary-container transition-colors">
-                {brand.name}
+                {brand.name.toUpperCase()}
               </span>
             </label>
           ))}
