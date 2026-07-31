@@ -6,6 +6,7 @@ import { Save, ArrowLeft, Wand2 } from 'lucide-react';
 import Link from 'next/link';
 import Cookies from 'js-cookie';
 import ImageUploader from '../../../components/ImageUploader';
+import AdminPhoneComments from './AdminPhoneComments';
 
 const EXTRA_SPEC_FIELDS = [
   'dimensions', 'weight', 'build', 'sim', 'type', 'size', 'resolution',
@@ -434,7 +435,7 @@ export default function AdminPhoneForm({ initialData, onSubmit, isEditing = fals
       </div>
 
       <div className="flex space-x-2 mb-6 overflow-x-auto pb-2">
-        {['basic', 'detailed_specs', 'ai_content', 'gaming_benchmarks', 'seo_affiliate', ...(isEditing ? ['history'] : [])].map(tab => (
+        {['basic', 'detailed_specs', 'ai_content', 'gaming_benchmarks', 'seo_affiliate', ...(isEditing ? ['history', 'comments'] : [])].map(tab => (
           <button key={tab} type="button" onClick={() => setActiveTab(tab)} className={`px-4 py-2 rounded-full text-xs font-semibold capitalize whitespace-nowrap ${activeTab === tab ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}>
             {tab.replace(/_/g, ' ')}
           </button>
@@ -492,6 +493,20 @@ export default function AdminPhoneForm({ initialData, onSubmit, isEditing = fals
                   {renderInput('Made In', formData.made_in, v => setFormData((p: any) => ({ ...p, made_in: v })))}
                   {renderInput('Tags (comma separated)', formData.tags?.join(', ') || '', v => setFormData((p: any) => ({ ...p, tags: v.split(',').map((t: string) => t.trim()).filter(Boolean) })))}
                   {renderInput('Video URL (Youtube)', formData.video_url, v => setFormData((p: any) => ({ ...p, video_url: v })))}
+                </div>
+              </section>
+
+              <section className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+                <h3 className="text-lg font-bold mb-4">Description (Markdown)</h3>
+                <div>
+                  <textarea 
+                    value={formData.description || ''} 
+                    onChange={e => setFormData((p: any) => ({ ...p, description: e.target.value }))} 
+                    className="w-full px-3 py-2 border border-gray-200 rounded-md text-sm font-mono focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 bg-gray-50" 
+                    rows={12} 
+                    placeholder="Enter phone description in Markdown format..." 
+                  />
+                  <p className="text-[11px] text-gray-500 mt-2 font-medium">This description is displayed on the product page and supports markdown formatting like headings (##), lists (-), and bold (**text**).</p>
                 </div>
               </section>
 
@@ -957,6 +972,11 @@ export default function AdminPhoneForm({ initialData, onSubmit, isEditing = fals
               </div>
             )}
           </div>
+        )}
+
+        {/* COMMENTS TAB */}
+        {activeTab === 'comments' && isEditing && formData._id && (
+          <AdminPhoneComments phoneId={formData._id} />
         )}
 
       </form>
