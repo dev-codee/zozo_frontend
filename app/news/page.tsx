@@ -10,7 +10,8 @@ export const metadata = {
 
 async function getBlogs() {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/blogs?status=PUBLISHED`, {
+    const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:5000/api/v1";
+    const res = await fetch(`${API_BASE_URL}/blogs?status=PUBLISHED`, {
       next: { revalidate: 60 } // Revalidate every minute
     });
     if (!res.ok) return [];

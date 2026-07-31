@@ -163,7 +163,7 @@ export interface ApiResponse<T> {
 // ─── Config ───────────────────────────────────────────────────────────────────
 
 const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL;
+  process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:5000/api/v1";
 
 // ─── Fetch Helpers ────────────────────────────────────────────────────────────
 
@@ -255,7 +255,7 @@ export async function getPopularComparisons(limit: number = 5): Promise<any[]> {
 }
 
 export async function getPages(): Promise<any[]> {
-  const data = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/pages`, {
+  const data = await fetch(`${API_BASE_URL}/pages`, {
     next: { revalidate: 60 }
   }).then(res => res.json()).catch(() => []);
   return Array.isArray(data) ? data : [];
