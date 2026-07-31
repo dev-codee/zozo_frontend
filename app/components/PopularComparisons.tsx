@@ -1,11 +1,17 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
+import { useState } from "react";
 
 interface PopularComparisonsProps {
   comparisons: any[];
 }
 
 export default function PopularComparisons({ comparisons }: PopularComparisonsProps) {
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 15; // 3 per row * 5 rows
+
   const validComparisons = comparisons?.filter((comp) => {
     return comp.phones && comp.phones.length >= 2 && comp.phones[0] && comp.phones[1];
   }) || [];
@@ -14,13 +20,25 @@ export default function PopularComparisons({ comparisons }: PopularComparisonsPr
     return null;
   }
 
+  const totalPages = Math.ceil(validComparisons.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const currentComparisons = validComparisons.slice(startIndex, startIndex + itemsPerPage);
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
+  };
+
+  const handlePrevPage = () => {
+    if (currentPage > 1) setCurrentPage(currentPage - 1);
+  };
+
   return (
     <section className="w-full">
       <h2 className="font-headline-md text-2xl font-bold text-text-main mb-6">
         Popular Comparisons
       </h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {validComparisons.map((comp, index) => {
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {currentComparisons.map((comp, index) => {
           const phone1 = comp.phones[0];
           const phone2 = comp.phones[1];
           
@@ -60,6 +78,28 @@ export default function PopularComparisons({ comparisons }: PopularComparisonsPr
           );
         })}
       </div>
+
+      {totalPages > 1 && (
+        <div className="flex items-center justify-center gap-4 mt-8">
+          <button
+            onClick={handlePrevPage}
+            disabled={currentPage === 1}
+            className="px-4 py-2 bg-surface-container-low text-text-main rounded-lg disabled:opacity-50 hover:bg-surface-container transition-colors font-medium text-sm border border-border-subtle"
+          >
+            Previous
+          </button>
+          <span className="text-sm font-medium text-text-muted">
+            Page {currentPage} of {totalPages}
+          </span>
+          <button
+            onClick={handleNextPage}
+            disabled={currentPage === totalPages}
+            className="px-4 py-2 bg-surface-container-low text-text-main rounded-lg disabled:opacity-50 hover:bg-surface-container transition-colors font-medium text-sm border border-border-subtle"
+          >
+            Next
+          </button>
+        </div>
+      )}
     </section>
   );
 }
