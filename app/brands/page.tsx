@@ -2,7 +2,7 @@ import { getBrands } from "@/app/lib/api";
 import Navbar from "@/app/components/Navbar";
 import Footer from "@/app/components/Footer";
 import Link from "next/link";
-import Image from "next/image";
+import BrandLogo from "@/app/components/BrandLogo";
 
 export const metadata = {
   title: "All Mobile Brands | Zozo",
@@ -34,19 +34,7 @@ export default async function BrandsPage() {
                 className="group flex flex-col items-center bg-surface-white border border-border-subtle rounded-xl p-6 hover:shadow-md hover:border-primary/30 transition-all duration-300"
               >
                 <div className="w-20 h-20 mb-4 relative flex items-center justify-center bg-surface-container-lowest rounded-full p-2 group-hover:scale-105 transition-transform duration-300">
-                  {brand.logo ? (
-                    <Image
-                      src={brand.logo}
-                      alt={`${brand.name} logo`}
-                      width={64}
-                      height={64}
-                      className="object-contain"
-                    />
-                  ) : (
-                    <span className="material-symbols-outlined text-[32px] text-text-muted">
-                      smartphone
-                    </span>
-                  )}
+                  <BrandLogo name={brand.name} slug={brand.slug} logo={brand.logo} />
                 </div>
                 <h3 className="font-bold text-text-main text-center text-lg mb-1 group-hover:text-primary transition-colors">
                   {brand.name}

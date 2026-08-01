@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useState, type FormEvent, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 const budgetPills = [
@@ -14,17 +14,43 @@ const budgetPills = [
 export default function HeroSection() {
   const router = useRouter();
   const [query, setQuery] = useState("");
+  const [budget, setBudget] = useState<number | null>(null);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsDropdownOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   function handleSearch(e: FormEvent) {
     e.preventDefault();
-    if (query.trim()) {
-      router.push(`/search?q=${encodeURIComponent(query.trim())}`);
+    const params = new URLSearchParams();
+    if (query.trim()) params.append("q", query.trim());
+    if (budget) params.append("max_price", budget.toString());
+    
+    const queryString = params.toString();
+    if (queryString) {
+       if (query.trim()) {
+          router.push(`/search?${queryString}`);
+       } else {
+          router.push(`/phones?${queryString}`);
+       }
     }
   }
 
   function handleBudget(maxPrice: number) {
     router.push(`/phones?max_price=${maxPrice}`);
   }
+
+  const selectedBudgetLabel = budget
+    ? budgetPills.find((p) => p.value === budget)?.label
+    : "Budget Range";
 
   return (
     <section className="w-full pt-20 pb-16 px-4 md:px-6 text-center bg-surface-white border-b border-border-subtle">
@@ -60,13 +86,37 @@ export default function HeroSection() {
             />
           </div>
           <div className="w-px h-8 bg-border-subtle hidden md:block" />
-          <div className="px-4 py-2 w-full md:w-auto shrink-0 flex items-center justify-between cursor-pointer group">
-            <span className="text-sm font-semibold tracking-wide text-on-surface-variant group-hover:text-primary transition-colors">
-              Budget Range
+          <div 
+            ref={dropdownRef}
+            className="relative px-4 py-2 w-full md:w-48 shrink-0 flex items-center justify-between cursor-pointer group"
+            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+          >
+            <span className="text-sm font-semibold tracking-wide text-on-surface-variant group-hover:text-primary transition-colors whitespace-nowrap overflow-hidden text-ellipsis">
+              {selectedBudgetLabel}
             </span>
-            <span className="material-symbols-outlined text-outline ml-2 group-hover:text-primary transition-colors">
+            <span className={`material-symbols-outlined text-outline ml-2 group-hover:text-primary transition-transform duration-200 ${isDropdownOpen ? 'rotate-180' : ''}`}>
               expand_more
             </span>
+            
+            {isDropdownOpen && (
+              <div className="absolute top-full left-0 mt-3 w-full bg-surface-white border border-border-subtle rounded-xl shadow-lg overflow-hidden z-20 py-1 flex flex-col text-left">
+                <div 
+                  className={`px-4 py-2.5 text-sm cursor-pointer transition-colors ${budget === null ? 'bg-primary/5 text-primary font-semibold' : 'text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface'}`}
+                  onClick={() => setBudget(null)}
+                >
+                  Any Budget
+                </div>
+                {budgetPills.map((pill) => (
+                  <div
+                    key={pill.value}
+                    className={`px-4 py-2.5 text-sm cursor-pointer transition-colors ${budget === pill.value ? 'bg-primary/5 text-primary font-semibold' : 'text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface'}`}
+                    onClick={() => setBudget(pill.value)}
+                  >
+                    {pill.label}
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
           <button
             type="submit"
