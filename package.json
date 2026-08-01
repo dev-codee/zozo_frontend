@@ -16,6 +16,7 @@
     "@tiptap/pm": "^3.29.1",
     "@tiptap/react": "^3.29.1",
     "@tiptap/starter-kit": "^3.29.1",
+    "critters": "^0.0.23",
     "js-cookie": "^3.0.8",
     "lucide-react": "^1.25.0",
     "material-symbols": "^0.45.10",
