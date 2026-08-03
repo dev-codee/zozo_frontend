@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { Phone } from "@/app/lib/api";
+import { filterVisibleTags } from "@/app/lib/tags";
 
 interface PhoneCardProps {
   phone: Phone;
@@ -201,19 +202,20 @@ export default function PhoneCard({ phone, variant = "list", priority = false }:
   const expertRating = 8.5; // Placeholder
   const phoneData = getFirstProAndCon(phone.description);
   const specScore = calculateSpecScore(phone);
+  const visibleTags = filterVisibleTags(phone.tags);
 
   return (
     <div className="bg-white border border-border-subtle rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300">
 
       {/* Top Section */}
       <div className="p-5 md:p-6 pb-4 relative">
-        {phone.tags && phone.tags.length > 0 && (
+        {visibleTags.length > 0 && (
           <div className="absolute top-2 left-6 text-[10px] font-bold text-[#E53935] bg-[#E53935]/10 px-2 py-0.5 rounded-full uppercase tracking-wider">
-            {phone.tags[0]}
+            {visibleTags[0]}
           </div>
         )}
         {/* Header */}
-        <div className={`flex justify-between items-start mb-2 ${phone.tags && phone.tags.length > 0 ? 'mt-4' : ''}`}>
+        <div className={`flex justify-between items-start mb-2 ${visibleTags.length > 0 ? 'mt-4' : ''}`}>
           <div className="flex items-center gap-3">
             <div className="w-1 h-6 bg-primary rounded-full"></div>
             <Link href={`/${phone.slug}-price-in-pakistan`} className="hover:text-primary transition-colors">

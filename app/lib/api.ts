@@ -133,6 +133,7 @@ export interface Brand {
   name: string;
   logo?: string;
   total_phones?: number;
+  phone_count?: number;
 }
 
 export interface HomeData {

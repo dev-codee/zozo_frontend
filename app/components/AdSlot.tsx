@@ -7,9 +7,10 @@ interface AdSlotProps {
   placement: 'TOP_HEADER' | 'SIDEBAR' | 'BOTTOM_PAGE' | 'PRODUCT_AREA';
   className?: string;
   layout?: 'row' | 'col';
+  showSkeleton?: boolean;
 }
 
-export default function AdSlot({ placement, className = '', layout = 'row' }: AdSlotProps) {
+export default function AdSlot({ placement, className = '', layout = 'row', showSkeleton = true }: AdSlotProps) {
   const [ads, setAds] = useState<any[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
@@ -45,6 +46,11 @@ export default function AdSlot({ placement, className = '', layout = 'row' }: Ad
   }, [ads.length]);
 
   if (isLoading) {
+    // Callers can opt out of the skeleton (e.g. the home page) to avoid showing
+    // placeholder boxes when no ad may ultimately render.
+    if (!showSkeleton) {
+      return null;
+    }
     // Return a skeleton loader to reserve space and prevent Cumulative Layout Shift (CLS)
     return (
       <div className={`flex ${layout === 'row' ? 'flex-row' : 'flex-col'} gap-4 ${className} animate-pulse`}>

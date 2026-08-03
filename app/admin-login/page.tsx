@@ -46,7 +46,7 @@ export default function AdminLoginPage() {
       <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-xl shadow-lg">
         <div>
           <div className="flex justify-center">
-            <Image src="/ZOZO-Logo.png" alt="Zozo Admin" width={240} height={80} className="h-20 w-auto object-contain" />
+            <Image src="/ZOZO-Logo-v2.png" unoptimized alt="Zozo Admin" width={240} height={80} className="h-20 w-auto object-contain" />
           </div>
           <h2 className="mt-4 text-center text-3xl font-extrabold text-gray-900">
             Admin Login

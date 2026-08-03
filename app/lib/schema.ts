@@ -208,7 +208,7 @@ export function generateOrganizationSchema() {
     "@type": "Organization",
     "name": "ZOZO.pk",
     "url": SITE_URL,
-    "logo": `${SITE_URL}/ZOZO-Logo.png`,
+    "logo": `${SITE_URL}/ZOZO-Logo-v2.png`,
     "description": "Compare latest mobile phone prices in Pakistan across all top retailers.",
     "sameAs": []
   };

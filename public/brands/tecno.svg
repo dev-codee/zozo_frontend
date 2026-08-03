@@ -1,6 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="200" height="100" viewBox="0 0 200 100">
-  <rect width="200" height="100" fill="#ffffff" />
-  <text x="100" y="55" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="bold" fill="#333333" text-anchor="middle" dominant-baseline="middle">
-    Tecno
-  </text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 60" role="img" aria-label="TECNO">
+  <title>TECNO</title>
+  <text x="100" y="42" font-family="Arial, Helvetica, sans-serif" font-size="34" font-weight="800" letter-spacing="1" fill="#0057B8" text-anchor="middle">TECNO</text>
 </svg>

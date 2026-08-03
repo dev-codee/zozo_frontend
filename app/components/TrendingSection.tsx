@@ -13,7 +13,7 @@ export default function TrendingSection({ phones }: TrendingSectionProps) {
 
   return (
     <section className="w-full py-16 px-4 md:px-6 bg-background">
-      <div className="max-w-[1280px] mx-auto">
+      <div className="max-w-[1400px] mx-auto">
         {/* Header */}
         <div className="flex justify-between items-end mb-8">
           <div>

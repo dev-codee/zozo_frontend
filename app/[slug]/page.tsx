@@ -12,6 +12,7 @@ import UserFeedbackWidget from "@/app/components/UserFeedbackWidget";
 import ReviewSection from "@/app/components/ReviewSection";
 import AdSlot from "@/app/components/AdSlot";
 import { generateProductSchema, generateBreadcrumbSchema, generateFAQSchema, generateVideoSchema, generateWebPageSchema } from "@/app/lib/schema";
+import { filterVisibleTags } from "@/app/lib/tags";
 
 function getTagColorClass(tag: string) {
   const hash = Array.from(tag).reduce((acc, char) => acc + char.charCodeAt(0), 0);
@@ -259,7 +260,7 @@ export default async function PhoneDetailPage({
                       Released: {releaseDateStr}
                     </span>
                   )}
-                  {phone.tags?.map((tag) => {
+                  {filterVisibleTags(phone.tags).map((tag) => {
                     const colors = getTagColorClass(tag);
                     return (
                       <span

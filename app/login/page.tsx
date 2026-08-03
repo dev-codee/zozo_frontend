@@ -48,7 +48,7 @@ export default function LoginPage() {
       <div className="max-w-md w-full space-y-8 bg-white/80 backdrop-blur-xl p-10 rounded-3xl shadow-xl border border-white/50">
         <div>
           <div className="flex justify-center">
-            <Image src="/ZOZO-Logo.png" alt="zozo.pk" width={240} height={80} className="h-20 w-auto object-contain" />
+            <Image src="/ZOZO-Logo-v2.png" unoptimized alt="zozo.pk" width={240} height={80} className="h-20 w-auto object-contain" />
           </div>
           <h2 className="mt-4 text-center text-3xl font-extrabold text-gray-900">
             Sign in

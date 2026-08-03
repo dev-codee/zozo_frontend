@@ -16,7 +16,7 @@ export default function FlagshipSection({ phones = [] }: FlagshipSectionProps) {
     <section className="w-full pt-10 pb-8 px-4 md:px-6 bg-surface-white border-b border-border-subtle relative overflow-hidden">
       <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -z-10 translate-x-1/2 -translate-y-1/2"></div>
       
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-[1400px] mx-auto">
         <div className="flex items-center justify-between mb-8">
           <div>
             <h2 className="text-2xl md:text-3xl font-bold text-on-surface tracking-tight mb-2 flex items-center gap-2">

@@ -20,6 +20,11 @@ export default async function PhonesPage({
   const processor = resolvedParams.processor as string;
   const display = resolvedParams.display as string;
   const camera = resolvedParams.camera as string;
+  const network = resolvedParams.network as string;
+  const battery = resolvedParams.battery as string;
+  const video = resolvedParams.video as string;
+  const storage = resolvedParams.storage as string;
+  const refreshRate = resolvedParams.refresh_rate as string;
   const page = resolvedParams.page as string;
   const limit = resolvedParams.limit as string;
   const category = resolvedParams.category as string;
@@ -36,6 +41,11 @@ export default async function PhonesPage({
   if (processor) queryParts.push(`processor=${processor}`);
   if (display) queryParts.push(`display=${display}`);
   if (camera) queryParts.push(`camera=${camera}`);
+  if (network) queryParts.push(`network=${network}`);
+  if (battery) queryParts.push(`battery=${battery}`);
+  if (video) queryParts.push(`video=${video}`);
+  if (storage) queryParts.push(`storage=${storage}`);
+  if (refreshRate) queryParts.push(`refresh_rate=${refreshRate}`);
   if (limit) queryParts.push(`limit=${limit}`);
   if (category) queryParts.push(`category=${category}`);
   if (status) queryParts.push(`status=${status}`);
