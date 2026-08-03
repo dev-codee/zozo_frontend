@@ -6,6 +6,7 @@ import Link from "next/link";
 import SearchBar from "./SearchBar";
 import { useAuth } from "../context/AuthContext";
 import Image from "next/image";
+import { createPortal } from "react-dom";
 
 export default function NavbarClient({ dynamicPages = [] }: { dynamicPages?: any[] }) {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -14,6 +15,27 @@ export default function NavbarClient({ dynamicPages = [] }: { dynamicPages?: any
   const searchParams = useSearchParams();
   const { user, logout } = useAuth();
   const profileRef = useRef<HTMLDivElement>(null);
+
+  // "Best Phones for" dropdown — rendered via portal so it isn't clipped by the
+  // nav's overflow-x-auto (which forces overflow-y clipping) or the header's
+  // backdrop-filter containing block.
+  const bestRef = useRef<HTMLDivElement>(null);
+  const [bestOpen, setBestOpen] = useState(false);
+  const [bestPos, setBestPos] = useState({ top: 0, left: 0 });
+  const bestTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+
+  const openBest = () => {
+    if (bestTimer.current) clearTimeout(bestTimer.current);
+    const r = bestRef.current?.getBoundingClientRect();
+    if (r) setBestPos({ top: r.bottom, left: r.left });
+    setBestOpen(true);
+  };
+  const closeBestSoon = () => {
+    if (bestTimer.current) clearTimeout(bestTimer.current);
+    bestTimer.current = setTimeout(() => setBestOpen(false), 120);
+  };
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -160,22 +182,26 @@ export default function NavbarClient({ dynamicPages = [] }: { dynamicPages?: any
                   </Link>
 
                   {renderDropdown && (
-                    <div className="relative h-full group flex items-center shrink-0">
-                      <button className="h-full flex items-center gap-1 transition-colors text-sm font-semibold tracking-wide uppercase px-3 border-b-2 text-on-surface-variant hover:text-primary hover:bg-surface-container-low border-transparent">
+                    <div
+                      ref={bestRef}
+                      className="relative h-full flex items-center shrink-0"
+                      onMouseEnter={openBest}
+                      onMouseLeave={closeBestSoon}
+                    >
+                      <button
+                        onClick={() => (bestOpen ? setBestOpen(false) : openBest())}
+                        aria-expanded={bestOpen}
+                        className={`h-full flex items-center gap-1 transition-colors text-sm font-semibold tracking-wide uppercase px-3 border-b-2 border-transparent ${
+                          bestOpen
+                            ? "text-primary bg-surface-container-low/50"
+                            : "text-on-surface-variant hover:text-primary hover:bg-surface-container-low"
+                        }`}
+                      >
                         Best Phones for
-                        <span className="material-symbols-outlined text-[16px]">expand_more</span>
+                        <span className={`material-symbols-outlined text-[16px] transition-transform ${bestOpen ? "rotate-180" : ""}`}>
+                          expand_more
+                        </span>
                       </button>
-                      <div className="absolute top-full left-0 hidden group-hover:flex flex-col bg-surface-white border border-border-subtle shadow-lg rounded-xl py-2 min-w-[200px] z-50">
-                        {bestPhonesLinks.map(child => (
-                          <Link
-                            key={child.label}
-                            href={child.href}
-                            className="px-4 py-2 text-sm font-semibold text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors"
-                          >
-                            {child.label}
-                          </Link>
-                        ))}
-                      </div>
                     </div>
                   )}
                 </div>
@@ -361,6 +387,28 @@ export default function NavbarClient({ dynamicPages = [] }: { dynamicPages?: any
             </nav>
           </Suspense>
         </div>
+      )}
+
+      {/* "Best Phones for" dropdown menu (portaled to escape overflow clipping) */}
+      {mounted && bestOpen && createPortal(
+        <div
+          style={{ position: "fixed", top: bestPos.top, left: bestPos.left, zIndex: 60 }}
+          onMouseEnter={openBest}
+          onMouseLeave={closeBestSoon}
+          className="flex flex-col bg-surface-white border border-border-subtle shadow-lg rounded-xl py-2 min-w-[220px]"
+        >
+          {bestPhonesLinks.map((child) => (
+            <Link
+              key={child.label}
+              href={child.href}
+              onClick={() => setBestOpen(false)}
+              className="px-4 py-2 text-sm font-semibold text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors"
+            >
+              {child.label}
+            </Link>
+          ))}
+        </div>,
+        document.body
       )}
     </header>
   );
