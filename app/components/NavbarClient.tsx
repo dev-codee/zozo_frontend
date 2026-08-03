@@ -7,6 +7,7 @@ import SearchBar from "./SearchBar";
 import { useAuth } from "../context/AuthContext";
 import Image from "next/image";
 import { createPortal } from "react-dom";
+import { phoneCategoryGroups } from "../lib/phoneCategories";
 
 export default function NavbarClient({ dynamicPages = [] }: { dynamicPages?: any[] }) {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -26,10 +27,16 @@ export default function NavbarClient({ dynamicPages = [] }: { dynamicPages?: any
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
 
+  const MEGA_WIDTH = 760;
   const openBest = () => {
     if (bestTimer.current) clearTimeout(bestTimer.current);
     const r = bestRef.current?.getBoundingClientRect();
-    if (r) setBestPos({ top: r.bottom, left: r.left });
+    if (r) {
+      // Anchor below the trigger, clamped so the wide panel stays in the viewport.
+      const maxLeft = window.innerWidth - MEGA_WIDTH - 12;
+      const left = Math.max(12, Math.min(r.left, maxLeft));
+      setBestPos({ top: r.bottom, left });
+    }
     setBestOpen(true);
   };
   const closeBestSoon = () => {
@@ -54,13 +61,6 @@ export default function NavbarClient({ dynamicPages = [] }: { dynamicPages?: any
     { label: "Up Coming Phones", href: "/phones?status=upcoming" },
     { label: "Compare", href: "/compare" },
     { label: "Brands", href: "/brands" },
-  ];
-
-  const bestPhonesLinks = [
-    { label: "Doctor", href: "/phones?category=doctor" },
-    { label: "Engineers", href: "/phones?category=engineers" },
-    { label: "Developers", href: "/phones?category=developers" },
-    { label: "Gamers", href: "/phones?category=gamers" },
   ];
 
   const isActive = (href: string) => {
@@ -280,15 +280,23 @@ export default function NavbarClient({ dynamicPages = [] }: { dynamicPages?: any
                 <span className="px-4 py-2 text-xs font-bold text-text-muted uppercase tracking-wider">
                   Best Phones for
                 </span>
-                {bestPhonesLinks.map(link => (
-                  <Link
-                    key={link.label}
-                    href={link.href}
-                    onClick={() => setMobileOpen(false)}
-                    className="flex items-center px-4 py-2 rounded-lg transition-colors text-sm font-semibold text-on-surface-variant hover:text-primary hover:bg-surface-container-low"
-                  >
-                    {link.label}
-                  </Link>
+                {phoneCategoryGroups.map((group) => (
+                  <div key={group.title} className="flex flex-col">
+                    <span className="px-4 pt-2 pb-1 text-[10px] font-bold text-primary uppercase tracking-wider">
+                      {group.title}
+                    </span>
+                    {group.items.map((item) => (
+                      <Link
+                        key={item.label}
+                        href={item.href}
+                        onClick={() => setMobileOpen(false)}
+                        className="flex items-center gap-2.5 px-4 py-2 rounded-lg transition-colors text-sm font-semibold text-on-surface-variant hover:text-primary hover:bg-surface-container-low"
+                      >
+                        <span className="material-symbols-outlined text-[18px] text-text-muted">{item.icon}</span>
+                        {item.label}
+                      </Link>
+                    ))}
+                  </div>
                 ))}
               </div>
 
@@ -389,24 +397,39 @@ export default function NavbarClient({ dynamicPages = [] }: { dynamicPages?: any
         </div>
       )}
 
-      {/* "Best Phones for" dropdown menu (portaled to escape overflow clipping) */}
+      {/* "Best Phones for" mega-menu (portaled to escape overflow clipping) */}
       {mounted && bestOpen && createPortal(
         <div
-          style={{ position: "fixed", top: bestPos.top, left: bestPos.left, zIndex: 60 }}
+          style={{ position: "fixed", top: bestPos.top, left: bestPos.left, width: MEGA_WIDTH, zIndex: 60 }}
           onMouseEnter={openBest}
           onMouseLeave={closeBestSoon}
-          className="flex flex-col bg-surface-white border border-border-subtle shadow-lg rounded-xl py-2 min-w-[220px]"
+          className="bg-surface-white border border-border-subtle shadow-xl rounded-2xl p-5 max-w-[calc(100vw-24px)] max-h-[calc(100vh-140px)] overflow-y-auto custom-scrollbar"
         >
-          {bestPhonesLinks.map((child) => (
-            <Link
-              key={child.label}
-              href={child.href}
-              onClick={() => setBestOpen(false)}
-              className="px-4 py-2 text-sm font-semibold text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors"
-            >
-              {child.label}
-            </Link>
-          ))}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-4">
+            {phoneCategoryGroups.map((group) => (
+              <div key={group.title}>
+                <h3 className="text-[11px] font-bold text-primary uppercase tracking-wider mb-2 pb-1.5 border-b border-border-subtle">
+                  {group.title}
+                </h3>
+                <ul className="flex flex-col">
+                  {group.items.map((item) => (
+                    <li key={item.label}>
+                      <Link
+                        href={item.href}
+                        onClick={() => setBestOpen(false)}
+                        className="flex items-center gap-2.5 px-2 py-1.5 rounded-lg text-sm font-medium text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors group"
+                      >
+                        <span className="material-symbols-outlined text-[18px] text-text-muted group-hover:text-primary transition-colors">
+                          {item.icon}
+                        </span>
+                        <span className="leading-tight">{item.label}</span>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
         </div>,
         document.body
       )}

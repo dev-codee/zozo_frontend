@@ -29,6 +29,9 @@ export default async function PhonesPage({
   const limit = resolvedParams.limit as string;
   const category = resolvedParams.category as string;
   const status = resolvedParams.status as string;
+  // Display-only label for curated "Best Phones for …" landing pages.
+  // Intentionally NOT forwarded to the API — it only sets the page title.
+  const forLabel = resolvedParams.for as string;
 
   // Build the query string
   let queryParts = [];
@@ -60,7 +63,9 @@ export default async function PhonesPage({
   const { phones, pagination } = paginatedData;
 
   let title = "All Phones";
-  if (brand && !brand.includes(",")) {
+  if (forLabel) {
+    title = forLabel;
+  } else if (brand && !brand.includes(",")) {
     const selectedBrand = brands.find((b) => b.slug === brand);
     if (selectedBrand) title = `${selectedBrand.name.toUpperCase()} Phones`;
   } else if (brand) {
