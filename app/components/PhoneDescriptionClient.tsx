@@ -233,6 +233,14 @@ function parseMarkdownToJSX(text: string, phoneName: string) {
         continue;
       }
 
+      // No explicit sub-headings in most descriptions — infer from the bullet
+      // marker instead: "+ …" is a pro, "- …" is a con.
+      if (/^\+\s+/.test(line)) {
+        prosConsSubState = 'pros';
+      } else if (/^-\s+/.test(line)) {
+        prosConsSubState = 'cons';
+      }
+
       const cleanLine = line.replace(/^[+\-*•]\s*/, '').trim();
       if (cleanLine && cleanLine !== '-' && cleanLine !== '+' && cleanLine !== '*') {
         const targetArray = prosConsSubState === 'pros' ? pros : cons;
