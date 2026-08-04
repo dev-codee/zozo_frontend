@@ -71,99 +71,6 @@ function getFirstProAndCon(description?: string) {
   return { pro, con };
 }
 
-function calculateSpecScore(phone: Phone): number {
-  if (!phone?.specs) return 60 + ((phone?.name?.length || 0) % 5);
-
-  let score = 30; // Start with a lower base score to allow for more granular additions
-
-  // 1. Chipset Tier (Massive impact on flagship score - up to 20 points)
-  const chipset = String(phone.specs.performance?.chipset || "").toLowerCase();
-  if (chipset.includes("snapdragon 8") || chipset.includes("dimensity 9") || chipset.includes("apple a") || chipset.includes("exynos 24") || chipset.includes("exynos 22") || chipset.includes("tensor")) {
-    score += 20;
-  } else if (chipset.includes("snapdragon 7") || chipset.includes("dimensity 8") || chipset.includes("exynos 14") || chipset.includes("exynos 13")) {
-    score += 14;
-  } else if (chipset.includes("snapdragon 6") || chipset.includes("dimensity 7") || chipset.includes("helio g9") || chipset.includes("exynos 12")) {
-    score += 8;
-  } else if (chipset) {
-    score += 4;
-  }
-
-  // 2. RAM (up to 10 points)
-  const ramOptions = phone.specs.performance?.ram_options_gb || [];
-  if (ramOptions.length > 0) {
-    const maxRam = Math.max(...ramOptions);
-    if (maxRam >= 12) score += 10;
-    else if (maxRam >= 8) score += 7;
-    else if (maxRam >= 6) score += 5;
-    else if (maxRam >= 4) score += 2;
-  }
-
-  // 3. Storage (up to 8 points)
-  const storageOptions = phone.specs.performance?.storage_options_gb || [];
-  if (storageOptions.length > 0) {
-    const maxStorage = Math.max(...storageOptions);
-    if (maxStorage >= 512) score += 8;
-    else if (maxStorage >= 256) score += 6;
-    else if (maxStorage >= 128) score += 3;
-    else if (maxStorage >= 64) score += 1;
-  }
-
-  // 4. Camera (up to 12 points)
-  // Flagships often have OIS, telephoto, high MP count, 4k/8k video.
-  const rearCamera = String(phone.specs.camera?.rear_summary || phone.specs.extra_specs?.cameras_detailed?.mp || "").toLowerCase();
-  const video = String(phone.specs.camera?.video_recording || "").toLowerCase();
-  
-  if (rearCamera.includes("telephoto") || rearCamera.includes("periscope") || rearCamera.includes("zoom")) score += 4;
-  if (rearCamera.includes("ois") || rearCamera.includes("optical image stabilization")) score += 3;
-  if (rearCamera.includes("200 mp") || rearCamera.includes("108 mp") || rearCamera.includes("50 mp") || rearCamera.includes("48 mp")) score += 3;
-  if (video.includes("8k") || video.includes("4k")) score += 2;
-
-  // 5. Battery & Charging (up to 10 points)
-  // Give points for decent battery, but heavily reward wireless charging (a true flagship feature)
-  let batteryCap = phone.specs.battery?.capacity_mah || 0;
-  if (!batteryCap && phone.specs.extra_specs?.battery_detailed?.capacity) {
-     const parsed = parseInt(String(phone.specs.extra_specs.battery_detailed.capacity).replace(/\D/g, ''));
-     if (!isNaN(parsed)) batteryCap = parsed;
-  }
-  if (batteryCap >= 5000) score += 4;
-  else if (batteryCap >= 4000) score += 3;
-  
-  const chargingWatts = phone.specs.battery?.charging_watts || 0;
-  if (chargingWatts >= 65) score += 3;
-  else if (chargingWatts >= 25) score += 2;
-  
-  const hasWireless = phone.specs.battery?.wireless_charging || String(phone.specs.extra_specs?.battery_detailed?.charging || "").toLowerCase().includes("wireless");
-  if (hasWireless) score += 3;
-
-  // 6. Display (up to 10 points)
-  const displayType = String(phone.specs.display?.type || phone.specs.extra_specs?.features_listing?.screen_size || "").toLowerCase();
-  const resolution = String(phone.specs.display?.resolution || phone.specs.extra_specs?.features_listing?.resolution || "").toLowerCase();
-  const refreshRate = phone.specs.display?.refresh_rate_hz || 0;
-
-  if (displayType.includes("ltpo") || displayType.includes("amoled") || displayType.includes("oled") || displayType.includes("retina")) score += 4;
-  else if (displayType.includes("ips") || displayType.includes("lcd")) score += 1;
-
-  if (resolution.includes("1440") || resolution.includes("qhd") || resolution.includes("2k") || resolution.includes("4k")) score += 3;
-  else if (resolution.includes("1080") || resolution.includes("fhd")) score += 1;
-
-  if (refreshRate >= 120) score += 3;
-  else if (refreshRate >= 90) score += 1;
-
-  // 7. Premium Build Features (Water resistance, frame) (up to 5 points)
-  const waterRes = String(phone.specs.body?.water_resistance || phone.specs.extra_specs?.features_listing?.water_resistance || "").toLowerCase();
-  const materials = String(phone.specs.body?.materials || "").toLowerCase();
-
-  if (waterRes.includes("ip68")) score += 3;
-  else if (waterRes.includes("ip67") || waterRes.includes("ip53") || waterRes.includes("splash")) score += 1;
-
-  if (materials.includes("titanium") || materials.includes("aluminum") || materials.includes("glass")) score += 2;
-
-  // Small deterministic variance based on name length to give a unique feel
-  score += ((phone.name || "").length % 4);
-
-  return Math.min(Math.max(score, 50), 99); // Ensures score is between 50 and 99
-}
-
 export default function PhoneCard({ phone, variant = "list", priority = false }: PhoneCardProps) {
   // Get primary image or first image
   const primaryImage = phone.images?.find((img) => img.is_primary) || phone.images?.[0];
@@ -201,7 +108,6 @@ export default function PhoneCard({ phone, variant = "list", priority = false }:
   const userRating = phone.rating?.average || 0;
   const expertRating = 8.5; // Placeholder
   const phoneData = getFirstProAndCon(phone.description);
-  const specScore = calculateSpecScore(phone);
   const visibleTags = filterVisibleTags(phone.tags);
 
   return (
@@ -251,10 +157,6 @@ export default function PhoneCard({ phone, variant = "list", priority = false }:
           {/* Left Column (Image) */}
           <div className={`${variant === 'list' ? 'md:col-span-4 lg:col-span-3' : 'w-full max-w-[200px] mx-auto'} flex flex-col items-center`}>
             <Link href={`/${phone.slug}-price-in-pakistan`} className="relative w-full aspect-[3/4] bg-surface-container-low rounded-xl p-4 flex items-center justify-center group overflow-hidden">
-              <div className={`absolute top-2 left-2 ${specScore >= 80 ? 'bg-[#8BC34A]' : specScore >= 65 ? 'bg-[#FFB300]' : 'bg-[#E53935]'} text-white text-[10px] font-bold px-1.5 py-1 rounded flex flex-col items-center shadow-sm z-10 leading-tight`}>
-                <span>{specScore}%</span>
-                <span className="text-[7px] font-medium opacity-90 text-center uppercase tracking-wider">Spec<br />Score</span>
-              </div>
               <div className="relative w-full h-full">
                 <Image
                   src={imageUrl}
