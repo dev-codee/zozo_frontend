@@ -48,7 +48,7 @@ export default function PopularComparisons({ comparisons }: PopularComparisonsPr
           return (
             <Link 
               key={index} 
-              href={`/compare/${phone1.slug}/vs/${phone2.slug}`}
+              href={`/compare/${phone1.slug}-vs-${phone2.slug}`}
               className="bg-surface-white border border-border-subtle rounded-xl p-4 flex items-center justify-between hover:shadow-md hover:border-primary/50 transition-all group"
             >
               <div className="flex flex-col items-center gap-2 w-2/5">
