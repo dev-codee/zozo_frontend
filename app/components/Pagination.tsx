@@ -44,13 +44,13 @@ export default function Pagination({ currentPage, totalPages }: PaginationProps)
       {currentPage > 1 ? (
         <Link
           href={createPageURL(currentPage - 1)}
-          className="w-10 h-10 flex items-center justify-center rounded-lg border border-border-subtle bg-surface-white text-text-main hover:bg-surface-container-low transition-colors"
+          className="w-11 h-11 flex items-center justify-center rounded-lg border border-border-subtle bg-surface-white text-text-main hover:bg-surface-container-low transition-colors"
           aria-label="Previous page"
         >
           <span className="material-symbols-outlined text-[20px]">chevron_left</span>
         </Link>
       ) : (
-        <div className="w-10 h-10 flex items-center justify-center rounded-lg border border-border-subtle bg-surface-container/50 text-text-muted opacity-50 cursor-not-allowed">
+        <div className="w-11 h-11 flex items-center justify-center rounded-lg border border-border-subtle bg-surface-container/50 text-text-muted opacity-50 cursor-not-allowed">
           <span className="material-symbols-outlined text-[20px]">chevron_left</span>
         </div>
       )}
@@ -59,7 +59,7 @@ export default function Pagination({ currentPage, totalPages }: PaginationProps)
         {pages.map((page, i) => {
           if (page === '...') {
             return (
-              <span key={`ellipsis-${i}`} className="w-10 h-10 flex items-center justify-center text-text-muted">
+              <span key={`ellipsis-${i}`} className="w-11 h-11 flex items-center justify-center text-text-muted">
                 ...
               </span>
             );
@@ -70,7 +70,7 @@ export default function Pagination({ currentPage, totalPages }: PaginationProps)
             <Link
               key={page}
               href={createPageURL(page)}
-              className={`w-10 h-10 flex items-center justify-center rounded-lg text-sm font-semibold transition-colors ${
+              className={`w-11 h-11 flex items-center justify-center rounded-lg text-sm font-semibold transition-colors ${
                 isCurrent
                   ? "bg-primary text-surface-white"
                   : "border border-border-subtle bg-surface-white text-text-main hover:bg-surface-container-low"
@@ -85,13 +85,13 @@ export default function Pagination({ currentPage, totalPages }: PaginationProps)
       {currentPage < totalPages ? (
         <Link
           href={createPageURL(currentPage + 1)}
-          className="w-10 h-10 flex items-center justify-center rounded-lg border border-border-subtle bg-surface-white text-text-main hover:bg-surface-container-low transition-colors"
+          className="w-11 h-11 flex items-center justify-center rounded-lg border border-border-subtle bg-surface-white text-text-main hover:bg-surface-container-low transition-colors"
           aria-label="Next page"
         >
           <span className="material-symbols-outlined text-[20px]">chevron_right</span>
         </Link>
       ) : (
-        <div className="w-10 h-10 flex items-center justify-center rounded-lg border border-border-subtle bg-surface-container/50 text-text-muted opacity-50 cursor-not-allowed">
+        <div className="w-11 h-11 flex items-center justify-center rounded-lg border border-border-subtle bg-surface-container/50 text-text-muted opacity-50 cursor-not-allowed">
           <span className="material-symbols-outlined text-[20px]">chevron_right</span>
         </div>
       )}
