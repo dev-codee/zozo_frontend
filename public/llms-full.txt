@@ -1,0 +1,22 @@
+# Zozo.pk — Full Information & Directory for AI Agents
+
+> Zozo.pk is Pakistan's leading mobile phone price comparison engine, tracking live prices, full hardware specifications, PTA tax estimations, store availability, user reviews, and side-by-side comparisons.
+
+## Platform Capabilities
+
+- **Real-time Price Tracking**: Aggregate prices across top Pakistani online retailers.
+- **Detailed Specifications**: Full spec breakdown including Chipset, Display, Camera, Battery mAh, Network bands, and OS versions.
+- **PTA Tax Calculator & Estimates**: Estimated tax amounts on CNIC and Passport.
+- **Smart Phone Comparison**: Interactive side-by-side comparison tool.
+- **AI-Powered FAQs & Snippets**: Machine-readable answers for search intent queries.
+
+## Key URLs
+
+- [Homepage](https://zozo.pk)
+- [Phone Catalog](https://zozo.pk/phones)
+- [Brands Directory](https://zozo.pk/brands)
+- [Comparison Tool](https://zozo.pk/compare)
+- [Tech News](https://zozo.pk/news)
+- [Sitemap](https://zozo.pk/site-map)
+- [XML Sitemap](https://zozo.pk/sitemap.xml)
+- [Robots Directive](https://zozo.pk/robots.txt)
