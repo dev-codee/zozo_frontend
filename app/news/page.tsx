@@ -1,12 +1,22 @@
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import Navbar from '@/app/components/Navbar';
 import Footer from '@/app/components/Footer';
 import StaticSidebar from '@/app/components/StaticSidebar';
 import { getApiBaseUrl } from '@/app/lib/api';
+import { generateCollectionPageSchema } from '@/app/lib/schema';
 
-export const metadata = {
-  title: 'Tech News & Reviews - zozo.pk',
-  description: 'Latest mobile phone news, reviews, and comparisons.',
+export const metadata: Metadata = {
+  title: 'Tech News & Smartphone Reviews — Zozo.pk',
+  description: 'Latest mobile phone news, smartphone reviews, leaks, buying guides, and comparisons in Pakistan.',
+  alternates: {
+    canonical: 'https://zozo.pk/news',
+  },
+  openGraph: {
+    title: 'Tech News & Smartphone Reviews — Zozo.pk',
+    description: 'Latest mobile phone news, reviews, and comparisons in Pakistan.',
+    url: 'https://zozo.pk/news',
+  },
 };
 
 async function getBlogs() {
@@ -31,6 +41,12 @@ export default async function NewsPage() {
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(generateCollectionPageSchema("Tech News & Reviews", "Latest tech news, reviews and mobile updates on Zozo", "/news")),
+        }}
+      />
       <Navbar />
       <div className="w-full flex flex-col md:flex-row bg-surface">
         <StaticSidebar activeSlug="news" />

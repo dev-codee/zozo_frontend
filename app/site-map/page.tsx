@@ -8,9 +8,17 @@ import { getBrands, getHomeData, type Brand, type Phone } from "@/app/lib/api";
 export const revalidate = 3600;
 
 export const metadata: Metadata = {
-  title: "Sitemap | Zozo",
+  title: "HTML Sitemap — All Mobile Phones, Brands & Prices | Zozo",
   description:
     "Browse the full Zozo sitemap — mobile phones, popular brands, price ranges, comparisons and more, all in one place.",
+  alternates: {
+    canonical: "https://zozo.pk/site-map",
+  },
+  openGraph: {
+    title: "HTML Sitemap | Zozo",
+    description: "Browse all mobile phone pages, brands, and price ranges on Zozo.",
+    url: "https://zozo.pk/site-map",
+  },
 };
 
 type LinkItem = { label: string; href: string };
