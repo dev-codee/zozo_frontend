@@ -29,7 +29,7 @@ export default async function ComparePage({
   // Redirect to canonical URL if exactly 2 phones are compared
   if (selectedSlugs.length === 2) {
     const { redirect } = await import("next/navigation");
-    redirect(`/compare/${selectedSlugs[0]}/vs/${selectedSlugs[1]}`);
+    redirect(`/compare/${selectedSlugs[0]}-vs-${selectedSlugs[1]}`);
   }
 
   // Fetch full details of the compared phones and summary of all phones for dropdown

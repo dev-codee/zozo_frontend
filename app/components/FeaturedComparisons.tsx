@@ -85,7 +85,7 @@ export default function FeaturedComparisons({ comparisons }: FeaturedComparisons
               return (
                 <Link
                   key={comp._id ?? index}
-                  href={`/compare/${p1.slug}/vs/${p2.slug}`}
+                  href={`/compare/${p1.slug}-vs-${p2.slug}`}
                   className="group flex-shrink-0 w-[300px] md:w-[330px] bg-surface-container-lowest border border-border-subtle rounded-xl p-3 flex items-center justify-between gap-2 hover:border-primary/40 hover:shadow-sm transition-all"
                 >
                   {/* Phone 1 */}

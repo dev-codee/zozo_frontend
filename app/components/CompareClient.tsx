@@ -394,7 +394,7 @@ export default function CompareClient({ initialPhones, allPhones }: CompareClien
     
     if (activePhones.length === 2) {
       // Canonical 2-phone comparison
-      router.push(`/compare/${activePhones[0].slug}/vs/${activePhones[1].slug}`);
+      router.push(`/compare/${activePhones[0].slug}-vs-${activePhones[1].slug}`);
     } else {
       // 1 or 3 phones fallback to query params
       const params = new URLSearchParams();
