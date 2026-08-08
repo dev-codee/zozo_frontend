@@ -56,10 +56,30 @@ export async function generateMetadata({
     };
   }
 
+  const primaryImage = phone.images?.find((img) => img.is_primary)?.url || phone.images?.[0]?.url;
+  const canonicalUrl = `https://zozo.pk/${phone.slug}-price-in-pakistan`;
+  const title = phone.seo?.meta_title || phone.seo?.ai_seo_title || `${phone.name} Price in Pakistan & Specs`;
+  const description = phone.seo?.meta_description || phone.seo?.ai_meta_description || `Best price for ${phone.name} in Pakistan. Compare full specifications, camera, battery, features, and user reviews on Zozo.`;
+
   return {
-    title: phone.seo?.meta_title || phone.seo?.ai_seo_title || `${phone.name} Best Price in Pakistan, Compare Specs`,
-    description: phone.seo?.meta_description || phone.seo?.ai_meta_description || `Best price for ${phone.name} in Pakistan. Read full specifications, features, and user reviews on Zozo.`,
+    title,
+    description,
     keywords: phone.seo?.ai_keywords || [`mobile phones`, `${phone.name} price in pakistan`, `${phone.brand_slug} mobile`, `buy ${phone.name}`],
+    alternates: {
+      canonical: canonicalUrl,
+    },
+    openGraph: {
+      title,
+      description,
+      url: canonicalUrl,
+      images: primaryImage ? [{ url: primaryImage, alt: `${phone.name} Price in Pakistan` }] : [],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: primaryImage ? [primaryImage] : [],
+    },
   };
 }
 
@@ -249,7 +269,7 @@ export default async function PhoneDetailPage({
             <div className="flex flex-col gap-3">
               <div>
                 <h1 className="font-headline-lg text-2xl md:text-3xl lg:text-4xl text-text-main mb-1.5 font-bold tracking-tight">
-                  {phone.name}
+                  {phone.name} Price in Pakistan & Specs
                 </h1>
                 <div className="flex flex-wrap items-center gap-2 mb-0">
                   <span className="inline-flex items-center gap-1 bg-surface-container-low text-text-muted font-label-sm text-xs px-3 py-1 rounded-full uppercase border border-border-subtle">

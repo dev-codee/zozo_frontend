@@ -1,12 +1,22 @@
+import type { Metadata } from "next";
 import { getBrands } from "@/app/lib/api";
 import Navbar from "@/app/components/Navbar";
 import Footer from "@/app/components/Footer";
 import Link from "next/link";
 import BrandLogo from "@/app/components/BrandLogo";
+import { generateCollectionPageSchema } from "@/app/lib/schema";
 
-export const metadata = {
-  title: "All Mobile Brands | Zozo",
-  description: "Browse all mobile phone brands available on Zozo. Find the latest smartphones from your favorite manufacturers.",
+export const metadata: Metadata = {
+  title: "All Mobile Phone Brands in Pakistan — Samsung, Apple, Xiaomi & More",
+  description: "Browse all mobile phone brands available on Zozo. Find latest smartphones, prices, and specs from your favorite manufacturers in Pakistan.",
+  alternates: {
+    canonical: "https://zozo.pk/brands",
+  },
+  openGraph: {
+    title: "All Mobile Phone Brands in Pakistan | Zozo",
+    description: "Browse all mobile phone brands available on Zozo. Find latest smartphones and specs.",
+    url: "https://zozo.pk/brands",
+  },
 };
 
 export default async function BrandsPage() {
@@ -14,6 +24,12 @@ export default async function BrandsPage() {
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(generateCollectionPageSchema("Mobile Phone Brands", "Browse all mobile phone brands on Zozo", "/brands")),
+        }}
+      />
       <Navbar />
       <main className="w-full max-w-[1280px] mx-auto px-4 md:px-6 py-10 bg-surface min-h-[60vh]">
         <div className="mb-8">

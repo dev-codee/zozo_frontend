@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { getApiBaseUrl } from '@/app/lib/api';
@@ -15,14 +16,37 @@ async function getBlog(slug: string) {
   }
 }
 
-export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const resolvedParams = await params;
   const blog = await getBlog(resolvedParams.slug);
-  if (!blog) return { title: 'Not Found' };
+  if (!blog) return { title: 'Not Found | Zozo' };
   
+  const canonicalUrl = `https://zozo.pk/news/${resolvedParams.slug}`;
+  const title = `${blog.title} — Mobile News & Reviews`;
+  const description = blog.excerpt || blog.title;
+  const image = blog.coverImage || '/ZOZO-Logo-v2.png';
+
   return {
-    title: `${blog.title} - zozo.pk News`,
-    description: blog.excerpt || blog.title,
+    title,
+    description,
+    alternates: {
+      canonical: canonicalUrl,
+    },
+    openGraph: {
+      title,
+      description,
+      url: canonicalUrl,
+      type: 'article',
+      publishedTime: blog.createdAt,
+      modifiedTime: blog.updatedAt || blog.createdAt,
+      images: [{ url: image, alt: blog.title }],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: [image],
+    },
   };
 }
 
@@ -34,8 +58,36 @@ export default async function SingleBlogPage({ params }: { params: Promise<{ slu
     notFound();
   }
 
+  const newsArticleSchema = {
+    "@context": "https://schema.org",
+    "@type": "NewsArticle",
+    "headline": blog.title,
+    "description": blog.excerpt || blog.title,
+    "image": blog.coverImage ? [blog.coverImage] : [],
+    "datePublished": blog.createdAt,
+    "dateModified": blog.updatedAt || blog.createdAt,
+    "author": {
+      "@type": "Organization",
+      "name": "ZOZO.pk",
+      "url": "https://zozo.pk"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "ZOZO.pk",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://zozo.pk/ZOZO-Logo-v2.png"
+      }
+    }
+  };
+
   return (
-    <div className="max-w-[800px] mx-auto px-4 md:px-6 py-12">
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(newsArticleSchema) }}
+      />
+      <div className="max-w-[800px] mx-auto px-4 md:px-6 py-12">
       <div className="mb-8">
         <Link href="/news" className="text-primary hover:underline text-sm font-medium mb-6 inline-block">
           ← Back to News
@@ -61,5 +113,6 @@ export default async function SingleBlogPage({ params }: { params: Promise<{ slu
         dangerouslySetInnerHTML={{ __html: blog.body }}
       />
     </div>
+  </>
   );
 }

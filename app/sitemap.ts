@@ -1,5 +1,5 @@
 import { MetadataRoute } from 'next';
-import { getPhones, getPages } from './lib/api';
+import { getPhones, getPages, getBrands } from './lib/api';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://zozo.pk';
@@ -19,6 +19,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.9,
     },
     {
+      url: `${baseUrl}/brands`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly',
+      priority: 0.8,
+    },
+    {
       url: `${baseUrl}/compare`,
       lastModified: new Date(),
       changeFrequency: 'weekly',
@@ -29,10 +35,39 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: new Date(),
       changeFrequency: 'daily',
       priority: 0.8,
-    }
+    },
+    {
+      url: `${baseUrl}/site-map`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly',
+      priority: 0.6,
+    },
   ];
 
+  // Common price range routes for SEO indexing
+  const priceTiers = [15000, 30000, 50000, 80000, 150000];
+  priceTiers.forEach((price) => {
+    routes.push({
+      url: `${baseUrl}/phones?max_price=${price}`,
+      lastModified: new Date(),
+      changeFrequency: 'daily',
+      priority: 0.8,
+    });
+  });
+
   try {
+    // Dynamic Brand routes
+    const brandsData = await getBrands();
+    if (brandsData && Array.isArray(brandsData)) {
+      const brandRoutes: MetadataRoute.Sitemap = brandsData.map((brand) => ({
+        url: `${baseUrl}/${brand.slug}-phone-price-pakistan`,
+        lastModified: new Date(),
+        changeFrequency: 'daily',
+        priority: 0.85,
+      }));
+      routes.push(...brandRoutes);
+    }
+
     // Dynamic Phone routes
     const phonesData = await getPhones('limit=1000'); // Fetch up to 1000 phones for sitemap
     if (phonesData && phonesData.phones) {

@@ -39,9 +39,30 @@ export async function generateMetadata({
     if (parsedSlugs) {
       const comparisonPhones = await getComparisonData(parsedSlugs);
       if (comparisonPhones && comparisonPhones.length === 2) {
-        const title = `${comparisonPhones[0].name} vs ${comparisonPhones[1].name} - Price & Specs Comparison`;
-        const description = `Compare ${comparisonPhones[0].name} and ${comparisonPhones[1].name} prices, specifications, features, and detailed comparison in Pakistan.`;
-        return { title, description };
+        const title = `${comparisonPhones[0].name} vs ${comparisonPhones[1].name} — Price & Specs Comparison`;
+        const description = `Compare ${comparisonPhones[0].name} vs ${comparisonPhones[1].name} prices in Pakistan, full specifications, camera, battery, display, and features.`;
+        const canonicalUrl = `https://zozo.pk/compare/${parsedSlugs[0]}-vs-${parsedSlugs[1]}`;
+        const img1 = comparisonPhones[0].images?.[0]?.url;
+
+        return {
+          title,
+          description,
+          alternates: {
+            canonical: canonicalUrl,
+          },
+          openGraph: {
+            title,
+            description,
+            url: canonicalUrl,
+            images: img1 ? [{ url: img1, alt: `${comparisonPhones[0].name} vs ${comparisonPhones[1].name}` }] : [],
+          },
+          twitter: {
+            card: "summary_large_image",
+            title,
+            description,
+            images: img1 ? [img1] : [],
+          },
+        };
       }
     }
   } catch (err) {
@@ -49,8 +70,11 @@ export async function generateMetadata({
   }
 
   return {
-    title: "Phone Comparison | Zozo",
-    description: "Compare smartphone prices and specifications in Pakistan.",
+    title: "Phone Comparison — Compare Mobile Prices in Pakistan",
+    description: "Compare smartphone prices and specifications side by side in Pakistan.",
+    alternates: {
+      canonical: "https://zozo.pk/compare",
+    },
   };
 }
 

@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Navbar from "./components/Navbar";
 import HeroSection from "./components/HeroSection";
 import FlagshipSection from "./components/FlagshipSection";
@@ -8,7 +9,19 @@ import FeaturedComparisons from "./components/FeaturedComparisons";
 import Footer from "./components/Footer";
 import { getHomeData, getPopularComparisons } from "./lib/api";
 import AdSlot from "./components/AdSlot";
-import { generateOrganizationSchema, generateWebSiteSchema } from "./lib/schema";
+
+export const metadata: Metadata = {
+  title: "zozo.pk — Compare Mobile Phone Prices in Pakistan",
+  description: "Compare latest mobile phone prices in Pakistan across all top retailers. Find the best deals on Samsung, Apple, Xiaomi, Vivo, and more.",
+  alternates: {
+    canonical: "https://zozo.pk",
+  },
+  openGraph: {
+    title: "zozo.pk — Compare Mobile Phone Prices in Pakistan",
+    description: "Compare latest mobile phone prices in Pakistan across all top retailers.",
+    url: "https://zozo.pk",
+  },
+};
 
 export default async function Home() {
   // Fetch home data from backend (server component)
@@ -19,8 +32,6 @@ export default async function Home() {
 
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(generateOrganizationSchema()) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(generateWebSiteSchema()) }} />
       <Navbar />
       
       <main className="w-full flex-1">

@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { getPhones, getBrands } from "@/app/lib/api";
 import Navbar from "@/app/components/Navbar";
 import Footer from "@/app/components/Footer";
@@ -5,6 +6,57 @@ import PhoneCard from "@/app/components/PhoneCard";
 import Breadcrumb from "@/app/components/Breadcrumb";
 import SidebarFilter from "@/app/components/SidebarFilter";
 import Pagination from "@/app/components/Pagination";
+import { generateCollectionPageSchema, generateBreadcrumbSchema } from "@/app/lib/schema";
+
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}): Promise<Metadata> {
+  const resolvedParams = await searchParams;
+  const brand = resolvedParams.brand as string;
+  const maxPrice = resolvedParams.max_price as string;
+  const category = resolvedParams.category as string;
+  const forLabel = resolvedParams.for as string;
+
+  let title = "Mobile Phone Prices in Pakistan — Full Phone List";
+  let description = "Browse and filter latest mobile phone prices, specifications, and features in Pakistan. Compare specs across top brands.";
+
+  if (forLabel) {
+    title = `${forLabel} — Price in Pakistan`;
+    description = `Discover the best phones for ${forLabel} in Pakistan. Detailed specs, current prices, and comparison.`;
+  } else if (brand && !brand.includes(",")) {
+    const formattedBrand = brand.charAt(0).toUpperCase() + brand.slice(1);
+    title = `${formattedBrand} Mobile Phone Prices in Pakistan`;
+    description = `Compare all ${formattedBrand} mobile phone prices, full specifications, and latest deals in Pakistan on Zozo.`;
+  } else if (maxPrice) {
+    const formattedPrice = Number(maxPrice).toLocaleString();
+    title = `Best Mobile Phones Under Rs. ${formattedPrice} in Pakistan`;
+    description = `Find the best smartphones priced under Rs. ${formattedPrice} in Pakistan. Compare camera, battery, RAM, and performance.`;
+  } else if (category) {
+    title = `Best ${category.charAt(0).toUpperCase() + category.slice(1)} Mobile Phones in Pakistan`;
+  }
+
+  const queryParams = new URLSearchParams();
+  if (brand) queryParams.set("brand", brand);
+  if (maxPrice) queryParams.set("max_price", maxPrice);
+  if (category) queryParams.set("category", category);
+  const queryString = queryParams.toString();
+  const canonicalUrl = `https://zozo.pk/phones${queryString ? `?${queryString}` : ""}`;
+
+  return {
+    title,
+    description,
+    alternates: {
+      canonical: canonicalUrl,
+    },
+    openGraph: {
+      title,
+      description,
+      url: canonicalUrl,
+    },
+  };
+}
 
 export default async function PhonesPage({
   searchParams,
@@ -29,8 +81,6 @@ export default async function PhonesPage({
   const limit = resolvedParams.limit as string;
   const category = resolvedParams.category as string;
   const status = resolvedParams.status as string;
-  // Display-only label for curated "Best Phones for …" landing pages.
-  // Intentionally NOT forwarded to the API — it only sets the page title.
   const forLabel = resolvedParams.for as string;
 
   // Build the query string
@@ -86,6 +136,18 @@ export default async function PhonesPage({
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(generateCollectionPageSchema(title, `Explore ${title} on Zozo`, `/phones`)),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(generateBreadcrumbSchema([{ label: title }])),
+        }}
+      />
       <Navbar />
       <main className="w-full max-w-[1280px] mx-auto px-4 md:px-6 py-8 flex flex-col md:flex-row gap-8 bg-surface min-h-[60vh]">
         <SidebarFilter brands={brands} />
@@ -93,6 +155,15 @@ export default async function PhonesPage({
         <section className="flex-1">
           <div className="mb-6 space-y-4">
             <Breadcrumb items={[{ label: title }]} />
+
+            <div>
+              <h1 className="text-2xl md:text-3xl font-bold text-text-main tracking-tight mb-1">
+                {title}
+              </h1>
+              <p className="text-sm text-text-muted">
+                Compare prices, features, and full specifications across top online retailers in Pakistan.
+              </p>
+            </div>
 
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <p className="font-body-sm text-body-sm text-text-muted">

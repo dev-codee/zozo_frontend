@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { getPhones, getComparisonData, getPopularComparisons } from "@/app/lib/api";
 import Navbar from "@/app/components/Navbar";
 import Footer from "@/app/components/Footer";
@@ -6,6 +7,19 @@ import CompareClient from "@/app/components/CompareClient";
 import PopularComparisons from "@/app/components/PopularComparisons";
 
 export const revalidate = 60; // ISR validation time
+
+export const metadata: Metadata = {
+  title: "Compare Mobile Phones Side-by-Side — Prices & Specifications",
+  description: "Compare mobile phone prices, camera specs, battery life, performance, and features side by side in Pakistan.",
+  alternates: {
+    canonical: "https://zozo.pk/compare",
+  },
+  openGraph: {
+    title: "Compare Mobile Phones Side-by-Side | Zozo",
+    description: "Compare mobile phone prices, camera specs, battery life, performance, and features side by side in Pakistan.",
+    url: "https://zozo.pk/compare",
+  },
+};
 
 export default async function ComparePage({
   searchParams,

@@ -1,8 +1,10 @@
+import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Navbar from '@/app/components/Navbar';
 import Footer from '@/app/components/Footer';
 import StaticSidebar from '@/app/components/StaticSidebar';
 import { getApiBaseUrl } from '@/app/lib/api';
+import { generateWebPageSchema } from '@/app/lib/schema';
 
 async function getPage(slug: string) {
   try {
@@ -17,13 +19,26 @@ async function getPage(slug: string) {
   }
 }
 
-export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const resolvedParams = await params;
   const page = await getPage(resolvedParams.slug);
-  if (!page) return { title: 'Not Found' };
+  if (!page) return { title: 'Not Found | Zozo' };
   
+  const canonicalUrl = `https://zozo.pk/pages/${resolvedParams.slug}`;
+  const title = `${page.title} — Zozo`;
+  const description = page.excerpt || `${page.title} page on Zozo.pk`;
+
   return {
-    title: `${page.title} - zozo.pk`,
+    title,
+    description,
+    alternates: {
+      canonical: canonicalUrl,
+    },
+    openGraph: {
+      title,
+      description,
+      url: canonicalUrl,
+    },
   };
 }
 
@@ -37,6 +52,12 @@ export default async function StaticPagePage({ params }: { params: Promise<{ slu
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(generateWebPageSchema(page.title, `${page.title} on Zozo`, `/pages/${page.slug}`)),
+        }}
+      />
       <Navbar />
       <div className="w-full flex flex-col md:flex-row bg-surface">
         <StaticSidebar activeSlug={page.slug} />
