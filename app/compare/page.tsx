@@ -32,12 +32,25 @@ export default async function ComparePage({
     redirect(`/compare/${selectedSlugs[0]}-vs-${selectedSlugs[1]}`);
   }
 
-  // Fetch full details of the compared phones and summary of all phones for dropdown
-  const [comparisonPhones, allPhones, popularComparisons] = await Promise.all([
+  // Fetch full details safely
+  const [comparisonPhonesResult, allPhonesResult, popularComparisonsResult] = await Promise.allSettled([
     getComparisonData(selectedSlugs),
     getPhones("limit=all"),
     getPopularComparisons(8)
   ]);
+
+  const comparisonPhones =
+    comparisonPhonesResult.status === "fulfilled" && Array.isArray(comparisonPhonesResult.value)
+      ? comparisonPhonesResult.value
+      : [];
+  const allPhonesData =
+    allPhonesResult.status === "fulfilled" && allPhonesResult.value
+      ? allPhonesResult.value
+      : { phones: [] };
+  const popularComparisons =
+    popularComparisonsResult.status === "fulfilled" && Array.isArray(popularComparisonsResult.value)
+      ? popularComparisonsResult.value
+      : [];
 
   return (
     <>
@@ -51,7 +64,7 @@ export default async function ComparePage({
             ]}
           />
         </div>
-        <CompareClient initialPhones={comparisonPhones} allPhones={allPhones.phones} />
+        <CompareClient initialPhones={comparisonPhones} allPhones={allPhonesData.phones || []} />
         
         <div className="max-w-[1280px] mx-auto px-4 md:px-6 py-12">
           {popularComparisons && popularComparisons.length > 0 && (

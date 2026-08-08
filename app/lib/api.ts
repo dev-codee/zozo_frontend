@@ -201,7 +201,11 @@ export async function getPhones(query?: string): Promise<PaginatedPhones> {
     return { phones: data, pagination: { total: data.length, page: 1, limit: 15, totalPages: 1 } };
   }
 
-  return data || { phones: [], pagination: { total: 0, page: 1, limit: 15, totalPages: 1 } };
+  if (data && Array.isArray(data.phones)) {
+    return data;
+  }
+
+  return { phones: [], pagination: { total: 0, page: 1, limit: 15, totalPages: 1 } };
 }
 
 export async function searchPhones(q: string): Promise<Phone[]> {

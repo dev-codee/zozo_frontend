@@ -26,7 +26,7 @@ interface SpecCategory {
   fields: SpecField[];
 }
 
-export default function CompareClient({ initialPhones, allPhones }: CompareClientProps) {
+export default function CompareClient({ initialPhones = [], allPhones = [] }: CompareClientProps) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
