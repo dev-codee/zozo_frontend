@@ -2,10 +2,11 @@ import { notFound } from 'next/navigation';
 import Navbar from '@/app/components/Navbar';
 import Footer from '@/app/components/Footer';
 import StaticSidebar from '@/app/components/StaticSidebar';
+import { getApiBaseUrl } from '@/app/lib/api';
 
 async function getPage(slug: string) {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/pages/slug/${slug}`, {
+    const res = await fetch(`${getApiBaseUrl()}/pages/slug/${slug}`, {
       next: { revalidate: 60 }
     });
     if (!res.ok) return null;

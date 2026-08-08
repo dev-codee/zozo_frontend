@@ -161,15 +161,24 @@ export interface ApiResponse<T> {
   success: boolean;
 }
 
-// ─── Config ───────────────────────────────────────────────────────────────────
-
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
+export function getApiBaseUrl(): string {
+  const envUrl = process.env.NEXT_PUBLIC_API_URL;
+  if (envUrl && envUrl.trim().length > 0 && !envUrl.includes("undefined")) {
+    return envUrl.replace(/\/$/, "");
+  }
+  if (typeof window !== "undefined") {
+    return `${window.location.origin}/api`;
+  }
+  return "http://localhost:5000/api";
+}
 
 // ─── Fetch Helpers ────────────────────────────────────────────────────────────
 
 async function apiFetch<T>(endpoint: string): Promise<T | null> {
   try {
-    const res = await fetch(`${API_BASE_URL}${endpoint}`, {
+    const baseUrl = getApiBaseUrl();
+    const cleanEndpoint = endpoint.startsWith("/") ? endpoint : `/${endpoint}`;
+    const res = await fetch(`${baseUrl}${cleanEndpoint}`, {
       next: { revalidate: 60 }, // ISR — revalidate every 60s
     });
 
@@ -241,7 +250,7 @@ export async function getAIComparisonVerdict(slugs: string[]): Promise<{ verdict
 export async function trackComparison(slugs: string[]): Promise<void> {
   if (slugs.length < 2) return;
   try {
-    await fetch(`${API_BASE_URL}/compare/track`, {
+    await fetch(`${getApiBaseUrl()}/compare/track`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -259,7 +268,7 @@ export async function getPopularComparisons(limit: number = 5): Promise<any[]> {
 }
 
 export async function getPages(): Promise<any[]> {
-  const data = await fetch(`${API_BASE_URL}/pages`, {
+  const data = await fetch(`${getApiBaseUrl()}/pages`, {
     next: { revalidate: 60 }
   }).then(res => res.json()).catch(() => []);
   return Array.isArray(data) ? data : [];
@@ -272,7 +281,7 @@ export async function getVoteStats(phoneId: string): Promise<any> {
 
 export async function castVote(payload: { phoneId: string; sessionId: string; pollType: string; value: any }): Promise<any> {
   try {
-    const res = await fetch(`${API_BASE_URL}/votes`, {
+    const res = await fetch(`${getApiBaseUrl()}/votes`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -305,7 +314,7 @@ export async function getReviews(phoneId: string, page = 1, limit = 6): Promise<
 
 export async function postReview(payload: { phoneId: string; rating: number; comment: string }): Promise<Review> {
   try {
-    const res = await fetch(`${API_BASE_URL}/reviews`, {
+    const res = await fetch(`${getApiBaseUrl()}/reviews`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

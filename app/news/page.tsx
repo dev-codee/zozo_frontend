@@ -2,6 +2,7 @@ import Link from 'next/link';
 import Navbar from '@/app/components/Navbar';
 import Footer from '@/app/components/Footer';
 import StaticSidebar from '@/app/components/StaticSidebar';
+import { getApiBaseUrl } from '@/app/lib/api';
 
 export const metadata = {
   title: 'Tech News & Reviews - zozo.pk',
@@ -10,7 +11,7 @@ export const metadata = {
 
 async function getBlogs() {
   try {
-    const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
+    const API_BASE_URL = getApiBaseUrl();
     const res = await fetch(`${API_BASE_URL}/blogs?status=PUBLISHED`, {
       next: { revalidate: 60 } // Revalidate every minute
     });

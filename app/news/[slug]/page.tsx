@@ -1,9 +1,10 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
+import { getApiBaseUrl } from '@/app/lib/api';
 
 async function getBlog(slug: string) {
   try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/blogs/slug/${slug}`, {
+    const res = await fetch(`${getApiBaseUrl()}/blogs/slug/${slug}`, {
       next: { revalidate: 60 }
     });
     if (!res.ok) return null;
