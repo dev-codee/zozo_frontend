@@ -78,13 +78,15 @@ export default function CompareClient({ initialPhones = [], allPhones = [] }: Co
         {
           label: "Price (lowest)",
           getValue: (p: Phone) => {
-            const validPrices = (p.prices || []).map(pr => pr.price_pkr).filter(pr => typeof pr === 'number' && pr > 0);
-            const lowest = p.price_pkr || (validPrices.length ? Math.min(...validPrices) : null);
+            const parsedPricePkr = Number(p.price_pkr);
+            const validPrices = (p.prices || []).map(pr => Number(pr.price_pkr)).filter(pr => !isNaN(pr) && pr > 0);
+            const lowest = (!isNaN(parsedPricePkr) && parsedPricePkr > 0) ? parsedPricePkr : (validPrices.length ? Math.min(...validPrices) : null);
             return lowest ? `Rs. ${lowest.toLocaleString()}` : "Price TBA";
           },
           getRawValue: (p: Phone) => {
-            const validPrices = (p.prices || []).map(pr => pr.price_pkr).filter(pr => typeof pr === 'number' && pr > 0);
-            return p.price_pkr || (validPrices.length ? Math.min(...validPrices) : null);
+            const parsedPricePkr = Number(p.price_pkr);
+            const validPrices = (p.prices || []).map(pr => Number(pr.price_pkr)).filter(pr => !isNaN(pr) && pr > 0);
+            return (!isNaN(parsedPricePkr) && parsedPricePkr > 0) ? parsedPricePkr : (validPrices.length ? Math.min(...validPrices) : null);
           },
           better: "lower"
         },
@@ -481,11 +483,13 @@ export default function CompareClient({ initialPhones = [], allPhones = [] }: Co
                         {phone.name}
                       </h3>
                       <p className="font-headline-md text-sm font-bold text-price-green mt-1">
-                        {phone.price_pkr || (phone.prices || []).filter(pr => typeof pr.price_pkr === 'number' && pr.price_pkr > 0).length > 0
-                          ? `Rs. ${Math.min(
-                              ...(phone.price_pkr ? [phone.price_pkr] : []),
-                              ...(phone.prices || []).map(pr => pr.price_pkr).filter(pr => typeof pr === 'number' && pr > 0)
-                            ).toLocaleString()}`
+                        {Number(phone.price_pkr) > 0 || (phone.prices || []).filter(pr => !isNaN(Number(pr.price_pkr)) && Number(pr.price_pkr) > 0).length > 0
+                          ? `Rs. ${(
+                            Number(phone.price_pkr) > 0 ? Number(phone.price_pkr) :
+                            Math.min(
+                              ...(phone.prices || []).map(pr => Number(pr.price_pkr)).filter(pr => !isNaN(pr) && pr > 0)
+                            )
+                          ).toLocaleString()}`
                           : "Price TBA"}
                       </p>
                     </div>

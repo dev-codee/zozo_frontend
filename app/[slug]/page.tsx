@@ -107,8 +107,9 @@ export default async function PhoneDetailPage({
   }
 
   // Derived values
-  const validPrices = (phone.prices || []).map((p) => p.price_pkr).filter(p => typeof p === 'number' && p > 0);
-  const lowestPrice = phone.price_pkr || (validPrices.length ? Math.min(...validPrices) : null);
+  const parsedPricePkr = Number(phone.price_pkr);
+  const validPrices = (phone.prices || []).map((p) => Number(p.price_pkr)).filter(p => !isNaN(p) && p > 0);
+  const lowestPrice = (!isNaN(parsedPricePkr) && parsedPricePkr > 0) ? parsedPricePkr : (validPrices.length ? Math.min(...validPrices) : null);
   const rating = phone.rating?.average;
   const reviewCount = phone.rating?.count || 0;
   const hasAffiliateUrls = phone.prices?.some((p) => !!p.product_url);
@@ -268,7 +269,7 @@ export default async function PhoneDetailPage({
             {/* Product Info */}
             <div className="flex flex-col gap-3">
               <div>
-                <h1 className="font-headline-lg text-2xl md:text-3xl lg:text-4xl text-text-main mb-1.5 font-bold tracking-tight">
+                <h1 className="font-headline-lg text-xl md:text-2xl lg:text-[28px] text-text-main mb-1.5 font-bold tracking-tight">
                   {phone.name} Price in Pakistan & Specs
                 </h1>
                 <div className="flex flex-wrap items-center gap-2 mb-0">
@@ -568,10 +569,6 @@ export default async function PhoneDetailPage({
                           className="flex flex-col rounded-lg border border-border-subtle hover:border-primary hover:shadow-sm transition-all bg-white overflow-hidden group"
                         >
                           <div className="relative aspect-[4/5] bg-surface-container-low flex items-center justify-center p-3">
-                            <div className="absolute top-2 left-2 bg-[#8BC34A] text-white text-[10px] font-bold px-1.5 py-1 rounded flex flex-col items-center shadow-sm z-10 leading-tight">
-                              <span>85%</span>
-                              <span className="text-[7px] font-medium opacity-90 text-center uppercase tracking-wider">Spec<br />Score</span>
-                            </div>
                             {primaryImage ? (
                               <img
                                 src={primaryImage.url}

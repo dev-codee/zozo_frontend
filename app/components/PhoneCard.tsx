@@ -78,8 +78,9 @@ export default function PhoneCard({ phone, variant = "list", priority = false }:
   const imageAlt = primaryImage?.alt_text || phone.name;
 
   // Get lowest price safely
-  const validPrices = (phone.prices || []).map((p) => p.price_pkr).filter(p => typeof p === 'number' && p > 0);
-  const lowestPrice = phone.price_pkr || (validPrices.length ? Math.min(...validPrices) : null);
+  const parsedPricePkr = Number(phone.price_pkr);
+  const validPrices = (phone.prices || []).map((p) => Number(p.price_pkr)).filter(p => !isNaN(p) && p > 0);
+  const lowestPrice = (!isNaN(parsedPricePkr) && parsedPricePkr > 0) ? parsedPricePkr : (validPrices.length ? Math.min(...validPrices) : null);
 
   const chipset = phone.specs?.performance?.chipset || "Chipset TBA";
   const ramOptions = phone.specs?.performance?.ram_options_gb;
