@@ -54,6 +54,9 @@ export const metadata: Metadata = {
       'max-snippet': -1,
     },
   },
+  verification: {
+    google: "Vvyd5gNTQ-gef20eLQuyFvY8sRS2GkSegQtt16W6PZE",
+  },
 };
 
 import { AuthProvider } from './context/AuthContext';
