@@ -60,7 +60,7 @@ export function generateProductSchema(phone: SchemaPhone) {
     "@context": "https://schema.org",
     "@type": "Product",
     "name": phone.name,
-    "description": phone.seo?.meta_description || phone.description || `${phone.name} Price in Pakistan, Specifications and Reviews`,
+    "description": (phone.seo?.meta_description || phone.description || `${phone.name} Price in Pakistan, Specifications and Reviews`).trim().substring(0, 4000),
     "brand": {
       "@type": "Brand",
       "name": phone.brand_slug.toUpperCase().replace('-', ' ')
@@ -71,6 +71,9 @@ export function generateProductSchema(phone: SchemaPhone) {
 
   if (primaryImage) {
     schema.image = primaryImage;
+  } else {
+    // Fallback image to fix the "Missing field 'image'" error in GSC
+    schema.image = `${SITE_URL}/ZOZO-Logo-v2.png`;
   }
 
   if (phone.model_number) {
