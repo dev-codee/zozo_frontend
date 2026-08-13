@@ -57,6 +57,15 @@ export const metadata: Metadata = {
   verification: {
     google: "Vvyd5gNTQ-gef20eLQuyFvY8sRS2GkSegQtt16W6PZE",
   },
+  icons: {
+    icon: [
+      { url: '/favicon.ico', sizes: 'any' },
+      { url: '/icon.png', type: 'image/png' },
+    ],
+    apple: [
+      { url: '/icon.png', type: 'image/png' },
+    ],
+  },
 };
 
 import { AuthProvider } from './context/AuthContext';
