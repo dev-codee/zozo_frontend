@@ -468,6 +468,7 @@ export default async function PhoneDetailPage({
                   {/* Action 1: Compare */}
                   <Link
                     href={`/compare?phone=${phone.slug}`}
+                    rel="nofollow"
                     className="flex items-center justify-center gap-1.5 py-1 px-3 sm:py-1.5 sm:px-4 rounded-sm border border-border-subtle bg-surface-white hover:bg-surface-container-low hover:border-primary font-medium text-[10px] sm:text-[11px] text-text-main transition-colors"
                   >
                     <span className="material-symbols-outlined text-[13px] sm:text-[14px]">

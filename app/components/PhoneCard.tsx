@@ -134,6 +134,7 @@ export default function PhoneCard({ phone, variant = "list", priority = false }:
           {variant === "list" && (
             <Link
               href={`/compare?phone=${phone.slug}`}
+              rel="nofollow"
               className="flex items-center gap-1 text-primary text-sm font-semibold hover:bg-primary/5 px-2 py-1 rounded transition-colors shrink-0"
             >
               <span className="material-symbols-outlined text-[18px]">add</span>
@@ -173,6 +174,7 @@ export default function PhoneCard({ phone, variant = "list", priority = false }:
             <div className="flex gap-4 mt-3">
               <Link
                 href={`/compare?phone=${phone.slug}`}
+                rel="nofollow"
                 className="w-8 h-8 rounded border border-border-subtle flex items-center justify-center text-text-muted hover:border-primary hover:text-primary transition-colors"
                 title="Compare"
               >
