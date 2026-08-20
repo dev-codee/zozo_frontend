@@ -74,7 +74,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       const phoneRoutes: MetadataRoute.Sitemap = phonesData.phones.map((phone) => ({
         url: `${baseUrl}/${phone.slug}-price-in-pakistan`,
         lastModified: phone.updated_at ? new Date(phone.updated_at) : new Date(),
-        changeFrequency: 'daily',
+        // 'weekly' (not 'daily') so Google spends crawl budget discovering new
+        // phone pages instead of re-crawling ~1000 unchanged ones every day.
+        changeFrequency: 'weekly',
         priority: 0.8,
       }));
       routes.push(...phoneRoutes);

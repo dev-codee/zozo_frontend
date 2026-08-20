@@ -58,11 +58,22 @@ export async function generateMetadata({
 
   const primaryImage = phone.images?.find((img) => img.is_primary)?.url || phone.images?.[0]?.url;
   const canonicalUrl = `https://zozo.pk/${phone.slug}-price-in-pakistan`;
-  const title = phone.seo?.meta_title || phone.seo?.ai_seo_title || `${phone.name} Price in Pakistan & Specs`;
+
+  // Auto-updating year (e.g. 2026) appended to the title. Any year already baked
+  // into a custom/AI title is stripped first so it never shows stale or doubled.
+  const year = new Date().getFullYear();
+  const baseTitle =
+    phone.seo?.meta_title ||
+    phone.seo?.ai_seo_title ||
+    `${phone.name} Latest Price in Pakistan & Specs`;
+  const title = `${baseTitle.replace(/\s*\b20\d{2}\b\s*$/, "").trim()} ${year}`;
+
   const description = phone.seo?.meta_description || phone.seo?.ai_meta_description || `Best price for ${phone.name} in Pakistan. Compare full specifications, camera, battery, features, and user reviews on Zozo.`;
 
   return {
-    title,
+    // `absolute` bypasses the "%s | Zozo" template from the root layout so phone
+    // titles read "… & Specs 2026" with no "| Zozo" suffix.
+    title: { absolute: title },
     description,
     keywords: phone.seo?.ai_keywords || [`mobile phones`, `${phone.name} price in pakistan`, `${phone.brand_slug} mobile`, `buy ${phone.name}`],
     alternates: {
@@ -94,7 +105,7 @@ export default async function PhoneDetailPage({
   if (!slug.endsWith('-price-in-pakistan')) {
     const phoneCheck = await getPhoneBySlug(slug);
     if (phoneCheck) {
-      redirect(`/${slug}-price-price-in-pakistan`);
+      redirect(`/${slug}-price-in-pakistan`);
     }
   } else {
     slug = slug.replace('-price-in-pakistan', '');
@@ -105,6 +116,12 @@ export default async function PhoneDetailPage({
   if (!phone) {
     notFound();
   }
+
+  // Guard against records with missing fields — an undefined brand_slug/name
+  // would throw on `.toUpperCase()`/`.replace()` during render and surface to
+  // Google as a "Server error (5xx)" for that phone.
+  phone.brand_slug = phone.brand_slug || "";
+  phone.name = phone.name || "Phone";
 
   // Derived values
   const parsedPricePkr = Number(phone.price_pkr);

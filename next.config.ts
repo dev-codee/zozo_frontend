@@ -38,7 +38,7 @@ const nextConfig: NextConfig = {
     return [
       {
         source: "/phones/:slug",
-        destination: "/:slug-price-price-in-pakistan",
+        destination: "/:slug-price-in-pakistan",
         permanent: true,
       },
     ];

@@ -37,21 +37,40 @@ export async function generateMetadata({
     title = `Best ${category.charAt(0).toUpperCase() + category.slice(1)} Mobile Phones in Pakistan`;
   }
 
-  const queryParams = new URLSearchParams();
-  if (brand) queryParams.set("brand", brand);
-  if (maxPrice) queryParams.set("max_price", maxPrice);
-  if (category) queryParams.set("category", category);
-  const queryString = queryParams.toString();
-  const canonicalUrl = `https://zozo.pk/phones${queryString ? `?${queryString}` : ""}`;
+  // Canonical resolution.
+  // The pretty brand landing URL `/{brand}-phone-price-pakistan` is internally
+  // rewritten to `/phones?brand={brand}`. When brand is the *only* active filter
+  // we must canonicalize back to the pretty URL (which is what lives in the
+  // sitemap), otherwise Google reports the branded page as "Alternate page with
+  // proper canonical tag" and indexes the ugly query URL instead — or nothing.
+  let canonicalUrl: string;
+  const isSoleBrand = !!brand && !brand.includes(",") && !maxPrice && !category && !forLabel;
+
+  if (isSoleBrand) {
+    canonicalUrl = `https://zozo.pk/${brand}-phone-price-pakistan`;
+  } else {
+    const queryParams = new URLSearchParams();
+    if (brand) queryParams.set("brand", brand);
+    if (maxPrice) queryParams.set("max_price", maxPrice);
+    if (category) queryParams.set("category", category);
+    const queryString = queryParams.toString();
+    canonicalUrl = `https://zozo.pk/phones${queryString ? `?${queryString}` : ""}`;
+  }
+
+  // Append the auto-updating current year (stripping any pre-existing year so it
+  // never doubles or goes stale) and expose it as an `absolute` title so the
+  // "%s | Zozo" template from the root layout is not applied to listing pages.
+  const year = new Date().getFullYear();
+  const finalTitle = `${title.replace(/\s*\b20\d{2}\b\s*$/, "").trim()} ${year}`;
 
   return {
-    title,
+    title: { absolute: finalTitle },
     description,
     alternates: {
       canonical: canonicalUrl,
     },
     openGraph: {
-      title,
+      title: finalTitle,
       description,
       url: canonicalUrl,
     },

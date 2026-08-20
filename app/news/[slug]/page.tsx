@@ -93,7 +93,7 @@ export default async function SingleBlogPage({ params }: { params: Promise<{ slu
           ← Back to News
         </Link>
         <div className="flex gap-2 mb-4">
-          {blog.categories.map((c: any) => (
+          {(blog.categories ?? []).map((c: any) => (
             <span key={c._id} className="text-xs font-bold uppercase tracking-wider text-primary bg-primary/10 px-2 py-1 rounded">
               {c.name}
             </span>
