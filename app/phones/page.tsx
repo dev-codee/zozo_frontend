@@ -6,6 +6,7 @@ import PhoneCard from "@/app/components/PhoneCard";
 import Breadcrumb from "@/app/components/Breadcrumb";
 import SidebarFilter from "@/app/components/SidebarFilter";
 import Pagination from "@/app/components/Pagination";
+import SortSelect from "@/app/components/SortSelect";
 import { generateCollectionPageSchema, generateBreadcrumbSchema } from "@/app/lib/schema";
 
 export async function generateMetadata({
@@ -188,14 +189,7 @@ export default async function PhonesPage({
               <p className="font-body-sm text-body-sm text-text-muted">
                 Showing <span className="font-semibold text-text-main">{phones.length}</span> of <span className="font-semibold text-text-main">{pagination.total}</span> results
               </p>
-              <div className="flex items-center gap-3">
-                <label htmlFor="sort" className="font-label-sm text-label-sm text-text-muted whitespace-nowrap">Sort by:</label>
-                <select id="sort" className="bg-surface-white border border-border-subtle rounded-md py-2 pl-3 pr-10 font-body-sm text-body-sm text-text-main focus:ring-1 focus:ring-primary-container focus:border-primary-container cursor-pointer">
-                  <option value="latest">Latest</option>
-                  <option value="trending">Trending</option>
-                  <option value="price_asc">Price: Low to High</option>
-                </select>
-              </div>
+                <SortSelect />
             </div>
           </div>
 
