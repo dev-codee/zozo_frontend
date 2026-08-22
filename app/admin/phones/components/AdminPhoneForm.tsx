@@ -695,6 +695,10 @@ export default function AdminPhoneForm({ initialData, onSubmit, isEditing = fals
             <section className="bg-white p-5 rounded-xl border shadow-sm">
               <h3 className="font-bold mb-3">Display Extended</h3>
               <div className="space-y-2">
+                {renderInput('Resolution', formData.specs.display?.resolution, v => handleSpecChange('display', 'resolution', v))}
+                {renderInput('Refresh Rate (Hz)', formData.specs.display?.refresh_rate_hz, v => handleSpecChange('display', 'refresh_rate_hz', v), 'number')}
+                {renderInput('Protection', formData.specs.display?.protection, v => handleSpecChange('display', 'protection', v))}
+                {renderInput('Peak Brightness (nits)', formData.specs.display?.peak_brightness_nits, v => handleSpecChange('display', 'peak_brightness_nits', v), 'number')}
                 {renderTextFields('features_listing', DEFAULT_EXTRA_SPECS.features_listing, ['display_features'])}
               </div>
               {renderBooleanFields('features_listing', DEFAULT_EXTRA_SPECS.features_listing, ['display_features'])}
@@ -714,6 +718,9 @@ export default function AdminPhoneForm({ initialData, onSubmit, isEditing = fals
             <section className="bg-white p-5 rounded-xl border shadow-sm">
               <h3 className="font-bold mb-3">Processor & RAM</h3>
               <div className="space-y-2">
+                {renderInput('CPU', formData.specs.performance?.cpu, v => handleSpecChange('performance', 'cpu', v))}
+                {renderInput('GPU', formData.specs.performance?.gpu, v => handleSpecChange('performance', 'gpu', v))}
+                {renderInput('Expandable Storage', formData.specs.performance?.expandable_storage, v => handleSpecChange('performance', 'expandable_storage', v), 'checkbox')}
                 {Object.keys(DEFAULT_EXTRA_SPECS.processor).map(key => renderInput(key, (formData.specs.extra_specs as any).processor[key], v => handleNestedExtraSpec('processor', key, v)))}
                 {Object.keys(DEFAULT_EXTRA_SPECS.ram_storage).map(key => renderInput(key, (formData.specs.extra_specs as any).ram_storage[key], v => handleNestedExtraSpec('ram_storage', key, v)))}
               </div>
@@ -722,6 +729,9 @@ export default function AdminPhoneForm({ initialData, onSubmit, isEditing = fals
             <section className="bg-white p-5 rounded-xl border shadow-sm">
               <h3 className="font-bold mb-3">Cameras & Video</h3>
               <div className="space-y-2">
+                {renderInput('Rear Summary', formData.specs.camera?.rear_summary, v => handleSpecChange('camera', 'rear_summary', v))}
+                {renderInput('Front Summary', formData.specs.camera?.front_summary, v => handleSpecChange('camera', 'front_summary', v))}
+                {renderInput('Video Recording', formData.specs.camera?.video_recording, v => handleSpecChange('camera', 'video_recording', v))}
                 {renderTextFields('cameras_detailed', DEFAULT_EXTRA_SPECS.cameras_detailed)}
               </div>
               {renderBooleanFields('cameras_detailed', DEFAULT_EXTRA_SPECS.cameras_detailed)}
@@ -741,21 +751,66 @@ export default function AdminPhoneForm({ initialData, onSubmit, isEditing = fals
             <section className="bg-white p-5 rounded-xl border shadow-sm">
               <h3 className="font-bold mb-3">Connectivity & Sensors</h3>
               <div className="space-y-2">
+                {renderInput('Network', formData.specs.connectivity?.network, v => handleSpecChange('connectivity', 'network', v))}
+                {renderInput('SIM', formData.specs.connectivity?.sim, v => handleSpecChange('connectivity', 'sim', v))}
+                {renderInput('USB', formData.specs.connectivity?.usb, v => handleSpecChange('connectivity', 'usb', v))}
+                {renderInput('Bluetooth', formData.specs.connectivity?.bluetooth, v => handleSpecChange('connectivity', 'bluetooth', v))}
+                {renderInput('NFC', formData.specs.connectivity?.nfc, v => handleSpecChange('connectivity', 'nfc', v), 'checkbox')}
                 {renderTextFields('connectivity_detailed', DEFAULT_EXTRA_SPECS.connectivity_detailed)}
                 {renderTextFields('sensors', DEFAULT_EXTRA_SPECS.sensors)}
               </div>
               {renderBooleanFields('connectivity_detailed', DEFAULT_EXTRA_SPECS.connectivity_detailed)}
               {renderBooleanFields('sensors', DEFAULT_EXTRA_SPECS.sensors)}
+              <div className="mt-4">
+                <label className="block text-xs font-semibold text-gray-600 mb-2">SIM Types</label>
+                <div className="flex flex-wrap gap-2">
+                  {SIM_TYPES.map(feat => (
+                    <label key={feat} className="flex items-center space-x-1 text-xs bg-gray-50 px-2 py-1 rounded border">
+                      <input type="checkbox" checked={formData.specs.connectivity?.sim_types?.includes(feat) || false} onChange={() => toggleArrayItem('connectivity', 'sim_types', feat)} />
+                      <span>{feat}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+              <div className="mt-4">
+                <label className="block text-xs font-semibold text-gray-600 mb-2">Network Features</label>
+                <div className="flex flex-wrap gap-2">
+                  {NETWORK_FEATURES.map(feat => (
+                    <label key={feat} className="flex items-center space-x-1 text-xs bg-gray-50 px-2 py-1 rounded border">
+                      <input type="checkbox" checked={formData.specs.connectivity?.network_features?.includes(feat) || false} onChange={() => toggleArrayItem('connectivity', 'network_features', feat)} />
+                      <span>{feat}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
             </section>
 
             <section className="bg-white p-5 rounded-xl border shadow-sm">
               <h3 className="font-bold mb-3">Battery & Body Extended</h3>
               <div className="space-y-2">
+                {renderInput('Charging Watts', formData.specs.battery?.charging_watts, v => handleSpecChange('battery', 'charging_watts', v), 'number')}
+                {renderInput('Fast Charging', formData.specs.battery?.fast_charging, v => handleSpecChange('battery', 'fast_charging', v), 'checkbox')}
+                {renderInput('Wireless Charging', formData.specs.battery?.wireless_charging, v => handleSpecChange('battery', 'wireless_charging', v), 'checkbox')}
+                {renderInput('Height (mm)', formData.specs.body?.height_mm, v => handleSpecChange('body', 'height_mm', v), 'number')}
+                {renderInput('Width (mm)', formData.specs.body?.width_mm, v => handleSpecChange('body', 'width_mm', v), 'number')}
+                {renderInput('Thickness (mm)', formData.specs.body?.thickness_mm, v => handleSpecChange('body', 'thickness_mm', v), 'number')}
+                {renderInput('Weight (g)', formData.specs.body?.weight_g, v => handleSpecChange('body', 'weight_g', v), 'number')}
+                {renderInput('Materials', formData.specs.body?.materials, v => handleSpecChange('body', 'materials', v))}
+                {renderInput('Water Resistance', formData.specs.body?.water_resistance, v => handleSpecChange('body', 'water_resistance', v))}
                 {renderTextFields('battery_detailed', DEFAULT_EXTRA_SPECS.battery_detailed)}
                 {renderTextFields('body_detailed', DEFAULT_EXTRA_SPECS.body_detailed)}
               </div>
               {renderBooleanFields('battery_detailed', DEFAULT_EXTRA_SPECS.battery_detailed)}
               {renderBooleanFields('body_detailed', DEFAULT_EXTRA_SPECS.body_detailed)}
+            </section>
+
+            <section className="bg-white p-5 rounded-xl border shadow-sm">
+              <h3 className="font-bold mb-3">OS & Software</h3>
+              <div className="space-y-2">
+                {renderInput('OS', formData.specs.os, v => setFormData((p: any) => ({ ...p, specs: { ...p.specs, os: v } })))}
+                {renderTextFields('software', DEFAULT_EXTRA_SPECS.software)}
+              </div>
+              {renderBooleanFields('software', DEFAULT_EXTRA_SPECS.software)}
             </section>
 
           </div>
