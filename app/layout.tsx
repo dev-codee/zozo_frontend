@@ -13,8 +13,8 @@ import { generateOrganizationSchema, generateWebSiteSchema } from "./lib/schema"
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://zozo.pk'),
   title: {
-    default: "zozo.pk — Compare Mobile Phone Prices in Pakistan",
-    template: "%s | Zozo",
+    default: "Compare Mobile Phone Prices in Pakistan",
+    template: "%s",
   },
   description: "Compare latest mobile phone prices in Pakistan across all top retailers. Find the best deals on Samsung, Apple, Xiaomi, Vivo, and more.",
   keywords: "mobile phones, prices, Pakistan, compare, Samsung, Apple, Xiaomi, Vivo, Oppo, Infinix, Tecno",
