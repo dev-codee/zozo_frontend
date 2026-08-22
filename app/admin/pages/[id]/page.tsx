@@ -14,6 +14,7 @@ export default function EditPagePage() {
     title: '', slug: '', body: '', status: 'DRAFT', pageType: 'STANDALONE', placement: 'NONE', parentPage: ''
   });
   const [parentPages, setParentPages] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     fetch(`${process.env.NEXT_PUBLIC_API_URL}/pages`)
@@ -44,6 +45,8 @@ export default function EditPagePage() {
       }
     } catch (error) {
       console.error(error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -81,6 +84,14 @@ export default function EditPagePage() {
     const slug = title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
     setFormData({ ...formData, title, slug });
   };
+
+  if (isLoading) {
+    return (
+      <div className="p-6 max-w-5xl flex justify-center items-center h-64">
+        <div className="text-gray-500 font-medium">Loading page details...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="p-6 max-w-5xl">

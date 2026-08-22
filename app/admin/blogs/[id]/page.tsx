@@ -16,6 +16,7 @@ export default function EditBlogPage() {
     status: 'DRAFT', featured: false, trending: false,
     pinned: false, breaking: false, categories: [] as string[]
   });
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     fetchCategories();
@@ -51,6 +52,8 @@ export default function EditBlogPage() {
       }
     } catch (error) {
       console.error(error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -86,6 +89,14 @@ export default function EditBlogPage() {
     }
     setFormData({ ...formData, categories: selected });
   };
+
+  if (isLoading) {
+    return (
+      <div className="p-6 max-w-5xl flex justify-center items-center h-64">
+        <div className="text-gray-500 font-medium">Loading blog details...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="p-6 max-w-5xl">
