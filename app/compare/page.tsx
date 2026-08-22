@@ -5,6 +5,7 @@ import Footer from "@/app/components/Footer";
 import Breadcrumb from "@/app/components/Breadcrumb";
 import CompareClient from "@/app/components/CompareClient";
 import PopularComparisons from "@/app/components/PopularComparisons";
+import Link from "next/link";
 
 export const revalidate = 60; // ISR validation time
 
@@ -82,7 +83,17 @@ export default async function ComparePage({
         
         <div className="max-w-[1280px] mx-auto px-4 md:px-6 py-12">
           {popularComparisons && popularComparisons.length > 0 && (
-            <PopularComparisons comparisons={popularComparisons} />
+            <div className="flex flex-col gap-6">
+              <PopularComparisons comparisons={popularComparisons} />
+              <div className="flex justify-center">
+                <Link 
+                  href="/comparisons" 
+                  className="px-6 py-3 bg-primary text-white rounded-lg font-medium hover:bg-primary/90 transition-colors shadow-sm"
+                >
+                  View All Comparisons
+                </Link>
+              </div>
+            </div>
           )}
         </div>
       </main>
