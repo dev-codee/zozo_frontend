@@ -149,11 +149,10 @@ export default async function SiteMapPage() {
                       const img =
                         phone.images?.find((i) => i.is_primary)?.url ||
                         phone.images?.[0]?.url;
-                      const price =
-                        phone.price_pkr ||
-                        (phone.prices?.length
-                          ? Math.min(...phone.prices.map((p) => p.price_pkr))
-                          : null);
+                      const rawPriceStr = String(phone.price_pkr || "");
+                      const parsedPricePkr = Number(rawPriceStr.replace(/[^0-9.]/g, ''));
+                      const validPrices = (phone.prices || []).map((p) => Number(p.price_pkr)).filter(p => !isNaN(p) && p > 0);
+                      const price = (!isNaN(parsedPricePkr) && parsedPricePkr > 0) ? parsedPricePkr : (validPrices.length ? Math.min(...validPrices) : null);
                       return (
                         <li key={phone._id}>
                           <Link
@@ -179,7 +178,7 @@ export default async function SiteMapPage() {
                                 {phone.name}
                               </span>
                               <span className="block text-xs font-bold text-price-green mt-0.5">
-                                {price ? `Rs. ${price.toLocaleString()}` : "Price TBA"}
+                                {price ? `Rs. ${price.toLocaleString()}` : (phone.price_pkr || "Price TBA")}
                               </span>
                             </div>
                           </Link>

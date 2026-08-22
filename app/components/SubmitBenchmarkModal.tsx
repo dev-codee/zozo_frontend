@@ -7,10 +7,10 @@ import { Phone } from "../lib/api";
 interface SubmitBenchmarkModalProps {
   isOpen: boolean;
   onClose: () => void;
-  slots: (Phone | null)[];
+  phone: Phone;
 }
 
-export default function SubmitBenchmarkModal({ isOpen, onClose, slots }: SubmitBenchmarkModalProps) {
+export default function SubmitBenchmarkModal({ isOpen, onClose, phone }: SubmitBenchmarkModalProps) {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -18,9 +18,8 @@ export default function SubmitBenchmarkModal({ isOpen, onClose, slots }: SubmitB
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Form states
-  const [selectedPhoneSlug, setSelectedPhoneSlug] = useState<string>(slots.filter(p => p !== null)[0]?.slug || "");
-  const [customDeviceName, setCustomDeviceName] = useState("");
-  const [processor, setProcessor] = useState("");
+  const [customDeviceName, setCustomDeviceName] = useState(phone?.name || "");
+  const [processor, setProcessor] = useState(phone?.specs?.performance?.chipset || "");
   const [userName, setUserName] = useState("");
   const [androidVersion, setAndroidVersion] = useState("");
   const [memoryConfig, setMemoryConfig] = useState("");
@@ -43,14 +42,7 @@ export default function SubmitBenchmarkModal({ isOpen, onClose, slots }: SubmitB
   const [geekbenchMulti, setGeekbenchMulti] = useState("");
   const [geekbenchCompute, setGeekbenchCompute] = useState("");
 
-  const handlePhoneSelect = (slug: string) => {
-    setSelectedPhoneSlug(slug);
-    const phone = slots.find(p => p?.slug === slug);
-    if (phone) {
-      setCustomDeviceName(phone.name);
-      setProcessor(phone.specs.performance?.chipset || "");
-    }
-  };
+
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -69,8 +61,8 @@ export default function SubmitBenchmarkModal({ isOpen, onClose, slots }: SubmitB
 
     try {
       const formData = new FormData();
-      if (selectedPhoneSlug) formData.append("phone_slug", selectedPhoneSlug);
-      formData.append("device_name", customDeviceName || selectedPhoneSlug);
+      formData.append("phone_slug", phone.slug);
+      formData.append("device_name", customDeviceName || phone.name);
       formData.append("processor", processor);
       formData.append("user_name", userName);
       formData.append("android_version", androidVersion);
@@ -160,21 +152,7 @@ export default function SubmitBenchmarkModal({ isOpen, onClose, slots }: SubmitB
               <div className="bg-surface-container-lowest border border-border-subtle rounded-xl p-5 space-y-4">
                 <h3 className="font-bold text-text-main text-sm uppercase tracking-wider mb-2 border-b border-border-subtle pb-2"># Device</h3>
                 
-                {slots.filter(p => p !== null).length > 0 && (
-                  <div>
-                    <label className="block text-sm font-semibold text-text-main mb-1">Select Phone from Compare*</label>
-                    <select 
-                      className="w-full p-2.5 rounded-lg border border-border-subtle bg-surface-white dark:bg-surface-container text-text-main focus:outline-none focus:border-primary"
-                      value={selectedPhoneSlug}
-                      onChange={(e) => handlePhoneSelect(e.target.value)}
-                    >
-                      <option value="">-- Or enter custom device --</option>
-                      {slots.filter(p => p !== null).map((p) => (
-                        <option key={p!.slug} value={p!.slug}>{p!.name}</option>
-                      ))}
-                    </select>
-                  </div>
-                )}
+
 
                 <div>
                   <label className="block text-sm font-semibold text-text-main mb-1">Device Name*</label>

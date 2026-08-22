@@ -78,7 +78,8 @@ export default function PhoneCard({ phone, variant = "list", priority = false }:
   const imageAlt = primaryImage?.alt_text || phone.name;
 
   // Get lowest price safely
-  const parsedPricePkr = Number(phone.price_pkr);
+  const rawPriceStr = String(phone.price_pkr || "");
+  const parsedPricePkr = Number(rawPriceStr.replace(/[^0-9.]/g, ''));
   const validPrices = (phone.prices || []).map((p) => Number(p.price_pkr)).filter(p => !isNaN(p) && p > 0);
   const lowestPrice = (!isNaN(parsedPricePkr) && parsedPricePkr > 0) ? parsedPricePkr : (validPrices.length ? Math.min(...validPrices) : null);
 
@@ -282,7 +283,7 @@ export default function PhoneCard({ phone, variant = "list", priority = false }:
       {/* Pricing Strip */}
       <div className="bg-surface-container-lowest border-t border-border-subtle p-3 px-6 flex items-center justify-between">
         <span className="font-bold text-text-main text-lg">
-          {lowestPrice ? `Rs. ${lowestPrice.toLocaleString()}` : "Price TBA"}
+          {lowestPrice ? `Rs. ${lowestPrice.toLocaleString()}` : (phone.price_pkr || "Price TBA")}
         </span>
 
         <Link

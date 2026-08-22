@@ -112,7 +112,11 @@ export default function SearchBar({ className = "w-72" }: { className?: string }
                       {phone.name}
                     </span>
                     <span className="text-xs text-text-muted truncate mt-0.5">
-                      {phone.price_pkr ? `Rs. ${phone.price_pkr.toLocaleString()}` : 'Price TBA'}
+                      {(() => {
+                        if (!phone.price_pkr) return 'Price TBA';
+                        const num = Number(String(phone.price_pkr).replace(/[^0-9.]/g, ''));
+                        return (!isNaN(num) && num > 0) ? `Rs. ${num.toLocaleString()}` : phone.price_pkr;
+                      })()}
                     </span>
                   </div>
                 </Link>

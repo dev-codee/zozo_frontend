@@ -5,7 +5,6 @@ import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Phone, getAIComparisonVerdict } from "@/app/lib/api";
 import AIVerdictClient from "@/app/components/AIVerdictClient";
-import SubmitBenchmarkModal from "@/app/components/SubmitBenchmarkModal";
 import { useAuth } from "@/app/context/AuthContext";
 
 interface CompareClientProps {
@@ -37,7 +36,6 @@ export default function CompareClient({ initialPhones = [], allPhones = [] }: Co
   const slots: (Phone | null)[] = Array.from({ length: maxSlots }, (_, i) => initialPhones[i] || null);
 
   const [aiVerdict, setAiVerdict] = useState<string | null>(null);
-  const [benchmarkModalOpen, setBenchmarkModalOpen] = useState(false);
   const [aiKeyDifferences, setAiKeyDifferences] = useState<Record<string, string[]> | null>(null);
   const [loadingAI, setLoadingAI] = useState(false);
 
@@ -78,13 +76,15 @@ export default function CompareClient({ initialPhones = [], allPhones = [] }: Co
         {
           label: "Price (lowest)",
           getValue: (p: Phone) => {
-            const parsedPricePkr = Number(p.price_pkr);
+            const rawStr = String(p.price_pkr || "");
+            const parsedPricePkr = Number(rawStr.replace(/[^0-9.]/g, ''));
             const validPrices = (p.prices || []).map(pr => Number(pr.price_pkr)).filter(pr => !isNaN(pr) && pr > 0);
             const lowest = (!isNaN(parsedPricePkr) && parsedPricePkr > 0) ? parsedPricePkr : (validPrices.length ? Math.min(...validPrices) : null);
-            return lowest ? `Rs. ${lowest.toLocaleString()}` : "Price TBA";
+            return lowest ? `Rs. ${lowest.toLocaleString()}` : (p.price_pkr || "Price TBA");
           },
           getRawValue: (p: Phone) => {
-            const parsedPricePkr = Number(p.price_pkr);
+            const rawStr = String(p.price_pkr || "");
+            const parsedPricePkr = Number(rawStr.replace(/[^0-9.]/g, ''));
             const validPrices = (p.prices || []).map(pr => Number(pr.price_pkr)).filter(pr => !isNaN(pr) && pr > 0);
             return (!isNaN(parsedPricePkr) && parsedPricePkr > 0) ? parsedPricePkr : (validPrices.length ? Math.min(...validPrices) : null);
           },
@@ -579,25 +579,7 @@ export default function CompareClient({ initialPhones = [], allPhones = [] }: Co
                 );
               })}
 
-              {/* Special row for Benchmark Submissions */}
-              {category.name === "Benchmarks & Gaming" && (
-                <div className="col-span-3 flex justify-center py-5 bg-surface-white border-t border-border-subtle/50">
-                  <button 
-                    onClick={() => {
-                      if (!user) {
-                        const redirectUrl = encodeURIComponent(pathname + '?' + searchParams.toString());
-                        router.push(`/login?redirect=${redirectUrl}`);
-                      } else {
-                        setBenchmarkModalOpen(true);
-                      }
-                    }} 
-                    className="flex items-center gap-2 text-text-main hover:text-primary font-semibold text-sm px-5 py-2.5 bg-surface-container-low hover:bg-primary/10 rounded-xl transition-colors border border-border-subtle hover:border-primary/30"
-                  >
-                    <span className="material-symbols-outlined text-[20px]">description</span>
-                    Submit your benchmark results
-                  </button>
-                </div>
-              )}
+
             </div>
           ))}
 
@@ -607,8 +589,6 @@ export default function CompareClient({ initialPhones = [], allPhones = [] }: Co
       {/* AI Verdict Section */}
       <AIVerdictClient verdict={aiVerdict} loading={loadingAI} hasEnoughPhones={slots.filter((p) => p !== null).length >= 2} />
 
-      {/* Modals */}
-      <SubmitBenchmarkModal isOpen={benchmarkModalOpen} onClose={() => setBenchmarkModalOpen(false)} slots={slots} />
     </div>
   );
 }

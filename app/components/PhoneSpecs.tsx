@@ -3,6 +3,7 @@ import { Phone } from "@/app/lib/api";
 interface PhoneSpecsProps {
   specs: Phone["specs"];
   className?: string;
+  phone?: Phone;
 }
 
 // ─── Rating Calculators ──────────────────────────────────────────────────────
@@ -159,7 +160,9 @@ function getRatingColors(label: string) {
 
 // ─── Component ───────────────────────────────────────────────────────────────
 
-export default function PhoneSpecs({ specs, className = "" }: PhoneSpecsProps) {
+import SubmitBenchmarkWrapper from "./SubmitBenchmarkWrapper";
+
+export default function PhoneSpecs({ specs, className = "", phone }: PhoneSpecsProps) {
   const ext = specs.extra_specs || {};
 
   const chipset = specs.performance?.chipset || "";
@@ -428,6 +431,7 @@ export default function PhoneSpecs({ specs, className = "" }: PhoneSpecsProps) {
           {renderRow("Thermal Throttling", ext.gaming?.throttle)}
           {renderRow("Game Mode", ext.gaming?.game_mode)}
           {renderRow("Gaming Triggers", ext.gaming?.triggers)}
+          {phone && <SubmitBenchmarkWrapper phone={phone} />}
         </>
       ))}
     </section>

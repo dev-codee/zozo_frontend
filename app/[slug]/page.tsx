@@ -124,7 +124,8 @@ export default async function PhoneDetailPage({
   phone.name = phone.name || "Phone";
 
   // Derived values
-  const parsedPricePkr = Number(phone.price_pkr);
+  const rawPriceStr = String(phone.price_pkr || "");
+  const parsedPricePkr = Number(rawPriceStr.replace(/[^0-9.]/g, ''));
   const validPrices = (phone.prices || []).map((p) => Number(p.price_pkr)).filter(p => !isNaN(p) && p > 0);
   const lowestPrice = (!isNaN(parsedPricePkr) && parsedPricePkr > 0) ? parsedPricePkr : (validPrices.length ? Math.min(...validPrices) : null);
   const rating = phone.rating?.average;
@@ -335,7 +336,7 @@ export default async function PhoneDetailPage({
               {/* Price */}
               <div className="flex items-baseline gap-2">
                 <span className="font-display-lg text-2xl md:text-3xl font-bold text-price-green tracking-tight">
-                  {lowestPrice ? `Rs. ${lowestPrice.toLocaleString()}` : "Price TBA"}
+                  {lowestPrice ? `Rs. ${lowestPrice.toLocaleString()}` : (phone.price_pkr || "Price TBA")}
                 </span>
               </div>
 
@@ -562,7 +563,7 @@ export default async function PhoneDetailPage({
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-[15px] items-start">
             <div className="lg:col-span-2">
               {/* Full Specifications Table */}
-              <PhoneSpecs specs={phone.specs} />
+              <PhoneSpecs specs={phone.specs} phone={phone} />
             </div>
 
             <div className="lg:col-span-1 space-y-6">
