@@ -286,7 +286,27 @@ export default function AdminPhoneForm({ initialData, onSubmit, isEditing = fals
             }
           }
         }));
-        alert("AI successfully researched and populated the phone fields!");
+        
+        // Find empty fields to warn admin
+        const findEmptyFields = (obj: any, prefix = ''): string[] => {
+          let empty: string[] = [];
+          for (const key in obj) {
+            if (typeof obj[key] === 'object' && obj[key] !== null && !Array.isArray(obj[key])) {
+              empty = [...empty, ...findEmptyFields(obj[key], prefix ? `${prefix}.${key}` : key)];
+            } else if (obj[key] === '' || obj[key] === null || obj[key] === undefined || (Array.isArray(obj[key]) && obj[key].length === 0)) {
+              empty.push(prefix ? `${prefix}.${key}` : key);
+            }
+          }
+          return empty;
+        };
+
+        const missing = findEmptyFields(ai.specs || {});
+        let msg = "AI successfully researched and populated the phone fields!";
+        if (missing.length > 0) {
+          msg += `\n\nNOTE: The AI safely left ${missing.length} fields empty because it could not verify them from trusted sources. Please fill them manually if applicable:\n\n${missing.slice(0, 15).join(', ')}${missing.length > 15 ? '...' : ''}`;
+        }
+        
+        alert(msg);
       } else {
         alert("Failed to auto-fill: " + data.message);
       }
