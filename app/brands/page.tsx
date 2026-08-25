@@ -4,6 +4,7 @@ import Navbar from "@/app/components/Navbar";
 import Footer from "@/app/components/Footer";
 import Link from "next/link";
 import BrandLogo from "@/app/components/BrandLogo";
+import AppIcon from "@/app/components/AppIcon";
 import { generateCollectionPageSchema } from "@/app/lib/schema";
 
 export const metadata: Metadata = {
@@ -63,14 +64,12 @@ export default async function BrandsPage() {
           </div>
         ) : (
           <div className="bg-surface-white rounded-xl border border-border-subtle p-12 flex flex-col items-center justify-center text-center mt-6">
-            <span className="material-symbols-outlined text-[64px] text-outline mb-4">
-              category
-            </span>
+            <AppIcon name="category" size={64} className="text-outline mb-4 opacity-60" />
             <h2 className="font-headline-md text-xl font-bold text-text-main mb-2">
               No Brands Found
             </h2>
             <p className="text-text-muted max-w-md mx-auto">
-              We couldn't find any brands at the moment. Please check back later.
+              We couldn&apos;t find any brands at the moment. Please check back later.
             </p>
           </div>
         )}

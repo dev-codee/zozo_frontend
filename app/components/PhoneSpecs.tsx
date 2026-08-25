@@ -1,4 +1,5 @@
 import { Phone } from "@/app/lib/api";
+import AppIcon from "./AppIcon";
 
 interface PhoneSpecsProps {
   specs: Phone["specs"];
@@ -236,7 +237,7 @@ export default function PhoneSpecs({ specs, className = "", phone }: PhoneSpecsP
       <details open className="group flex flex-col">
         <summary className="w-full p-5 md:px-6 flex items-center justify-between cursor-pointer select-none bg-surface-container-low/20 hover:bg-surface-container-low/40 transition-colors duration-200 list-none [&::-webkit-details-marker]:hidden border-none outline-none text-left">
           <div className="flex items-center gap-3">
-            <span className="material-symbols-outlined text-text-muted text-[22px]">{icon}</span>
+            <AppIcon name={icon} size={22} className="text-text-muted" />
             <span className="font-headline-sm text-base md:text-lg font-bold text-text-main">
               {title}
             </span>
@@ -251,7 +252,11 @@ export default function PhoneSpecs({ specs, className = "", phone }: PhoneSpecsP
               </div>
             )}
           </div>
-          <span className="material-symbols-outlined text-text-muted transition-transform duration-200 group-open:rotate-180">keyboard_arrow_down</span>
+          <AppIcon
+            name="keyboard_arrow_down"
+            size={20}
+            className="text-text-muted transition-transform duration-200 group-open:rotate-180"
+          />
         </summary>
         <div className="flex flex-col bg-surface-white divide-y divide-border-subtle/30">
           {rows}

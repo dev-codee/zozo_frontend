@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Phone, getAIComparisonVerdict } from "@/app/lib/api";
 import AIVerdictClient from "@/app/components/AIVerdictClient";
 import { useAuth } from "@/app/context/AuthContext";
+import AppIcon from "./AppIcon";
 
 interface CompareClientProps {
   initialPhones: Phone[];
@@ -462,7 +463,7 @@ export default function CompareClient({ initialPhones = [], allPhones = [] }: Co
                     className="absolute top-4 right-4 w-7 h-7 rounded-full bg-surface-container hover:bg-error/10 hover:text-error text-text-muted flex items-center justify-center cursor-pointer transition-colors shadow-sm"
                     title="Remove device"
                   >
-                    <span className="material-symbols-outlined text-[18px] font-bold">close</span>
+                    <AppIcon name="close" size={16} />
                   </button>
 
                   {/* Device Info */}
@@ -497,12 +498,12 @@ export default function CompareClient({ initialPhones = [], allPhones = [] }: Co
                     {aiKeyDifferences?.[phone.slug] && (
                       <div className="mt-4 text-left w-full border-t border-border-subtle/50 pt-3">
                         <h4 className="text-xs font-bold text-primary mb-2 flex items-center gap-1.5">
-                          <span className="material-symbols-outlined text-[16px]">psychiatry</span> Key Differences
+                          <AppIcon name="psychiatry" size={16} /> Key Differences
                         </h4>
                         <ul className="space-y-2">
                           {aiKeyDifferences[phone.slug].map((diff, i) => (
                             <li key={i} className="text-xs text-text-muted leading-tight flex items-start gap-1.5">
-                              <span className="material-symbols-outlined text-green-500 text-[14px] shrink-0 mt-0.5">check_circle</span>
+                              <AppIcon name="check_circle" size={14} className="text-green-500 shrink-0 mt-0.5" />
                               {diff}
                             </li>
                           ))}
@@ -535,7 +536,7 @@ export default function CompareClient({ initialPhones = [], allPhones = [] }: Co
             <div key={catIdx} className="col-span-3 grid grid-cols-[180px_1fr_1fr] divide-x divide-border-subtle">
               {/* Category Header Bar */}
               <div className="col-span-3 bg-surface-container-low/40 py-3 px-6 flex items-center gap-2 border-b border-t border-border-subtle">
-                <span className="material-symbols-outlined text-text-muted text-[18px]">{category.icon}</span>
+                <AppIcon name={category.icon} size={18} className="text-text-muted" />
                 <h3 className="font-headline-sm text-sm font-bold text-text-main uppercase tracking-wider">
                   {category.name}
                 </h3>
@@ -629,7 +630,7 @@ function PhoneSearchSelector({ index, onSelect, allPhones, selectedSlugs }: Sear
 
   return (
     <div ref={dropdownRef} className="w-full flex flex-col items-center justify-center p-6 border-2 border-dashed border-border-subtle rounded-xl min-h-[220px] bg-surface-container-low/10 hover:bg-surface-container-low/20 transition-all duration-200 relative my-auto">
-      <span className="material-symbols-outlined text-[32px] text-text-muted/60 mb-2">add_circle</span>
+      <AppIcon name="add_circle" size={32} className="text-text-muted/60 mb-2" />
       <span className="text-xs font-semibold text-text-muted mb-4">Add Device {index + 1}</span>
 
       {/* Input container */}
@@ -645,9 +646,11 @@ function PhoneSearchSelector({ index, onSelect, allPhones, selectedSlugs }: Sear
           onFocus={() => setIsOpen(true)}
           className="w-full text-xs font-semibold py-2 px-3 pl-8 border border-border-subtle rounded-lg bg-surface-white focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary shadow-sm text-left text-text-main"
         />
-        <span className="material-symbols-outlined text-[16px] text-text-muted absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none">
-          search
-        </span>
+        <AppIcon
+          name="search"
+          size={16}
+          className="text-text-muted absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none"
+        />
       </div>
 
       {/* Dropdown Menu */}

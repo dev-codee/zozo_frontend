@@ -1,6 +1,7 @@
 import Link from "next/link";
 import PhoneCard from "./PhoneCard";
 import type { Phone } from "@/app/lib/api";
+import AppIcon from "./AppIcon";
 
 interface FlagshipSectionProps {
   phones?: Phone[];
@@ -20,7 +21,7 @@ export default function FlagshipSection({ phones = [] }: FlagshipSectionProps) {
         <div className="flex items-center justify-between mb-8">
           <div>
             <h2 className="text-2xl md:text-3xl font-bold text-on-surface tracking-tight mb-2 flex items-center gap-2">
-              <span className="material-symbols-outlined text-primary text-[28px]">workspace_premium</span>
+              <AppIcon name="workspace_premium" size={26} className="text-primary" />
               Flagship Phones
             </h2>
             <p className="text-sm text-text-muted">The ultimate premium smartphone experiences.</p>
@@ -32,7 +33,7 @@ export default function FlagshipSection({ phones = [] }: FlagshipSectionProps) {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {flagships.map((phone, index) => (
-            <PhoneCard key={phone._id} phone={phone} variant="grid" priority={index < 4} />
+            <PhoneCard key={phone._id} phone={phone} variant="grid" priority={index < 2} />
           ))}
           {flagships.length === 0 && (
             <div className="col-span-full py-10 text-center text-text-muted bg-surface-container-low rounded-xl">

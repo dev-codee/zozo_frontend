@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
+import AppIcon from "./AppIcon";
 
 interface PaginationProps {
   currentPage: number;
@@ -44,14 +45,14 @@ export default function Pagination({ currentPage, totalPages }: PaginationProps)
       {currentPage > 1 ? (
         <Link
           href={createPageURL(currentPage - 1)}
-          className="w-11 h-11 flex items-center justify-center rounded-lg border border-border-subtle bg-surface-white text-text-main hover:bg-surface-container-low transition-colors"
+          className="w-11 h-11 flex items-center justify-center rounded-lg border border-border-subtle bg-surface-white text-text-main hover:bg-surface-container-low transition-colors cursor-pointer"
           aria-label="Previous page"
         >
-          <span className="material-symbols-outlined text-[20px]">chevron_left</span>
+          <AppIcon name="chevron_left" size={20} />
         </Link>
       ) : (
         <div className="w-11 h-11 flex items-center justify-center rounded-lg border border-border-subtle bg-surface-container/50 text-text-muted opacity-50 cursor-not-allowed">
-          <span className="material-symbols-outlined text-[20px]">chevron_left</span>
+          <AppIcon name="chevron_left" size={20} />
         </div>
       )}
 
@@ -70,7 +71,7 @@ export default function Pagination({ currentPage, totalPages }: PaginationProps)
             <Link
               key={page}
               href={createPageURL(page)}
-              className={`w-11 h-11 flex items-center justify-center rounded-lg text-sm font-semibold transition-colors ${
+              className={`w-11 h-11 flex items-center justify-center rounded-lg text-sm font-semibold transition-colors cursor-pointer ${
                 isCurrent
                   ? "bg-primary text-surface-white"
                   : "border border-border-subtle bg-surface-white text-text-main hover:bg-surface-container-low"
@@ -85,14 +86,14 @@ export default function Pagination({ currentPage, totalPages }: PaginationProps)
       {currentPage < totalPages ? (
         <Link
           href={createPageURL(currentPage + 1)}
-          className="w-11 h-11 flex items-center justify-center rounded-lg border border-border-subtle bg-surface-white text-text-main hover:bg-surface-container-low transition-colors"
+          className="w-11 h-11 flex items-center justify-center rounded-lg border border-border-subtle bg-surface-white text-text-main hover:bg-surface-container-low transition-colors cursor-pointer"
           aria-label="Next page"
         >
-          <span className="material-symbols-outlined text-[20px]">chevron_right</span>
+          <AppIcon name="chevron_right" size={20} />
         </Link>
       ) : (
         <div className="w-11 h-11 flex items-center justify-center rounded-lg border border-border-subtle bg-surface-container/50 text-text-muted opacity-50 cursor-not-allowed">
-          <span className="material-symbols-outlined text-[20px]">chevron_right</span>
+          <AppIcon name="chevron_right" size={20} />
         </div>
       )}
     </div>

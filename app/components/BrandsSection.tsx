@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import BrandLogo from "./BrandLogo";
+import AppIcon from "./AppIcon";
 import type { Brand } from "@/app/lib/api";
 
 interface BrandsSectionProps {
@@ -55,7 +56,7 @@ export default function BrandsSection({ brands }: BrandsSectionProps) {
             className="inline-flex items-center text-primary text-sm font-semibold hover:underline"
           >
             View All
-            <span className="material-symbols-outlined ml-0.5 text-[18px]">chevron_right</span>
+            <AppIcon name="chevron_right" size={18} className="ml-0.5" />
           </Link>
         </div>
 
@@ -66,9 +67,9 @@ export default function BrandsSection({ brands }: BrandsSectionProps) {
               type="button"
               aria-label="Scroll brands left"
               onClick={() => scrollByCards(-1)}
-              className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1 z-10 w-8 h-8 rounded-full bg-white/90 border border-border-subtle shadow-md flex items-center justify-center text-text-muted hover:text-primary hover:border-primary transition-colors"
+              className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1 z-10 w-8 h-8 rounded-full bg-white/90 border border-border-subtle shadow-md flex items-center justify-center text-text-muted hover:text-primary hover:border-primary transition-colors cursor-pointer"
             >
-              <span className="material-symbols-outlined text-[20px]">chevron_left</span>
+              <AppIcon name="chevron_left" size={20} />
             </button>
           )}
 
@@ -98,9 +99,9 @@ export default function BrandsSection({ brands }: BrandsSectionProps) {
               type="button"
               aria-label="Scroll brands right"
               onClick={() => scrollByCards(1)}
-              className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1 z-10 w-8 h-8 rounded-full bg-white/90 border border-border-subtle shadow-md flex items-center justify-center text-text-muted hover:text-primary hover:border-primary transition-colors"
+              className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1 z-10 w-8 h-8 rounded-full bg-white/90 border border-border-subtle shadow-md flex items-center justify-center text-text-muted hover:text-primary hover:border-primary transition-colors cursor-pointer"
             >
-              <span className="material-symbols-outlined text-[20px]">chevron_right</span>
+              <AppIcon name="chevron_right" size={20} />
             </button>
           )}
         </div>

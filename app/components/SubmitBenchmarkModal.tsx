@@ -2,6 +2,7 @@
 
 import { useState, useRef } from "react";
 import { Phone } from "../lib/api";
+import AppIcon from "./AppIcon";
 
 
 interface SubmitBenchmarkModalProps {
@@ -118,22 +119,22 @@ export default function SubmitBenchmarkModal({ isOpen, onClose, phone }: SubmitB
         {/* Header */}
         <div className="sticky top-0 z-10 flex items-center justify-between p-4 px-6 border-b border-border-subtle bg-surface-white/95 dark:bg-surface-container/95 backdrop-blur">
           <h2 className="text-lg font-bold text-text-main flex items-center gap-2">
-            <span className="material-symbols-outlined text-primary">analytics</span>
+            <AppIcon name="analytics" size={20} className="text-primary" />
             Add Benchmark Results
           </h2>
-          <button onClick={onClose} className="p-1 rounded-full hover:bg-surface-container-low text-text-muted hover:text-text-main transition-colors">
-            <span className="material-symbols-outlined font-bold">close</span>
+          <button onClick={onClose} className="p-1 rounded-full hover:bg-surface-container-low text-text-muted hover:text-text-main transition-colors cursor-pointer">
+            <AppIcon name="close" size={20} />
           </button>
         </div>
 
         {/* Content */}
         <div className="p-6">
           {success ? (
-            <div className="text-center py-10">
-              <span className="material-symbols-outlined text-green-500 text-6xl mb-4">check_circle</span>
+            <div className="text-center py-10 flex flex-col items-center">
+              <AppIcon name="check_circle" size={56} className="text-green-500 mb-4" />
               <h3 className="text-xl font-bold text-text-main mb-2">Submitted Successfully!</h3>
               <p className="text-text-muted mb-6">Your benchmark results have been submitted and are pending review.</p>
-              <button onClick={onClose} className="px-6 py-2.5 bg-primary text-white rounded-xl font-semibold">Close</button>
+              <button onClick={onClose} className="px-6 py-2.5 bg-primary text-white rounded-xl font-semibold cursor-pointer">Close</button>
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-6">
@@ -143,7 +144,7 @@ export default function SubmitBenchmarkModal({ isOpen, onClose, phone }: SubmitB
 
               {error && (
                 <div className="p-3 bg-error/10 text-error rounded-xl text-sm border border-error/20 flex items-center gap-2">
-                  <span className="material-symbols-outlined">error</span>
+                  <AppIcon name="error" size={18} />
                   {error}
                 </div>
               )}
@@ -152,6 +153,7 @@ export default function SubmitBenchmarkModal({ isOpen, onClose, phone }: SubmitB
               <div className="bg-surface-container-lowest border border-border-subtle rounded-xl p-5 space-y-4">
                 <h3 className="font-bold text-text-main text-sm uppercase tracking-wider mb-2 border-b border-border-subtle pb-2"># Device</h3>
                 
+
 
 
                 <div>
@@ -166,12 +168,12 @@ export default function SubmitBenchmarkModal({ isOpen, onClose, phone }: SubmitB
 
               {/* Benchmark Selectors */}
               <div className="flex flex-wrap gap-3">
-                <button type="button" onClick={() => setShowAntutu(!showAntutu)} className={`px-4 py-2 border rounded-lg text-sm font-semibold flex items-center gap-2 transition-colors ${showAntutu ? 'border-primary text-primary bg-primary/5' : 'border-border-subtle text-text-muted hover:bg-surface-container-low'}`}>
-                  <span className="material-symbols-outlined text-[18px]">{showAntutu ? 'remove' : 'add'}</span>
+                <button type="button" onClick={() => setShowAntutu(!showAntutu)} className={`px-4 py-2 border rounded-lg text-sm font-semibold flex items-center gap-2 transition-colors cursor-pointer ${showAntutu ? 'border-primary text-primary bg-primary/5' : 'border-border-subtle text-text-muted hover:bg-surface-container-low'}`}>
+                  <AppIcon name={showAntutu ? 'remove' : 'add'} size={18} />
                   ANTUTU V11
                 </button>
-                <button type="button" onClick={() => setShowGeekbench(!showGeekbench)} className={`px-4 py-2 border rounded-lg text-sm font-semibold flex items-center gap-2 transition-colors ${showGeekbench ? 'border-primary text-primary bg-primary/5' : 'border-border-subtle text-text-muted hover:bg-surface-container-low'}`}>
-                  <span className="material-symbols-outlined text-[18px]">{showGeekbench ? 'remove' : 'add'}</span>
+                <button type="button" onClick={() => setShowGeekbench(!showGeekbench)} className={`px-4 py-2 border rounded-lg text-sm font-semibold flex items-center gap-2 transition-colors cursor-pointer ${showGeekbench ? 'border-primary text-primary bg-primary/5' : 'border-border-subtle text-text-muted hover:bg-surface-container-low'}`}>
+                  <AppIcon name={showGeekbench ? 'remove' : 'add'} size={18} />
                   GEEKBENCH V6
                 </button>
               </div>
@@ -256,8 +258,8 @@ export default function SubmitBenchmarkModal({ isOpen, onClose, phone }: SubmitB
                 </div>
               </div>
 
-              <button type="submit" disabled={loading} className="w-full py-3.5 bg-primary hover:bg-primary-dark text-white rounded-xl font-bold transition-colors flex items-center justify-center gap-2">
-                {loading ? <span className="animate-spin material-symbols-outlined">progress_activity</span> : <span className="material-symbols-outlined">send</span>}
+              <button type="submit" disabled={loading} className="w-full py-3.5 bg-primary hover:bg-primary-dark text-white rounded-xl font-bold transition-colors flex items-center justify-center gap-2 cursor-pointer">
+                {loading ? <AppIcon name="progress_activity" size={20} className="animate-spin" /> : <AppIcon name="send" size={20} />}
                 {loading ? 'Submitting...' : 'Submit Benchmark'}
               </button>
             </form>

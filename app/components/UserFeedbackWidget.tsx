@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { castVote, getVoteStats } from "../lib/api";
+import AppIcon from "./AppIcon";
 
 interface UserFeedbackWidgetProps {
   phoneId: string;
@@ -248,8 +249,8 @@ export default function UserFeedbackWidget({ phoneId, phoneName }: UserFeedbackW
                   </div>
                   <span>{featureStats?.totalVotes || 1} User Votes</span>
                 </div>
-                <button className="font-bold text-text-main hover:text-primary flex items-center gap-1">
-                  View Results <span className="material-symbols-outlined text-[18px]">chevron_right</span>
+                <button className="font-bold text-text-main hover:text-primary flex items-center gap-1 cursor-pointer">
+                  View Results <AppIcon name="chevron_right" size={18} />
                 </button>
              </div>
           </div>

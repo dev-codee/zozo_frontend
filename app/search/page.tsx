@@ -3,6 +3,7 @@ import Navbar from "@/app/components/Navbar";
 import Footer from "@/app/components/Footer";
 import PhoneCard from "@/app/components/PhoneCard";
 import Breadcrumb from "@/app/components/Breadcrumb";
+import AppIcon from "@/app/components/AppIcon";
 
 export default async function SearchPage({
   searchParams,
@@ -22,7 +23,7 @@ export default async function SearchPage({
         
         <div className="flex items-center justify-between">
           <h1 className="font-headline-lg text-3xl font-bold text-text-main">
-            Search Results for "{q}"
+            Search Results for &quot;{q}&quot;
           </h1>
           <span className="text-text-muted font-body-sm text-sm">
             {phones.length} results
@@ -37,14 +38,12 @@ export default async function SearchPage({
           </div>
         ) : (
           <div className="bg-surface-white rounded-xl border border-border-subtle p-12 flex flex-col items-center justify-center text-center">
-            <span className="material-symbols-outlined text-[64px] text-outline mb-4">
-              search_off
-            </span>
+            <AppIcon name="search_off" size={64} className="text-outline mb-4 opacity-60" />
             <h2 className="font-headline-md text-xl font-bold text-text-main mb-2">
               No Results Found
             </h2>
             <p className="text-text-muted max-w-md mx-auto">
-              We couldn't find any phones matching "{q}". Try searching for a different brand or model.
+              We couldn&apos;t find any phones matching &quot;{q}&quot;. Try searching for a different brand or model.
             </p>
           </div>
         )}

@@ -3,6 +3,7 @@ import Link from "next/link";
 import Navbar from "@/app/components/Navbar";
 import Footer from "@/app/components/Footer";
 import Breadcrumb from "@/app/components/Breadcrumb";
+import AppIcon from "@/app/components/AppIcon";
 import { getBrands, getHomeData, type Brand, type Phone } from "@/app/lib/api";
 
 export const revalidate = 3600;
@@ -168,9 +169,7 @@ export default async function SiteMapPage() {
                                   className="w-full h-full object-contain mix-blend-darken"
                                 />
                               ) : (
-                                <span className="material-symbols-outlined text-text-muted text-lg">
-                                  smartphone
-                                </span>
+                                <AppIcon name="smartphone" size={20} className="text-text-muted" />
                               )}
                             </div>
                             <div className="min-w-0">

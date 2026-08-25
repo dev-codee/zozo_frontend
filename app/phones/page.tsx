@@ -7,6 +7,7 @@ import Breadcrumb from "@/app/components/Breadcrumb";
 import SidebarFilter from "@/app/components/SidebarFilter";
 import Pagination from "@/app/components/Pagination";
 import SortSelect from "@/app/components/SortSelect";
+import AppIcon from "@/app/components/AppIcon";
 import { generateCollectionPageSchema, generateBreadcrumbSchema } from "@/app/lib/schema";
 
 export async function generateMetadata({
@@ -206,9 +207,7 @@ export default async function PhonesPage({
             </div>
           ) : (
             <div className="bg-surface-white rounded-xl border border-border-subtle p-12 flex flex-col items-center justify-center text-center mt-6">
-              <span className="material-symbols-outlined text-[64px] text-outline mb-4">
-                sentiment_dissatisfied
-              </span>
+              <AppIcon name="sentiment_dissatisfied" size={64} className="text-outline mb-4 opacity-60" />
               <h2 className="font-headline-md text-xl font-bold text-text-main mb-2">
                 No Phones Found
               </h2>

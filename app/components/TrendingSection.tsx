@@ -1,6 +1,7 @@
 import Link from "next/link";
 import PhoneCard from "./PhoneCard";
 import type { Phone } from "@/app/lib/api";
+import AppIcon from "./AppIcon";
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
@@ -26,12 +27,10 @@ export default function TrendingSection({ phones }: TrendingSectionProps) {
           </div>
           <Link
             href="/phones?sort=trending"
-            className="hidden md:inline-flex items-center text-primary text-sm font-semibold tracking-wide hover:underline"
+            className="hidden md:inline-flex items-center text-primary text-sm font-semibold tracking-wide hover:underline gap-1"
           >
-            View All{" "}
-            <span className="material-symbols-outlined ml-1 text-[18px]">
-              arrow_forward
-            </span>
+            View All
+            <AppIcon name="chevron_right" size={18} />
           </Link>
         </div>
 
@@ -43,10 +42,8 @@ export default function TrendingSection({ phones }: TrendingSectionProps) {
             ))}
           </div>
         ) : (
-          <div className="text-center py-16 bg-surface-white border border-border-subtle rounded-xl">
-            <span className="material-symbols-outlined text-5xl text-outline mb-4">
-              smartphone
-            </span>
+          <div className="text-center py-16 bg-surface-white border border-border-subtle rounded-xl flex flex-col items-center">
+            <AppIcon name="smartphone" size={48} className="text-outline mb-4 opacity-60" />
             <p className="text-text-muted text-base">
               No trending phones available right now.
             </p>
@@ -58,12 +55,10 @@ export default function TrendingSection({ phones }: TrendingSectionProps) {
           <div className="mt-8 text-center md:hidden">
             <Link
               href="/phones?sort=trending"
-              className="inline-flex items-center text-primary text-sm font-semibold tracking-wide hover:underline"
+              className="inline-flex items-center text-primary text-sm font-semibold tracking-wide hover:underline gap-1"
             >
-              View All Phones{" "}
-              <span className="material-symbols-outlined ml-1 text-[18px]">
-                arrow_forward
-              </span>
+              View All Phones
+              <AppIcon name="chevron_right" size={18} />
             </Link>
           </div>
         )}

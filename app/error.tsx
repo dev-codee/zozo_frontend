@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react';
 import Link from 'next/link';
+import AppIcon from './components/AppIcon';
 
 export default function Error({
   error,
@@ -16,9 +17,7 @@ export default function Error({
 
   return (
     <main className="w-full max-w-[1280px] mx-auto px-4 md:px-6 py-24 flex flex-col items-center justify-center text-center min-h-[60vh] bg-surface">
-      <span className="material-symbols-outlined text-[64px] text-outline mb-4">
-        error
-      </span>
+      <AppIcon name="error" size={64} className="text-outline mb-4 opacity-70" />
       <h1 className="text-2xl md:text-3xl font-bold text-text-main mb-2">
         Something went wrong
       </h1>
@@ -28,7 +27,7 @@ export default function Error({
       <div className="flex items-center gap-3">
         <button
           onClick={() => unstable_retry()}
-          className="bg-primary hover:bg-on-primary-fixed-variant text-white font-semibold text-sm px-5 h-10 rounded-lg flex items-center justify-center transition-colors"
+          className="bg-primary hover:bg-on-primary-fixed-variant text-white font-semibold text-sm px-5 h-10 rounded-lg flex items-center justify-center transition-colors cursor-pointer"
         >
           Try again
         </button>

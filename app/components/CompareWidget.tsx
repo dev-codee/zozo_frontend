@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import AppIcon from "./AppIcon";
 
 export default function CompareWidget() {
   const router = useRouter();
@@ -31,10 +32,8 @@ export default function CompareWidget() {
             className="w-full md:w-2/5 bg-surface-white border border-border-subtle rounded-xl p-4 flex items-center justify-between cursor-pointer hover:border-primary transition-colors group shadow-sm"
           >
             <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-lg bg-surface-container-low flex items-center justify-center border border-border-subtle">
-                <span className="material-symbols-outlined text-outline">
-                  smartphone
-                </span>
+              <div className="w-12 h-12 rounded-lg bg-surface-container-low flex items-center justify-center border border-border-subtle text-outline">
+                <AppIcon name="smartphone" size={24} />
               </div>
               <div className="flex flex-col text-left">
                 <span className="text-xs font-medium text-text-muted">
@@ -45,9 +44,7 @@ export default function CompareWidget() {
                 </span>
               </div>
             </div>
-            <span className="material-symbols-outlined text-outline">
-              search
-            </span>
+            <AppIcon name="search" size={20} className="text-outline" />
           </button>
 
           {/* VS Badge */}
@@ -63,10 +60,8 @@ export default function CompareWidget() {
             className="w-full md:w-2/5 bg-surface-white border border-border-subtle rounded-xl p-4 flex items-center justify-between cursor-pointer hover:border-primary transition-colors group shadow-sm"
           >
             <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-lg bg-surface-container-low flex items-center justify-center border border-border-subtle">
-                <span className="material-symbols-outlined text-outline">
-                  smartphone
-                </span>
+              <div className="w-12 h-12 rounded-lg bg-surface-container-low flex items-center justify-center border border-border-subtle text-outline">
+                <AppIcon name="smartphone" size={24} />
               </div>
               <div className="flex flex-col text-left">
                 <span className="text-xs font-medium text-text-muted">
@@ -77,9 +72,7 @@ export default function CompareWidget() {
                 </span>
               </div>
             </div>
-            <span className="material-symbols-outlined text-outline">
-              search
-            </span>
+            <AppIcon name="search" size={20} className="text-outline" />
           </button>
         </div>
 
@@ -90,9 +83,7 @@ export default function CompareWidget() {
             className="bg-primary-container text-white rounded-lg px-10 py-4 font-semibold text-sm hover:bg-primary transition-colors shadow-md hover:shadow-lg inline-flex items-center gap-2 cursor-pointer"
           >
             Compare Now
-            <span className="material-symbols-outlined text-[20px]">
-              insights
-            </span>
+            <AppIcon name="compare_arrows" size={20} />
           </button>
         </div>
       </div>

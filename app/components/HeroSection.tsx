@@ -2,6 +2,7 @@
 
 import { useState, type FormEvent, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import AppIcon from "./AppIcon";
 
 const budgetPills = [
   { label: "Under 15k", value: 15000 },
@@ -73,9 +74,7 @@ export default function HeroSection() {
           className="bg-surface-white border border-border-subtle rounded-xl p-2 shadow-[0_10px_15px_-3px_rgba(15,23,42,0.05)] flex flex-col md:flex-row items-center gap-2 max-w-2xl mx-auto relative z-10 hover:shadow-[0_20px_25px_-5px_rgba(15,23,42,0.08)] transition-shadow duration-300"
         >
           <div className="flex-1 flex items-center px-4 py-2 w-full">
-            <span className="material-symbols-outlined text-text-muted mr-3">
-              search
-            </span>
+            <AppIcon name="search" size={20} className="text-text-muted mr-3" />
             <input
               type="text"
               value={query}
@@ -94,9 +93,11 @@ export default function HeroSection() {
             <span className="text-sm font-semibold tracking-wide text-on-surface-variant group-hover:text-primary transition-colors whitespace-nowrap overflow-hidden text-ellipsis">
               {selectedBudgetLabel}
             </span>
-            <span className={`material-symbols-outlined text-outline ml-2 group-hover:text-primary transition-transform duration-200 ${isDropdownOpen ? 'rotate-180' : ''}`}>
-              expand_more
-            </span>
+            <AppIcon
+              name="expand_more"
+              size={18}
+              className={`text-outline ml-2 group-hover:text-primary transition-transform duration-200 ${isDropdownOpen ? 'rotate-180' : ''}`}
+            />
             
             {isDropdownOpen && (
               <div className="absolute top-full left-0 mt-3 w-full bg-surface-white border border-border-subtle rounded-xl shadow-lg overflow-hidden z-20 py-1 flex flex-col text-left">

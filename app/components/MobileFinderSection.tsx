@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import AppIcon from "./AppIcon";
 
 const PRICE_MIN = 0;
 const PRICE_MAX = 500000;
@@ -12,7 +13,7 @@ const features: { label: string; href: string; icon: string }[] = [
   { label: "5G Phones", href: "/phones?network=5G", icon: "signal_cellular_alt" },
   { label: "8GB & Above RAM", href: "/phones?ram=8,12,16", icon: "memory" },
   { label: "256GB & Above Storage", href: "/phones?storage=256,512,1024", icon: "storage" },
-  { label: "120Hz Refresh Rate", href: "/phones?refresh_rate=120", icon: "refresh" },
+  { label: "120Hz Refresh Rate", href: "/phones?refresh_rate=120", icon: "sync" },
   { label: "5000mAh & Above Battery", href: "/phones?battery=5000", icon: "battery_charging_full" },
   { label: "AMOLED Display", href: "/phones?display=AMOLED", icon: "smartphone" },
 ];
@@ -20,8 +21,8 @@ const features: { label: string; href: string; icon: string }[] = [
 const quickPicks: { label: string; href: string; icon: string }[] = [
   { label: "All Phones", href: "/phones", icon: "smartphone" },
   { label: "5G Phones", href: "/phones?network=5G", icon: "signal_cellular_alt" },
-  { label: "Trending", href: "/phones?sort=trending", icon: "trending_up" },
-  { label: "Latest", href: "/phones?sort=latest", icon: "new_releases" },
+  { label: "Trending", href: "/phones?sort=trending", icon: "flame" },
+  { label: "Latest", href: "/phones?sort=latest", icon: "sparkles" },
 ];
 
 const priceChips = [15000, 20000, 25000, 30000, 40000, 50000, 80000, 100000];
@@ -123,7 +124,7 @@ export default function MobileFinderSection() {
 
               <button
                 onClick={findMobiles}
-                className="w-full py-3 bg-primary hover:bg-on-primary-fixed-variant text-white font-bold text-sm rounded-lg shadow-md hover:shadow-lg transition-all"
+                className="w-full py-3 bg-primary hover:bg-on-primary-fixed-variant text-white font-bold text-sm rounded-lg shadow-md hover:shadow-lg transition-all cursor-pointer"
               >
                 Find Mobiles
               </button>
@@ -141,7 +142,7 @@ export default function MobileFinderSection() {
                     className="flex items-center gap-3 py-3 group"
                   >
                     <span className="w-8 h-8 flex-shrink-0 rounded-md bg-surface-container-low text-text-muted flex items-center justify-center group-hover:bg-primary/10 group-hover:text-primary transition-colors">
-                      <span className="material-symbols-outlined text-[18px]">{f.icon}</span>
+                      <AppIcon name={f.icon} size={18} />
                     </span>
                     <span className="text-sm font-medium text-text-main group-hover:text-primary transition-colors">
                       {f.label}
@@ -167,11 +168,11 @@ export default function MobileFinderSection() {
                 className="flex items-center gap-2 px-3 py-3 rounded-lg border border-border-subtle bg-surface-container-lowest hover:border-primary hover:shadow-sm transition-all group"
               >
                 <span className="w-8 h-8 flex-shrink-0 rounded-md bg-white border border-border-subtle flex items-center justify-center text-text-muted group-hover:text-primary transition-colors">
-                  <span className="material-symbols-outlined text-[18px]">{q.icon}</span>
+                  <AppIcon name={q.icon} size={18} />
                 </span>
                 <span className="text-sm font-semibold text-text-main group-hover:text-primary transition-colors flex items-center gap-0.5">
                   {q.label}
-                  <span className="material-symbols-outlined text-[16px] text-text-muted">chevron_right</span>
+                  <AppIcon name="chevron_right" size={16} className="text-text-muted" />
                 </span>
               </Link>
             ))}

@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Phone } from "../lib/api";
+import AppIcon from "./AppIcon";
 
 export default function SearchBar({ className = "w-72" }: { className?: string }) {
   const [query, setQuery] = useState("");
@@ -70,21 +71,23 @@ export default function SearchBar({ className = "w-72" }: { className?: string }
           placeholder="Search phones..."
           className="w-full bg-surface-container-low text-on-surface border border-border-subtle rounded-full pl-11 pr-4 py-2 text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all shadow-sm"
         />
-        <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-text-muted text-[20px] pointer-events-none">
-          search
-        </span>
+        <AppIcon
+          name="search"
+          size={18}
+          className="absolute left-4 top-1/2 -translate-y-1/2 text-text-muted pointer-events-none"
+        />
       </form>
 
       {isOpen && (
         <div className="absolute top-[calc(100%+8px)] right-0 w-[400px] bg-surface-white border border-border-subtle rounded-xl shadow-xl overflow-hidden z-50">
           {query.trim() === "" ? (
             <div className="p-6 text-sm text-text-muted text-center flex flex-col items-center gap-2">
-              <span className="material-symbols-outlined text-[32px] opacity-50">search</span>
+              <AppIcon name="search" size={32} className="opacity-50" />
               Type to start searching...
             </div>
           ) : loading ? (
             <div className="p-6 text-sm text-text-muted text-center flex flex-col items-center gap-2">
-              <span className="material-symbols-outlined animate-spin text-[32px] opacity-50 text-primary">progress_activity</span>
+              <AppIcon name="progress_activity" size={32} className="animate-spin opacity-50 text-primary" />
               Searching...
             </div>
           ) : results.length > 0 ? (
@@ -104,7 +107,7 @@ export default function SearchBar({ className = "w-72" }: { className?: string }
                         className="w-full h-full object-contain"
                       />
                     ) : (
-                      <span className="material-symbols-outlined text-text-muted">smartphone</span>
+                      <AppIcon name="smartphone" size={24} className="text-text-muted" />
                     )}
                   </div>
                   <div className="flex flex-col overflow-hidden">
@@ -123,15 +126,15 @@ export default function SearchBar({ className = "w-72" }: { className?: string }
               ))}
               <button 
                 onClick={handleSearch}
-                className="w-full block text-center p-3 text-sm text-primary font-bold hover:bg-surface-container-lowest transition-colors bg-surface-container-low/30 border-t border-border-subtle/50"
+                className="w-full block text-center p-3 text-sm text-primary font-bold hover:bg-surface-container-lowest transition-colors bg-surface-container-low/30 border-t border-border-subtle/50 cursor-pointer"
               >
                 View all results
               </button>
             </div>
           ) : (
             <div className="p-6 text-sm text-text-muted text-center flex flex-col items-center gap-2">
-              <span className="material-symbols-outlined text-[32px] opacity-50">search_off</span>
-              No results found for "{query}"
+              <AppIcon name="search_off" size={32} className="opacity-50" />
+              No results found for &quot;{query}&quot;
             </div>
           )}
         </div>

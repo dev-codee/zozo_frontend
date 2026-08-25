@@ -1,4 +1,5 @@
 import Link from "next/link";
+import AppIcon from "./AppIcon";
 
 interface BreadcrumbItem {
   label: string;
@@ -21,9 +22,7 @@ export default function Breadcrumb({ items }: BreadcrumbProps) {
         
         {items.map((item, index) => (
           <li key={index} className="inline-flex items-center gap-2 flex-shrink-0">
-            <span className="material-symbols-outlined text-[16px]" aria-hidden="true">
-              chevron_right
-            </span>
+            <AppIcon name="chevron_right" size={16} aria-hidden="true" />
             {item.href ? (
               <Link href={item.href} className="hover:text-primary transition-colors capitalize py-1.5 px-1 inline-flex items-center min-h-[44px]">
                 {item.label}

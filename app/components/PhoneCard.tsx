@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import type { Phone } from "@/app/lib/api";
 import { filterVisibleTags } from "@/app/lib/tags";
+import AppIcon from "./AppIcon";
 
 interface PhoneCardProps {
   phone: Phone;
@@ -103,12 +104,8 @@ export default function PhoneCard({ phone, variant = "list", priority = false }:
     ? `${phone.specs?.display?.size_inches || '??'} Inches | ${phone.specs?.display?.type || 'Display'}`
     : ext.features_listing?.screen_size ? `${ext.features_listing.screen_size} | Display` : "Display TBA";
 
-  // Dummy Antutu score since we don't have it structured in DB yet
-  const antutuScore = "Approx. 1,000,000";
-
   // Ratings
   const userRating = phone.rating?.average || 0;
-  const expertRating = 8.5; // Placeholder
   const phoneData = getFirstProAndCon(phone.description);
   const visibleTags = filterVisibleTags(phone.tags);
 
@@ -138,7 +135,7 @@ export default function PhoneCard({ phone, variant = "list", priority = false }:
               rel="nofollow"
               className="flex items-center gap-1 text-primary text-sm font-semibold hover:bg-primary/5 px-2 py-1 rounded transition-colors shrink-0"
             >
-              <span className="material-symbols-outlined text-[18px]">add</span>
+              <AppIcon name="add" size={16} />
               Compare
             </Link>
           )}
@@ -166,7 +163,7 @@ export default function PhoneCard({ phone, variant = "list", priority = false }:
                   alt={imageAlt}
                   fill
                   priority={priority}
-                  sizes="(max-width: 768px) 100vw, 33vw"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 33vw, 250px"
                   className="object-contain mix-blend-darken group-hover:scale-105 transition-transform duration-500"
                 />
               </div>
@@ -179,10 +176,10 @@ export default function PhoneCard({ phone, variant = "list", priority = false }:
                 className="w-8 h-8 rounded border border-border-subtle flex items-center justify-center text-text-muted hover:border-primary hover:text-primary transition-colors"
                 title="Compare"
               >
-                <span className="material-symbols-outlined text-[18px]">compare_arrows</span>
+                <AppIcon name="compare_arrows" size={16} />
               </Link>
-              <button className="w-8 h-8 rounded border border-border-subtle flex items-center justify-center text-text-muted hover:border-primary hover:text-primary transition-colors">
-                <span className="material-symbols-outlined text-[18px]">photo_camera</span>
+              <button className="w-8 h-8 rounded border border-border-subtle flex items-center justify-center text-text-muted hover:border-primary hover:text-primary transition-colors" aria-label="View photos">
+                <AppIcon name="photo_camera" size={16} />
               </button>
             </div>
 
@@ -196,33 +193,33 @@ export default function PhoneCard({ phone, variant = "list", priority = false }:
             <div>
               <ul className="space-y-3 mb-4 relative">
                 <li className="flex items-start gap-3 text-sm text-text-main">
-                  <span className="material-symbols-outlined text-[20px] text-text-muted shrink-0 mt-0.5">developer_board</span>
+                  <AppIcon name="developer_board" size={18} className="text-text-muted shrink-0 mt-0.5" />
                   {chipset}
                 </li>
                 <li className="flex items-start gap-3 text-sm text-text-main">
-                  <span className="material-symbols-outlined text-[20px] text-text-muted shrink-0 mt-0.5">memory</span>
+                  <AppIcon name="memory" size={18} className="text-text-muted shrink-0 mt-0.5" />
                   {ramStorage}
                 </li>
                 <li className="flex items-start gap-3 text-sm text-text-main">
-                  <span className="material-symbols-outlined text-[20px] text-text-muted shrink-0 mt-0.5">photo_camera</span>
+                  <AppIcon name="photo_camera" size={18} className="text-text-muted shrink-0 mt-0.5" />
                   {rearCamera}
                 </li>
                 <li className="flex items-start gap-3 text-sm text-text-main">
-                  <span className="material-symbols-outlined text-[20px] text-text-muted shrink-0 mt-0.5">camera_front</span>
+                  <AppIcon name="camera_front" size={18} className="text-text-muted shrink-0 mt-0.5" />
                   {frontCamera}
                 </li>
                 <li className="flex items-start gap-3 text-sm text-text-main">
-                  <span className="material-symbols-outlined text-[20px] text-text-muted shrink-0 mt-0.5">battery_charging_full</span>
+                  <AppIcon name="battery_charging_full" size={18} className="text-text-muted shrink-0 mt-0.5" />
                   {battery}
                 </li>
                 <li className="flex items-start gap-3 text-sm text-text-main">
-                  <span className="material-symbols-outlined text-[20px] text-text-muted shrink-0 mt-0.5">smartphone</span>
+                  <AppIcon name="smartphone" size={18} className="text-text-muted shrink-0 mt-0.5" />
                   {display}
                 </li>
 
                 {/* Ellipsis button for extra menu */}
-                <button className="absolute top-0 right-0 text-text-muted hover:text-text-main">
-                  <span className="material-symbols-outlined">more_vert</span>
+                <button className="absolute top-0 right-0 text-text-muted hover:text-text-main" aria-label="More options">
+                  <AppIcon name="more_vert" size={18} />
                 </button>
               </ul>
 
@@ -240,15 +237,18 @@ export default function PhoneCard({ phone, variant = "list", priority = false }:
                   <div className="flex items-center gap-6">
                     <span className="text-xs text-text-muted w-20">Rating</span>
                     <div className="flex items-center gap-0.5 text-[#FF9800]">
-                      {[1, 2, 3, 4, 5].map((star) => (
-                        <span
-                          key={star}
-                          className="material-symbols-outlined text-[16px]"
-                          style={{ fontVariationSettings: star <= userRating ? "'FILL' 1" : star - 0.5 <= userRating ? "'FILL' 1" : "'FILL' 0" }}
-                        >
-                          {star <= userRating ? 'star' : star - 0.5 <= userRating ? 'star_half' : 'star'}
-                        </span>
-                      ))}
+                      {[1, 2, 3, 4, 5].map((star) => {
+                        const isFilled = star <= Math.round(userRating);
+                        return (
+                          <AppIcon
+                            key={star}
+                            name={star <= userRating ? "star" : star - 0.5 <= userRating ? "star_half" : "star"}
+                            size={16}
+                            fill={isFilled ? "#FF9800" : "none"}
+                            className="text-[#FF9800]"
+                          />
+                        );
+                      })}
                       <span className="ml-1 text-sm font-bold text-text-main">{userRating > 0 ? userRating.toFixed(1) : "0"}/5</span>
                     </div>
                   </div>

@@ -1,0 +1,199 @@
+import React from "react";
+import {
+  Search,
+  SearchX,
+  ChevronDown,
+  ChevronUp,
+  ChevronRight,
+  ChevronLeft,
+  X,
+  Menu,
+  Plus,
+  Minus,
+  PlusCircle,
+  CheckCircle2,
+  AlertCircle,
+  AlertTriangle,
+  Star,
+  StarHalf,
+  ArrowLeftRight,
+  Smartphone,
+  Camera,
+  Video,
+  Film,
+  Tv,
+  Cpu,
+  HardDrive,
+  BatteryCharging,
+  Battery,
+  Signal,
+  LayoutGrid,
+  Lock,
+  Gavel,
+  ExternalLink,
+  LogOut,
+  MoreVertical,
+  GraduationCap,
+  BookOpen,
+  Stethoscope,
+  Wrench,
+  Code,
+  Compass,
+  Palette,
+  Briefcase,
+  Gamepad2,
+  Plane,
+  User,
+  Baby,
+  Mountain,
+  PiggyBank,
+  Bot,
+  Sparkles,
+  LayoutDashboard,
+  Zap,
+  PhoneCall,
+  Wifi,
+  Award,
+  Crown,
+  MessageSquareQuote,
+  Loader2,
+  Send,
+  FileText,
+  BarChart3,
+  SlidersHorizontal,
+  Filter,
+  Layers,
+  HelpCircle,
+  ThumbsUp,
+  Sliders,
+  Check,
+  Flame,
+  type LucideIcon,
+} from "lucide-react";
+
+export interface AppIconProps {
+  name: string;
+  className?: string;
+  size?: number | string;
+  style?: React.CSSProperties;
+  fill?: string;
+}
+
+const iconMap: Record<string, LucideIcon> = {
+  // Navigation & UI
+  search: Search,
+  search_off: SearchX,
+  expand_more: ChevronDown,
+  keyboard_arrow_down: ChevronDown,
+  expand_less: ChevronUp,
+  keyboard_arrow_up: ChevronUp,
+  chevron_right: ChevronRight,
+  chevron_left: ChevronLeft,
+  close: X,
+  menu: Menu,
+  add: Plus,
+  remove: Minus,
+  add_circle: PlusCircle,
+  check: Check,
+  check_circle: CheckCircle2,
+  error: AlertCircle,
+  warning: AlertTriangle,
+  help_outline: HelpCircle,
+  thumbs_up_down: ThumbsUp,
+  star: Star,
+  star_half: StarHalf,
+  compare_arrows: ArrowLeftRight,
+  more_vert: MoreVertical,
+  open_in_new: ExternalLink,
+  logout: LogOut,
+  tune: SlidersHorizontal,
+  filter_list: Filter,
+  sliders: Sliders,
+  category: Layers,
+
+  // Device & Hardware
+  smartphone: Smartphone,
+  phone_android: Smartphone,
+  photo_camera: Camera,
+  camera: Camera,
+  camera_front: Camera,
+  videocam: Video,
+  movie: Film,
+  smart_display: Tv,
+  developer_board: Cpu,
+  memory: Cpu,
+  storage: HardDrive,
+  battery_charging_full: BatteryCharging,
+  battery_full: Battery,
+  battery_std: Battery,
+  signal_cellular_alt: Signal,
+  widgets: LayoutGrid,
+  lock: Lock,
+  gavel: Gavel,
+  flame: Flame,
+  whatshot: Flame,
+
+  // Professions & Lifestyle (Navbar Categories)
+  school: GraduationCap,
+  menu_book: BookOpen,
+  medical_services: Stethoscope,
+  engineering: Wrench,
+  code: Code,
+  architecture: Compass,
+  palette: Palette,
+  business_center: Briefcase,
+  sports_esports: Gamepad2,
+  flight: Plane,
+  elderly: User,
+  child_care: Baby,
+  hiking: Mountain,
+  savings: PiggyBank,
+  smart_toy: Bot,
+  dashboard: LayoutDashboard,
+  bolt: Zap,
+  call: PhoneCall,
+  work: Briefcase,
+  wifi: Wifi,
+  workspace_premium: Award,
+  crown: Crown,
+
+  // Misc & Actions
+  rate_review: MessageSquareQuote,
+  progress_activity: Loader2,
+  sync: Loader2,
+  send: Send,
+  description: FileText,
+  analytics: BarChart3,
+  psychiatry: Sparkles,
+  sparkles: Sparkles,
+};
+
+export default function AppIcon({ name, className = "", size, style, fill }: AppIconProps) {
+  const normalized = (name || "").trim().toLowerCase();
+  const IconComponent = iconMap[normalized];
+
+  if (!IconComponent) {
+    return (
+      <span
+        className={`inline-flex items-center justify-center ${className}`}
+        style={style}
+      >
+        <Sparkles size={size || 18} />
+      </span>
+    );
+  }
+
+  const iconProps: any = {
+    className: `inline-block shrink-0 ${className}`,
+    style,
+  };
+
+  if (size) {
+    iconProps.size = size;
+  }
+  if (fill) {
+    iconProps.fill = fill;
+  }
+
+  return <IconComponent {...iconProps} />;
+}

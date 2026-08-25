@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import AppIcon from "./AppIcon";
 
 interface FeaturedComparisonsProps {
   comparisons?: any[];
@@ -54,10 +55,10 @@ export default function FeaturedComparisons({ comparisons }: FeaturedComparisons
           </h2>
           <Link
             href="/compare"
-            className="inline-flex items-center text-primary text-sm font-semibold hover:underline"
+            className="inline-flex items-center text-primary text-sm font-semibold hover:underline gap-0.5"
           >
             Compare More
-            <span className="material-symbols-outlined ml-0.5 text-[18px]">chevron_right</span>
+            <AppIcon name="chevron_right" size={18} />
           </Link>
         </div>
 
@@ -68,9 +69,9 @@ export default function FeaturedComparisons({ comparisons }: FeaturedComparisons
               type="button"
               aria-label="Scroll comparisons left"
               onClick={() => scrollByCards(-1)}
-              className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1 z-10 w-8 h-8 rounded-full bg-white/90 border border-border-subtle shadow-md flex items-center justify-center text-text-muted hover:text-primary hover:border-primary transition-colors"
+              className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1 z-10 w-8 h-8 rounded-full bg-white/90 border border-border-subtle shadow-md flex items-center justify-center text-text-muted hover:text-primary hover:border-primary transition-colors cursor-pointer"
             >
-              <span className="material-symbols-outlined text-[20px]">chevron_left</span>
+              <AppIcon name="chevron_left" size={20} />
             </button>
           )}
 
@@ -122,9 +123,9 @@ export default function FeaturedComparisons({ comparisons }: FeaturedComparisons
               type="button"
               aria-label="Scroll comparisons right"
               onClick={() => scrollByCards(1)}
-              className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1 z-10 w-8 h-8 rounded-full bg-white/90 border border-border-subtle shadow-md flex items-center justify-center text-text-muted hover:text-primary hover:border-primary transition-colors"
+              className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1 z-10 w-8 h-8 rounded-full bg-white/90 border border-border-subtle shadow-md flex items-center justify-center text-text-muted hover:text-primary hover:border-primary transition-colors cursor-pointer"
             >
-              <span className="material-symbols-outlined text-[20px]">chevron_right</span>
+              <AppIcon name="chevron_right" size={20} />
             </button>
           )}
         </div>

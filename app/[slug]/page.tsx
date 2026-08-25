@@ -11,6 +11,7 @@ import PhoneDescriptionClient from "@/app/components/PhoneDescriptionClient";
 import UserFeedbackWidget from "@/app/components/UserFeedbackWidget";
 import ReviewSection from "@/app/components/ReviewSection";
 import AdSlot from "@/app/components/AdSlot";
+import AppIcon from "@/app/components/AppIcon";
 import { generateProductSchema, generateBreadcrumbSchema, generateFAQSchema, generateVideoSchema, generateWebPageSchema } from "@/app/lib/schema";
 import { filterVisibleTags } from "@/app/lib/tags";
 
@@ -316,12 +317,7 @@ export default async function PhoneDetailPage({
                 {rating && (
                   <div className="flex items-center gap-2 mt-1.5">
                     <div className="flex items-center text-yellow-500">
-                      <span
-                        className="material-symbols-outlined text-[20px]"
-                        style={{ fontVariationSettings: "'FILL' 1" }}
-                      >
-                        star
-                      </span>
+                      <AppIcon name="star" size={18} fill="#FF9800" className="text-yellow-500" />
                       <span className="font-label-md text-sm text-text-main ml-1 font-semibold">
                         {rating.toFixed(1)}
                       </span>
@@ -343,7 +339,7 @@ export default async function PhoneDetailPage({
               {phone.pta_tax && (phone.pta_tax.passport_pkr || phone.pta_tax.cnic_pkr) && (
                 <div className="p-4 bg-surface-container-low/50 border border-border-subtle rounded-xl flex flex-col gap-2">
                   <h3 className="text-xs font-bold text-text-main flex items-center gap-1.5 uppercase tracking-wider">
-                    <span className="material-symbols-outlined text-primary text-[18px]">gavel</span>
+                    <AppIcon name="gavel" size={16} className="text-primary" />
                     PTA Tax Estimate
                   </h3>
                   <div className="grid grid-cols-2 gap-4 mt-1">
@@ -377,7 +373,7 @@ export default async function PhoneDetailPage({
                   {/* Box 1: RAM */}
                   <div className="flex items-center gap-2 p-1.5 sm:p-2 rounded-sm border border-border-subtle bg-surface-white hover:border-primary/50 transition-colors">
                     <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-sm bg-blue-50 text-primary flex items-center justify-center flex-shrink-0">
-                      <span className="material-symbols-outlined text-[14px] sm:text-[18px]">memory</span>
+                      <AppIcon name="memory" size={16} />
                     </div>
                     <div className="flex flex-col overflow-hidden">
                       <span className="text-[9px] sm:text-[10px] font-medium text-text-muted uppercase tracking-wider mb-0.5">RAM</span>
@@ -388,7 +384,7 @@ export default async function PhoneDetailPage({
                   {/* Box 2: STORAGE */}
                   <div className="flex items-center gap-2 p-1.5 sm:p-2 rounded-sm border border-border-subtle bg-surface-white hover:border-primary/50 transition-colors">
                     <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-sm bg-blue-50 text-primary flex items-center justify-center flex-shrink-0">
-                      <span className="material-symbols-outlined text-[14px] sm:text-[18px]">storage</span>
+                      <AppIcon name="storage" size={16} />
                     </div>
                     <div className="flex flex-col overflow-hidden">
                       <span className="text-[9px] sm:text-[10px] font-medium text-text-muted uppercase tracking-wider mb-0.5">Storage</span>
@@ -399,7 +395,7 @@ export default async function PhoneDetailPage({
                   {/* Box 3: NETWORK */}
                   <div className="flex items-center gap-2 p-1.5 sm:p-2 rounded-sm border border-border-subtle bg-surface-white hover:border-primary/50 transition-colors">
                     <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-sm bg-blue-50 text-primary flex items-center justify-center flex-shrink-0">
-                      <span className="material-symbols-outlined text-[14px] sm:text-[18px]">signal_cellular_alt</span>
+                      <AppIcon name="signal_cellular_alt" size={16} />
                     </div>
                     <div className="flex flex-col overflow-hidden">
                       <span className="text-[9px] sm:text-[10px] font-medium text-text-muted uppercase tracking-wider mb-0.5">Network</span>
@@ -410,7 +406,7 @@ export default async function PhoneDetailPage({
                   {/* Box 4: BATTERY */}
                   <div className="flex items-center gap-2 p-1.5 sm:p-2 rounded-sm border border-border-subtle bg-surface-white hover:border-primary/50 transition-colors">
                     <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-sm bg-blue-50 text-primary flex items-center justify-center flex-shrink-0">
-                      <span className="material-symbols-outlined text-[14px] sm:text-[18px]">battery_charging_full</span>
+                      <AppIcon name="battery_charging_full" size={16} />
                     </div>
                     <div className="flex flex-col overflow-hidden">
                       <span className="text-[9px] sm:text-[10px] font-medium text-text-muted uppercase tracking-wider mb-0.5">Battery</span>
@@ -421,7 +417,7 @@ export default async function PhoneDetailPage({
                   {/* Box 8: OS */}
                   <div className="flex items-center gap-2 p-1.5 sm:p-2 rounded-sm border border-border-subtle bg-surface-white hover:border-primary/50 transition-colors">
                     <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-sm bg-blue-50 text-primary flex items-center justify-center flex-shrink-0">
-                      <span className="material-symbols-outlined text-[14px] sm:text-[18px]">widgets</span>
+                      <AppIcon name="widgets" size={16} />
                     </div>
                     <div className="flex flex-col overflow-hidden">
                       <span className="text-[9px] sm:text-[10px] font-medium text-text-muted uppercase tracking-wider mb-0.5">OS</span>
@@ -432,7 +428,7 @@ export default async function PhoneDetailPage({
                   {/* Box 6: DISPLAY */}
                   <div className="flex items-center gap-2 p-1.5 sm:p-2 rounded-sm border border-border-subtle bg-surface-white hover:border-primary/50 transition-colors">
                     <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-sm bg-blue-50 text-primary flex items-center justify-center flex-shrink-0">
-                      <span className="material-symbols-outlined text-[14px] sm:text-[18px]">smartphone</span>
+                      <AppIcon name="smartphone" size={16} />
                     </div>
                     <div className="flex flex-col overflow-hidden">
                       <span className="text-[9px] sm:text-[10px] font-medium text-text-muted uppercase tracking-wider mb-0.5">Display</span>
@@ -443,7 +439,7 @@ export default async function PhoneDetailPage({
                   {/* Box 5: CAMERA */}
                   <div className="flex items-center gap-2 p-1.5 sm:p-2 rounded-sm border border-border-subtle bg-surface-white hover:border-primary/50 transition-colors">
                     <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-sm bg-blue-50 text-primary flex items-center justify-center flex-shrink-0">
-                      <span className="material-symbols-outlined text-[14px] sm:text-[18px]">photo_camera</span>
+                      <AppIcon name="photo_camera" size={16} />
                     </div>
                     <div className="flex flex-col overflow-hidden">
                       <span className="text-[9px] sm:text-[10px] font-medium text-text-muted uppercase tracking-wider mb-0.5">Camera</span>
@@ -454,7 +450,7 @@ export default async function PhoneDetailPage({
                   {/* Box 7: CHIPSET */}
                   <div className="flex items-center gap-2 p-1.5 sm:p-2 rounded-sm border border-border-subtle bg-surface-white hover:border-primary/50 transition-colors">
                     <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-sm bg-blue-50 text-primary flex items-center justify-center flex-shrink-0">
-                      <span className="material-symbols-outlined text-[14px] sm:text-[18px]">developer_board</span>
+                      <AppIcon name="developer_board" size={16} />
                     </div>
                     <div className="flex flex-col overflow-hidden">
                       <span className="text-[9px] sm:text-[10px] font-medium text-text-muted uppercase tracking-wider mb-0.5">Chipset</span>
@@ -472,17 +468,13 @@ export default async function PhoneDetailPage({
                     rel="nofollow"
                     className="flex items-center justify-center gap-1.5 py-1 px-3 sm:py-1.5 sm:px-4 rounded-sm border border-border-subtle bg-surface-white hover:bg-surface-container-low hover:border-primary font-medium text-[10px] sm:text-[11px] text-text-main transition-colors"
                   >
-                    <span className="material-symbols-outlined text-[13px] sm:text-[14px]">
-                      compare_arrows
-                    </span>
+                    <AppIcon name="compare_arrows" size={14} />
                     Compare
                   </Link>
 
                   {/* Action 2: Price Alert */}
                   <button className="flex items-center justify-center gap-1.5 py-1 px-3 sm:py-1.5 sm:px-4 rounded-sm border border-border-subtle bg-surface-white hover:bg-surface-container-low hover:border-primary font-medium text-[10px] sm:text-[11px] text-text-main transition-colors">
-                    <span className="material-symbols-outlined text-[13px] sm:text-[14px]">
-                      notifications
-                    </span>
+                    <AppIcon name="flame" size={14} />
                     Price Alert
                   </button>
                 </div>
@@ -548,10 +540,8 @@ export default async function PhoneDetailPage({
                     </div>
                   ))
                 ) : (
-                  <div className="p-8 text-center">
-                    <span className="material-symbols-outlined text-4xl text-outline mb-2">
-                      storefront
-                    </span>
+                  <div className="p-8 text-center flex flex-col items-center">
+                    <AppIcon name="category" size={32} className="text-outline mb-2 opacity-60" />
                     <p className="text-text-muted font-medium">No prices available for this phone yet.</p>
                   </div>
                 )}
@@ -569,7 +559,7 @@ export default async function PhoneDetailPage({
             <div className="lg:col-span-1 space-y-6">
               <div className="bg-white border border-border-subtle rounded-xl p-4 shadow-sm">
                 <h3 className="font-headline-sm text-sm font-bold text-text-main mb-4 flex items-center gap-1">
-                  <span className="material-symbols-outlined text-primary text-lg">compare_arrows</span>
+                  <AppIcon name="compare_arrows" size={18} className="text-primary" />
                   Competitors for {phone.name}
                 </h3>
 
@@ -595,7 +585,7 @@ export default async function PhoneDetailPage({
                                 className="object-contain w-full h-full mix-blend-darken group-hover:scale-105 transition-transform duration-300"
                               />
                             ) : (
-                              <span className="material-symbols-outlined text-text-muted text-3xl">smartphone</span>
+                              <AppIcon name="smartphone" size={28} className="text-text-muted" />
                             )}
                           </div>
                           <div className="flex flex-col p-3 bg-white">
@@ -698,7 +688,7 @@ export default async function PhoneDetailPage({
         {phone.video_url && (
           <section className="bg-white border border-border-subtle rounded-xl overflow-hidden shadow-sm">
             <div className="p-6 border-b border-border-subtle bg-surface-container-low/30 flex items-center gap-2">
-              <span className="material-symbols-outlined text-red-600 text-2xl">smart_display</span>
+              <AppIcon name="smart_display" size={24} className="text-red-600" />
               <h2 className="font-headline-md text-xl font-bold text-text-main">
                 Video Review & Hands-on
               </h2>
@@ -721,7 +711,7 @@ export default async function PhoneDetailPage({
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 text-primary hover:underline font-semibold"
                 >
-                  <span className="material-symbols-outlined">open_in_new</span>
+                  <AppIcon name="open_in_new" size={18} />
                   Watch Video on YouTube
                 </a>
               )}

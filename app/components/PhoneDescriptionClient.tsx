@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import AppIcon from "./AppIcon";
 
 function boldPhoneName(text: string, phoneName: string): React.ReactNode[] {
   if (!text) return [];
@@ -101,13 +102,13 @@ function parseMarkdownToJSX(text: string, phoneName: string) {
           <div key={`proscons-${key}`} className="grid grid-cols-1 md:grid-cols-2 gap-4 my-6">
             <div className="bg-emerald-50 border border-emerald-200 dark:bg-emerald-500/5 dark:border-emerald-500/10 rounded-xl p-5 shadow-sm">
               <h3 className="text-emerald-800 dark:text-emerald-400 font-bold text-sm uppercase tracking-wider mb-4 flex items-center gap-1.5">
-                <span className="material-symbols-outlined text-emerald-600 dark:text-emerald-400 text-lg">check_circle</span>
+                <AppIcon name="check_circle" size={18} className="text-emerald-600 dark:text-emerald-400" />
                 Pros
               </h3>
               <ul className="space-y-2.5 text-sm text-text-muted">
                 {pros.map((pro, idx) => (
                   <li key={idx} className="flex items-start gap-2">
-                    <span className="material-symbols-outlined text-emerald-500 text-base flex-shrink-0 mt-0.5">done</span>
+                    <AppIcon name="check" size={16} className="text-emerald-500 flex-shrink-0 mt-0.5" />
                     <span>{boldPhoneName(pro, phoneName)}</span>
                   </li>
                 ))}
@@ -115,13 +116,13 @@ function parseMarkdownToJSX(text: string, phoneName: string) {
             </div>
             <div className="bg-rose-50 border border-rose-200 dark:bg-rose-500/5 dark:border-rose-500/10 rounded-xl p-5 shadow-sm">
               <h3 className="text-rose-800 dark:text-rose-400 font-bold text-sm uppercase tracking-wider mb-4 flex items-center gap-1.5">
-                <span className="material-symbols-outlined text-rose-600 dark:text-rose-400 text-lg">cancel</span>
+                <AppIcon name="close" size={18} className="text-rose-600 dark:text-rose-400" />
                 Cons
               </h3>
               <ul className="space-y-2.5 text-sm text-text-muted">
                 {cons.map((con, idx) => (
                   <li key={idx} className="flex items-start gap-2">
-                    <span className="material-symbols-outlined text-rose-500 text-base flex-shrink-0 mt-0.5">close</span>
+                    <AppIcon name="close" size={16} className="text-rose-500 flex-shrink-0 mt-0.5" />
                     <span>{boldPhoneName(con, phoneName)}</span>
                   </li>
                 ))}
@@ -149,10 +150,10 @@ function parseMarkdownToJSX(text: string, phoneName: string) {
                   </span>
                   <div className="w-7 h-7 rounded-full bg-surface-container-low flex items-center justify-center flex-shrink-0 text-text-muted group-hover:bg-primary/10 group-hover:text-primary transition-colors">
                     <span className="group-open:hidden flex items-center justify-center">
-                      <span className="material-symbols-outlined text-[20px]">add</span>
+                      <AppIcon name="add" size={18} />
                     </span>
                     <span className="hidden group-open:flex items-center justify-center">
-                      <span className="material-symbols-outlined text-[20px]">remove</span>
+                      <AppIcon name="remove" size={18} />
                     </span>
                   </div>
                 </summary>
@@ -213,8 +214,8 @@ function parseMarkdownToJSX(text: string, phoneName: string) {
       // Render the heading
       renderedElements.push(
         <h2 key={`heading-${i}`} className="font-headline-md text-xl font-bold text-text-main mt-8 mb-4 border-b border-border-subtle/50 pb-2 flex items-center gap-2">
-          {sectionTitle.includes('faq') && <span className="material-symbols-outlined text-primary text-xl">help_outline</span>}
-          {sectionTitle.includes('pros') && <span className="material-symbols-outlined text-primary text-xl">thumbs_up_down</span>}
+          {sectionTitle.includes('faq') && <AppIcon name="help_outline" size={20} className="text-primary" />}
+          {sectionTitle.includes('pros') && <AppIcon name="thumbs_up_down" size={20} className="text-primary" />}
           {boldPhoneName(cleanTitle, phoneName)}
         </h2>
       );

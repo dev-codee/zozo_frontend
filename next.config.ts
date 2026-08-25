@@ -6,6 +6,8 @@ const nextConfig: NextConfig = {
     optimizeCss: true,
   },
   images: {
+    formats: ["image/avif", "image/webp"],
+    minimumCacheTTL: 31536000,
     remotePatterns: [
       {
         protocol: "https",
@@ -29,6 +31,15 @@ const nextConfig: NextConfig = {
           {
             key: "X-Robots-Tag",
             value: "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1",
+          },
+        ],
+      },
+      {
+        source: "/(brands|fonts|icons)/(.*)",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
           },
         ],
       },

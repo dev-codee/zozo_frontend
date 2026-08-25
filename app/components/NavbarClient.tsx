@@ -8,6 +8,7 @@ import { useAuth } from "../context/AuthContext";
 import Image from "next/image";
 import { createPortal } from "react-dom";
 import { phoneCategoryGroups } from "../lib/phoneCategories";
+import AppIcon from "./AppIcon";
 
 export default function NavbarClient({ dynamicPages = [] }: { dynamicPages?: any[] }) {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -84,7 +85,14 @@ export default function NavbarClient({ dynamicPages = [] }: { dynamicPages?: any
       {/* Top Row: Logo, Search, Actions */}
       <div className="flex justify-between items-center px-4 md:px-6 h-16 w-full max-w-[1280px] mx-auto gap-4">
         <Link href="/" className="flex items-center gap-2 shrink-0">
-          <Image src="/ZOZO-Logo-v2.png" unoptimized alt="zozo.pk" width={210} height={60} className="h-14 md:h-16 w-auto object-contain" />
+          <Image
+            src="/ZOZO-Logo-v2.png"
+            alt="zozo.pk"
+            width={180}
+            height={48}
+            priority
+            className="h-12 md:h-14 w-auto object-contain"
+          />
         </Link>
 
         {/* Centered Search Bar */}
@@ -99,7 +107,7 @@ export default function NavbarClient({ dynamicPages = [] }: { dynamicPages?: any
             className="md:hidden text-on-surface hover:text-primary transition-colors p-2 rounded-full hover:bg-surface-container-low"
             aria-label="Search"
           >
-            <span className="material-symbols-outlined">search</span>
+            <AppIcon name="search" size={20} />
           </Link>
           
           {user ? (
@@ -116,7 +124,7 @@ export default function NavbarClient({ dynamicPages = [] }: { dynamicPages?: any
                   </div>
                 )}
                 <span className="text-sm font-semibold text-on-surface max-w-[100px] truncate">{user.name}</span>
-                <span className="material-symbols-outlined text-text-muted text-[16px]">expand_more</span>
+                <AppIcon name="expand_more" size={16} className="text-text-muted" />
               </button>
               
               {profileOpen && (
@@ -132,7 +140,7 @@ export default function NavbarClient({ dynamicPages = [] }: { dynamicPages?: any
                     }}
                     className="w-full text-left px-4 py-2 text-sm font-semibold text-error hover:bg-error/10 transition-colors flex items-center gap-2"
                   >
-                    <span className="material-symbols-outlined text-[18px]">logout</span>
+                    <AppIcon name="logout" size={18} />
                     Sign out
                   </button>
                 </div>
@@ -152,9 +160,7 @@ export default function NavbarClient({ dynamicPages = [] }: { dynamicPages?: any
             className="md:hidden text-on-surface p-2 rounded-full hover:bg-surface-container-low transition-colors"
             aria-label="Toggle menu"
           >
-            <span className="material-symbols-outlined">
-              {mobileOpen ? "close" : "menu"}
-            </span>
+            <AppIcon name={mobileOpen ? "close" : "menu"} size={22} />
           </button>
         </div>
       </div>
@@ -198,9 +204,11 @@ export default function NavbarClient({ dynamicPages = [] }: { dynamicPages?: any
                         }`}
                       >
                         Best Phones for
-                        <span className={`material-symbols-outlined text-[16px] transition-transform ${bestOpen ? "rotate-180" : ""}`}>
-                          expand_more
-                        </span>
+                        <AppIcon
+                          name="expand_more"
+                          size={16}
+                          className={`transition-transform duration-200 ${bestOpen ? "rotate-180" : ""}`}
+                        />
                       </button>
                     </div>
                   )}
@@ -231,7 +239,7 @@ export default function NavbarClient({ dynamicPages = [] }: { dynamicPages?: any
                 <div key={page._id} className="relative h-full group flex items-center shrink-0">
                   <button className="h-full flex items-center gap-1 transition-colors text-sm font-semibold tracking-wide uppercase px-3 border-b-2 text-on-surface-variant hover:text-primary hover:bg-surface-container-low border-transparent">
                     {page.title}
-                    <span className="material-symbols-outlined text-[16px]">expand_more</span>
+                    <AppIcon name="expand_more" size={16} />
                   </button>
                   {children.length > 0 && (
                     <div className="absolute top-full left-0 hidden group-hover:flex flex-col bg-surface-white border border-border-subtle shadow-lg rounded-xl py-2 min-w-[200px] z-50">
@@ -292,7 +300,7 @@ export default function NavbarClient({ dynamicPages = [] }: { dynamicPages?: any
                         onClick={() => setMobileOpen(false)}
                         className="flex items-center gap-2.5 px-4 py-2 rounded-lg transition-colors text-sm font-semibold text-on-surface-variant hover:text-primary hover:bg-surface-container-low"
                       >
-                        <span className="material-symbols-outlined text-[18px] text-text-muted">{item.icon}</span>
+                        <AppIcon name={item.icon} size={18} className="text-text-muted" />
                         {item.label}
                       </Link>
                     ))}
@@ -379,7 +387,7 @@ export default function NavbarClient({ dynamicPages = [] }: { dynamicPages?: any
                     }}
                     className="flex items-center gap-2 px-4 py-3 rounded-lg transition-colors text-sm font-semibold tracking-wide text-error hover:bg-error/10"
                   >
-                    <span className="material-symbols-outlined">logout</span>
+                    <AppIcon name="logout" size={18} />
                     Sign Out
                   </button>
                 </div>
@@ -419,9 +427,7 @@ export default function NavbarClient({ dynamicPages = [] }: { dynamicPages?: any
                         onClick={() => setBestOpen(false)}
                         className="flex items-center gap-2.5 px-2 py-1.5 rounded-lg text-sm font-medium text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors group"
                       >
-                        <span className="material-symbols-outlined text-[18px] text-text-muted group-hover:text-primary transition-colors">
-                          {item.icon}
-                        </span>
+                        <AppIcon name={item.icon} size={18} className="text-text-muted group-hover:text-primary transition-colors" />
                         <span className="leading-tight">{item.label}</span>
                       </Link>
                     </li>

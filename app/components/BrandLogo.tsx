@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import AppIcon from "./AppIcon";
 
 interface BrandLogoProps {
   name: string;
@@ -17,9 +18,7 @@ export default function BrandLogo({ name, slug, logo }: BrandLogoProps) {
 
   if (error && !logo) {
     return (
-      <span className="material-symbols-outlined text-[32px] text-text-muted">
-        smartphone
-      </span>
+      <AppIcon name="smartphone" size={32} className="text-text-muted" />
     );
   }
 
