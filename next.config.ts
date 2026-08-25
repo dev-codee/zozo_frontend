@@ -3,7 +3,10 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   output: "standalone",
   experimental: {
-    optimizeCss: true,
+    // Inline CSS into <style> in the <head> instead of a render-blocking
+    // <link>. Recommended for atomic CSS (Tailwind): styles arrive with the
+    // HTML so the browser can paint immediately, cutting LCP render delay.
+    inlineCss: true,
   },
   images: {
     formats: ["image/avif", "image/webp"],
