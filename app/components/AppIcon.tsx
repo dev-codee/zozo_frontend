@@ -107,6 +107,7 @@ const iconMap: Record<string, LucideIcon> = {
   open_in_new: ExternalLink,
   logout: LogOut,
   tune: SlidersHorizontal,
+  filter: Filter,
   filter_list: Filter,
   sliders: Sliders,
   category: Layers,
