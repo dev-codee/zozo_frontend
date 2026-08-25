@@ -10,6 +10,8 @@ import Footer from "./components/Footer";
 import { getHomeData, getPopularComparisons } from "./lib/api";
 import AdSlot from "./components/AdSlot";
 
+export const revalidate = 300; // Cache and revalidate page every 5 minutes
+
 export const metadata: Metadata = {
   title: "zozo.pk — Compare Mobile Phone Prices in Pakistan",
   description: "Compare latest mobile phone prices in Pakistan across all top retailers. Find the best deals on Samsung, Apple, Xiaomi, Vivo, and more.",

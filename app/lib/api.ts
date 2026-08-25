@@ -179,7 +179,7 @@ async function apiFetch<T>(endpoint: string): Promise<T | null> {
     const baseUrl = getApiBaseUrl();
     const cleanEndpoint = endpoint.startsWith("/") ? endpoint : `/${endpoint}`;
     const res = await fetch(`${baseUrl}${cleanEndpoint}`, {
-      next: { revalidate: 60 }, // ISR — revalidate every 60s
+      next: { revalidate: 300 }, // ISR — revalidate every 300s (5 minutes)
     });
 
     if (!res.ok) {

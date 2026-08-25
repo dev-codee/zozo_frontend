@@ -10,6 +10,8 @@ import SortSelect from "@/app/components/SortSelect";
 import AppIcon from "@/app/components/AppIcon";
 import { generateCollectionPageSchema, generateBreadcrumbSchema } from "@/app/lib/schema";
 
+export const revalidate = 600; // Cache phone collection queries for 10 minutes
+
 export async function generateMetadata({
   searchParams,
 }: {

@@ -32,8 +32,8 @@ export default function FlagshipSection({ phones = [] }: FlagshipSectionProps) {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {flagships.map((phone, index) => (
-            <PhoneCard key={phone._id} phone={phone} variant="grid" priority={index < 2} />
+          {flagships.map((phone) => (
+            <PhoneCard key={phone._id} phone={phone} variant="grid" />
           ))}
           {flagships.length === 0 && (
             <div className="col-span-full py-10 text-center text-text-muted bg-surface-container-low rounded-xl">

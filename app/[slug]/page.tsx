@@ -15,6 +15,8 @@ import AppIcon from "@/app/components/AppIcon";
 import { generateProductSchema, generateBreadcrumbSchema, generateFAQSchema, generateVideoSchema, generateWebPageSchema } from "@/app/lib/schema";
 import { filterVisibleTags } from "@/app/lib/tags";
 
+export const revalidate = 3600; // Cache phone detail pages for 1 hour
+
 function getTagColorClass(tag: string) {
   const hash = Array.from(tag).reduce((acc, char) => acc + char.charCodeAt(0), 0);
   const colorThemes = [
