@@ -25,6 +25,11 @@ export default function NavbarClient({ dynamicPages = [] }: { dynamicPages?: any
   const [bestOpen, setBestOpen] = useState(false);
   const [bestPos, setBestPos] = useState({ top: 0, left: 0 });
   const bestTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const evsRef = useRef<HTMLDivElement>(null);
+  const [evsOpen, setEvsOpen] = useState(false);
+  const [evsPos, setEvsPos] = useState({ top: 0, left: 0 });
+  const evsTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
 
@@ -45,6 +50,21 @@ export default function NavbarClient({ dynamicPages = [] }: { dynamicPages?: any
     bestTimer.current = setTimeout(() => setBestOpen(false), 120);
   };
 
+  const openEvs = () => {
+    if (evsTimer.current) clearTimeout(evsTimer.current);
+    const r = evsRef.current?.getBoundingClientRect();
+    if (r) {
+      const maxLeft = window.innerWidth - 200 - 12;
+      const left = Math.max(12, Math.min(r.left, maxLeft));
+      setEvsPos({ top: r.bottom, left });
+    }
+    setEvsOpen(true);
+  };
+  const closeEvsSoon = () => {
+    if (evsTimer.current) clearTimeout(evsTimer.current);
+    evsTimer.current = setTimeout(() => setEvsOpen(false), 120);
+  };
+
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (profileRef.current && !profileRef.current.contains(event.target as Node)) {
@@ -57,8 +77,8 @@ export default function NavbarClient({ dynamicPages = [] }: { dynamicPages?: any
 
   const baseNavLinks = [
     { label: "Home", href: "/" },
-    { label: "Top 10 Phones", href: "/phones?sort=trending&limit=10" },
-    { label: "Best 10 Phones By Price", href: "/phones?sort=price_asc&limit=10" },
+    { label: "Top Phones", href: "#top-phones" },
+    { label: "EVs", href: "#evs" },
     { label: "Up Coming Phones", href: "/phones?status=upcoming" },
     { label: "Compare", href: "/compare" },
     { label: "Brands", href: "/brands" },
@@ -170,44 +190,51 @@ export default function NavbarClient({ dynamicPages = [] }: { dynamicPages?: any
         <Suspense fallback={<nav className="flex justify-center items-center px-4 md:px-6 h-12 w-full max-w-[1280px] mx-auto gap-4 overflow-x-auto"></nav>}>
           <nav className="flex justify-center items-center px-4 md:px-6 h-12 w-full max-w-[1280px] mx-auto gap-4 overflow-x-auto custom-scrollbar">
             {baseNavLinks.map((link, index) => {
-              // Insert the Dropdown after Best 10 Phones By Price (index 2)
-              const renderDropdown = index === 2;
+              // Insert the Dropdown at Top Phones (index 1) and EVs (index 2)
+              const isBest = index === 1;
+              const isEvs = index === 2;
+              const renderDropdown = isBest || isEvs;
+              const ref = isBest ? bestRef : (isEvs ? evsRef : null);
+              const open = isBest ? bestOpen : evsOpen;
+              const openFn = isBest ? openBest : openEvs;
+              const closeFn = isBest ? closeBestSoon : closeEvsSoon;
+              const setOpenFn = isBest ? setBestOpen : setEvsOpen;
               const active = isActive(link.href);
 
               return (
                 <div key={link.label} className="h-full flex items-center shrink-0 gap-4">
-                  <Link
-                    href={link.href}
-                    className={`h-full flex items-center transition-colors text-sm font-semibold tracking-wide uppercase px-3 border-b-2 ${
-                      active 
-                        ? "text-primary border-primary bg-surface-container-low/50" 
-                        : "text-on-surface-variant hover:text-primary hover:bg-surface-container-low border-transparent"
-                    }`}
-                  >
-                    {link.label}
-                  </Link>
-
-                  {renderDropdown && (
+                  {!renderDropdown ? (
+                    <Link
+                      href={link.href}
+                      className={`h-full flex items-center transition-colors text-sm font-semibold tracking-wide uppercase px-3 border-b-2 ${
+                        active 
+                          ? "text-primary border-primary bg-surface-container-low/50" 
+                          : "text-on-surface-variant hover:text-primary hover:bg-surface-container-low border-transparent"
+                      }`}
+                    >
+                      {link.label}
+                    </Link>
+                  ) : (
                     <div
-                      ref={bestRef}
+                      ref={ref as any}
                       className="relative h-full flex items-center shrink-0"
-                      onMouseEnter={openBest}
-                      onMouseLeave={closeBestSoon}
+                      onMouseEnter={openFn}
+                      onMouseLeave={closeFn}
                     >
                       <button
-                        onClick={() => (bestOpen ? setBestOpen(false) : openBest())}
-                        aria-expanded={bestOpen}
+                        onClick={() => (open ? setOpenFn(false) : openFn())}
+                        aria-expanded={open}
                         className={`h-full flex items-center gap-1 transition-colors text-sm font-semibold tracking-wide uppercase px-3 border-b-2 border-transparent ${
-                          bestOpen
+                          open
                             ? "text-primary bg-surface-container-low/50"
                             : "text-on-surface-variant hover:text-primary hover:bg-surface-container-low"
                         }`}
                       >
-                        Best Phones for
+                        {link.label}
                         <AppIcon
                           name="expand_more"
                           size={16}
-                          className={`transition-transform duration-200 ${bestOpen ? "rotate-180" : ""}`}
+                          className={`transition-transform duration-200 ${open ? "rotate-180" : ""}`}
                         />
                       </button>
                     </div>
@@ -267,7 +294,7 @@ export default function NavbarClient({ dynamicPages = [] }: { dynamicPages?: any
           <Suspense fallback={<nav className="flex flex-col p-4 gap-1"></nav>}>
             <nav className="flex flex-col p-4 gap-1 overflow-y-auto max-h-[calc(100vh-64px)] custom-scrollbar">
               
-              {baseNavLinks.slice(0, 3).map((link) => {
+              {baseNavLinks.slice(0, 1).map((link) => {
                 const active = isActive(link.href);
                 return (
                   <Link
@@ -283,13 +310,30 @@ export default function NavbarClient({ dynamicPages = [] }: { dynamicPages?: any
                 );
               })}
 
-              {/* Mobile Best Phones for */}
+              {/* Mobile Top Phones Menu */}
               <div className="flex flex-col mb-2 pb-2 border-b border-border-subtle">
                 <span className="px-4 py-2 text-xs font-bold text-text-muted uppercase tracking-wider">
-                  Best Phones for
+                  Top Phones
                 </span>
+                <Link
+                  href="/phones?sort=trending&limit=10"
+                  onClick={() => setMobileOpen(false)}
+                  className="flex items-center gap-2.5 px-4 py-2 rounded-lg transition-colors text-sm font-semibold text-on-surface-variant hover:text-primary hover:bg-surface-container-low"
+                >
+                  <AppIcon name="star" size={18} className="text-text-muted" />
+                  Top 10 Phones
+                </Link>
+                <Link
+                  href="/phones?sort=price_asc&limit=10"
+                  onClick={() => setMobileOpen(false)}
+                  className="flex items-center gap-2.5 px-4 py-2 rounded-lg transition-colors text-sm font-semibold text-on-surface-variant hover:text-primary hover:bg-surface-container-low"
+                >
+                  <AppIcon name="attach_money" size={18} className="text-text-muted" />
+                  Best 10 Phones by Price
+                </Link>
+
                 {phoneCategoryGroups.map((group) => (
-                  <div key={group.title} className="flex flex-col">
+                  <div key={group.title} className="flex flex-col mt-2">
                     <span className="px-4 pt-2 pb-1 text-[10px] font-bold text-primary uppercase tracking-wider">
                       {group.title}
                     </span>
@@ -305,6 +349,24 @@ export default function NavbarClient({ dynamicPages = [] }: { dynamicPages?: any
                       </Link>
                     ))}
                   </div>
+                ))}
+              </div>
+
+              {/* Mobile EVs Menu */}
+              <div className="flex flex-col mb-2 pb-2 border-b border-border-subtle">
+                <span className="px-4 py-2 text-xs font-bold text-text-muted uppercase tracking-wider">
+                  EVs
+                </span>
+                {['Car', 'Bike', 'Scooter', 'Cycle'].map((cat) => (
+                  <Link
+                    key={cat}
+                    href={`/vehicles?category=${cat}`}
+                    onClick={() => setMobileOpen(false)}
+                    className="flex items-center gap-2.5 px-4 py-2 rounded-lg transition-colors text-sm font-semibold text-on-surface-variant hover:text-primary hover:bg-surface-container-low"
+                  >
+                    <AppIcon name="electric_car" size={18} className="text-text-muted" />
+                    {cat}s
+                  </Link>
                 ))}
               </div>
 
@@ -413,7 +475,34 @@ export default function NavbarClient({ dynamicPages = [] }: { dynamicPages?: any
           onMouseLeave={closeBestSoon}
           className="bg-surface-white border border-border-subtle shadow-xl rounded-2xl p-5 max-w-[calc(100vw-24px)] max-h-[calc(100vh-140px)] overflow-y-auto custom-scrollbar"
         >
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-4">
+            <div>
+              <h3 className="text-[11px] font-bold text-primary uppercase tracking-wider mb-2 pb-1.5 border-b border-border-subtle">
+                Top Lists
+              </h3>
+              <ul className="flex flex-col">
+                <li>
+                  <Link
+                    href="/phones?sort=trending&limit=10"
+                    onClick={() => setBestOpen(false)}
+                    className="flex items-center gap-2.5 px-2 py-1.5 rounded-lg text-sm font-medium text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors group"
+                  >
+                    <AppIcon name="star" size={18} className="text-text-muted group-hover:text-primary transition-colors" />
+                    <span className="leading-tight">Top 10 Phones</span>
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/phones?sort=price_asc&limit=10"
+                    onClick={() => setBestOpen(false)}
+                    className="flex items-center gap-2.5 px-2 py-1.5 rounded-lg text-sm font-medium text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors group"
+                  >
+                    <AppIcon name="attach_money" size={18} className="text-text-muted group-hover:text-primary transition-colors" />
+                    <span className="leading-tight">Best 10 Phones by Price</span>
+                  </Link>
+                </li>
+              </ul>
+            </div>
             {phoneCategoryGroups.map((group) => (
               <div key={group.title}>
                 <h3 className="text-[11px] font-bold text-primary uppercase tracking-wider mb-2 pb-1.5 border-b border-border-subtle">
@@ -436,6 +525,23 @@ export default function NavbarClient({ dynamicPages = [] }: { dynamicPages?: any
               </div>
             ))}
           </div>
+        </div>,
+        document.body
+      )}
+
+      {/* EVs mega-menu */}
+      {mounted && evsOpen && createPortal(
+        <div
+          style={{ position: "fixed", top: evsPos.top, left: evsPos.left, width: 200, zIndex: 60 }}
+          onMouseEnter={openEvs}
+          onMouseLeave={closeEvsSoon}
+          className="bg-surface-white border border-border-subtle shadow-xl rounded-xl p-3 flex flex-col gap-1"
+        >
+          {['Car', 'Bike', 'Scooter', 'Cycle'].map(cat => (
+             <Link key={cat} href={`/vehicles?category=${cat}`} onClick={() => setEvsOpen(false)} className="px-4 py-2 rounded-lg text-sm font-medium text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors">
+               {cat}s
+             </Link>
+           ))}
         </div>,
         document.body
       )}

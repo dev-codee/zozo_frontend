@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { PlusCircle, Trash2, Pencil, Copy, Search } from 'lucide-react';
 import Cookies from 'js-cookie';
 
-const CATEGORIES = ['', 'Car', 'Bike', 'Scooter', 'Cycle', 'Rickshaw', 'Truck', 'Van', 'Bus', 'Other'];
+const CATEGORIES = ['', 'Car', 'Bike', 'Scooter', 'Cycle'];
 
 export default function VehiclesListPage() {
   const router = useRouter();

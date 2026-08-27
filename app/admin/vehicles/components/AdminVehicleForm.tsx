@@ -8,9 +8,9 @@ import Cookies from 'js-cookie';
 import ImageUploader from '../../../components/ImageUploader';
 
 // ─── Option lists (kept in sync with Vehicle.model.js enums) ────────────────────
-const EV_CATEGORIES = ['Car', 'Bike', 'Scooter', 'Cycle', 'Rickshaw', 'Truck', 'Van', 'Bus', 'Other'];
+const EV_CATEGORIES = ['Car', 'Bike', 'Scooter', 'Cycle'];
 const VEHICLE_TYPES = ['BEV', 'PHEV', 'EREV', 'FCEV'];
-const BODY_TYPES = ['Sedan', 'SUV', 'Crossover', 'Hatchback', 'Coupe', 'MPV', 'Pickup', 'Sports', 'Wagon', 'Scooter', 'Bike', 'Rickshaw', 'Other'];
+const BODY_TYPES = ['Sedan', 'SUV', 'Crossover', 'Hatchback', 'Coupe', 'MPV', 'Pickup', 'Sports', 'Wagon', 'Scooter', 'Bike', 'Other'];
 const STATUSES = ['available', 'upcoming', 'announced', 'rumored', 'discontinued'];
 
 // Tabs map 1:1 to the specs.* sub-objects in the Vehicle schema.
@@ -80,7 +80,8 @@ const emptyVehicle = () => ({
     ai_faq: [] as any[], ai_editorial_summary: '', ai_pros: [] as string[], ai_cons: [] as string[],
     ai_buying_advice: '', ai_snippet: '', ai_suggested_tags: [] as string[], ai_keywords: [] as string[],
   },
-  is_published: false,
+  approvalStatus: 'APPROVED',
+  is_published: true,
 });
 
 // Fields entered as comma-separated strings but stored as arrays.

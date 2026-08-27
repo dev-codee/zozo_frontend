@@ -927,7 +927,7 @@ export default function AdminPhoneForm({ initialData, onSubmit, isEditing = fals
             {/* AI-Generated SEO Fields */}
             <section className="bg-gradient-to-r from-indigo-50 to-purple-50 p-6 rounded-xl border border-indigo-200 shadow-sm md:col-span-2">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-bold text-indigo-900">🤖 AI-Generated SEO Content</h3>
+                <h3 className="text-lg font-bold text-indigo-900">AI-Generated SEO Content</h3>
                 <div className="flex gap-2">
                   <button type="button" onClick={handleAIFillSEO} disabled={isAIFillingSEO} className="px-3 py-1.5 bg-gradient-to-r from-purple-500 to-indigo-600 text-white rounded-md text-xs font-semibold hover:from-purple-600 hover:to-indigo-700 disabled:opacity-50 flex items-center">
                     <Wand2 className="w-3 h-3 mr-1" />
@@ -942,7 +942,7 @@ export default function AdminPhoneForm({ initialData, onSubmit, isEditing = fals
                     }}));
                     alert('AI content copied to manual fields!');
                   }} className="px-3 py-1.5 bg-white border border-indigo-300 text-indigo-700 rounded-md text-xs font-semibold hover:bg-indigo-100">
-                    📋 Copy AI → Manual
+                    Copy AI → Manual
                   </button>
                 </div>
               </div>
@@ -1013,7 +1013,7 @@ export default function AdminPhoneForm({ initialData, onSubmit, isEditing = fals
             {/* Manual SEO Fields */}
             <section className="bg-white p-6 rounded-xl border shadow-sm">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-bold text-gray-900">📝 Manual SEO Fields</h3>
+                <h3 className="text-lg font-bold text-gray-900">Manual SEO Fields</h3>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-4">

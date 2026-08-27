@@ -117,6 +117,92 @@ export function generateProductSchema(phone: SchemaPhone) {
   return schema;
 }
 
+// ─── Vehicle Schema ──────────────────────────────────────────────────────────
+
+export function generateVehicleSchema(vehicle: any) {
+  const primaryImage = vehicle.images?.find((img: any) => img.url)?.url || vehicle.images?.[0]?.url;
+  const lowestPrice = vehicle.price_pkr || (vehicle.prices?.length ? Math.min(...vehicle.prices.map((p: any) => p.price_pkr)) : null);
+
+  const offers = vehicle.prices?.filter((p: any) => p.product_url).map((p: any) => ({
+    "@type": "Offer",
+    "url": p.product_url,
+    "priceCurrency": "PKR",
+    "price": p.price_pkr,
+    "availability": p.stock_status?.toLowerCase().includes('out')
+      ? "https://schema.org/OutOfStock"
+      : "https://schema.org/InStock",
+    "seller": {
+      "@type": "Organization",
+      "name": p.retailer_name
+    }
+  })) || [];
+
+  const isCar = (vehicle.ev_category || 'Car').toLowerCase() === 'car';
+  const schema: any = {
+    "@context": "https://schema.org",
+    "@type": isCar ? "Car" : "Vehicle",
+    "name": vehicle.name,
+    "description": (vehicle.seo?.meta_description || vehicle.description || `${vehicle.name} Price in Pakistan, Specifications and Features`).trim().substring(0, 4000),
+    "brand": {
+      "@type": "Brand",
+      "name": (vehicle.brand_slug || "").toUpperCase().replace('-', ' ')
+    },
+    "url": `${SITE_URL}/vehicles/${vehicle.slug}`,
+    "fuelType": vehicle.vehicle_type === 'PHEV' ? "Hybrid" : "Electric",
+    "vehicleEngine": {
+      "@type": "EngineSpecification",
+      "engineType": vehicle.vehicle_type || "Electric Motor",
+    },
+  };
+
+  if (primaryImage) {
+    schema.image = primaryImage;
+  } else {
+    schema.image = `${SITE_URL}/ZOZO-Logo-v2.png`;
+  }
+
+  if (vehicle.model_name) schema.model = vehicle.model_name;
+  if (vehicle.body_type) schema.bodyType = vehicle.body_type;
+  if (vehicle.seats) schema.seatingCapacity = vehicle.seats;
+  if (vehicle.doors) schema.numberOfDoors = vehicle.doors;
+  if (vehicle.release_date) schema.releaseDate = vehicle.release_date;
+
+  if (vehicle.specs?.powertrain?.drive_layout) {
+    schema.driveWheelConfiguration = vehicle.specs.powertrain.drive_layout;
+  }
+
+  if (vehicle.rating?.average && vehicle.rating?.count) {
+    schema.aggregateRating = {
+      "@type": "AggregateRating",
+      "ratingValue": vehicle.rating.average.toFixed(1),
+      "bestRating": "5",
+      "worstRating": "1",
+      "ratingCount": vehicle.rating.count
+    };
+  }
+
+  if (offers.length > 0) {
+    schema.offers = offers.length === 1 ? offers[0] : {
+      "@type": "AggregateOffer",
+      "lowPrice": Math.min(...vehicle.prices.map((p: any) => p.price_pkr)),
+      "highPrice": Math.max(...vehicle.prices.map((p: any) => p.price_pkr)),
+      "priceCurrency": "PKR",
+      "offerCount": offers.length,
+      "offers": offers
+    };
+  } else if (lowestPrice) {
+    schema.offers = {
+      "@type": "Offer",
+      "priceCurrency": "PKR",
+      "price": lowestPrice,
+      "availability": "https://schema.org/InStock",
+      "url": `${SITE_URL}/vehicles/${vehicle.slug}`
+    };
+  }
+
+  return schema;
+}
+
 // ─── Review Schema ───────────────────────────────────────────────────────────
 
 export function generateReviewSchema(reviews: SchemaReview[], phoneName: string) {

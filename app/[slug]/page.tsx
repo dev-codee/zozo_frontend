@@ -1,7 +1,7 @@
 import { notFound, redirect } from "next/navigation";
 import { Metadata } from "next";
 import Link from "next/link";
-import { getPhoneBySlug, getPhones, getRelatedPhones, Phone } from "@/app/lib/api";
+import { getPhoneBySlug, getPhones, getRelatedPhones, getVehicleBySlug, Phone } from "@/app/lib/api";
 import Navbar from "@/app/components/Navbar";
 import Footer from "@/app/components/Footer";
 import Breadcrumb from "@/app/components/Breadcrumb";
@@ -117,6 +117,11 @@ export default async function PhoneDetailPage({
   const phone = await getPhoneBySlug(slug);
 
   if (!phone) {
+    // Check if it's an EV vehicle
+    const vehicleCheck = await getVehicleBySlug(slug);
+    if (vehicleCheck?.vehicle) {
+      redirect(`/vehicles/${slug}`);
+    }
     notFound();
   }
 

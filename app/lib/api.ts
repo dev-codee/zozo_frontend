@@ -136,6 +136,191 @@ export interface Brand {
   phone_count?: number;
 }
 
+export interface VehiclePrice {
+  retailer_slug?: string;
+  retailer_name: string;
+  variant?: string;
+  price_pkr: number;
+  stock_status?: string;
+  product_url?: string;
+  last_checked?: string;
+}
+
+export interface Vehicle {
+  _id: string;
+  slug: string;
+  name: string;
+  brand_slug: string;
+  model_name?: string;
+  variant_name?: string;
+  model_year?: number;
+  generation?: string;
+  vehicle_type?: "BEV" | "PHEV" | "EREV" | "FCEV" | string;
+  ev_category?: "Car" | "Bike" | "Scooter" | "Cycle" | string;
+  body_type?: string;
+  segment?: string;
+  platform?: string;
+  doors?: number;
+  seats?: number;
+  status: "available" | "upcoming" | "announced" | "rumored" | "discontinued" | string;
+  announcement_date?: string;
+  release_date?: string;
+  assembly_country?: string;
+  made_in?: string;
+  description?: string;
+  tags?: string[];
+  country_availability?: string[];
+  video_url?: string;
+  price_pkr?: number;
+  images: { url: string; is_primary?: boolean; alt_text?: string }[];
+  prices?: VehiclePrice[];
+  pricing?: {
+    price_global_base_usd?: number;
+    price_global_base_cny?: number;
+    price_global_base_eur?: number;
+    price_pkr_ex_factory?: number;
+    price_pkr_on_road?: number;
+  };
+  specs?: {
+    battery?: {
+      chemistry?: string;
+      capacity_gross_kwh?: number;
+      capacity_usable_kwh?: number;
+      system_voltage?: number;
+      thermal_management?: string;
+      warranty_years?: number;
+      warranty_distance_km?: number;
+    };
+    range_and_efficiency?: {
+      wltp_combined_km?: number;
+      wltp_consumption_kwh_100km?: number;
+      epa_combined_km?: number;
+      efficiency_mpge_combined?: number;
+      cltc_range_km?: number;
+      real_world_range_mild_km?: number;
+      real_world_range_cold_km?: number;
+      real_world_range_highway_km?: number;
+      drag_coefficient_cd?: number;
+    };
+    charging?: {
+      ac_max_power_kw?: number;
+      ac_port_type?: string;
+      ac_charge_time_0_100_hrs?: number;
+      dc_max_power_kw?: number;
+      dc_port_type?: string;
+      dc_charge_time_10_80_min?: number;
+      v2l_support?: boolean;
+      v2h_support?: boolean;
+      v2g_support?: boolean;
+    };
+    powertrain?: {
+      drive_layout?: string;
+      motor_count?: number;
+      total_power_hp?: number;
+      total_power_kw?: number;
+      total_torque_nm?: number;
+      acceleration_0_100_kmh?: number;
+      acceleration_0_60_mph?: number;
+      top_speed_kmh?: number;
+    };
+    dimensions_and_weight?: {
+      length_mm?: number;
+      width_mm?: number;
+      height_mm?: number;
+      wheelbase_mm?: number;
+      ground_clearance_mm?: number;
+      curb_weight_kg?: number;
+      trunk_liters?: number;
+      frunk_liters?: number;
+      towing_braked_kg?: number;
+      towing_unbraked_kg?: number;
+    };
+    chassis_and_suspension?: {
+      front_suspension?: string;
+      rear_suspension?: string;
+      air_suspension?: boolean;
+      turning_circle_m?: number;
+      wheel_sizes_inches?: number[];
+      tire_size?: string;
+    };
+    cockpit_and_tech?: {
+      cockpit_os?: string;
+      cockpit_chip?: string;
+      center_screen_inches?: number;
+      center_screen_features?: string;
+      driver_cluster_inches?: number;
+      hud?: string;
+      apple_carplay?: string;
+      android_auto?: string;
+      audio_brand?: string;
+      speaker_count?: number;
+      wireless_chargers?: number;
+      ota_updates?: string;
+      heat_pump?: boolean;
+    };
+    adas_and_safety?: {
+      euro_ncap_stars?: number;
+      nhtsa_stars?: number;
+      airbag_count?: number;
+      autonomy_level?: string;
+      adas_system_name?: string;
+      lidar_count?: number;
+      camera_count?: number;
+      radar_count?: number;
+      ultrasonic_count?: number;
+      features?: string[];
+    };
+    extra_specs?: any;
+  };
+  ratings?: {
+    overall?: number;
+    range_efficiency?: number;
+    charging_speed?: number;
+    performance?: number;
+    tech_cockpit?: number;
+    safety_adas?: number;
+    value_for_money?: number;
+  };
+  rating?: {
+    average?: number;
+    count?: number;
+  };
+  seo?: {
+    meta_title?: string;
+    meta_description?: string;
+    ai_seo_title?: string;
+    ai_meta_description?: string;
+    ai_faq?: { question: string; answer: string }[];
+    ai_summary?: string;
+    ai_editorial_summary?: string;
+    ai_pros?: string[];
+    ai_cons?: string[];
+    ai_buying_advice?: string;
+    ai_snippet?: string;
+    ai_keywords?: string[];
+  };
+  competitor_slugs?: string[];
+}
+
+export interface VehicleDetailResponse {
+  vehicle: Vehicle;
+  variants?: Vehicle[];
+}
+
+export interface RelatedVehiclesResponse {
+  by_brand?: Vehicle[];
+  by_category?: Vehicle[];
+  by_price?: Vehicle[];
+}
+
+export interface PaginatedVehicles {
+  data: Vehicle[];
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+}
+
 export interface HomeData {
   trending: Phone[];
   latest: Phone[];
@@ -174,12 +359,13 @@ export function getApiBaseUrl(): string {
 
 // ─── Fetch Helpers ────────────────────────────────────────────────────────────
 
-async function apiFetch<T>(endpoint: string): Promise<T | null> {
+async function apiFetch<T>(endpoint: string, init?: RequestInit): Promise<T | null> {
   try {
     const baseUrl = getApiBaseUrl();
     const cleanEndpoint = endpoint.startsWith("/") ? endpoint : `/${endpoint}`;
     const res = await fetch(`${baseUrl}${cleanEndpoint}`, {
-      next: { revalidate: 300 }, // ISR — revalidate every 300s (5 minutes)
+      next: { revalidate: 60 },
+      ...init,
     });
 
     if (!res.ok) {
@@ -196,6 +382,22 @@ async function apiFetch<T>(endpoint: string): Promise<T | null> {
 }
 
 // ─── API Functions ────────────────────────────────────────────────────────────
+
+export async function getVehicles(query?: string): Promise<PaginatedVehicles | null> {
+  const endpoint = query ? `/vehicles?${query}` : "/vehicles";
+  const data = await apiFetch<PaginatedVehicles>(endpoint, { cache: "no-store" });
+  return data;
+}
+
+export async function getVehicleBySlug(slug: string): Promise<VehicleDetailResponse | null> {
+  const data = await apiFetch<VehicleDetailResponse>(`/vehicles/${slug}`, { cache: "no-store" });
+  return data;
+}
+
+export async function getRelatedVehicles(slug: string): Promise<RelatedVehiclesResponse | null> {
+  const data = await apiFetch<RelatedVehiclesResponse>(`/vehicles/${slug}/related`, { cache: "no-store" });
+  return data;
+}
 
 export async function getHomeData(): Promise<HomeData | null> {
   return apiFetch<HomeData>("/home");
