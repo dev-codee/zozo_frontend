@@ -230,7 +230,7 @@ export default function AdminVehicleForm({ initialData, onSubmit, isEditing = fa
           // Top-level scalars
           for (const k of ['brand_slug', 'model_name', 'variant_name', 'model_year', 'generation',
             'vehicle_type', 'ev_category', 'body_type', 'segment', 'platform', 'doors', 'seats',
-            'status', 'release_date', 'assembly_country', 'made_in']) {
+            'status', 'release_date', 'assembly_country', 'made_in', 'country_availability', 'price_pkr']) {
             if (ai[k] !== undefined && ai[k] !== null && ai[k] !== '') next[k] = ai[k];
           }
           if (Array.isArray(ai.tags) && ai.tags.length) next.tags = ai.tags;
@@ -247,6 +247,7 @@ export default function AdminVehicleForm({ initialData, onSubmit, isEditing = fa
           }
           if (ai.specs?.extra_specs) next.specs.extra_specs = { ...prev.specs.extra_specs, ...ai.specs.extra_specs };
           if (ai.pricing) next.pricing = { ...prev.pricing, ...ai.pricing };
+          if (ai.description) next.description = ai.description;
           return next;
         });
         alert("AI researched and populated the EV fields. Review each tab and fill any values the AI safely left blank.");
