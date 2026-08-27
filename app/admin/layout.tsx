@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { LayoutDashboard, Smartphone, PlusCircle, Users, Activity, FileText, Tags, FileEdit } from 'lucide-react';
+import { LayoutDashboard, Smartphone, PlusCircle, Users, Activity, FileText, Tags, FileEdit, Car } from 'lucide-react';
 import LogoutButton from '../components/LogoutButton';
 import Cookies from 'js-cookie';
 import Image from 'next/image';
@@ -91,6 +91,28 @@ export default function AdminLayout({
             >
               <PlusCircle className="mr-3 h-5 w-5 text-indigo-500" />
               Add Mobile
+            </Link>
+
+            <div className="pt-4 pb-2">
+              <p className="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                Electric Vehicles
+              </p>
+            </div>
+
+            <Link
+              href="/admin/vehicles"
+              className="flex items-center px-3 py-2 text-xs font-medium text-gray-700 rounded-md hover:bg-gray-50"
+            >
+              <Car className="mr-3 h-5 w-5 text-gray-400" />
+              All EVs
+            </Link>
+
+            <Link
+              href="/admin/vehicles/new"
+              className="flex items-center px-3 py-2 text-xs font-medium text-emerald-600 bg-emerald-50 rounded-md"
+            >
+              <PlusCircle className="mr-3 h-5 w-5 text-emerald-500" />
+              Add EV
             </Link>
 
             <div className="pt-4 pb-2">
