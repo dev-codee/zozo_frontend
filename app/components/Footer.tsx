@@ -42,7 +42,7 @@ export default async function Footer() {
 
         {/* Disclaimer */}
         <p className="text-text-muted text-xs leading-relaxed max-w-3xl mx-auto">
-          Prices, specifications, and availability on ZOZO are for informational purposes only and are based on the Pakistani market. Some content is generated or enhanced using AI and third-party sources, so errors or outdated information may occur. All trademarks, logos, and product images belong to their respective owners, and users should verify details with the official brand or retailer before making a purchase.
+          Prices, specifications, and availability on ZOZO are provided for informational purposes only and are based on information available in the Pakistani market. Information may change over time, and errors or outdated details may occur. All trademarks, logos, and product images belong to their respective owners. Users should verify product details, pricing, availability, and specifications with the official brand or retailer before making a purchase.
         </p>
 
         {/* Copyright */}

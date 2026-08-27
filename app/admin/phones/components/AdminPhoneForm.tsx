@@ -55,6 +55,9 @@ export default function AdminPhoneForm({ initialData, onSubmit, isEditing = fals
   const [isAIFilling, setIsAIFilling] = useState(false);
   const [isAIFillingSEO, setIsAIFillingSEO] = useState(false);
   const [activeTab, setActiveTab] = useState('basic'); // 'basic', 'ai_content', 'detailed_specs', 'seo'
+  const [showAddBrand, setShowAddBrand] = useState(false);
+  const [newBrandName, setNewBrandName] = useState('');
+  const [addingBrand, setAddingBrand] = useState(false);
 
   const [newPrice, setNewPrice] = useState({
     retailer_name: '',
@@ -144,13 +147,44 @@ export default function AdminPhoneForm({ initialData, onSubmit, isEditing = fals
     return defaultData;
   });
 
-  useEffect(() => {
+  const fetchBrands = () => {
     const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
-    fetch(`${apiUrl}/brands`)
+    return fetch(`${apiUrl}/brands`)
       .then(res => res.json())
       .then(data => { if (data.success && data.data) setBrands(data.data); })
       .catch(console.error);
-  }, []);
+  };
+
+  useEffect(() => { fetchBrands(); }, []);
+
+  const handleAddBrand = async () => {
+    const name = newBrandName.trim();
+    if (!name) return;
+    setAddingBrand(true);
+    try {
+      const token = Cookies.get('admin_token');
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+      const res = await fetch(`${apiUrl}/admin/brands`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        body: JSON.stringify({ name, type: 'phone' })
+      });
+      const data = await res.json();
+      if (res.ok && data.data) {
+        await fetchBrands();
+        setFormData((p: any) => ({ ...p, brand_slug: data.data.slug }));
+        setNewBrandName('');
+        setShowAddBrand(false);
+      } else {
+        alert(`Failed to add brand: ${data.message}`);
+      }
+    } catch (e) {
+      console.error(e);
+      alert('Error adding brand');
+    } finally {
+      setAddingBrand(false);
+    }
+  };
 
   // Duplicate checker & Revisions state
   const [duplicates, setDuplicates] = useState<any[]>([]);
@@ -484,11 +518,31 @@ export default function AdminPhoneForm({ initialData, onSubmit, isEditing = fals
                   {renderInput('Phone Name', formData.name, v => setFormData((p: any) => ({ ...p, name: v })))}
                   {renderInput('Price (PKR) - Header Display Price', formData.price_pkr, v => setFormData((p: any) => ({ ...p, price_pkr: v })), 'number')}
                   <div>
-                    <label className="block text-xs font-semibold text-gray-600 mb-1">Brand</label>
-                    <select value={formData.brand_slug} onChange={e => setFormData((p: any) => ({ ...p, brand_slug: e.target.value }))} className="w-full px-3 py-2 border rounded-md text-xs">
-                      <option value="">Select Brand</option>
-                      {brands.map(b => <option key={b.slug} value={b.slug}>{b.name}</option>)}
-                    </select>
+                    <div className="flex items-center justify-between mb-1">
+                      <label className="block text-xs font-semibold text-gray-600">Brand</label>
+                      <button type="button" onClick={() => setShowAddBrand(v => !v)} className="text-[11px] font-semibold text-indigo-600 hover:underline">
+                        {showAddBrand ? 'Cancel' : '+ New brand'}
+                      </button>
+                    </div>
+                    {showAddBrand ? (
+                      <div className="flex items-center space-x-2">
+                        <input autoFocus value={newBrandName} onChange={e => setNewBrandName(e.target.value)}
+                          onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); handleAddBrand(); } }}
+                          className="flex-1 px-2 py-1.5 border rounded-md text-xs" placeholder="New brand name (e.g. Realme)" />
+                        <button type="button" onClick={handleAddBrand} disabled={addingBrand}
+                          className="px-3 py-1.5 bg-indigo-600 text-white rounded-md text-xs font-semibold disabled:opacity-50">
+                          {addingBrand ? 'Adding...' : 'Add'}
+                        </button>
+                      </div>
+                    ) : (
+                      <select value={formData.brand_slug} onChange={e => setFormData((p: any) => ({ ...p, brand_slug: e.target.value }))} className="w-full px-3 py-2 border rounded-md text-xs">
+                        <option value="">Select Brand</option>
+                        {formData.brand_slug && !brands.some(b => b.slug === formData.brand_slug) && (
+                          <option value={formData.brand_slug}>{formData.brand_slug} (unlisted)</option>
+                        )}
+                        {brands.map(b => <option key={b.slug} value={b.slug}>{b.name}</option>)}
+                      </select>
+                    )}
                   </div>
                   <div>
                     <label className="block text-xs font-semibold text-gray-600 mb-1">Status</label>
