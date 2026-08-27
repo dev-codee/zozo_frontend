@@ -10,7 +10,7 @@ import ImageUploader from '../../../components/ImageUploader';
 // ─── Option lists (kept in sync with Vehicle.model.js enums) ────────────────────
 const EV_CATEGORIES = ['Car', 'Bike', 'Scooter', 'Cycle', 'Rickshaw', 'Truck', 'Van', 'Bus', 'Other'];
 const VEHICLE_TYPES = ['BEV', 'PHEV', 'EREV', 'FCEV'];
-const BODY_TYPES = ['Sedan', 'SUV', 'Crossover', 'Hatchback', 'Coupe', 'MPV', 'Pickup', 'Sports', 'Wagon', 'Other'];
+const BODY_TYPES = ['Sedan', 'SUV', 'Crossover', 'Hatchback', 'Coupe', 'MPV', 'Pickup', 'Sports', 'Wagon', 'Scooter', 'Bike', 'Rickshaw', 'Other'];
 const STATUSES = ['available', 'upcoming', 'announced', 'rumored', 'discontinued'];
 
 // Tabs map 1:1 to the specs.* sub-objects in the Vehicle schema.
@@ -29,57 +29,45 @@ const emptyVehicle = () => ({
   specs: {
     battery: {
       chemistry: '', capacity_gross_kwh: '', capacity_usable_kwh: '', system_voltage: '',
-      cell_format: '', integration_type: '', thermal_management: '', preheating_support: false,
-      swappable_battery: false, warranty_years: '', warranty_distance_km: '', warranty_soh_guarantee: '',
+      thermal_management: '', warranty_years: '', warranty_distance_km: '',
     },
     range_and_efficiency: {
-      wltp_combined_km: '', wltp_city_km: '', wltp_consumption_kwh_100km: '', epa_combined_km: '',
+      wltp_combined_km: '', wltp_consumption_kwh_100km: '', epa_combined_km: '',
       efficiency_mpge_combined: '', cltc_range_km: '', real_world_range_mild_km: '',
       real_world_range_cold_km: '', real_world_range_highway_km: '', drag_coefficient_cd: '',
     },
     charging: {
-      ac_max_power_kw: '', ac_phases: '', ac_port_type: '', ac_charge_time_0_100_hrs: '',
-      ac_port_location: '', dc_max_power_kw: '', dc_port_type: '', dc_charge_time_10_80_min: '',
-      dc_speed_km_15min: '', plug_and_charge: false, v2l_support: false, v2l_max_power_kw: '',
-      v2h_support: false, v2g_support: false, v2v_support: false,
+      ac_max_power_kw: '', ac_port_type: '', ac_charge_time_0_100_hrs: '',
+      dc_max_power_kw: '', dc_port_type: '', dc_charge_time_10_80_min: '',
+      v2l_support: false, v2h_support: false, v2g_support: false,
     },
     powertrain: {
-      drive_layout: '', motor_count: '', front_motor_type: '', front_motor_power_hp: '',
-      rear_motor_type: '', rear_motor_power_hp: '', total_power_hp: '', total_power_kw: '',
+      drive_layout: '', motor_count: '', total_power_hp: '', total_power_kw: '',
       total_torque_nm: '', acceleration_0_100_kmh: '', acceleration_0_60_mph: '', top_speed_kmh: '',
-      quarter_mile_seconds: '', transmission: '', one_pedal_driving: false, regen_modes: '',
-      max_regen_power_kw: '', launch_control: false,
     },
     dimensions_and_weight: {
       length_mm: '', width_mm: '', height_mm: '', wheelbase_mm: '', ground_clearance_mm: '',
-      curb_weight_kg: '', gvwr_kg: '', max_payload_kg: '', weight_distribution: '', trunk_liters: '',
-      trunk_max_liters: '', frunk_liters: '', frunk_powered: false, roof_load_kg: '',
+      curb_weight_kg: '', trunk_liters: '', frunk_liters: '',
       towing_braked_kg: '', towing_unbraked_kg: '',
     },
     chassis_and_suspension: {
-      front_suspension: '', rear_suspension: '', air_suspension: false, adaptive_damping: false,
-      rear_wheel_steering: false, turning_circle_m: '', front_brakes: '', rear_brakes: '',
-      wheel_sizes_inches: '', tire_size: '', ev_specific_tires: false,
+      front_suspension: '', rear_suspension: '', air_suspension: false,
+      turning_circle_m: '', wheel_sizes_inches: '', tire_size: '',
     },
     cockpit_and_tech: {
       cockpit_os: '', cockpit_chip: '', center_screen_inches: '', center_screen_features: '',
-      driver_cluster_inches: '', hud: '', passenger_screen_inches: '', rear_screens: '',
-      apple_carplay: '', android_auto: '', audio_brand: '', speaker_count: '', audio_power_watts: '',
-      wireless_chargers: '', ota_updates: '', app_connectivity: '', keyless_tech: '',
-      sentry_mode: false, heat_pump: false,
+      driver_cluster_inches: '', hud: '', apple_carplay: '', android_auto: '', audio_brand: '', 
+      speaker_count: '', wireless_chargers: '', ota_updates: '', heat_pump: false,
     },
     adas_and_safety: {
-      euro_ncap_stars: '', euro_ncap_adult_pct: '', euro_ncap_child_pct: '', nhtsa_stars: '',
-      airbag_count: '', autonomy_level: '', adas_system_name: '', adas_compute_chip: '',
-      lidar_count: '', camera_count: '', radar_count: '', ultrasonic_count: '', features: '',
+      euro_ncap_stars: '', nhtsa_stars: '', airbag_count: '', autonomy_level: '', 
+      adas_system_name: '', lidar_count: '', camera_count: '', radar_count: '', ultrasonic_count: '', features: '',
     },
     extra_specs: {},
   },
   pricing: {
     price_global_base_usd: '', price_global_base_cny: '', price_global_base_eur: '',
-    price_pkr_ex_factory: '', price_pkr_on_road: '', customs_duty_rate_pct: '',
-    sales_tax_rate_pct: '', token_tax_annual_pkr: '', included_home_charger: '',
-    charging_adapter_included: '',
+    price_pkr_ex_factory: '', price_pkr_on_road: '',
   },
   prices: [] as any[],
   ratings: {
@@ -98,9 +86,9 @@ const emptyVehicle = () => ({
 // Fields entered as comma-separated strings but stored as arrays.
 const COMMA_ARRAY_PATHS = [
   'country_availability', 'competitor_slugs',
-  'specs.powertrain.regen_modes', 'specs.chassis_and_suspension.wheel_sizes_inches',
-  'specs.cockpit_and_tech.app_connectivity', 'specs.cockpit_and_tech.keyless_tech',
-  'specs.adas_and_safety.features',
+  'tags', 'specs.chassis_and_suspension.wheel_sizes_inches',
+  'specs.adas_and_safety.features', 'seo.ai_faq', 'seo.ai_pros', 'seo.ai_cons',
+  'seo.ai_suggested_tags', 'seo.ai_keywords'
 ];
 const NUMERIC_ARRAY_PATHS = ['specs.chassis_and_suspension.wheel_sizes_inches'];
 
