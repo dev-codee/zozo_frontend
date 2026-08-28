@@ -12,6 +12,57 @@ interface EVDescriptionClientProps {
   faqs?: { question: string; answer: string }[];
 }
 
+/**
+ * Parses inline markdown (**bold**, *italic*, `code`) into React elements.
+ * Handles nested bold/italic and mixed formatting.
+ */
+function parseInlineMarkdown(text: string): React.ReactNode {
+  // Split on markdown patterns: **bold**, *italic*, `code`
+  const parts: React.ReactNode[] = [];
+  // Regex matches: **bold**, *italic*, `code`
+  const regex = /(\*\*(.+?)\*\*|\*(.+?)\*|`(.+?)`)/g;
+  let lastIndex = 0;
+  let match: RegExpExecArray | null;
+
+  while ((match = regex.exec(text)) !== null) {
+    // Add text before the match
+    if (match.index > lastIndex) {
+      parts.push(text.slice(lastIndex, match.index));
+    }
+
+    if (match[2]) {
+      // **bold**
+      parts.push(
+        <strong key={match.index} className="font-bold text-text-main">
+          {match[2]}
+        </strong>
+      );
+    } else if (match[3]) {
+      // *italic*
+      parts.push(
+        <em key={match.index} className="italic">
+          {match[3]}
+        </em>
+      );
+    } else if (match[4]) {
+      // `code`
+      parts.push(
+        <code key={match.index} className="bg-surface-container-high px-1.5 py-0.5 rounded text-xs font-mono">
+          {match[4]}
+        </code>
+      );
+    }
+
+    lastIndex = match.index + match[0].length;
+  }
+
+  // Add remaining text
+  if (lastIndex < text.length) {
+    parts.push(text.slice(lastIndex));
+  }
+
+  return parts.length > 0 ? parts : text;
+}
 export default function EVDescriptionClient({
   description,
   vehicleName,
@@ -39,16 +90,50 @@ export default function EVDescriptionClient({
           </div>
           <div className="prose prose-sm md:prose-base max-w-none text-text-main/90 leading-relaxed space-y-4 font-normal">
             {description.split("\n\n").map((paragraph, idx) => {
-              if (paragraph.startsWith("##")) {
+              const trimmed = paragraph.trim();
+
+              // Headings
+              if (trimmed.startsWith("##")) {
                 return (
                   <h3 key={idx} className="text-base md:text-lg font-bold text-text-main pt-2">
-                    {paragraph.replace(/^#+\s*/, "")}
+                    {parseInlineMarkdown(trimmed.replace(/^#+\s*/, ""))}
                   </h3>
                 );
               }
+
+              // Bullet list block (lines starting with - or *)
+              const lines = trimmed.split("\n");
+              const isList = lines.every((l) => /^\s*[-*]\s+/.test(l) || l.trim() === "");
+              if (isList && lines.filter((l) => l.trim()).length > 0) {
+                return (
+                  <ul key={idx} className="list-disc list-inside space-y-1.5 text-sm md:text-base text-text-main/80">
+                    {lines
+                      .filter((l) => l.trim())
+                      .map((l, li) => (
+                        <li key={li}>{parseInlineMarkdown(l.replace(/^\s*[-*]\s+/, ""))}</li>
+                      ))}
+                  </ul>
+                );
+              }
+
+              // Numbered list block
+              const isNumberedList = lines.every((l) => /^\s*\d+[.)]\s+/.test(l) || l.trim() === "");
+              if (isNumberedList && lines.filter((l) => l.trim()).length > 0) {
+                return (
+                  <ol key={idx} className="list-decimal list-inside space-y-1.5 text-sm md:text-base text-text-main/80">
+                    {lines
+                      .filter((l) => l.trim())
+                      .map((l, li) => (
+                        <li key={li}>{parseInlineMarkdown(l.replace(/^\s*\d+[.)]\s+/, ""))}</li>
+                      ))}
+                  </ol>
+                );
+              }
+
+              // Regular paragraph
               return (
                 <p key={idx} className="text-sm md:text-base leading-relaxed text-text-main/80">
-                  {paragraph}
+                  {parseInlineMarkdown(trimmed)}
                 </p>
               );
             })}
@@ -116,7 +201,7 @@ export default function EVDescriptionClient({
             </h3>
           </div>
           <p className="text-xs md:text-sm text-text-main/90 leading-relaxed">
-            {buyingAdvice}
+            {parseInlineMarkdown(buyingAdvice)}
           </p>
         </section>
       )}
@@ -155,7 +240,7 @@ export default function EVDescriptionClient({
                   </button>
                   {isOpen && (
                     <div className="p-4 pt-2 bg-surface-white text-xs md:text-sm text-text-muted leading-relaxed border-t border-border-subtle/40">
-                      {faq.answer}
+                      {parseInlineMarkdown(faq.answer)}
                     </div>
                   )}
                 </div>

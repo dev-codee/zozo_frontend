@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import type { Vehicle } from "@/app/lib/api";
 import AppIcon from "./AppIcon";
+import { getBrandRegion } from "@/app/lib/brandRegion";
 
 interface EVCardProps {
   vehicle: Vehicle;
@@ -32,6 +33,7 @@ export default function EVCard({ vehicle, variant = "list", priority = false }: 
   const drive = vehicle.specs?.powertrain?.drive_layout || "Drive TBA";
 
   const userRating = vehicle.rating?.average || vehicle.ratings?.overall || 0;
+  const brandRegion = getBrandRegion(vehicle.brand_slug, vehicle.made_in);
 
   return (
     <div className="flex flex-col bg-surface-white border border-border-subtle rounded-lg p-4 md:p-5 transition-all duration-300 hover:shadow-card group relative h-full">
@@ -51,6 +53,12 @@ export default function EVCard({ vehicle, variant = "list", priority = false }: 
             {vehicle.body_type && vehicle.body_type.toLowerCase() !== vehicle.ev_category?.toLowerCase() && (
               <span className="text-[10px] font-medium text-text-muted border-l border-border-subtle pl-2">
                 {vehicle.body_type}
+              </span>
+            )}
+            {brandRegion && (
+              <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-text-muted border-l border-border-subtle pl-2">
+                <span className="text-sm leading-none">{brandRegion.flag}</span>
+                {brandRegion.country}
               </span>
             )}
           </div>

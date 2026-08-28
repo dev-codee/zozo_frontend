@@ -11,6 +11,7 @@ import EVSpecs from "@/app/components/EVSpecs";
 import EVDescriptionClient from "@/app/components/EVDescriptionClient";
 import AdSlot from "@/app/components/AdSlot";
 import AppIcon from "@/app/components/AppIcon";
+import { getBrandRegion } from "@/app/lib/brandRegion";
 import {
   generateVehicleSchema,
   generateBreadcrumbSchema,
@@ -190,6 +191,7 @@ export default async function EVDetailPage({
 
   const specs = vehicle.specs || {};
   const pricing = vehicle.pricing || {};
+  const brandRegion = getBrandRegion(vehicle.brand_slug, vehicle.made_in);
 
   // Build the 8-box highlights (ONLY values that exist)
   const highlights: { icon: string; label: string; value: string }[] = [];
@@ -440,6 +442,14 @@ export default async function EVDetailPage({
                         Released: {releaseDateStr}
                       </span>
                     )}
+
+                    {/* Region / Country of Origin */}
+                    {brandRegion && (
+                      <span className="inline-flex items-center gap-1.5 bg-surface-container-lowest text-text-main font-bold text-xs px-2.5 py-1 rounded border border-border-subtle">
+                        <span className="text-base leading-none">{brandRegion.flag}</span>
+                        {brandRegion.country}
+                      </span>
+                    )}
                   </div>
 
                   {/* Rating display */}
@@ -676,7 +686,7 @@ export default async function EVDetailPage({
             {/* Right 1 Col: Sidebar & Competitors */}
             <div className="lg:col-span-1 flex flex-col gap-6">
               {/* Competitors Card */}
-              <div className="bg-surface-white border border-border-subtle rounded-2xl p-5 shadow-sm">
+              <div className="bg-surface-white border border-border-subtle rounded-xl p-5 shadow-sm">
                 <h3 className="font-headline-sm text-sm font-bold text-text-main mb-4 flex items-center gap-2">
                   <AppIcon name="compare_arrows" size={18} className="text-primary" />
                   Similar & Competitor EVs
@@ -686,11 +696,17 @@ export default async function EVDetailPage({
                   <div className="grid grid-cols-2 gap-3">
                     {competitors.map((comp) => {
                       const compImg = comp.images?.find((img) => img.url)?.url;
+                      const formattedPrice = comp.price_pkr
+                        ? comp.price_pkr >= 1000000
+                          ? `Rs. ${(comp.price_pkr / 100000).toFixed(1)} Lac`
+                          : `Rs. ${comp.price_pkr.toLocaleString()}`
+                        : "(Upcoming)";
+
                       return (
                         <Link
                           key={comp._id}
                           href={`/vehicles/${comp.slug}`}
-                          className="flex flex-col rounded-xl border border-border-subtle hover:border-primary hover:shadow-sm transition-all bg-surface-white overflow-hidden group"
+                          className="flex flex-col rounded-md border border-border-subtle hover:border-primary hover:shadow-sm transition-all bg-surface-white overflow-hidden group"
                         >
                           <div className="relative aspect-[16/10] bg-surface-container-low flex items-center justify-center p-2">
                             <Image
@@ -705,7 +721,7 @@ export default async function EVDetailPage({
                               {comp.name}
                             </h4>
                             <span className="text-xs font-bold text-text-main mt-1">
-                              {comp.price_pkr ? `Rs. ${(comp.price_pkr / 100000).toFixed(1)} Lac` : "(Upcoming)"}
+                              {formattedPrice}
                             </span>
                           </div>
                         </Link>
@@ -713,7 +729,9 @@ export default async function EVDetailPage({
                     })}
                   </div>
                 ) : (
-                  <p className="text-xs text-text-muted">No competitor vehicles listed yet.</p>
+                  <p className="text-xs text-text-muted">
+                    No competitor {vehicle.ev_category ? `${vehicle.ev_category.toLowerCase()}s` : "vehicles"} found.
+                  </p>
                 )}
               </div>
 
