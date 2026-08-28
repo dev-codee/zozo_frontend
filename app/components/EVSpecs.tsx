@@ -9,206 +9,62 @@ interface EVSpecsProps {
   className?: string;
 }
 
-// ─── Rating Calculators ────────────────────────────────────────────────────────
-
-function getRangeRating(specs: Vehicle["specs"]) {
-  const wltp = specs?.range_and_efficiency?.wltp_combined_km;
-  const epa = specs?.range_and_efficiency?.epa_combined_km;
-  const range = wltp || epa || 0;
-
-  if (range <= 0) return null;
-
-  let score = 5.0;
-  if (range >= 700) score = 9.8;
-  else if (range >= 600) score = 9.2;
-  else if (range >= 500) score = 8.5;
-  else if (range >= 400) score = 7.8;
-  else if (range >= 300) score = 6.8;
-  else if (range >= 200) score = 5.8;
-  else score = 4.8;
-
-  let label = "Average";
-  if (score >= 9.0) label = "Exceptional";
-  else if (score >= 8.0) label = "Very Good";
-  else if (score >= 7.0) label = "Good";
-  else if (score >= 5.5) label = "Moderate";
-  else label = "City Range";
-
-  return { score, label };
-}
-
-function getPerformanceRating(specs: Vehicle["specs"]) {
-  const accel = specs?.powertrain?.acceleration_0_100_kmh;
-  const hp = specs?.powertrain?.total_power_hp;
-
-  if (!accel && !hp) return null;
-
-  let score = 6.0;
-  if (accel && accel > 0) {
-    if (accel <= 3.0) score = 9.9;
-    else if (accel <= 4.0) score = 9.4;
-    else if (accel <= 5.5) score = 8.5;
-    else if (accel <= 7.5) score = 7.5;
-    else if (accel <= 10.0) score = 6.5;
-    else score = 5.2;
-  } else if (hp && hp > 0) {
-    if (hp >= 600) score = 9.8;
-    else if (hp >= 400) score = 8.8;
-    else if (hp >= 250) score = 7.8;
-    else if (hp >= 150) score = 6.8;
-    else score = 5.5;
+// Helper to render a single spec row (hides if null/undefined/empty)
+const renderRow = (label: string, value: React.ReactNode) => {
+  if (value === null || value === undefined || value === "" || value === "false") return null;
+  if (value === true || value === "true") value = "Yes";
+  if (value === false) value = "No";
+  if (Array.isArray(value)) {
+    if (value.length === 0) return null;
+    value = value.join(", ");
   }
+  return (
+    <div key={label} className="grid grid-cols-1 md:grid-cols-[220px_1fr] gap-2 md:gap-6 py-2.5 px-5 md:px-6 border-b border-border-subtle/50 last:border-b-0 hover:bg-surface-container-lowest/50 transition-colors duration-150">
+      <span className="text-text-muted font-semibold text-xs md:text-sm capitalize">{label.replace(/_/g, " ")}</span>
+      <span className="text-text-main text-xs md:text-sm font-medium leading-relaxed">{value}</span>
+    </div>
+  );
+};
 
-  let label = "Standard";
-  if (score >= 9.0) label = "Supercar Fast";
-  else if (score >= 8.0) label = "High Performance";
-  else if (score >= 7.0) label = "Brisk";
-  else if (score >= 6.0) label = "Adequate";
-  else label = "Commuter";
+// Helper to render an accordion section (only if at least one row has data)
+const renderSection = (
+  id: string,
+  title: string,
+  icon: string,
+  rowNodes: React.ReactNode[]
+) => {
+  const validRows = rowNodes.filter(Boolean);
+  if (validRows.length === 0) return null; // Entire section hidden if all fields are empty!
 
-  return { score, label };
-}
+  return (
+    <details open className="group flex flex-col border-b border-border-subtle last:border-b-0">
+      <summary className="w-full p-4 md:p-5 md:px-6 flex items-center justify-between cursor-pointer select-none bg-surface-container-low/20 hover:bg-surface-container-low/40 transition-colors duration-200 list-none [&::-webkit-details-marker]:hidden border-none outline-none text-left">
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 rounded-lg bg-surface-white border border-border-subtle flex items-center justify-center text-primary shadow-xs">
+            <AppIcon name={icon} size={18} />
+          </div>
+          <span className="font-headline-sm text-sm md:text-base font-bold text-text-main">
+            {title}
+          </span>
+        </div>
 
-function getChargingRating(specs: Vehicle["specs"]) {
-  const dcKw = specs?.charging?.dc_max_power_kw;
-  const chargeMin = specs?.charging?.dc_charge_time_10_80_min;
+        <AppIcon
+          name="keyboard_arrow_down"
+          size={20}
+          className="text-text-muted transition-transform duration-200 group-open:rotate-180 ml-auto"
+        />
+      </summary>
 
-  if (!dcKw && !chargeMin) return null;
-
-  let score = 6.0;
-  if (dcKw && dcKw > 0) {
-    if (dcKw >= 250) score = 9.8;
-    else if (dcKw >= 150) score = 8.8;
-    else if (dcKw >= 100) score = 7.8;
-    else if (dcKw >= 50) score = 6.8;
-    else score = 5.0;
-  }
-
-  let label = "Standard";
-  if (score >= 9.0) label = "Ultra-Fast (800V)";
-  else if (score >= 8.0) label = "Rapid DC";
-  else if (score >= 7.0) label = "Fast";
-  else label = "Standard DC";
-
-  return { score, label };
-}
-
-function getSafetyRating(specs: Vehicle["specs"]) {
-  const ncap = specs?.adas_and_safety?.euro_ncap_stars;
-  const airbags = specs?.adas_and_safety?.airbag_count;
-
-  if (!ncap && !airbags) return null;
-
-  let score = 7.0;
-  if (ncap === 5) score = 9.5;
-  else if (ncap === 4) score = 8.0;
-  else if (ncap === 3) score = 6.5;
-
-  if (airbags && airbags >= 7) score = Math.min(10.0, score + 0.5);
-
-  let label = "Good";
-  if (score >= 9.0) label = "5-Star Safety";
-  else if (score >= 7.5) label = "High Safety";
-  else label = "Standard";
-
-  return { score, label };
-}
-
-function getRatingColors(label: string) {
-  if (label.includes("Exceptional") || label.includes("Supercar") || label.includes("Ultra-Fast") || label.includes("5-Star")) {
-    return { bar: "bg-emerald-500", text: "text-emerald-600 dark:text-emerald-400" };
-  }
-  if (label.includes("Very Good") || label.includes("High Performance") || label.includes("Rapid") || label.includes("High Safety")) {
-    return { bar: "bg-green-500", text: "text-green-600 dark:text-green-400" };
-  }
-  if (label.includes("Good") || label.includes("Brisk") || label.includes("Fast")) {
-    return { bar: "bg-blue-500", text: "text-blue-600 dark:text-blue-400" };
-  }
-  return { bar: "bg-amber-500", text: "text-amber-600 dark:text-amber-400" };
-}
+      <div className="flex flex-col bg-surface-white">
+        {validRows}
+      </div>
+    </details>
+  );
+};
 
 export default function EVSpecs({ vehicle, className = "" }: EVSpecsProps) {
   const specs = vehicle.specs || {};
   const pricing = vehicle.pricing || {};
-
-  const ratings = {
-    range: getRangeRating(specs),
-    performance: getPerformanceRating(specs),
-    charging: getChargingRating(specs),
-    safety: getSafetyRating(specs),
-  };
-
-  // Helper to render a single spec row (hides if null/undefined/empty)
-  const renderRow = (label: string, value: React.ReactNode) => {
-    if (value === null || value === undefined || value === "" || value === "false") return null;
-    if (value === true || value === "true") value = "Yes";
-    if (value === false) value = "No";
-    if (Array.isArray(value)) {
-      if (value.length === 0) return null;
-      value = value.join(", ");
-    }
-    return (
-      <div key={label} className="grid grid-cols-1 md:grid-cols-[220px_1fr] gap-2 md:gap-6 py-2.5 px-5 md:px-6 border-b border-border-subtle/50 last:border-b-0 hover:bg-surface-container-lowest/50 transition-colors duration-150">
-        <span className="text-text-muted font-semibold text-xs md:text-sm capitalize">{label.replace(/_/g, " ")}</span>
-        <span className="text-text-main text-xs md:text-sm font-medium leading-relaxed">{value}</span>
-      </div>
-    );
-  };
-
-  // Helper to render an accordion section (only if at least one row has data)
-  const renderSection = (
-    id: string,
-    title: string,
-    icon: string,
-    rowNodes: React.ReactNode[],
-    rating?: { score: number; label: string } | null
-  ) => {
-    const validRows = rowNodes.filter(Boolean);
-    if (validRows.length === 0) return null; // Entire section hidden if all fields are empty!
-
-    const colors = rating ? getRatingColors(rating.label) : null;
-
-    return (
-      <details open className="group flex flex-col border-b border-border-subtle last:border-b-0">
-        <summary className="w-full p-4 md:p-5 md:px-6 flex items-center justify-between cursor-pointer select-none bg-surface-container-low/20 hover:bg-surface-container-low/40 transition-colors duration-200 list-none [&::-webkit-details-marker]:hidden border-none outline-none text-left">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-surface-white border border-border-subtle flex items-center justify-center text-primary shadow-xs">
-              <AppIcon name={icon} size={18} />
-            </div>
-            <span className="font-headline-sm text-sm md:text-base font-bold text-text-main">
-              {title}
-            </span>
-          </div>
-
-          <div className="flex items-center gap-4 ml-auto mr-3">
-            {rating && colors && (
-              <div className="flex items-center gap-2">
-                <div className="hidden sm:block w-16 md:w-24 h-1.5 bg-border-subtle rounded-full overflow-hidden">
-                  <div
-                    className={`h-full rounded-full ${colors.bar} transition-all duration-500`}
-                    style={{ width: `${rating.score * 10}%` }}
-                  />
-                </div>
-                <span className={`text-[11px] md:text-xs font-semibold ${colors.text}`}>
-                  ({rating.label})
-                </span>
-              </div>
-            )}
-          </div>
-
-          <AppIcon
-            name="keyboard_arrow_down"
-            size={20}
-            className="text-text-muted transition-transform duration-200 group-open:rotate-180"
-          />
-        </summary>
-
-        <div className="flex flex-col bg-surface-white">
-          {validRows}
-        </div>
-      </details>
-    );
-  };
 
   return (
     <section className={`bg-surface-white border border-border-subtle rounded-2xl overflow-hidden shadow-sm flex flex-col ${className}`}>
@@ -266,7 +122,7 @@ export default function EVSpecs({ vehicle, className = "" }: EVSpecsProps) {
         renderRow("Real-World Range (Cold Weather)", specs.range_and_efficiency?.real_world_range_cold_km ? `${specs.range_and_efficiency.real_world_range_cold_km} km` : ""),
         renderRow("Real-World Range (Highway)", specs.range_and_efficiency?.real_world_range_highway_km ? `${specs.range_and_efficiency.real_world_range_highway_km} km` : ""),
         renderRow("Drag Coefficient (Cd)", specs.range_and_efficiency?.drag_coefficient_cd ? `${specs.range_and_efficiency.drag_coefficient_cd} Cd` : ""),
-      ], ratings.range)}
+      ])}
 
       {/* 4. Charging & Bidirectional Power */}
       {renderSection("charging", "Charging & Bidirectional Power", "bolt", [
@@ -279,7 +135,7 @@ export default function EVSpecs({ vehicle, className = "" }: EVSpecsProps) {
         renderRow("Vehicle-to-Load (V2L)", specs.charging?.v2l_support ? "Supported (Power external devices)" : ""),
         renderRow("Vehicle-to-Home (V2H)", specs.charging?.v2h_support ? "Supported" : ""),
         renderRow("Vehicle-to-Grid (V2G)", specs.charging?.v2g_support ? "Supported" : ""),
-      ], ratings.charging)}
+      ])}
 
       {/* 5. Drivetrain, Motors & Performance */}
       {renderSection("powertrain", "Drivetrain, Motors & Performance", "sports_motorsports", [
@@ -291,7 +147,7 @@ export default function EVSpecs({ vehicle, className = "" }: EVSpecsProps) {
         renderRow("Acceleration 0-100 km/h", specs.powertrain?.acceleration_0_100_kmh ? `${specs.powertrain.acceleration_0_100_kmh} seconds` : ""),
         renderRow("Acceleration 0-60 mph", specs.powertrain?.acceleration_0_60_mph ? `${specs.powertrain.acceleration_0_60_mph} seconds` : ""),
         renderRow("Top Speed", specs.powertrain?.top_speed_kmh ? `${specs.powertrain.top_speed_kmh} km/h` : ""),
-      ], ratings.performance)}
+      ])}
 
       {/* 6. Dimensions, Weight & Storage */}
       {renderSection("dimensions", "Dimensions, Weight & Storage", "straighten", [
@@ -346,7 +202,7 @@ export default function EVSpecs({ vehicle, className = "" }: EVSpecsProps) {
         renderRow("Radar Sensors", specs.adas_and_safety?.radar_count ? `${specs.adas_and_safety.radar_count} mmWave Radars` : ""),
         renderRow("Ultrasonic Sensors", specs.adas_and_safety?.ultrasonic_count ? `${specs.adas_and_safety.ultrasonic_count} Ultrasonic Sensors` : ""),
         renderRow("Active Safety Features", specs.adas_and_safety?.features),
-      ], ratings.safety)}
+      ])}
 
       {/* 10. Pricing & Global Markets */}
       {renderSection("pricing", "Pricing & Global Markets", "payments", [

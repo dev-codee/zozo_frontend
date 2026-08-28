@@ -52,7 +52,7 @@ export default async function VehiclesPage({
     <div className="min-h-screen bg-surface-white flex flex-col selection:bg-primary/20">
       <Navbar />
       
-      <main className="flex-1 w-full max-w-[1280px] mx-auto px-4 md:px-6 py-6 md:py-8 mt-24">
+      <main className="flex-1 w-full max-w-[1280px] mx-auto px-4 md:px-6 py-6 md:py-8">
         <Breadcrumb 
           items={[
             { label: resolvedParams.category ? `${resolvedParams.category}s` : "Vehicles" }
@@ -70,7 +70,7 @@ export default async function VehiclesPage({
           </div>
         </div>
 
-        <div className="mt-6 flex flex-col gap-6">
+        <div className="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {vehicles.length === 0 ? (
             <div className="py-20 flex flex-col items-center justify-center bg-surface-container-low rounded-2xl border border-border-subtle">
               <div className="w-14 h-14 rounded-2xl bg-surface-container-high flex items-center justify-center text-text-muted mb-3">

@@ -338,7 +338,7 @@ export default async function EVDetailPage({
       <div className="min-h-screen bg-surface-white flex flex-col selection:bg-primary/20">
         <Navbar />
 
-        <main className="flex-1 w-full max-w-[1280px] mx-auto px-4 md:px-6 py-6 md:py-8 mt-24 flex flex-col gap-6">
+        <main className="flex-1 w-full max-w-[1280px] mx-auto px-4 md:px-6 py-6 md:py-8 flex flex-col gap-6">
           {/* Breadcrumb */}
           <Breadcrumb
             items={[
@@ -370,51 +370,73 @@ export default async function EVDetailPage({
 
                   {/* Badges & Meta Row */}
                   <div className="flex flex-wrap items-center gap-2 mt-3">
-                    <Link
-                      href={`/vehicles?brand=${vehicle.brand_slug}`}
-                      className="inline-flex items-center gap-1 bg-surface-container-low text-primary font-bold text-xs px-3 py-1 rounded-full uppercase border border-border-subtle hover:border-primary transition-colors"
-                    >
-                      {vehicle.brand_slug.toUpperCase().replace("-", " ")}
-                    </Link>
+                    {/* Brand */}
+                    {vehicle.brand_slug && (
+                      <Link
+                        href={`/vehicles?brand=${vehicle.brand_slug}`}
+                        className="inline-flex items-center gap-1 bg-blue-50 text-blue-900 font-bold text-xs px-2.5 py-1 rounded border border-blue-200 hover:bg-blue-100 uppercase tracking-wide transition-colors"
+                      >
+                        {vehicle.brand_slug.toUpperCase().replace("-", " ")}
+                      </Link>
+                    )}
 
+                    {/* Category */}
                     {vehicle.ev_category && (
                       <Link
                         href={`/vehicles?category=${vehicle.ev_category}`}
-                        className="inline-flex items-center gap-1 bg-surface-container-low text-text-muted font-semibold text-xs px-3 py-1 rounded-full uppercase border border-border-subtle hover:text-text-main"
+                        className="inline-flex items-center gap-1 bg-blue-50 text-blue-900 font-bold text-xs px-2.5 py-1 rounded border border-blue-200 hover:bg-blue-100 uppercase tracking-wide transition-colors"
                       >
                         {vehicle.ev_category}
                       </Link>
                     )}
 
-                    {vehicle.body_type && (
-                      <span className="inline-flex items-center gap-1 bg-surface-container-low text-text-muted font-medium text-xs px-3 py-1 rounded-full border border-border-subtle">
+                    {/* Body Type (only if distinct from category) */}
+                    {vehicle.body_type && vehicle.body_type.toLowerCase() !== vehicle.ev_category?.toLowerCase() && (
+                      <span className="inline-flex items-center gap-1 bg-blue-50 text-blue-900 font-semibold text-xs px-2.5 py-1 rounded border border-blue-200">
                         {vehicle.body_type}
                       </span>
                     )}
 
-                    {vehicle.vehicle_type && (
-                      <span className="inline-flex items-center gap-1 bg-primary/10 text-primary font-semibold text-xs px-2.5 py-1 rounded-full border border-primary/20">
+                    {/* Vehicle / Powertrain Type (only if distinct) */}
+                    {vehicle.vehicle_type &&
+                      vehicle.vehicle_type.toLowerCase() !== vehicle.ev_category?.toLowerCase() &&
+                      vehicle.vehicle_type.toLowerCase() !== vehicle.body_type?.toLowerCase() && (
+                      <span className="inline-flex items-center gap-1 bg-blue-50 text-blue-900 font-bold text-xs px-2.5 py-1 rounded border border-blue-200 uppercase">
                         {vehicle.vehicle_type}
                       </span>
                     )}
 
+                    {/* Availability Status */}
                     {vehicle.status && (
                       <span
-                        className={`inline-flex items-center gap-1 font-semibold text-xs px-3 py-1 rounded-full border ${
+                        className={`inline-flex items-center gap-1.5 font-bold text-xs px-2.5 py-1 rounded border ${
                           vehicle.status === "available"
-                            ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-500/20"
+                            ? "bg-emerald-50 text-emerald-900 border-emerald-300"
                             : vehicle.status === "upcoming"
-                            ? "bg-amber-500/10 text-amber-700 dark:text-amber-400 border-amber-500/20"
-                            : "bg-surface-container-low text-text-muted border-border-subtle"
+                            ? "bg-amber-50 text-amber-900 border-amber-300"
+                            : "bg-blue-50 text-blue-900 border-blue-200"
                         }`}
                       >
-                        <span className="w-1.5 h-1.5 rounded-full bg-current" />
-                        {vehicle.status.charAt(0).toUpperCase() + vehicle.status.slice(1)}
+                        <span
+                          className={`w-1.5 h-1.5 rounded-full ${
+                            vehicle.status === "available"
+                              ? "bg-emerald-600"
+                              : vehicle.status === "upcoming"
+                              ? "bg-amber-600"
+                              : "bg-blue-600"
+                          }`}
+                        />
+                        {vehicle.status === "available"
+                          ? "Available in Pakistan"
+                          : vehicle.status === "upcoming"
+                          ? "Upcoming in Pakistan"
+                          : vehicle.status.charAt(0).toUpperCase() + vehicle.status.slice(1)}
                       </span>
                     )}
 
+                    {/* Release Date */}
                     {releaseDateStr && (
-                      <span className="inline-flex items-center gap-1 bg-surface-container-low text-text-muted text-xs px-3 py-1 rounded-full border border-border-subtle">
+                      <span className="inline-flex items-center gap-1 bg-blue-50/60 text-blue-900 font-medium text-xs px-2.5 py-1 rounded border border-blue-200">
                         Released: {releaseDateStr}
                       </span>
                     )}
@@ -439,7 +461,7 @@ export default async function EVDetailPage({
                 </div>
 
                 {/* Pricing Box */}
-                <div className="bg-surface-container-lowest/80 border border-border-subtle rounded-xl p-4 flex flex-col gap-1">
+                <div className="bg-surface-container-lowest/80 border border-border-subtle rounded-lg p-4 flex flex-col gap-1">
                   <div className="flex items-baseline justify-between gap-4">
                     <div className="flex items-baseline gap-1.5">
                       <span className="text-sm font-bold text-text-muted">Rs.</span>
@@ -448,11 +470,11 @@ export default async function EVDetailPage({
                       </span>
                     </div>
                     {lowestPrice ? (
-                      <span className="text-xs font-semibold px-2.5 py-1 rounded bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20">
+                      <span className="text-xs font-semibold px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20">
                         Starting Price
                       </span>
                     ) : (
-                      <span className="text-xs font-semibold px-2.5 py-1 rounded bg-surface-container-high text-text-muted">
+                      <span className="text-xs font-semibold px-2 py-0.5 rounded bg-surface-container-high text-text-muted">
                         Expected Price
                       </span>
                     )}
@@ -487,7 +509,7 @@ export default async function EVDetailPage({
                           <Link
                             key={v._id}
                             href={`/vehicles/${v.slug}`}
-                            className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all border ${
+                            className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-all border ${
                               isCurrent
                                 ? "bg-primary text-white border-primary shadow-xs"
                                 : "bg-surface-white text-text-main border-border-subtle hover:border-primary hover:bg-surface-container-low"
@@ -506,26 +528,26 @@ export default async function EVDetailPage({
                   </div>
                 )}
 
-                {/* Top Features 8-Box Grid */}
+                {/* Top Features 3-Box Grid */}
                 {highlights.length > 0 && (
                   <div>
                     <h2 className="text-xs font-bold text-text-muted uppercase tracking-wider mb-2.5">
                       Key Highlights
                     </h2>
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                       {highlights.map((h, i) => (
                         <div
                           key={i}
-                          className="flex items-center gap-2 p-2 rounded-xl border border-border-subtle bg-surface-white hover:border-primary/50 transition-colors shadow-2xs"
+                          className="flex items-center gap-2.5 p-3 rounded-md border border-border-subtle bg-surface-white hover:border-primary/50 transition-colors shadow-2xs"
                         >
-                          <div className="w-8 h-8 rounded-lg bg-blue-50 text-primary flex items-center justify-center shrink-0">
-                            <AppIcon name={h.icon} size={18} />
+                          <div className="w-8 h-8 rounded-sm bg-blue-50 text-primary flex items-center justify-center shrink-0">
+                            <AppIcon name={h.icon} size={17} />
                           </div>
-                          <div className="flex flex-col overflow-hidden min-w-0">
-                            <span className="text-[10px] font-semibold text-text-muted uppercase tracking-wider truncate">
+                          <div className="flex flex-col min-w-0">
+                            <span className="text-[10px] font-semibold text-text-muted uppercase tracking-wider">
                               {h.label}
                             </span>
-                            <span className="text-xs font-bold text-text-main truncate leading-tight">
+                            <span className="text-xs font-bold text-text-main leading-snug">
                               {h.value}
                             </span>
                           </div>
@@ -534,26 +556,6 @@ export default async function EVDetailPage({
                     </div>
                   </div>
                 )}
-
-                {/* Action Buttons */}
-                <div className="flex flex-wrap items-center gap-3 pt-2">
-                  <Link
-                    href={`/compare?vehicle=${vehicle.slug}`}
-                    rel="nofollow"
-                    className="flex items-center justify-center gap-2 py-2 px-4 rounded-xl border border-border-subtle bg-surface-white hover:bg-surface-container-low hover:border-primary font-semibold text-xs text-text-main transition-colors shadow-2xs"
-                  >
-                    <AppIcon name="compare_arrows" size={16} />
-                    Compare EV
-                  </Link>
-
-                  <a
-                    href="#full-specs"
-                    className="flex items-center justify-center gap-2 py-2 px-4 rounded-xl bg-primary text-white hover:bg-primary/90 font-semibold text-xs transition-colors shadow-2xs"
-                  >
-                    <AppIcon name="receipt_long" size={16} />
-                    View All Specs
-                  </a>
-                </div>
               </div>
             </div>
           </div>

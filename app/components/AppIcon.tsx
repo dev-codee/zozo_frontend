@@ -70,6 +70,18 @@ import {
   Flame,
   Car,
   Bike,
+  Gauge,
+  Timer,
+  Network,
+  Shield,
+  Armchair,
+  Maximize2,
+  Ruler,
+  CreditCard,
+  Store,
+  Info,
+  Lightbulb,
+  Receipt,
   type LucideIcon,
 } from "lucide-react";
 
@@ -101,6 +113,7 @@ const iconMap: Record<string, LucideIcon> = {
   error: AlertCircle,
   warning: AlertTriangle,
   help_outline: HelpCircle,
+  quiz: HelpCircle,
   thumbs_up_down: ThumbsUp,
   star: Star,
   star_half: StarHalf,
@@ -113,6 +126,9 @@ const iconMap: Record<string, LucideIcon> = {
   filter_list: Filter,
   sliders: Sliders,
   category: Layers,
+  fullscreen: Maximize2,
+  info: Info,
+  lightbulb: Lightbulb,
 
   // Device & Hardware
   smartphone: Smartphone,
@@ -123,6 +139,8 @@ const iconMap: Record<string, LucideIcon> = {
   videocam: Video,
   movie: Film,
   smart_display: Tv,
+  tv: Tv,
+  devices: Tv,
   developer_board: Cpu,
   memory: Cpu,
   storage: HardDrive,
@@ -154,6 +172,7 @@ const iconMap: Record<string, LucideIcon> = {
   smart_toy: Bot,
   dashboard: LayoutDashboard,
   bolt: Zap,
+  offline_bolt: Zap,
   call: PhoneCall,
   work: Briefcase,
   wifi: Wifi,
@@ -166,16 +185,28 @@ const iconMap: Record<string, LucideIcon> = {
   sync: Loader2,
   send: Send,
   description: FileText,
+  receipt_long: Receipt,
   analytics: BarChart3,
   psychiatry: Sparkles,
   sparkles: Sparkles,
+  payments: CreditCard,
+  storefront: Store,
 
-  // Vehicles
+  // Vehicles & Automotive Specs
   car: Car,
   electric_car: Car,
+  directions_car: Car,
   bike: Bike,
   scooter: Bike,
   cycle: Bike,
+  speed: Gauge,
+  shutter_speed: Timer,
+  settings_ethernet: Network,
+  airline_seat_recline_extra: Armchair,
+  shield: Shield,
+  straighten: Ruler,
+  settings_suggest: Wrench,
+  sports_motorsports: Gauge,
 };
 
 export default function AppIcon({ name, className = "", size, style, fill }: AppIconProps) {

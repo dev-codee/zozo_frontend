@@ -50,7 +50,7 @@ export default async function NewsPage() {
       />
       <Navbar />
 
-      <main className="flex-1 w-full max-w-[1280px] mx-auto px-4 md:px-6 py-6 md:py-8 mt-24">
+      <main className="flex-1 w-full max-w-[1280px] mx-auto px-4 md:px-6 py-6 md:py-8">
         {/* News Layout Grid: Main Content (8 cols) + Dynamic Sidebar (4 cols) */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           {/* Main News Content */}
