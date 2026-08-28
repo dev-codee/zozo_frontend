@@ -362,9 +362,8 @@ export default function NavbarClient({ dynamicPages = [] }: { dynamicPages?: any
                     key={cat}
                     href={`/vehicles?category=${cat}`}
                     onClick={() => setMobileOpen(false)}
-                    className="flex items-center gap-2.5 px-4 py-2 rounded-lg transition-colors text-sm font-semibold text-on-surface-variant hover:text-primary hover:bg-surface-container-low"
+                    className="flex items-center px-4 py-2 rounded-lg transition-colors text-sm font-semibold text-on-surface-variant hover:text-primary hover:bg-surface-container-low"
                   >
-                    <AppIcon name="electric_car" size={18} className="text-text-muted" />
                     {cat}s
                   </Link>
                 ))}

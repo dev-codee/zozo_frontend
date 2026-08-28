@@ -68,6 +68,8 @@ import {
   Sliders,
   Check,
   Flame,
+  Car,
+  Bike,
   type LucideIcon,
 } from "lucide-react";
 
@@ -167,6 +169,13 @@ const iconMap: Record<string, LucideIcon> = {
   analytics: BarChart3,
   psychiatry: Sparkles,
   sparkles: Sparkles,
+
+  // Vehicles
+  car: Car,
+  electric_car: Car,
+  bike: Bike,
+  scooter: Bike,
+  cycle: Bike,
 };
 
 export default function AppIcon({ name, className = "", size, style, fill }: AppIconProps) {
@@ -174,14 +183,7 @@ export default function AppIcon({ name, className = "", size, style, fill }: App
   const IconComponent = iconMap[normalized];
 
   if (!IconComponent) {
-    return (
-      <span
-        className={`inline-flex items-center justify-center ${className}`}
-        style={style}
-      >
-        <Sparkles size={size || 18} />
-      </span>
-    );
+    return null;
   }
 
   const iconProps: any = {

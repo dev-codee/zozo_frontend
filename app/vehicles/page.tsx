@@ -5,8 +5,7 @@ import Footer from "@/app/components/Footer";
 import EVCard from "@/app/components/EVCard";
 import Breadcrumb from "@/app/components/Breadcrumb";
 import Pagination from "@/app/components/Pagination";
-
-import AppIcon from "@/app/components/AppIcon";
+import { Car } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -75,7 +74,7 @@ export default async function VehiclesPage({
           {vehicles.length === 0 ? (
             <div className="py-20 flex flex-col items-center justify-center bg-surface-container-low rounded-2xl border border-border-subtle">
               <div className="w-14 h-14 rounded-2xl bg-surface-container-high flex items-center justify-center text-text-muted mb-3">
-                <AppIcon name="electric_car" size={28} />
+                <Car className="w-7 h-7 text-text-muted" />
               </div>
               <h3 className="text-lg font-bold text-text-main mb-2">No vehicles found</h3>
               <p className="text-sm text-text-muted text-center max-w-md">

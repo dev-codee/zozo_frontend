@@ -28,6 +28,52 @@ function getYouTubeEmbedId(url: string) {
   return match && match[2].length === 11 ? match[2] : null;
 }
 
+function getBudgetLinks(category?: string) {
+  const cat = category || "Car";
+
+  if (cat === "Scooter" || cat === "Bike") {
+    const catTitle = cat === "Bike" ? "Bikes" : "Scooters";
+    return {
+      title: `Electric ${catTitle} by Budget`,
+      items: [
+        { label: `Under Rs. 1.5 Lakh`, price: 150000 },
+        { label: `Under Rs. 2.5 Lakh`, price: 250000 },
+        { label: `Under Rs. 4 Lakh`, price: 400000 },
+        { label: `Under Rs. 6 Lakh`, price: 600000 },
+        { label: `Under Rs. 10 Lakh`, price: 1000000 },
+      ],
+      queryParam: `category=${cat}`,
+    };
+  }
+
+  if (cat === "Cycle") {
+    return {
+      title: `Electric Cycles by Budget`,
+      items: [
+        { label: `Under Rs. 35,000`, price: 35000 },
+        { label: `Under Rs. 50,000`, price: 50000 },
+        { label: `Under Rs. 75,000`, price: 75000 },
+        { label: `Under Rs. 1 Lakh`, price: 100000 },
+      ],
+      queryParam: `category=Cycle`,
+    };
+  }
+
+  // Cars (max 3 Crore)
+  return {
+    title: `Electric Cars by Budget`,
+    items: [
+      { label: `Under Rs. 50 Lakh`, price: 5000000 },
+      { label: `Under Rs. 80 Lakh`, price: 8000000 },
+      { label: `Under Rs. 1 Crore`, price: 10000000 },
+      { label: `Under Rs. 1.5 Crore`, price: 15000000 },
+      { label: `Under Rs. 2 Crore`, price: 20000000 },
+      { label: `Under Rs. 3 Crore`, price: 30000000 },
+    ],
+    queryParam: `category=Car`,
+  };
+}
+
 export async function generateMetadata({
   params,
 }: {
@@ -463,8 +509,7 @@ export default async function EVDetailPage({
                 {/* Top Features 8-Box Grid */}
                 {highlights.length > 0 && (
                   <div>
-                    <h2 className="text-xs font-bold text-text-muted uppercase tracking-wider mb-2.5 flex items-center gap-1.5">
-                      <AppIcon name="stars" size={16} className="text-primary" />
+                    <h2 className="text-xs font-bold text-text-muted uppercase tracking-wider mb-2.5">
                       Key Highlights
                     </h2>
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
@@ -697,30 +742,29 @@ export default async function EVDetailPage({
               )}
 
               {/* Price bracket navigation */}
-              <div className="bg-surface-white border border-border-subtle rounded-2xl p-5 shadow-sm">
-                <h3 className="font-headline-sm text-sm font-bold text-primary mb-3">
-                  Electric Vehicles by Budget
-                </h3>
-                <ul className="flex flex-col gap-2">
-                  {[
-                    { label: "EVs Under Rs. 50 Lakh", price: 5000000 },
-                    { label: "EVs Under Rs. 80 Lakh", price: 8000000 },
-                    { label: "EVs Under Rs. 1 Crore", price: 10000000 },
-                    { label: "EVs Under Rs. 1.5 Crore", price: 15000000 },
-                    { label: "EVs Under Rs. 2 Crore", price: 20000000 },
-                  ].map((p) => (
-                    <li key={p.price}>
-                      <Link
-                        href={`/vehicles?max_price=${p.price}`}
-                        className="text-xs md:text-sm text-text-main hover:text-primary transition-colors flex items-center justify-between"
-                      >
-                        <span>{p.label}</span>
-                        <AppIcon name="chevron_right" size={14} className="text-text-muted" />
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
+              {(() => {
+                const budgetGroup = getBudgetLinks(vehicle.ev_category);
+                return (
+                  <div className="bg-surface-white border border-border-subtle rounded-2xl p-5 shadow-sm">
+                    <h3 className="font-headline-sm text-sm font-bold text-primary mb-3">
+                      {budgetGroup.title}
+                    </h3>
+                    <ul className="flex flex-col gap-2">
+                      {budgetGroup.items.map((p) => (
+                        <li key={p.price}>
+                          <Link
+                            href={`/vehicles?${budgetGroup.queryParam}&max_price=${p.price}`}
+                            className="text-xs md:text-sm text-text-main hover:text-primary transition-colors flex items-center justify-between"
+                          >
+                            <span>{p.label}</span>
+                            <AppIcon name="chevron_right" size={14} className="text-text-muted" />
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                );
+              })()}
 
               {/* Ad Slot */}
               <div className="rounded-2xl overflow-hidden">
