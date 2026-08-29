@@ -121,40 +121,40 @@ export default function VehiclesListPage() {
           <Link href="/admin/vehicles/new" className="text-indigo-600 font-medium hover:underline">Add your first EV</Link>
         </div>
       ) : (
-        <div className="bg-white shadow-sm rounded-xl border border-gray-200 overflow-hidden">
+        <div className="bg-white shadow-sm rounded-xl border border-gray-200 overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">EV</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Brand</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Approval</th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">EV</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Brand</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Approval</th>
+                <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider sticky right-0 bg-gray-50">Actions</th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {vehicles.map((v) => (
-                <tr key={v._id} className="hover:bg-gray-50 transition-colors">
-                  <td className="px-6 py-4 whitespace-nowrap">
+                <tr key={v._id} className="group hover:bg-gray-50 transition-colors">
+                  <td className="px-4 py-4">
                     <div className="flex items-center">
                       <div className="h-10 w-10 flex-shrink-0 bg-gray-100 rounded flex items-center justify-center overflow-hidden border border-gray-200">
                         {v.images && v.images.length > 0 ? (
                           <img src={v.images[0].url} alt="" className="h-full w-full object-cover" />
                         ) : (<span className="text-gray-400 text-xs">No img</span>)}
                       </div>
-                      <div className="ml-4">
+                      <div className="ml-4 min-w-0">
                         <div className="text-xs font-medium text-gray-900">{v.name}</div>
                         <div className="text-xs text-gray-500">{v.model_name || 'N/A'}{v.variant_name ? ` · ${v.variant_name}` : ''}</div>
                       </div>
                     </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="px-4 py-4 whitespace-nowrap">
                     <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800 uppercase">{v.brand_slug}</span>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-xs text-gray-600">{v.ev_category || '—'}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-xs text-gray-500 capitalize">{(v.status || '').replace('_', ' ')}</td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="px-4 py-4 whitespace-nowrap text-xs text-gray-600">{v.ev_category || '—'}</td>
+                  <td className="px-4 py-4 whitespace-nowrap text-xs text-gray-500 capitalize">{(v.status || '').replace('_', ' ')}</td>
+                  <td className="px-4 py-4 whitespace-nowrap">
                     <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
                       v.approvalStatus === 'APPROVED' ? 'bg-emerald-100 text-emerald-800' :
                       v.approvalStatus === 'PENDING_REVIEW' ? 'bg-amber-100 text-amber-800' :
@@ -162,7 +162,7 @@ export default function VehiclesListPage() {
                       'bg-gray-100 text-gray-800'
                     }`}>{v.approvalStatus || 'DRAFT'}</span>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-xs font-medium">
+                  <td className="px-4 py-4 whitespace-nowrap text-right text-xs font-medium sticky right-0 bg-white group-hover:bg-gray-50 shadow-[-8px_0_8px_-8px_rgba(0,0,0,0.08)]">
                     <div className="flex justify-end space-x-2">
                       {canApprove && v.approvalStatus !== 'APPROVED' && (
                         <>
