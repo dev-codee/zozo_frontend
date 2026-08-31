@@ -47,6 +47,19 @@ function getBudgetLinks(category?: string) {
     };
   }
 
+  if (cat === "Rickshaw") {
+    return {
+      title: `Electric Rickshaws by Budget`,
+      items: [
+        { label: `Under Rs. 3 Lakh`, price: 300000 },
+        { label: `Under Rs. 5 Lakh`, price: 500000 },
+        { label: `Under Rs. 8 Lakh`, price: 800000 },
+        { label: `Under Rs. 12 Lakh`, price: 1200000 },
+      ],
+      queryParam: `category=Rickshaw`,
+    };
+  }
+
   if (cat === "Cycle") {
     return {
       title: `Electric Cycles by Budget`,
@@ -337,10 +350,10 @@ export default async function EVDetailPage({
         />
       )}
 
-      <div className="min-h-screen bg-surface-white flex flex-col selection:bg-primary/20">
+      <div className="min-h-screen bg-surface flex flex-col selection:bg-primary/20">
         <Navbar />
 
-        <main className="flex-1 w-full max-w-[1280px] mx-auto px-4 md:px-6 py-6 md:py-8 flex flex-col gap-6">
+        <main className="w-full max-w-[1280px] mx-auto px-4 md:px-6 py-8 flex flex-col gap-[15px] bg-surface">
           {/* Breadcrumb */}
           <Breadcrumb
             items={[
@@ -354,7 +367,7 @@ export default async function EVDetailPage({
           />
 
           {/* Hero Section Container */}
-          <div className="bg-surface-white border border-border-subtle rounded-2xl p-6 md:p-8 shadow-sm">
+          <div className="bg-white border border-border-subtle rounded-xl p-6 md:p-8 shadow-sm">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
               {/* Left Column: Automotive Gallery */}
               <EVGallery
@@ -366,17 +379,17 @@ export default async function EVDetailPage({
               {/* Right Column: Title, Pricing & Highlights */}
               <div className="flex flex-col gap-5">
                 <div>
-                  <h1 className="font-headline-lg text-2xl md:text-3xl font-bold text-text-main leading-tight tracking-tight">
-                    {vehicle.name}
+                  <h1 className="font-headline-lg text-xl md:text-2xl lg:text-[28px] text-text-main mb-1.5 font-bold tracking-tight">
+                    {vehicle.name} Price in Pakistan & Specs
                   </h1>
 
                   {/* Badges & Meta Row */}
-                  <div className="flex flex-wrap items-center gap-2 mt-3">
+                  <div className="flex flex-wrap items-center gap-2 mb-0">
                     {/* Brand */}
                     {vehicle.brand_slug && (
                       <Link
                         href={`/vehicles?brand=${vehicle.brand_slug}`}
-                        className="inline-flex items-center gap-1 bg-blue-50 text-blue-900 font-bold text-xs px-2.5 py-1 rounded border border-blue-200 hover:bg-blue-100 uppercase tracking-wide transition-colors"
+                        className="inline-flex items-center gap-1 bg-surface-container-low text-text-muted font-label-sm text-xs px-3 py-1 rounded-full uppercase border border-border-subtle hover:bg-surface-container transition-colors"
                       >
                         {vehicle.brand_slug.toUpperCase().replace("-", " ")}
                       </Link>
@@ -386,7 +399,7 @@ export default async function EVDetailPage({
                     {vehicle.ev_category && (
                       <Link
                         href={`/vehicles?category=${vehicle.ev_category}`}
-                        className="inline-flex items-center gap-1 bg-blue-50 text-blue-900 font-bold text-xs px-2.5 py-1 rounded border border-blue-200 hover:bg-blue-100 uppercase tracking-wide transition-colors"
+                        className="inline-flex items-center gap-1 bg-surface-container-low text-text-muted font-label-sm text-xs px-3 py-1 rounded-full uppercase border border-border-subtle hover:bg-surface-container transition-colors"
                       >
                         {vehicle.ev_category}
                       </Link>
@@ -394,7 +407,7 @@ export default async function EVDetailPage({
 
                     {/* Body Type (only if distinct from category) */}
                     {vehicle.body_type && vehicle.body_type.toLowerCase() !== vehicle.ev_category?.toLowerCase() && (
-                      <span className="inline-flex items-center gap-1 bg-blue-50 text-blue-900 font-semibold text-xs px-2.5 py-1 rounded border border-blue-200">
+                      <span className="inline-flex items-center gap-1 bg-surface-container-low text-text-muted font-label-sm text-xs px-3 py-1 rounded-full border border-border-subtle uppercase">
                         {vehicle.body_type}
                       </span>
                     )}
@@ -403,7 +416,7 @@ export default async function EVDetailPage({
                     {vehicle.vehicle_type &&
                       vehicle.vehicle_type.toLowerCase() !== vehicle.ev_category?.toLowerCase() &&
                       vehicle.vehicle_type.toLowerCase() !== vehicle.body_type?.toLowerCase() && (
-                      <span className="inline-flex items-center gap-1 bg-blue-50 text-blue-900 font-bold text-xs px-2.5 py-1 rounded border border-blue-200 uppercase">
+                      <span className="inline-flex items-center gap-1 bg-surface-container-low text-text-muted font-label-sm text-xs px-3 py-1 rounded-full uppercase border border-border-subtle">
                         {vehicle.vehicle_type}
                       </span>
                     )}
@@ -411,7 +424,7 @@ export default async function EVDetailPage({
                     {/* Availability Status */}
                     {vehicle.status && (
                       <span
-                        className={`inline-flex items-center gap-1.5 font-bold text-xs px-2.5 py-1 rounded border ${
+                        className={`inline-flex items-center gap-1.5 font-label-sm text-xs px-3 py-1 rounded-full border ${
                           vehicle.status === "available"
                             ? "bg-emerald-50 text-emerald-900 border-emerald-300"
                             : vehicle.status === "upcoming"
@@ -428,24 +441,29 @@ export default async function EVDetailPage({
                               : "bg-blue-600"
                           }`}
                         />
-                        {vehicle.status === "available"
-                          ? "Available in Pakistan"
-                          : vehicle.status === "upcoming"
-                          ? "Upcoming in Pakistan"
-                          : vehicle.status.charAt(0).toUpperCase() + vehicle.status.slice(1)}
+                        {(() => {
+                          const availabilityStr = Array.isArray(vehicle.country_availability) 
+                            ? vehicle.country_availability.join(",").toLowerCase() 
+                            : (vehicle.country_availability || "").toString().toLowerCase();
+                          const isPak = availabilityStr.includes("pakistan") || availabilityStr.includes("global") || (!availabilityStr && vehicle.price_pkr);
+                          
+                          if (vehicle.status === "available") return isPak ? "Available in Pakistan" : "Available";
+                          if (vehicle.status === "upcoming") return isPak ? "Upcoming in Pakistan" : "Upcoming";
+                          return vehicle.status.charAt(0).toUpperCase() + vehicle.status.slice(1);
+                        })()}
                       </span>
                     )}
 
                     {/* Release Date */}
                     {releaseDateStr && (
-                      <span className="inline-flex items-center gap-1 bg-blue-50/60 text-blue-900 font-medium text-xs px-2.5 py-1 rounded border border-blue-200">
+                      <span className="inline-flex items-center gap-1 bg-surface-container-low text-text-muted font-label-sm text-xs px-3 py-1 rounded-full border border-border-subtle">
                         Released: {releaseDateStr}
                       </span>
                     )}
 
                     {/* Region / Country of Origin */}
                     {brandRegion && (
-                      <span className="inline-flex items-center gap-1.5 bg-surface-container-lowest text-text-main font-bold text-xs px-2.5 py-1 rounded border border-border-subtle">
+                      <span className="inline-flex items-center gap-1 bg-surface-container-low text-text-muted font-label-sm text-xs px-3 py-1 rounded-full border border-border-subtle">
                         <span className="text-base leading-none">{brandRegion.flag}</span>
                         {brandRegion.country}
                       </span>
@@ -454,15 +472,15 @@ export default async function EVDetailPage({
 
                   {/* Rating display */}
                   {rating && (
-                    <div className="flex items-center gap-2 mt-3">
+                    <div className="flex items-center gap-2 mt-1.5">
                       <div className="flex items-center text-yellow-500">
                         <AppIcon name="star" size={18} fill="#FF9800" className="text-yellow-500" />
-                        <span className="text-sm font-bold text-text-main ml-1">
+                        <span className="font-label-md text-sm text-text-main ml-1 font-semibold">
                           {typeof rating === "number" ? rating.toFixed(1) : rating}
                         </span>
                       </div>
                       {reviewCount > 0 && (
-                        <span className="text-text-muted text-xs">
+                        <span className="text-text-muted font-body-sm text-sm">
                           ({reviewCount} reviews)
                         </span>
                       )}
@@ -470,37 +488,30 @@ export default async function EVDetailPage({
                   )}
                 </div>
 
-                {/* Pricing Box */}
-                <div className="bg-surface-container-lowest/80 border border-border-subtle rounded-lg p-4 flex flex-col gap-1">
-                  <div className="flex items-baseline justify-between gap-4">
-                    <div className="flex items-baseline gap-1.5">
-                      <span className="text-sm font-bold text-text-muted">Rs.</span>
-                      <span className="text-3xl font-bold text-text-main tracking-tight">
-                        {lowestPrice ? lowestPrice.toLocaleString() : "TBA"}
-                      </span>
-                    </div>
+                {/* Pricing */}
+                <div className="flex flex-col gap-2">
+                  <div className="flex items-baseline gap-2">
+                    <span className="font-display-lg text-2xl md:text-3xl font-bold text-price-green tracking-tight">
+                      {lowestPrice ? `Rs. ${lowestPrice.toLocaleString()}` : (vehicle.price_pkr || "Price TBA")}
+                    </span>
                     {lowestPrice ? (
-                      <span className="text-xs font-semibold px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/20">
-                        Starting Price
-                      </span>
+                      <span className="text-[10px] text-text-muted uppercase tracking-wider font-semibold">Starting</span>
                     ) : (
-                      <span className="text-xs font-semibold px-2 py-0.5 rounded bg-surface-container-high text-text-muted">
-                        Expected Price
-                      </span>
+                      <span className="text-[10px] text-text-muted uppercase tracking-wider font-semibold">Expected</span>
                     )}
                   </div>
-
+                  
                   {/* Global base currencies */}
                   {(pricing.price_global_base_usd || pricing.price_global_base_eur || pricing.price_global_base_cny) && (
-                    <div className="flex flex-wrap items-center gap-3 pt-2 mt-1 border-t border-border-subtle/50 text-xs text-text-muted">
+                    <div className="flex flex-wrap items-center gap-3 text-xs text-text-muted border border-border-subtle bg-surface-container-low/50 px-3 py-2 rounded-lg inline-block w-fit">
                       {pricing.price_global_base_usd && (
-                        <span>Global MSRP: <strong className="text-text-main">${pricing.price_global_base_usd.toLocaleString()} USD</strong></span>
+                        <span>MSRP: <strong className="text-text-main">${pricing.price_global_base_usd.toLocaleString()}</strong></span>
                       )}
                       {pricing.price_global_base_eur && (
-                        <span>• <strong className="text-text-main">€{pricing.price_global_base_eur.toLocaleString()} EUR</strong></span>
+                        <span>• <strong className="text-text-main">€{pricing.price_global_base_eur.toLocaleString()}</strong></span>
                       )}
                       {pricing.price_global_base_cny && (
-                        <span>• <strong className="text-text-main">¥{pricing.price_global_base_cny.toLocaleString()} CNY</strong></span>
+                        <span>• <strong className="text-text-main">¥{pricing.price_global_base_cny.toLocaleString()}</strong></span>
                       )}
                     </div>
                   )}
@@ -519,7 +530,7 @@ export default async function EVDetailPage({
                           <Link
                             key={v._id}
                             href={`/vehicles/${v.slug}`}
-                            className={`px-3 py-1.5 rounded-md text-xs font-semibold transition-all border ${
+                            className={`px-3 py-1.5 rounded-sm text-xs font-semibold transition-all border ${
                               isCurrent
                                 ? "bg-primary text-white border-primary shadow-xs"
                                 : "bg-surface-white text-text-main border-border-subtle hover:border-primary hover:bg-surface-container-low"
@@ -538,31 +549,48 @@ export default async function EVDetailPage({
                   </div>
                 )}
 
-                {/* Top Features 3-Box Grid */}
+                {/* Key Specs */}
                 {highlights.length > 0 && (
-                  <div>
-                    <h2 className="text-xs font-bold text-text-muted uppercase tracking-wider mb-2.5">
-                      Key Highlights
+                  <div className="bg-white p-4 sm:p-5 rounded-xl mt-2">
+                    <h2 className="text-base sm:text-lg font-bold text-text-main flex items-center gap-2 mb-4">
+                      <span className="w-1 h-5 sm:h-6 bg-primary rounded-full"></span>
+                      Top Features of {vehicle.name}
                     </h2>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
                       {highlights.map((h, i) => (
                         <div
                           key={i}
-                          className="flex items-center gap-2.5 p-3 rounded-md border border-border-subtle bg-surface-white hover:border-primary/50 transition-colors shadow-2xs"
+                          className="flex items-center gap-2 p-1.5 sm:p-2 rounded-sm border border-border-subtle bg-surface-white hover:border-primary/50 transition-colors"
                         >
-                          <div className="w-8 h-8 rounded-sm bg-blue-50 text-primary flex items-center justify-center shrink-0">
-                            <AppIcon name={h.icon} size={17} />
+                          <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-sm bg-blue-50 text-primary flex items-center justify-center flex-shrink-0">
+                            <AppIcon name={h.icon} size={16} />
                           </div>
-                          <div className="flex flex-col min-w-0">
-                            <span className="text-[10px] font-semibold text-text-muted uppercase tracking-wider">
+                          <div className="flex flex-col overflow-hidden">
+                            <span className="text-[9px] sm:text-[10px] font-medium text-text-muted uppercase tracking-wider mb-0.5">
                               {h.label}
                             </span>
-                            <span className="text-xs font-bold text-text-main leading-snug">
+                            <span className="text-[11px] sm:text-xs font-medium text-text-main leading-tight line-clamp-2">
                               {h.value}
                             </span>
                           </div>
                         </div>
                       ))}
+                    </div>
+
+                    {/* Actions */}
+                    <div className="flex items-center justify-center sm:justify-start gap-2 mt-3 pt-2">
+                      <Link
+                        href={`/compare?vehicle=${vehicle.slug}`}
+                        rel="nofollow"
+                        className="flex items-center justify-center gap-1.5 py-1 px-3 sm:py-1.5 sm:px-4 rounded-sm border border-border-subtle bg-surface-white hover:bg-surface-container-low hover:border-primary font-medium text-[10px] sm:text-[11px] text-text-main transition-colors"
+                      >
+                        <AppIcon name="compare_arrows" size={14} />
+                        Compare
+                      </Link>
+                      <button className="flex items-center justify-center gap-1.5 py-1 px-3 sm:py-1.5 sm:px-4 rounded-sm border border-border-subtle bg-surface-white hover:bg-surface-container-low hover:border-primary font-medium text-[10px] sm:text-[11px] text-text-main transition-colors">
+                        <AppIcon name="flame" size={14} />
+                        Price Alert
+                      </button>
                     </div>
                   </div>
                 )}
@@ -572,7 +600,7 @@ export default async function EVDetailPage({
 
           {/* Dealership / Retailer Price Comparison (if available) */}
           {hasAffiliateUrls && (
-            <section className="bg-surface-white border border-border-subtle rounded-2xl overflow-hidden shadow-sm">
+            <section className="bg-white border border-border-subtle rounded-xl overflow-hidden shadow-sm">
               <div className="p-4 md:px-6 border-b border-border-subtle bg-surface-container-low/30 flex items-center justify-between">
                 <h2 className="font-headline-md text-base md:text-lg font-bold text-text-main flex items-center gap-2">
                   <AppIcon name="storefront" size={20} className="text-primary" />
@@ -588,21 +616,21 @@ export default async function EVDetailPage({
                       className="p-4 md:px-6 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:bg-surface-container-lowest transition-colors"
                     >
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-surface-container-low border border-border-subtle rounded-xl flex items-center justify-center font-bold text-primary text-base uppercase shrink-0">
+                        <div className="w-10 h-10 bg-surface-container-low border border-border-subtle rounded-lg flex items-center justify-center font-bold text-primary text-base uppercase shadow-sm flex-shrink-0">
                           {priceItem.retailer_name.charAt(0)}
                         </div>
                         <div>
-                          <div className="font-semibold text-sm text-text-main">
+                          <div className="font-label-md text-sm font-semibold text-text-main">
                             {priceItem.retailer_name}
                           </div>
-                          <div className="text-xs text-price-green font-medium flex items-center gap-1 mt-0.5">
+                          <div className="font-body-sm text-xs text-price-green font-medium flex items-center gap-1 mt-0.5">
                             <span className="w-1.5 h-1.5 rounded-full bg-price-green" />
                             {priceItem.stock_status || "In Stock"}
                           </div>
                         </div>
                       </div>
                       <div className="flex items-center justify-between md:justify-end gap-4 w-full md:w-auto pt-3 md:pt-0 border-t border-border-subtle md:border-0">
-                        <div className="text-lg font-bold text-text-main">
+                        <div className="font-headline-md text-lg font-bold text-text-main">
                           Rs. {priceItem.price_pkr.toLocaleString()}
                         </div>
                         {priceItem.product_url ? (
@@ -610,16 +638,16 @@ export default async function EVDetailPage({
                             href={priceItem.product_url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="bg-primary hover:bg-primary/90 text-white text-xs px-5 h-9 rounded-xl font-semibold flex items-center justify-center transition-all shadow-sm"
+                            className="bg-primary hover:bg-on-primary-fixed-variant text-white font-label-md text-xs px-5 h-9 transition-all shadow-md hover:shadow-lg rounded-lg font-semibold flex items-center justify-center cursor-pointer"
                           >
-                            Visit Dealer
+                            Buy Now
                           </a>
                         ) : (
                           <button
-                            className="bg-surface-container-low text-text-muted text-xs px-4 h-9 rounded-xl font-semibold cursor-not-allowed border border-border-subtle"
+                            className="bg-surface-container-low text-text-muted font-label-md text-xs px-5 h-9 rounded-lg font-semibold flex items-center justify-center cursor-not-allowed border border-border-subtle"
                             disabled
                           >
-                            Direct Booking
+                            Unavailable
                           </button>
                         )}
                       </div>
@@ -631,9 +659,9 @@ export default async function EVDetailPage({
           )}
 
           {/* Main Specifications and Sidebar Layout */}
-          <div id="full-specs" className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+          <div id="full-specs" className="grid grid-cols-1 lg:grid-cols-3 gap-[15px] items-start">
             {/* Left 2 Cols: Specs Table & Description */}
-            <div className="lg:col-span-2 flex flex-col gap-6">
+            <div className="lg:col-span-2 flex flex-col gap-[15px]">
               {/* Full Specs Accordion */}
               <EVSpecs vehicle={vehicle} />
 
@@ -649,7 +677,7 @@ export default async function EVDetailPage({
 
               {/* YouTube Video Review Embed */}
               {vehicle.video_url && (
-                <section className="bg-surface-white border border-border-subtle rounded-2xl overflow-hidden shadow-sm">
+                <section className="bg-white border border-border-subtle rounded-xl overflow-hidden shadow-sm">
                   <div className="p-4 md:px-6 border-b border-border-subtle bg-surface-container-low/30 flex items-center gap-2">
                     <AppIcon name="smart_display" size={22} className="text-red-600" />
                     <h2 className="font-headline-md text-base md:text-lg font-bold text-text-main">
@@ -658,7 +686,7 @@ export default async function EVDetailPage({
                   </div>
                   <div className="p-6 flex justify-center">
                     {getYouTubeEmbedId(vehicle.video_url) ? (
-                      <div className="w-full max-w-3xl aspect-video rounded-xl overflow-hidden border border-border-subtle shadow-sm">
+                      <div className="w-full max-w-3xl aspect-video rounded-lg overflow-hidden border border-border-subtle shadow-sm">
                         <iframe
                           className="w-full h-full"
                           src={`https://www.youtube.com/embed/${getYouTubeEmbedId(vehicle.video_url)}`}
@@ -684,9 +712,9 @@ export default async function EVDetailPage({
             </div>
 
             {/* Right 1 Col: Sidebar & Competitors */}
-            <div className="lg:col-span-1 flex flex-col gap-6">
+            <div className="lg:col-span-1 flex flex-col gap-[15px]">
               {/* Competitors Card */}
-              <div className="bg-surface-white border border-border-subtle rounded-xl p-5 shadow-sm">
+              <div className="bg-white border border-border-subtle rounded-xl p-4 shadow-sm">
                 <h3 className="font-headline-sm text-sm font-bold text-text-main mb-4 flex items-center gap-2">
                   <AppIcon name="compare_arrows" size={18} className="text-primary" />
                   Similar & Competitor EVs
@@ -737,7 +765,7 @@ export default async function EVDetailPage({
 
               {/* Other Models from same brand */}
               {brandVehicles.length > 0 && (
-                <div className="bg-surface-white border border-border-subtle rounded-2xl p-5 shadow-sm">
+                <div className="bg-white border border-border-subtle rounded-xl p-4 shadow-sm">
                   <h3 className="font-headline-sm text-sm font-bold text-text-main mb-3">
                     Other {vehicle.brand_slug.toUpperCase().replace("-", " ")} Electric Models
                   </h3>
@@ -765,7 +793,7 @@ export default async function EVDetailPage({
               {(() => {
                 const budgetGroup = getBudgetLinks(vehicle.ev_category);
                 return (
-                  <div className="bg-surface-white border border-border-subtle rounded-2xl p-5 shadow-sm">
+                  <div className="bg-white border border-border-subtle rounded-xl p-4 shadow-sm">
                     <h3 className="font-headline-sm text-sm font-bold text-primary mb-3">
                       {budgetGroup.title}
                     </h3>

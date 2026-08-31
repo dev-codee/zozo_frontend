@@ -8,9 +8,9 @@ import Cookies from 'js-cookie';
 import ImageUploader from '../../../components/ImageUploader';
 
 // ─── Option lists (kept in sync with Vehicle.model.js enums) ────────────────────
-const EV_CATEGORIES = ['Car', 'Bike', 'Scooter', 'Cycle'];
+const EV_CATEGORIES = ['Car', 'Bike', 'Scooter', 'Cycle', 'Rickshaw'];
 const VEHICLE_TYPES = ['BEV', 'PHEV', 'EREV', 'FCEV'];
-const BODY_TYPES = ['Sedan', 'SUV', 'Crossover', 'Hatchback', 'Coupe', 'MPV', 'Pickup', 'Sports', 'Wagon', 'Scooter', 'Bike', 'Other'];
+const BODY_TYPES = ['Sedan', 'SUV', 'Crossover', 'Hatchback', 'Coupe', 'MPV', 'Pickup', 'Sports', 'Wagon', 'Scooter', 'Bike', 'Rickshaw', 'Other'];
 const STATUSES = ['available', 'upcoming', 'announced', 'rumored', 'discontinued'];
 
 // Tabs map 1:1 to the specs.* sub-objects in the Vehicle schema.

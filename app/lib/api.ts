@@ -156,7 +156,7 @@ export interface Vehicle {
   model_year?: number;
   generation?: string;
   vehicle_type?: "BEV" | "PHEV" | "EREV" | "FCEV" | string;
-  ev_category?: "Car" | "Bike" | "Scooter" | "Cycle" | string;
+  ev_category?: "Car" | "Bike" | "Scooter" | "Cycle" | "Rickshaw" | string;
   body_type?: string;
   segment?: string;
   platform?: string;

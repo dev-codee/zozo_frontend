@@ -357,7 +357,7 @@ export default function NavbarClient({ dynamicPages = [] }: { dynamicPages?: any
                 <span className="px-4 py-2 text-xs font-bold text-text-muted uppercase tracking-wider">
                   EVs
                 </span>
-                {['Car', 'Bike', 'Scooter', 'Cycle'].map((cat) => (
+                {['Car', 'Bike', 'Scooter', 'Cycle', 'Rickshaw'].map((cat) => (
                   <Link
                     key={cat}
                     href={`/vehicles?category=${cat}`}
@@ -536,7 +536,7 @@ export default function NavbarClient({ dynamicPages = [] }: { dynamicPages?: any
           onMouseLeave={closeEvsSoon}
           className="bg-surface-white border border-border-subtle shadow-xl rounded-xl p-3 flex flex-col gap-1"
         >
-          {['Car', 'Bike', 'Scooter', 'Cycle'].map(cat => (
+          {['Car', 'Bike', 'Scooter', 'Cycle', 'Rickshaw'].map(cat => (
              <Link key={cat} href={`/vehicles?category=${cat}`} onClick={() => setEvsOpen(false)} className="px-4 py-2 rounded-lg text-sm font-medium text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors">
                {cat}s
              </Link>
