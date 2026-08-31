@@ -447,8 +447,8 @@ export default async function EVDetailPage({
                             : (vehicle.country_availability || "").toString().toLowerCase();
                           const isPak = availabilityStr.includes("pakistan") || availabilityStr.includes("global") || (!availabilityStr && vehicle.price_pkr);
                           
-                          if (vehicle.status === "available") return isPak ? "Available in Pakistan" : "Available";
-                          if (vehicle.status === "upcoming") return isPak ? "Upcoming in Pakistan" : "Upcoming";
+                          if (vehicle.status === "available") return isPak ? "Available in Pakistan" : "Available Internationally";
+                          if (vehicle.status === "upcoming") return isPak ? "Upcoming in Pakistan" : "Upcoming Internationally";
                           return vehicle.status.charAt(0).toUpperCase() + vehicle.status.slice(1);
                         })()}
                       </span>

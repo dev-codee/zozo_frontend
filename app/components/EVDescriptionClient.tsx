@@ -88,14 +88,14 @@ export default function EVDescriptionClient({
               About the {vehicleName}
             </h2>
           </div>
-          <div className="prose prose-sm md:prose-base max-w-none text-text-main/90 leading-relaxed space-y-4 font-normal">
-            {description.split("\n\n").map((paragraph, idx) => {
+          <div className="prose prose-sm md:prose-base max-w-none text-text-main/90 leading-relaxed space-y-4 font-normal text-justify">
+            {description.replace(/\r\n/g, "\n").split(/\n{2,}/).map((paragraph, idx) => {
               const trimmed = paragraph.trim();
 
               // Headings
               if (trimmed.startsWith("##")) {
                 return (
-                  <h3 key={idx} className="text-base md:text-lg font-bold text-text-main pt-2">
+                  <h3 key={idx} className="text-base md:text-lg font-bold text-text-main pt-2 text-left">
                     {parseInlineMarkdown(trimmed.replace(/^#+\s*/, ""))}
                   </h3>
                 );
@@ -106,7 +106,7 @@ export default function EVDescriptionClient({
               const isList = lines.every((l) => /^\s*[-*]\s+/.test(l) || l.trim() === "");
               if (isList && lines.filter((l) => l.trim()).length > 0) {
                 return (
-                  <ul key={idx} className="list-disc list-inside space-y-1.5 text-sm md:text-base text-text-main/80">
+                  <ul key={idx} className="list-disc list-inside space-y-1.5 text-sm md:text-base text-text-main/80 text-left">
                     {lines
                       .filter((l) => l.trim())
                       .map((l, li) => (
@@ -120,7 +120,7 @@ export default function EVDescriptionClient({
               const isNumberedList = lines.every((l) => /^\s*\d+[.)]\s+/.test(l) || l.trim() === "");
               if (isNumberedList && lines.filter((l) => l.trim()).length > 0) {
                 return (
-                  <ol key={idx} className="list-decimal list-inside space-y-1.5 text-sm md:text-base text-text-main/80">
+                  <ol key={idx} className="list-decimal list-inside space-y-1.5 text-sm md:text-base text-text-main/80 text-left">
                     {lines
                       .filter((l) => l.trim())
                       .map((l, li) => (
@@ -131,9 +131,13 @@ export default function EVDescriptionClient({
               }
 
               // Regular paragraph
+              // Handle single newlines inside a paragraph by replacing them with a space or rendering <br/>.
+              // For cleaner text, we'll join lines with a space so it flows nicely with text-justify.
+              const paragraphText = trimmed.replace(/\n/g, " ");
+              
               return (
-                <p key={idx} className="text-sm md:text-base leading-relaxed text-text-main/80">
-                  {parseInlineMarkdown(trimmed)}
+                <p key={idx} className="text-sm md:text-base leading-relaxed text-text-main/80 text-justify">
+                  {parseInlineMarkdown(paragraphText)}
                 </p>
               );
             })}
@@ -200,7 +204,7 @@ export default function EVDescriptionClient({
               ZOZO Buying Advice
             </h3>
           </div>
-          <p className="text-xs md:text-sm text-text-main/90 leading-relaxed">
+          <p className="text-xs md:text-sm text-text-main/90 leading-relaxed text-justify">
             {parseInlineMarkdown(buyingAdvice)}
           </p>
         </section>
