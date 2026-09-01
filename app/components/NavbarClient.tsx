@@ -367,6 +367,22 @@ export default function NavbarClient({ dynamicPages = [] }: { dynamicPages?: any
                     {cat}s
                   </Link>
                 ))}
+                <Link
+                  href="/vehicles/compare"
+                  onClick={() => setMobileOpen(false)}
+                  className="flex items-center gap-2.5 px-4 py-2 rounded-lg transition-colors text-sm font-semibold text-on-surface-variant hover:text-primary hover:bg-surface-container-low"
+                >
+                  <AppIcon name="compare_arrows" size={18} className="text-text-muted" />
+                  Compare EVs
+                </Link>
+                <Link
+                  href="/vehicles/comparisons"
+                  onClick={() => setMobileOpen(false)}
+                  className="flex items-center gap-2.5 px-4 py-2 rounded-lg transition-colors text-sm font-semibold text-on-surface-variant hover:text-primary hover:bg-surface-container-low"
+                >
+                  <AppIcon name="widgets" size={18} className="text-text-muted" />
+                  All EV Comparisons
+                </Link>
               </div>
 
               {baseNavLinks.slice(3).map((link) => {
@@ -541,6 +557,15 @@ export default function NavbarClient({ dynamicPages = [] }: { dynamicPages?: any
                {cat}s
              </Link>
            ))}
+           <div className="my-1 border-t border-border-subtle" />
+           <Link href="/vehicles/compare" onClick={() => setEvsOpen(false)} className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors">
+             <AppIcon name="compare_arrows" size={18} className="text-text-muted" />
+             Compare EVs
+           </Link>
+           <Link href="/vehicles/comparisons" onClick={() => setEvsOpen(false)} className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors">
+             <AppIcon name="widgets" size={18} className="text-text-muted" />
+             All EV Comparisons
+           </Link>
         </div>,
         document.body
       )}

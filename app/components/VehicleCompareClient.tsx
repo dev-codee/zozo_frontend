@@ -221,7 +221,7 @@ export default function VehicleCompareClient({
     },
     {
       name: "Charging",
-      icon: "ev_station",
+      icon: "bolt",
       fields: [
         {
           label: "DC Max Power",
@@ -271,7 +271,7 @@ export default function VehicleCompareClient({
     },
     {
       name: "Powertrain & Performance",
-      icon: "bolt",
+      icon: "sports_motorsports",
       fields: [
         { label: "Drive Layout", getValue: (v) => v.specs?.powertrain?.drive_layout || "N/A" },
         {
@@ -368,7 +368,7 @@ export default function VehicleCompareClient({
     },
     {
       name: "Chassis & Suspension",
-      icon: "settings",
+      icon: "settings_suggest",
       fields: [
         { label: "Front Suspension", getValue: (v) => v.specs?.chassis_and_suspension?.front_suspension || "N/A" },
         { label: "Rear Suspension", getValue: (v) => v.specs?.chassis_and_suspension?.rear_suspension || "N/A" },
