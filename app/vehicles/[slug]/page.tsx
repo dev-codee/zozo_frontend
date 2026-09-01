@@ -9,6 +9,8 @@ import Breadcrumb from "@/app/components/Breadcrumb";
 import EVGallery from "@/app/components/EVGallery";
 import EVSpecs from "@/app/components/EVSpecs";
 import EVDescriptionClient from "@/app/components/EVDescriptionClient";
+import VehicleFeedbackWidget from "@/app/components/VehicleFeedbackWidget";
+import VehicleReviewSection from "@/app/components/VehicleReviewSection";
 import AdSlot from "@/app/components/AdSlot";
 import AppIcon from "@/app/components/AppIcon";
 import { getBrandRegion } from "@/app/lib/brandRegion";
@@ -580,7 +582,7 @@ export default async function EVDetailPage({
                     {/* Actions */}
                     <div className="flex items-center justify-center sm:justify-start gap-2 mt-3 pt-2">
                       <Link
-                        href={`/compare?vehicle=${vehicle.slug}`}
+                        href={`/vehicles/compare?vehicle=${vehicle.slug}`}
                         rel="nofollow"
                         className="flex items-center justify-center gap-1.5 py-1 px-3 sm:py-1.5 sm:px-4 rounded-sm border border-border-subtle bg-surface-white hover:bg-surface-container-low hover:border-primary font-medium text-[10px] sm:text-[11px] text-text-main transition-colors"
                       >
@@ -731,28 +733,37 @@ export default async function EVDetailPage({
                         : "(Upcoming)";
 
                       return (
-                        <Link
+                        <div
                           key={comp._id}
-                          href={`/vehicles/${comp.slug}`}
                           className="flex flex-col rounded-md border border-border-subtle hover:border-primary hover:shadow-sm transition-all bg-surface-white overflow-hidden group"
                         >
-                          <div className="relative aspect-[16/10] bg-surface-container-low flex items-center justify-center p-2">
-                            <Image
-                              src={compImg || "/placeholder-car.svg"}
-                              alt={comp.name}
-                              fill
-                              className="object-contain mix-blend-darken group-hover:scale-105 transition-transform duration-300"
-                            />
-                          </div>
-                          <div className="flex flex-col p-2.5 bg-surface-white">
-                            <h4 className="font-semibold text-xs text-text-main group-hover:text-primary transition-colors line-clamp-2 min-h-[32px] leading-snug">
-                              {comp.name}
-                            </h4>
-                            <span className="text-xs font-bold text-text-main mt-1">
-                              {formattedPrice}
-                            </span>
-                          </div>
-                        </Link>
+                          <Link href={`/vehicles/${comp.slug}`} className="flex flex-col">
+                            <div className="relative aspect-[16/10] bg-surface-container-low flex items-center justify-center p-2">
+                              <Image
+                                src={compImg || "/placeholder-car.svg"}
+                                alt={comp.name}
+                                fill
+                                className="object-contain mix-blend-darken group-hover:scale-105 transition-transform duration-300"
+                              />
+                            </div>
+                            <div className="flex flex-col p-2.5 pb-1.5 bg-surface-white">
+                              <h4 className="font-semibold text-xs text-text-main group-hover:text-primary transition-colors line-clamp-2 min-h-[32px] leading-snug">
+                                {comp.name}
+                              </h4>
+                              <span className="text-xs font-bold text-text-main mt-1">
+                                {formattedPrice}
+                              </span>
+                            </div>
+                          </Link>
+                          <Link
+                            href={`/vehicles/compare/${vehicle.slug}-vs-${comp.slug}`}
+                            rel="nofollow"
+                            className="mx-2.5 mb-2.5 mt-0.5 inline-flex items-center justify-center gap-1 py-1 rounded-sm border border-border-subtle bg-surface-white hover:bg-primary/5 hover:border-primary font-medium text-[10px] text-text-main transition-colors"
+                          >
+                            <AppIcon name="compare_arrows" size={12} />
+                            Compare
+                          </Link>
+                        </div>
                       );
                     })}
                   </div>
@@ -820,6 +831,17 @@ export default async function EVDetailPage({
               </div>
             </div>
           </div>
+
+          {/* User Feedback Widget (poll options adapt to EV type) */}
+          <VehicleFeedbackWidget
+            vehicleId={vehicle._id}
+            vehicleName={vehicle.name}
+            evCategory={vehicle.ev_category}
+            bodyType={vehicle.body_type}
+          />
+
+          {/* User Reviews Section */}
+          <VehicleReviewSection vehicleId={vehicle._id} vehicleName={vehicle.name} />
         </main>
 
         <Footer />

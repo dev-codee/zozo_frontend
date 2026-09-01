@@ -469,6 +469,118 @@ export async function getPopularComparisons(limit: number = 5): Promise<any[]> {
   return data || [];
 }
 
+// ─── Vehicle (EV) Comparison ────────────────────────────────────────────────────
+
+export async function getVehicleComparisonData(slugs: string[]): Promise<Vehicle[]> {
+  if (slugs.length === 0) return [];
+  const data = await apiFetch<Vehicle[]>(`/vehicles/compare?slugs=${slugs.join(",")}`, { cache: "no-store" });
+  return data || [];
+}
+
+export async function getAIVehicleComparison(slugs: string[]): Promise<{ verdict: string, key_differences: Record<string, string[]> } | null> {
+  if (slugs.length < 2) return null;
+  const data = await apiFetch<{ verdict: string, key_differences: Record<string, string[]> }>(`/vehicles/compare/ai?slugs=${slugs.join(",")}`);
+  return data || null;
+}
+
+export async function trackVehicleComparison(slugs: string[]): Promise<void> {
+  if (slugs.length < 2) return;
+  try {
+    await fetch(`${getApiBaseUrl()}/vehicles/compare/track`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ slugs: slugs.join(",") }),
+    });
+  } catch (error) {
+    console.error("Failed to track vehicle comparison:", error);
+  }
+}
+
+export async function getPopularVehicleComparisons(limit: number = 8): Promise<any[]> {
+  const data = await apiFetch<any[]>(`/vehicles/compare/popular?limit=${limit}`);
+  return data || [];
+}
+
+// ─── Vehicle (EV) Reviews & Voting ──────────────────────────────────────────────
+
+export interface VehicleReview {
+  _id: string;
+  vehicleId: string;
+  userName: string;
+  rating: number;
+  comment: string;
+  createdAt: string;
+}
+
+export interface PaginatedVehicleReviews {
+  reviews: VehicleReview[];
+  pagination: PaginationInfo;
+}
+
+export async function getVehicleReviews(vehicleId: string, page = 1, limit = 6): Promise<PaginatedVehicleReviews> {
+  const data = await apiFetch<any>(`/vehicle-reviews/${vehicleId}?page=${page}&limit=${limit}`);
+
+  if (Array.isArray(data)) {
+    return { reviews: data, pagination: { total: data.length, page: 1, limit: 6, totalPages: 1 } };
+  }
+
+  return data || { reviews: [], pagination: { total: 0, page: 1, limit: 6, totalPages: 1 } };
+}
+
+export async function postVehicleReview(payload: { vehicleId: string; rating: number; comment: string }): Promise<VehicleReview> {
+  try {
+    const res = await fetch(`${getApiBaseUrl()}/vehicle-reviews`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+      body: JSON.stringify(payload),
+    });
+
+    if (!res.ok) {
+      const errorData = await res.json().catch(() => null);
+      throw new Error(errorData?.message || "Failed to submit review");
+    }
+
+    const json = await res.json();
+    return json.data;
+  } catch (error) {
+    console.error("Error submitting vehicle review:", error);
+    throw error;
+  }
+}
+
+export async function getVehicleVoteStats(vehicleId: string): Promise<any> {
+  const data = await apiFetch<any>(`/vehicle-votes/${vehicleId}/stats`);
+  return data || null;
+}
+
+export async function castVehicleVote(payload: { vehicleId: string; sessionId: string; pollType: string; value: any }): Promise<any> {
+  try {
+    const res = await fetch(`${getApiBaseUrl()}/vehicle-votes`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (!res.ok) {
+      const errorData = await res.json().catch(() => null);
+      throw new Error(errorData?.message || "Failed to cast vote");
+    }
+
+    const json = await res.json();
+    return json.data;
+  } catch (error) {
+    console.error("Error casting vehicle vote:", error);
+    throw error;
+  }
+}
+
 export async function getPages(): Promise<any[]> {
   const data = await fetch(`${getApiBaseUrl()}/pages`, {
     next: { revalidate: 60 }

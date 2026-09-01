@@ -5,7 +5,8 @@ import Footer from "@/app/components/Footer";
 import EVCard from "@/app/components/EVCard";
 import Breadcrumb from "@/app/components/Breadcrumb";
 import Pagination from "@/app/components/Pagination";
-import { Car } from "lucide-react";
+import Link from "next/link";
+import { Car, GitCompareArrows } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -68,6 +69,13 @@ export default async function VehiclesPage({
               Showing {vehicles.length} of {paginatedData?.total || 0} results
             </p>
           </div>
+          <Link
+            href="/vehicles/compare"
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-lg bg-primary text-white font-medium text-sm hover:bg-primary/90 transition-colors shadow-sm shrink-0"
+          >
+            <GitCompareArrows className="w-4 h-4" />
+            Compare EVs
+          </Link>
         </div>
 
         <div className="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
