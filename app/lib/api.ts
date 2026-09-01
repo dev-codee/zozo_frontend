@@ -16,6 +16,12 @@ export interface PhonePrice {
   product_url?: string;
 }
 
+export interface PriceHistoryPoint {
+  date: string;
+  price_pkr: number;
+  source?: string;
+}
+
 export interface Phone {
   _id: string;
   slug: string;
@@ -84,6 +90,7 @@ export interface Phone {
   };
   prices: PhonePrice[];
   price_pkr?: number;
+  price_history?: PriceHistoryPoint[];
   pta_tax?: {
     passport_pkr?: number;
     cnic_pkr?: number;

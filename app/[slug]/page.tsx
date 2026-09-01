@@ -8,6 +8,7 @@ import Breadcrumb from "@/app/components/Breadcrumb";
 import PhoneGallery from "@/app/components/PhoneGallery";
 import PhoneSpecs from "@/app/components/PhoneSpecs";
 import PhoneDescriptionClient from "@/app/components/PhoneDescriptionClient";
+import PriceHistoryChart from "@/app/components/PriceHistoryChart";
 import UserFeedbackWidget from "@/app/components/UserFeedbackWidget";
 import ReviewSection from "@/app/components/ReviewSection";
 import AdSlot from "@/app/components/AdSlot";
@@ -492,6 +493,11 @@ export default async function PhoneDetailPage({
 
         {/* Combined Price Comparison & Specs Grid Container with equal vertical gap */}
         <div className="flex flex-col gap-[15px]">
+          {/* Price History Graph — only rendered when we have at least two data points */}
+          {phone.price_history && phone.price_history.length >= 2 && (
+            <PriceHistoryChart points={phone.price_history} phoneName={phone.name} />
+          )}
+
           {/* Price Comparison Table */}
           {hasAffiliateUrls && (
             <section className="bg-surface-white border border-border-subtle rounded-xl overflow-hidden shadow-sm">

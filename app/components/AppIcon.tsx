@@ -82,6 +82,9 @@ import {
   Info,
   Lightbulb,
   Receipt,
+  TrendingUp,
+  ArrowUp,
+  ArrowDown,
   type LucideIcon,
 } from "lucide-react";
 
@@ -187,6 +190,9 @@ const iconMap: Record<string, LucideIcon> = {
   description: FileText,
   receipt_long: Receipt,
   analytics: BarChart3,
+  trending_up: TrendingUp,
+  arrow_upward: ArrowUp,
+  arrow_downward: ArrowDown,
   psychiatry: Sparkles,
   sparkles: Sparkles,
   payments: CreditCard,
