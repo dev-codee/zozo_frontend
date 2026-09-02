@@ -139,7 +139,9 @@ export interface Brand {
   slug: string;
   name: string;
   logo?: string;
+  type?: "phone" | "ev" | string;
   total_phones?: number;
+  total_vehicles?: number;
   phone_count?: number;
 }
 
@@ -431,8 +433,9 @@ export async function searchPhones(q: string): Promise<Phone[]> {
   return data || [];
 }
 
-export async function getBrands(): Promise<Brand[]> {
-  const data = await apiFetch<Brand[]>("/brands");
+export async function getBrands(type?: string): Promise<Brand[]> {
+  const query = type ? `?type=${type}` : "";
+  const data = await apiFetch<Brand[]>(`/brands${query}`);
   return data || [];
 }
 

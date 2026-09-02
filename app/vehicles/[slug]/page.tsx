@@ -777,9 +777,17 @@ export default async function EVDetailPage({
               {/* Other Models from same brand */}
               {brandVehicles.length > 0 && (
                 <div className="bg-white border border-border-subtle rounded-xl p-4 shadow-sm">
-                  <h3 className="font-headline-sm text-sm font-bold text-text-main mb-3">
-                    Other {vehicle.brand_slug.toUpperCase().replace("-", " ")} Electric Models
-                  </h3>
+                  <div className="flex items-center justify-between mb-3">
+                    <h3 className="font-headline-sm text-sm font-bold text-text-main">
+                      Other {vehicle.brand_slug.toUpperCase().replace("-", " ")} Electric Models
+                    </h3>
+                    <Link
+                      href={`/vehicles?brand=${vehicle.brand_slug}`}
+                      className="text-xs text-primary font-medium hover:underline flex items-center gap-0.5 shrink-0"
+                    >
+                      View all
+                    </Link>
+                  </div>
                   <ul className="flex flex-col gap-2">
                     {brandVehicles.map((bv) => (
                       <li key={bv._id}>
