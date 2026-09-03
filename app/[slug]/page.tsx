@@ -748,8 +748,8 @@ export default async function PhoneDetailPage({
         {/* User Feedback Widget */}
         <UserFeedbackWidget phoneId={phone._id} phoneName={phone.name} />
 
-        {/* Product Description */}
-        <PhoneDescriptionClient slug={phone.slug} initialDescription={phone.description} phoneName={phone.name} />
+        {/* Product Description — temporarily hidden from UI */}
+        {/* <PhoneDescriptionClient slug={phone.slug} initialDescription={phone.description} phoneName={phone.name} /> */}
 
         {/* Product Area Ad Slot */}
         <div className="mt-2 mb-4">
