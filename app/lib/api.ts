@@ -98,6 +98,7 @@ export interface Phone {
     source_note?: string;
   };
   tags?: string[];
+  view_count?: number;
   rating: {
     average: number;
     count: number;

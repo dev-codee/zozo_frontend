@@ -333,6 +333,19 @@ export default async function PhoneDetailPage({
                     <span className="text-text-muted font-body-sm text-sm">
                       ({reviewCount} reviews)
                     </span>
+                    {(phone.view_count ?? 0) > 0 && (
+                      <span className="inline-flex items-center gap-1 text-text-muted font-body-sm text-sm border-l border-border-subtle pl-2 ml-0.5">
+                        <AppIcon name="visibility" size={15} className="text-text-muted" />
+                        {(phone.view_count!).toLocaleString()} views
+                      </span>
+                    )}
+                  </div>
+                )}
+                {/* Show views even when there's no rating yet */}
+                {!rating && (phone.view_count ?? 0) > 0 && (
+                  <div className="flex items-center gap-1 mt-1.5 text-text-muted text-sm">
+                    <AppIcon name="visibility" size={15} className="text-text-muted" />
+                    <span>{(phone.view_count!).toLocaleString()} views</span>
                   </div>
                 )}
               </div>

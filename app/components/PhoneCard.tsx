@@ -282,9 +282,17 @@ export default function PhoneCard({ phone, variant = "list", priority = false }:
 
       {/* Pricing Strip */}
       <div className="bg-surface-container-lowest border-t border-border-subtle p-3 px-6 flex items-center justify-between">
-        <span className="font-bold text-text-main text-lg">
-          {lowestPrice ? `Rs. ${lowestPrice.toLocaleString()}` : (phone.price_pkr || "Price TBA")}
-        </span>
+        <div className="flex items-center gap-3">
+          <span className="font-bold text-text-main text-lg">
+            {lowestPrice ? `Rs. ${lowestPrice.toLocaleString()}` : (phone.price_pkr || "Price TBA")}
+          </span>
+          {(phone.view_count ?? 0) > 0 && (
+            <span className="inline-flex items-center gap-1 text-[11px] text-text-muted">
+              <AppIcon name="visibility" size={13} className="text-text-muted" />
+              {(phone.view_count!).toLocaleString()}
+            </span>
+          )}
+        </div>
 
         <Link
           href={`/${phone.slug}-price-in-pakistan`}

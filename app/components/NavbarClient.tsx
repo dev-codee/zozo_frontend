@@ -10,7 +10,13 @@ import { createPortal } from "react-dom";
 import { phoneCategoryGroups } from "../lib/phoneCategories";
 import AppIcon from "./AppIcon";
 
-export default function NavbarClient({ dynamicPages = [] }: { dynamicPages?: any[] }) {
+export default function NavbarClient({
+  dynamicPages = [],
+  popularBrands = [],
+}: {
+  dynamicPages?: any[];
+  popularBrands?: { slug: string; name: string }[];
+}) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const pathname = usePathname();
@@ -313,24 +319,19 @@ export default function NavbarClient({ dynamicPages = [] }: { dynamicPages?: any
               {/* Mobile Top Phones Menu */}
               <div className="flex flex-col mb-2 pb-2 border-b border-border-subtle">
                 <span className="px-4 py-2 text-xs font-bold text-text-muted uppercase tracking-wider">
-                  Top Phones
+                  Popular Brands
                 </span>
-                <Link
-                  href="/phones?sort=trending&limit=10"
-                  onClick={() => setMobileOpen(false)}
-                  className="flex items-center gap-2.5 px-4 py-2 rounded-lg transition-colors text-sm font-semibold text-on-surface-variant hover:text-primary hover:bg-surface-container-low"
-                >
-                  <AppIcon name="star" size={18} className="text-text-muted" />
-                  Top 10 Phones
-                </Link>
-                <Link
-                  href="/phones?sort=price_asc&limit=10"
-                  onClick={() => setMobileOpen(false)}
-                  className="flex items-center gap-2.5 px-4 py-2 rounded-lg transition-colors text-sm font-semibold text-on-surface-variant hover:text-primary hover:bg-surface-container-low"
-                >
-                  <AppIcon name="attach_money" size={18} className="text-text-muted" />
-                  Best 10 Phones by Price
-                </Link>
+                {popularBrands.map((brand) => (
+                  <Link
+                    key={brand.slug}
+                    href={`/phones?brand=${brand.slug}`}
+                    onClick={() => setMobileOpen(false)}
+                    className="flex items-center gap-2.5 px-4 py-2 rounded-lg transition-colors text-sm font-semibold text-on-surface-variant hover:text-primary hover:bg-surface-container-low"
+                  >
+                    <AppIcon name="smartphone" size={18} className="text-text-muted" />
+                    {brand.name}
+                  </Link>
+                ))}
 
                 {phoneCategoryGroups.map((group) => (
                   <div key={group.title} className="flex flex-col mt-2">
@@ -493,29 +494,21 @@ export default function NavbarClient({ dynamicPages = [] }: { dynamicPages?: any
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-4">
             <div>
               <h3 className="text-[11px] font-bold text-primary uppercase tracking-wider mb-2 pb-1.5 border-b border-border-subtle">
-                Top Lists
+                Popular Brands
               </h3>
               <ul className="flex flex-col">
-                <li>
-                  <Link
-                    href="/phones?sort=trending&limit=10"
-                    onClick={() => setBestOpen(false)}
-                    className="flex items-center gap-2.5 px-2 py-1.5 rounded-lg text-sm font-medium text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors group"
-                  >
-                    <AppIcon name="star" size={18} className="text-text-muted group-hover:text-primary transition-colors" />
-                    <span className="leading-tight">Top 10 Phones</span>
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    href="/phones?sort=price_asc&limit=10"
-                    onClick={() => setBestOpen(false)}
-                    className="flex items-center gap-2.5 px-2 py-1.5 rounded-lg text-sm font-medium text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors group"
-                  >
-                    <AppIcon name="attach_money" size={18} className="text-text-muted group-hover:text-primary transition-colors" />
-                    <span className="leading-tight">Best 10 Phones by Price</span>
-                  </Link>
-                </li>
+                {popularBrands.map((brand) => (
+                  <li key={brand.slug}>
+                    <Link
+                      href={`/phones?brand=${brand.slug}`}
+                      onClick={() => setBestOpen(false)}
+                      className="flex items-center gap-2.5 px-2 py-1.5 rounded-lg text-sm font-medium text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors group"
+                    >
+                      <AppIcon name="smartphone" size={18} className="text-text-muted group-hover:text-primary transition-colors" />
+                      <span className="leading-tight">{brand.name}</span>
+                    </Link>
+                  </li>
+                ))}
               </ul>
             </div>
             {phoneCategoryGroups.map((group) => (
