@@ -379,14 +379,15 @@ async function apiFetch<T>(endpoint: string, init?: RequestInit): Promise<T | nu
 
     if (!res.ok) {
       console.error(`API error: ${res.status} ${res.statusText} for ${endpoint}`);
-      return null;
+      if (res.status === 404) return null;
+      throw new Error(`API error: ${res.status}`);
     }
 
     const json: ApiResponse<T> = await res.json();
     return json.data;
   } catch (error) {
     console.error(`Failed to fetch ${endpoint}:`, error);
-    return null;
+    throw error;
   }
 }
 

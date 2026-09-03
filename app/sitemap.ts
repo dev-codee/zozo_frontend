@@ -96,6 +96,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }
   } catch (error) {
     console.error("Sitemap generation error:", error);
+    throw error; // Let Next.js catch this and serve the stale/last-good sitemap
   }
 
   return routes;
