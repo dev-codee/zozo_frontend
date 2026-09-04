@@ -7,6 +7,7 @@ import Link from 'next/link';
 import Cookies from 'js-cookie';
 import ImageUploader from '../../../components/ImageUploader';
 import AdminPhoneComments from './AdminPhoneComments';
+import MarkdownEditor from '../../../components/MarkdownEditor';
 
 const EXTRA_SPEC_FIELDS = [
   'dimensions', 'weight', 'build', 'sim', 'type', 'size', 'resolution',
@@ -571,16 +572,14 @@ export default function AdminPhoneForm({ initialData, onSubmit, isEditing = fals
               </section>
 
               <section className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
-                <h3 className="text-lg font-bold mb-4">Description (Markdown)</h3>
+                <h3 className="text-lg font-bold mb-4">Description</h3>
                 <div>
-                  <textarea 
-                    value={formData.description || ''} 
-                    onChange={e => setFormData((p: any) => ({ ...p, description: e.target.value }))} 
-                    className="w-full px-3 py-2 border border-gray-200 rounded-md text-sm font-mono focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 bg-gray-50" 
-                    rows={12} 
-                    placeholder="Enter phone description in Markdown format..." 
+                  <MarkdownEditor
+                    value={formData.description || ''}
+                    onChange={v => setFormData((p: any) => ({ ...p, description: v }))}
+                    height={420}
                   />
-                  <p className="text-[11px] text-gray-500 mt-2 font-medium">This description is displayed on the product page and supports markdown formatting like headings (##), lists (-), and bold (**text**).</p>
+                  <p className="text-[11px] text-gray-500 mt-2 font-medium">Use the toolbar for bold, italic, links, headings and lists. This is displayed on the product page. Tip: a <code>## Pros &amp; Cons</code> section renders as pros/cons cards, and a <code>## FAQ</code> section with <code>Q:</code> / <code>A:</code> lines renders as an accordion.</p>
                 </div>
               </section>
 
