@@ -667,15 +667,15 @@ export default async function EVDetailPage({
               {/* Full Specs Accordion */}
               <EVSpecs vehicle={vehicle} />
 
-              {/* Editorial / AI Description */}
-              <EVDescriptionClient
+              {/* Editorial / AI Description — temporarily hidden from UI */}
+              {/* <EVDescriptionClient
                 description={vehicle.description}
                 vehicleName={vehicle.name}
                 pros={vehicle.seo?.ai_pros}
                 cons={vehicle.seo?.ai_cons}
                 buyingAdvice={vehicle.seo?.ai_buying_advice}
                 faqs={vehicle.seo?.ai_faq}
-              />
+              /> */}
 
               {/* YouTube Video Review Embed */}
               {vehicle.video_url && (
