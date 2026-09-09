@@ -103,6 +103,7 @@ export async function generateMetadata({
     return {
       title: "Vehicle Not Found | Zozo",
       description: "The requested electric vehicle could not be found.",
+      robots: { index: false, follow: false },
     };
   }
 

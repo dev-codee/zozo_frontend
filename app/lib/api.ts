@@ -369,27 +369,62 @@ export function getApiBaseUrl(): string {
 
 // ─── Fetch Helpers ────────────────────────────────────────────────────────────
 
+// A slow or flaky backend must NEVER be turned into a soft-404. If a transient
+// fetch failure quietly returned null, the page would render "Not Found" with an
+// HTTP 200 and Google would deindex a URL that is actually fine. So we give each
+// request a hard timeout, retry transient failures (5xx / network / timeout),
+// and if they persist we THROW — letting error.tsx serve a real HTTP 500 that
+// Googlebot will retry later, instead of a bogus empty page.
+const API_TIMEOUT_MS = 8000;
+const API_MAX_RETRIES = 2;
+
 async function apiFetch<T>(endpoint: string, init?: RequestInit): Promise<T | null> {
-  try {
-    const baseUrl = getApiBaseUrl();
-    const cleanEndpoint = endpoint.startsWith("/") ? endpoint : `/${endpoint}`;
-    const res = await fetch(`${baseUrl}${cleanEndpoint}`, {
-      next: { revalidate: 60 },
-      ...init,
-    });
+  const baseUrl = getApiBaseUrl();
+  const cleanEndpoint = endpoint.startsWith("/") ? endpoint : `/${endpoint}`;
+  const url = `${baseUrl}${cleanEndpoint}`;
 
-    if (!res.ok) {
-      console.error(`API error: ${res.status} ${res.statusText} for ${endpoint}`);
+  let lastError: unknown;
+  for (let attempt = 0; attempt <= API_MAX_RETRIES; attempt++) {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), API_TIMEOUT_MS);
+    try {
+      const res = await fetch(url, {
+        next: { revalidate: 60 },
+        ...init,
+        signal: controller.signal,
+      });
+
+      // Genuinely missing resource — let the caller render a real 404. Not retried.
       if (res.status === 404) return null;
-      throw new Error(`API error: ${res.status}`);
-    }
 
-    const json: ApiResponse<T> = await res.json();
-    return json.data;
-  } catch (error) {
-    console.error(`Failed to fetch ${endpoint}:`, error);
-    throw error;
+      // 4xx (other than 404) — a client error retrying won't fix. Fail fast.
+      if (!res.ok && res.status < 500) {
+        throw new Error(`API client error: ${res.status} ${res.statusText} for ${endpoint}`);
+      }
+
+      // 5xx — transient server problem. Throw to fall into the retry path below.
+      if (!res.ok) {
+        throw new Error(`API server error: ${res.status} ${res.statusText} for ${endpoint}`);
+      }
+
+      const json: ApiResponse<T> = await res.json();
+      return json.data;
+    } catch (error) {
+      lastError = error;
+      const message = error instanceof Error ? error.message : "";
+      const isRetryable = !message.startsWith("API client error");
+
+      if (!isRetryable || attempt === API_MAX_RETRIES) {
+        console.error(`Failed to fetch ${endpoint}:`, error);
+        throw error;
+      }
+      // Linear backoff before the next attempt: 300ms, then 600ms.
+      await new Promise((resolve) => setTimeout(resolve, 300 * (attempt + 1)));
+    } finally {
+      clearTimeout(timer);
+    }
   }
+  throw lastError;
 }
 
 // ─── API Functions ────────────────────────────────────────────────────────────

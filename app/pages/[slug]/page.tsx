@@ -22,7 +22,7 @@ async function getPage(slug: string) {
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const resolvedParams = await params;
   const page = await getPage(resolvedParams.slug);
-  if (!page) return { title: 'Not Found | Zozo' };
+  if (!page) return { title: 'Not Found | Zozo', robots: { index: false, follow: false } };
   
   const canonicalUrl = `https://zozo.pk/pages/${resolvedParams.slug}`;
   const title = `${page.title} — Zozo`;

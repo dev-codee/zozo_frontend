@@ -54,9 +54,13 @@ export async function generateMetadata({
   const phone = await getPhoneBySlug(slug);
 
   if (!phone) {
+    // The page component calls notFound() (→ HTTP 404) for this case, but if a
+    // stale/edge cache ever serves this metadata with a 200, noindex stops Google
+    // from indexing the soft-404.
     return {
       title: "Phone Not Found | Zozo",
       description: "The requested phone could not be found.",
+      robots: { index: false, follow: false },
     };
   }
 
