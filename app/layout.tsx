@@ -83,17 +83,20 @@ export default function RootLayout({
         {/* Speed up the LCP image (phone photos are served from Cloudinary) */}
         <link rel="preconnect" href="https://res.cloudinary.com" />
         <link rel="dns-prefetch" href="https://res.cloudinary.com" />
+
         {/* Google tag (gtag.js) */}
         <Script
-          src="https://www.googletagmanager.com/gtag/js?id=G-N2HNBTG692"
-          strategy="lazyOnload"
+          async
+          src="https://www.googletagmanager.com/gtag/js?id=AW-11419881899"
         />
-        <Script id="google-analytics" strategy="lazyOnload">
+        <Script id="google-tag">
           {`
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
+
             gtag('config', 'G-N2HNBTG692');
+            gtag('config', 'AW-11419881899');
           `}
         </Script>
         <script
