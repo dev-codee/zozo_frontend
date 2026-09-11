@@ -415,6 +415,8 @@ export default function PhoneSpecs({ specs, className = "", phone }: PhoneSpecsP
           {renderRow("Supported Features", ext.ai_features)}
         </>
       ))}
+
+      {phone && <SubmitBenchmarkWrapper phone={phone} />}
     </section>
   );
 }

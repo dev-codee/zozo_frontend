@@ -5,7 +5,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Phone } from "@/app/lib/api";
 import SubmitBenchmarkModal from "./SubmitBenchmarkModal";
 import { useAuth } from "@/app/context/AuthContext";
-import AppIcon from "./AppIcon";
+import { Upload } from "lucide-react";
 
 export default function SubmitBenchmarkWrapper({ phone }: { phone: Phone }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -30,8 +30,8 @@ export default function SubmitBenchmarkWrapper({ phone }: { phone: Phone }) {
           onClick={handleOpen} 
           className="flex items-center gap-2 text-text-main hover:text-primary font-semibold text-sm px-5 py-2.5 bg-surface-container-low hover:bg-primary/10 rounded-xl transition-colors border border-border-subtle hover:border-primary/30 cursor-pointer"
         >
-          <AppIcon name="description" size={20} />
-          Submit your benchmark results
+          <Upload className="w-4 h-4 text-primary" />
+          Upload Benchmarks
         </button>
       </div>
       <SubmitBenchmarkModal isOpen={isOpen} onClose={() => setIsOpen(false)} phone={phone} />
