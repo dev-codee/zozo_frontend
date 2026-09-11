@@ -19,7 +19,7 @@ async function getBlog(slug: string) {
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const resolvedParams = await params;
   const blog = await getBlog(resolvedParams.slug);
-  if (!blog) return { title: 'Not Found | Zozo', robots: { index: false, follow: false } };
+  if (!blog) return { title: 'Not Found', robots: { index: false, follow: false } };
   
   const canonicalUrl = `https://zozo.pk/news/${resolvedParams.slug}`;
   const title = `${blog.title} — Mobile News & Reviews`;

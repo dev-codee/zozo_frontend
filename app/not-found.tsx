@@ -4,7 +4,7 @@ import Footer from '@/app/components/Footer';
 import AppIcon from '@/app/components/AppIcon';
 
 export const metadata = {
-  title: 'Page Not Found | Zozo',
+  title: 'Page Not Found',
   description: 'The page you are looking for could not be found.',
 };
 

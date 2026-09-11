@@ -32,7 +32,7 @@ export async function generateMetadata({
   } else if (brand && !brand.includes(",")) {
     const formattedBrand = brand.charAt(0).toUpperCase() + brand.slice(1);
     title = `${formattedBrand} Mobile Phone Prices in Pakistan`;
-    description = `Compare all ${formattedBrand} mobile phone prices, full specifications, and latest deals in Pakistan on Zozo.`;
+    description = `Compare all ${formattedBrand} mobile phone prices, full specifications, and latest deals in Pakistan.`;
   } else if (maxPrice) {
     const formattedPrice = Number(maxPrice).toLocaleString();
     title = `Best Mobile Phones Under Rs. ${formattedPrice} in Pakistan`;
@@ -162,7 +162,7 @@ export default async function PhonesPage({
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify(generateCollectionPageSchema(title, `Explore ${title} on Zozo`, `/phones`)),
+          __html: JSON.stringify(generateCollectionPageSchema(title, `Explore ${title}`, `/phones`)),
         }}
       />
       <script

@@ -48,10 +48,10 @@ export async function generateMetadata({
 
   if (brand && anc === "true") {
     title = `${brandName} ANC Wireless Earbuds Prices in Pakistan`;
-    description = `Compare ${brandName} active noise cancelling earbuds prices, battery life, and specs in Pakistan on Zozo.`;
+    description = `Compare ${brandName} active noise cancelling earbuds prices, battery life, and specs in Pakistan.`;
   } else if (brand) {
     title = `${brandName} Earbuds Prices & Specifications in Pakistan`;
-    description = `Compare all ${brandName} wireless earbuds prices, sound features, battery life, and reviews in Pakistan on Zozo.`;
+    description = `Compare all ${brandName} wireless earbuds prices, sound features, battery life, and reviews in Pakistan.`;
   } else if (maxPrice) {
     const formattedPrice = Number(maxPrice).toLocaleString();
     title = `Best Wireless Earbuds Under Rs. ${formattedPrice} in Pakistan`;
@@ -239,7 +239,7 @@ export default async function EarbudsPage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify(
-            generateCollectionPageSchema(pageHeading, `Explore ${pageHeading} on Zozo`, canonicalUrl)
+            generateCollectionPageSchema(pageHeading, `Explore ${pageHeading}`, canonicalUrl)
           ),
         }}
       />

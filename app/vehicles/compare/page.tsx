@@ -21,7 +21,7 @@ export const metadata: Metadata = {
     canonical: "https://zozo.pk/vehicles/compare",
   },
   openGraph: {
-    title: "Compare Electric Vehicles Side-by-Side | Zozo",
+    title: "Compare Electric Vehicles Side-by-Side",
     description:
       "Compare EV prices, range, charging speed, battery, and specs side by side in Pakistan.",
     url: "https://zozo.pk/vehicles/compare",

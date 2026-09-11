@@ -48,10 +48,10 @@ export async function generateMetadata({
 
   if (brand && category) {
     title = `${brandName} Electric ${formattedCategory}s Prices & Specifications in Pakistan`;
-    description = `Compare all ${brandName} electric ${category.toLowerCase()}s prices, full specifications, range, and battery details in Pakistan on Zozo.`;
+    description = `Compare all ${brandName} electric ${category.toLowerCase()}s prices, full specifications, range, and battery details in Pakistan.`;
   } else if (brand) {
     title = `${brandName} Electric Vehicles Prices in Pakistan`;
-    description = `Compare all ${brandName} electric vehicle prices, full specifications, range, and battery details in Pakistan on Zozo.`;
+    description = `Compare all ${brandName} electric vehicle prices, full specifications, range, and battery details in Pakistan.`;
   } else if (maxPrice) {
     const formattedPrice = Number(maxPrice).toLocaleString();
     title = `Best Electric Vehicles Under Rs. ${formattedPrice} in Pakistan`;
@@ -210,7 +210,7 @@ export default async function VehiclesPage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify(
-            generateCollectionPageSchema(title, `Explore ${title} on Zozo`, canonicalUrl)
+            generateCollectionPageSchema(title, `Explore ${title}`, canonicalUrl)
           ),
         }}
       />

@@ -8,13 +8,13 @@ import { generateCollectionPageSchema } from '@/app/lib/schema';
 import AppIcon from '@/app/components/AppIcon';
 
 export const metadata: Metadata = {
-  title: 'Tech News & Smartphone Reviews — Zozo.pk',
+  title: 'Tech News & Smartphone Reviews',
   description: 'Latest mobile phone news, smartphone reviews, leaks, buying guides, and comparisons in Pakistan.',
   alternates: {
     canonical: 'https://zozo.pk/news',
   },
   openGraph: {
-    title: 'Tech News & Smartphone Reviews — Zozo.pk',
+    title: 'Tech News & Smartphone Reviews',
     description: 'Latest mobile phone news, reviews, and comparisons in Pakistan.',
     url: 'https://zozo.pk/news',
   },
@@ -45,7 +45,7 @@ export default async function NewsPage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify(generateCollectionPageSchema("Tech News & Reviews", "Latest tech news, reviews and mobile updates on Zozo", "/news")),
+          __html: JSON.stringify(generateCollectionPageSchema("Tech News & Reviews", "Latest tech news, reviews and mobile updates", "/news")),
         }}
       />
       <Navbar />

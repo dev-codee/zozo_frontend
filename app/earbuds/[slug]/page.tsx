@@ -35,7 +35,7 @@ export async function generateMetadata({
 
   if (!earbud) {
     return {
-      title: "Earbud Not Found | Zozo",
+      title: "Earbud Not Found",
       description: "The requested wireless earbuds could not be found.",
     };
   }
@@ -46,12 +46,12 @@ export async function generateMetadata({
   const priceText = !isNaN(lowestPrice) && lowestPrice > 0 ? `Rs. ${lowestPrice.toLocaleString()}` : "Best Price";
 
   const year = new Date().getFullYear();
-  const rawTitle = earbud.seo?.ai_seo_title || earbud.seo?.meta_title || `${earbud.name} Price in Pakistan & Full Specs (${year})`;
+  const rawTitle = earbud.seo?.ai_seo_title || earbud.seo?.meta_title || `${earbud.name} Price & Full Specs (${year})`;
   const title = rawTitle.replace(/\s*[-–|]?\s*zozo(?:\.pk)?\s*$/i, "").trim();
   const description =
-    earbud.seo?.ai_meta_description ||
+    (earbud.seo?.ai_meta_description ||
     earbud.seo?.meta_description ||
-    `Check ${earbud.name} official price in Pakistan (${priceText}), battery life, ANC noise cancellation, Bluetooth specs, sound quality, and customer reviews on Zozo.`;
+    `Check ${earbud.name} official price (${priceText}), battery life, ANC noise cancellation, Bluetooth specs, sound quality, and customer reviews.`).replace(/\s*on\s+zozo(?:\.pk)?/gi, "").trim();
 
   const primaryImage = earbud.images?.find((img) => img.is_primary) || earbud.images?.[0];
   const canonicalUrl = `https://zozo.pk/earbuds/${earbud.slug}`;

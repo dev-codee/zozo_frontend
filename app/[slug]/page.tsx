@@ -60,7 +60,7 @@ export async function generateMetadata({
     // stale/edge cache ever serves this metadata with a 200, noindex stops Google
     // from indexing the soft-404.
     return {
-      title: "Phone Not Found | Zozo",
+      title: "Phone Not Found",
       description: "The requested phone could not be found.",
       robots: { index: false, follow: false },
     };
@@ -76,13 +76,11 @@ export async function generateMetadata({
     phone.seo?.meta_title ||
     phone.seo?.ai_seo_title ||
     `${phone.name} Latest Price & Specs`;
-  const title = `${baseTitle.replace(/\s*\b20\d{2}\b\s*$/, "").trim()} ${year}`;
+  const title = `${baseTitle.replace(/\s*[-–|]?\s*zozo(?:\.pk)?\s*$/i, "").replace(/\s*\b20\d{2}\b\s*$/, "").trim()} ${year}`.replace(/\s*[-–|]?\s*zozo(?:\.pk)?\s*$/i, "").trim();
 
-  const description = phone.seo?.meta_description || phone.seo?.ai_meta_description || `Best price for ${phone.name}. Compare full specifications, camera, battery, features, and user reviews on Zozo.`;
+  const description = (phone.seo?.meta_description || phone.seo?.ai_meta_description || `Best price for ${phone.name}. Compare full specifications, camera, battery, features, and user reviews.`).replace(/\s*on\s+zozo(?:\.pk)?/gi, "").trim();
 
   return {
-    // `absolute` bypasses the "%s | Zozo" template from the root layout so phone
-    // titles read "… & Specs 2026" with no "| Zozo" suffix.
     title: { absolute: title },
     description,
     keywords: phone.seo?.ai_keywords || [`mobile phones`, `${phone.name} price`, `${phone.brand_slug} mobile`, `buy ${phone.name}`],
@@ -277,7 +275,7 @@ export default async function PhoneDetailPage({
       <script type="application/ld+json" dangerouslySetInnerHTML={{
         __html: JSON.stringify(generateWebPageSchema(
           phone.seo?.meta_title || `${phone.name} Price, Specs & Reviews`,
-          phone.seo?.meta_description || `Find the best price for ${phone.name}. Read full specifications, features, and user reviews on Zozo.`,
+          phone.seo?.meta_description || `Find the best price for ${phone.name}. Read full specifications, features, and user reviews.`,
           `/${phone.slug}-price`
         ))
       }} />
@@ -303,7 +301,7 @@ export default async function PhoneDetailPage({
           {/* Hero Section */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
             {/* Gallery */}
-            <PhoneGallery images={phone.images} altText={`${phone.name.replace(/\s+/g, '-')}-Price-in-Pakistan-ZOZO`} />
+            <PhoneGallery images={phone.images} altText={`${phone.name.replace(/\s+/g, '-')}-Price`} />
 
             {/* Product Info */}
             <div className="flex flex-col gap-3">

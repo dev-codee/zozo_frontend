@@ -101,7 +101,7 @@ export async function generateMetadata({
 
   if (!vehicle) {
     return {
-      title: "Vehicle Not Found | Zozo",
+      title: "Vehicle Not Found",
       description: "The requested electric vehicle could not be found.",
       robots: { index: false, follow: false },
     };
@@ -114,13 +114,13 @@ export async function generateMetadata({
   const baseTitle =
     vehicle.seo?.meta_title ||
     vehicle.seo?.ai_seo_title ||
-    `${vehicle.name} Price in Pakistan & Full Specs`;
-  const title = `${baseTitle.replace(/\s*\b20\d{2}\b\s*$/, "").trim()} ${year}`;
+    `${vehicle.name} Price & Full Specs`;
+  const title = `${baseTitle.replace(/\s*[-–|]?\s*zozo(?:\.pk)?\s*$/i, "").replace(/\s*\b20\d{2}\b\s*$/, "").trim()} ${year}`.replace(/\s*[-–|]?\s*zozo(?:\.pk)?\s*$/i, "").trim();
 
   const description =
-    vehicle.seo?.meta_description ||
+    (vehicle.seo?.meta_description ||
     vehicle.seo?.ai_meta_description ||
-    `Get complete details on ${vehicle.name} in Pakistan. Compare price, battery capacity, range, acceleration, charging speed, features, and full specifications on Zozo.`;
+    `Get complete details on ${vehicle.name}. Compare price, battery capacity, range, acceleration, charging speed, features, and full specifications.`).replace(/\s*on\s+zozo(?:\.pk)?/gi, "").trim();
 
   return {
     title: { absolute: title },
@@ -328,9 +328,9 @@ export default async function EVDetailPage({
         dangerouslySetInnerHTML={{
           __html: JSON.stringify(
             generateWebPageSchema(
-              vehicle.seo?.meta_title || `${vehicle.name} Price in Pakistan, Specs & Features`,
+              vehicle.seo?.meta_title || `${vehicle.name} Price, Specs & Features`,
               vehicle.seo?.meta_description ||
-                `Check complete price, range, battery, performance and full specifications of ${vehicle.name} on ZOZO.`,
+                `Check complete price, range, battery, performance and full specifications of ${vehicle.name}.`,
               `/vehicles/${vehicle.slug}`
             )
           ),
@@ -375,7 +375,7 @@ export default async function EVDetailPage({
               {/* Left Column: Automotive Gallery */}
               <EVGallery
                 images={vehicle.images}
-                altText={`${vehicle.name} Price in Pakistan - ZOZO`}
+                altText={`${vehicle.name} Price`}
                 vehicleName={vehicle.name}
               />
 

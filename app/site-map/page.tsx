@@ -9,15 +9,15 @@ import { getBrands, getHomeData, type Brand, type Phone } from "@/app/lib/api";
 export const revalidate = 3600;
 
 export const metadata: Metadata = {
-  title: "HTML Sitemap — All Mobile Phones, Brands & Prices | Zozo",
+  title: "HTML Sitemap — All Mobile Phones, Brands & Prices",
   description:
-    "Browse the full Zozo sitemap — mobile phones, popular brands, price ranges, comparisons and more, all in one place.",
+    "Browse the full sitemap — mobile phones, popular brands, price ranges, comparisons and more, all in one place.",
   alternates: {
     canonical: "https://zozo.pk/site-map",
   },
   openGraph: {
-    title: "HTML Sitemap | Zozo",
-    description: "Browse all mobile phone pages, brands, and price ranges on Zozo.",
+    title: "HTML Sitemap",
+    description: "Browse all mobile phone pages, brands, and price ranges.",
     url: "https://zozo.pk/site-map",
   },
 };

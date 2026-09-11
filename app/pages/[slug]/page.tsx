@@ -22,11 +22,11 @@ async function getPage(slug: string) {
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const resolvedParams = await params;
   const page = await getPage(resolvedParams.slug);
-  if (!page) return { title: 'Not Found | Zozo', robots: { index: false, follow: false } };
+  if (!page) return { title: 'Page Not Found', robots: { index: false, follow: false } };
   
   const canonicalUrl = `https://zozo.pk/pages/${resolvedParams.slug}`;
-  const title = `${page.title} — Zozo`;
-  const description = page.excerpt || `${page.title} page on Zozo.pk`;
+  const title = page.title;
+  const description = page.excerpt || page.title;
 
   return {
     title,
@@ -55,7 +55,7 @@ export default async function StaticPagePage({ params }: { params: Promise<{ slu
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify(generateWebPageSchema(page.title, `${page.title} on Zozo`, `/pages/${page.slug}`)),
+          __html: JSON.stringify(generateWebPageSchema(page.title, page.excerpt || page.title, `/pages/${page.slug}`)),
         }}
       />
       <Navbar />

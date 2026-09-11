@@ -14,14 +14,14 @@ import AdSlot from "./components/AdSlot";
 export const revalidate = 300; // Cache and revalidate page every 5 minutes
 
 export const metadata: Metadata = {
-  title: "zozo.pk — Compare Mobile Phone & Earbuds Prices in Pakistan",
-  description: "Compare latest mobile phone and wireless earbuds prices in Pakistan across all top retailers. Find the best deals on Samsung, Apple, Xiaomi, Anker, and more.",
+  title: "Compare Mobile Phone & Earbuds Prices",
+  description: "Compare latest mobile phone and wireless earbuds prices across all top retailers. Find the best deals on Samsung, Apple, Xiaomi, Anker, and more.",
   alternates: {
     canonical: "https://zozo.pk",
   },
   openGraph: {
-    title: "zozo.pk — Compare Mobile Phone & Earbuds Prices in Pakistan",
-    description: "Compare latest mobile phone and wireless earbuds prices in Pakistan across all top retailers.",
+    title: "Compare Mobile Phone & Earbuds Prices",
+    description: "Compare latest mobile phone and wireless earbuds prices across all top retailers.",
     url: "https://zozo.pk",
   },
 };

@@ -9,13 +9,13 @@ import Link from "next/link";
 export const revalidate = 60; // ISR validation time
 
 export const metadata: Metadata = {
-  title: "All Phone Comparisons | Zozo",
+  title: "All Phone Comparisons",
   description: "Browse our extensive list of all mobile phone comparisons. Compare prices, specs, and features side by side.",
   alternates: {
     canonical: "https://zozo.pk/comparisons",
   },
   openGraph: {
-    title: "All Phone Comparisons | Zozo",
+    title: "All Phone Comparisons",
     description: "Browse our extensive list of all mobile phone comparisons. Compare prices, specs, and features side by side.",
     url: "https://zozo.pk/comparisons",
   },

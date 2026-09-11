@@ -16,7 +16,7 @@ export const metadata: Metadata = {
     canonical: "https://zozo.pk/compare",
   },
   openGraph: {
-    title: "Compare Mobile Phones Side-by-Side | Zozo",
+    title: "Compare Mobile Phones Side-by-Side",
     description: "Compare mobile phone prices, camera specs, battery life, performance, and features side by side in Pakistan.",
     url: "https://zozo.pk/compare",
   },

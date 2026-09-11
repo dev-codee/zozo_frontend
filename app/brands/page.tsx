@@ -9,13 +9,13 @@ import { generateCollectionPageSchema } from "@/app/lib/schema";
 
 export const metadata: Metadata = {
   title: "All Mobile Phone Brands in Pakistan — Samsung, Apple, Xiaomi & More",
-  description: "Browse all mobile phone brands available on Zozo. Find latest smartphones, prices, and specs from your favorite manufacturers in Pakistan.",
+  description: "Browse all mobile phone brands. Find latest smartphones, prices, and specs from your favorite manufacturers in Pakistan.",
   alternates: {
     canonical: "https://zozo.pk/brands",
   },
   openGraph: {
-    title: "All Mobile Phone Brands in Pakistan | Zozo",
-    description: "Browse all mobile phone brands available on Zozo. Find latest smartphones and specs.",
+    title: "All Mobile Phone Brands in Pakistan",
+    description: "Browse all mobile phone brands. Find latest smartphones and specs.",
     url: "https://zozo.pk/brands",
   },
 };
@@ -28,7 +28,7 @@ export default async function BrandsPage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify(generateCollectionPageSchema("Mobile Phone Brands", "Browse all mobile phone brands on Zozo", "/brands")),
+          __html: JSON.stringify(generateCollectionPageSchema("Mobile Phone Brands", "Browse all mobile phone brands", "/brands")),
         }}
       />
       <Navbar />
