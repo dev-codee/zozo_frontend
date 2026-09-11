@@ -422,7 +422,7 @@ export default function AdminEarbudForm({ initialData, onSubmit, isEditing = fal
       // Build clean payload
       const payload: any = {
         name: formData.name.trim(),
-        brand_slug: formData.brand_slug.trim().toLowerCase(),
+        brand_slug: formData.brand_slug.trim().toLowerCase().replace(/\s+/g, '-'),
         model_number: formData.model_number || undefined,
         release_date: formData.release_date || undefined,
         description: formData.description || undefined,
@@ -604,17 +604,14 @@ export default function AdminEarbudForm({ initialData, onSubmit, isEditing = fal
 
                   <div>
                     <label className="block text-xs font-semibold text-gray-700 mb-1">Brand *</label>
-                    <select
+                    <input
+                      type="text"
+                      required
+                      placeholder="e.g. Audionic, Sony, Soundpeats, Apple"
                       value={formData.brand_slug}
                       onChange={e => setTop('brand_slug', e.target.value)}
-                      required
-                      className="w-full px-3 py-2 border rounded-md text-xs focus:outline-none focus:border-amber-500 bg-white"
-                    >
-                      <option value="">Select Brand</option>
-                      {brands.map(b => (
-                        <option key={b.slug} value={b.slug}>{b.name}</option>
-                      ))}
-                    </select>
+                      className="w-full px-3 py-2 border rounded-md text-xs focus:outline-none focus:border-amber-500"
+                    />
                   </div>
 
                   <div>
