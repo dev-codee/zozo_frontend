@@ -163,7 +163,6 @@ const iconMap: Record<string, LucideIcon> = {
   battery_std: Battery,
   signal_cellular_alt: Signal,
   cell_tower: Signal,
-  volume_up: Volume2,
   sensors: Fingerprint,
   design_services: Layers,
   widgets: LayoutGrid,
