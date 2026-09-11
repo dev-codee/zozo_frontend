@@ -7,158 +7,6 @@ interface PhoneSpecsProps {
   phone?: Phone;
 }
 
-// ─── Rating Calculators ──────────────────────────────────────────────────────
-
-function getPerformanceRating(specs: Phone["specs"]) {
-  let score = 5.5; // Base score
-  const chipset = (specs.performance?.chipset || "").toLowerCase();
-  const ram = specs.performance?.ram_options_gb || [];
-  const maxRam = ram.length ? Math.max(...ram) : 4;
-
-  if (chipset.includes("snapdragon 8 elite") || chipset.includes("apple a18 pro") || chipset.includes("dimensity 9400") || chipset.includes("8s gen 4") || chipset.includes("7s gen 4")) {
-    if (chipset.includes("7s gen 4")) {
-      score = 8.2;
-    } else {
-      score = 9.8;
-    }
-  } else if (chipset.includes("snapdragon 8 gen 3") || chipset.includes("apple a18") || chipset.includes("apple a17 pro") || chipset.includes("dimensity 9300")) {
-    score = 9.5;
-  } else if (chipset.includes("snapdragon 8 gen 2") || chipset.includes("dimensity 9200") || chipset.includes("tensor g4")) {
-    score = 9.0;
-  } else if (chipset.includes("snapdragon 8 gen 1") || chipset.includes("snapdragon 8+") || chipset.includes("dimensity 9000") || chipset.includes("tensor g3")) {
-    score = 8.5;
-  } else if (chipset.includes("snapdragon 7") || chipset.includes("dimensity 8")) {
-    score = 8.0;
-  } else if (chipset.includes("snapdragon 6") || chipset.includes("dimensity 7") || chipset.includes("dimensity 6")) {
-    score = 7.0;
-  } else if (chipset.includes("helio g99") || chipset.includes("helio g96") || chipset.includes("helio g95")) {
-    score = 6.5;
-  } else if (chipset.includes("helio") || chipset.includes("unisoc")) {
-    score = 5.2;
-  }
-
-  if (maxRam >= 16) score += 0.2;
-  else if (maxRam >= 12) score += 0.1;
-  else if (maxRam <= 4) score -= 0.5;
-
-  score = Math.min(10.0, Math.max(1.0, score));
-
-  let label = "Average";
-  if (score >= 9.0) label = "Excellent";
-  else if (score >= 8.0) label = "Very Good";
-  else if (score >= 7.0) label = "Good";
-  else if (score >= 5.0) label = "Average";
-  else label = "Entry";
-
-  return { score, label };
-}
-
-function getDisplayRating(specs: Phone["specs"]) {
-  let score = 6.0;
-  const display = specs.display || {};
-  const refresh = display.refresh_rate_hz || 60;
-  const type = (display.type || "").toLowerCase();
-  const resolution = (display.resolution || "").toLowerCase();
-
-  if (type.includes("amoled") || type.includes("oled") || type.includes("ltpo")) {
-    score += 1.5;
-  } else if (type.includes("ips") || type.includes("lcd")) {
-    score += 0.5;
-  }
-
-  if (refresh >= 144) score += 1.5;
-  else if (refresh >= 120) score += 1.2;
-  else if (refresh >= 90) score += 0.6;
-
-  if (resolution.includes("4k") || resolution.includes("3840")) score += 1.0;
-  else if (resolution.includes("1440") || resolution.includes("2k") || resolution.includes("qhd")) score += 0.8;
-  else if (resolution.includes("1080") || resolution.includes("fhd")) score += 0.4;
-
-  score = Math.min(10.0, Math.max(1.0, score));
-
-  let label = "Average";
-  if (score >= 9.0) label = "Excellent";
-  else if (score >= 8.0) label = "Very Good";
-  else if (score >= 7.0) label = "Good";
-  else if (score >= 5.0) label = "Average";
-  else label = "Entry";
-
-  return { score, label };
-}
-
-function getCameraRating(specs: Phone["specs"]) {
-  let score = 5.5;
-  const camera = specs.camera || {};
-  const rear = (camera.rear_summary || "").toLowerCase();
-  const video = (camera.video_recording || "").toLowerCase();
-
-  if (rear.includes("200 mp")) score += 2.0;
-  else if (rear.includes("108 mp")) score += 1.5;
-  else if (rear.includes("50 mp")) score += 1.2;
-  else if (rear.includes("48 mp") || rear.includes("64 mp")) score += 1.0;
-
-  if (rear.includes("ois")) score += 1.0;
-  if (rear.includes("telephoto") || rear.includes("periscope")) score += 1.0;
-  if (rear.includes("triple") || rear.includes("quad")) score += 0.5;
-
-  if (video.includes("8k")) score += 1.0;
-  else if (video.includes("4k@60fps")) score += 0.8;
-  else if (video.includes("4k")) score += 0.5;
-
-  score = Math.min(10.0, Math.max(1.0, score));
-
-  let label = "Average";
-  if (score >= 9.0) label = "Excellent";
-  else if (score >= 8.0) label = "Very Good";
-  else if (score >= 7.0) label = "Good";
-  else if (score >= 5.0) label = "Average";
-  else label = "Entry";
-
-  return { score, label };
-}
-
-function getBatteryRating(specs: Phone["specs"]) {
-  let score = 6.0;
-  const battery = specs.battery || {};
-  const capacity = battery.capacity_mah || 4000;
-  const charging = battery.charging_watts || 15;
-
-  if (capacity >= 6000) score += 2.0;
-  else if (capacity >= 5500) score += 1.6;
-  else if (capacity >= 5000) score += 1.2;
-  else if (capacity >= 4500) score += 0.7;
-
-  if (charging >= 120) score += 2.0;
-  else if (charging >= 80) score += 1.6;
-  else if (charging >= 67) score += 1.2;
-  else if (charging >= 45) score += 0.9;
-  else if (charging >= 33) score += 0.6;
-  else if (charging >= 25) score += 0.4;
-
-  if (battery.wireless_charging) score += 0.5;
-
-  score = Math.min(10.0, Math.max(1.0, score));
-
-  let label = "Average";
-  if (score >= 9.0) label = "Excellent";
-  else if (score >= 8.0) label = "Very Good";
-  else if (score >= 7.0) label = "Good";
-  else if (score >= 5.0) label = "Average";
-  else label = "Entry";
-
-  return { score, label };
-}
-
-function getRatingColors(label: string) {
-  switch (label) {
-    case "Excellent": return { bar: "bg-emerald-500", text: "text-emerald-600 dark:text-emerald-400" };
-    case "Very Good": return { bar: "bg-green-500", text: "text-green-600 dark:text-green-400" };
-    case "Good": return { bar: "bg-amber-500", text: "text-amber-600 dark:text-amber-400" };
-    case "Average": return { bar: "bg-orange-500", text: "text-orange-600 dark:text-orange-400" };
-    default: return { bar: "bg-rose-500", text: "text-rose-600 dark:text-rose-400" };
-  }
-}
-
 // ─── Component ───────────────────────────────────────────────────────────────
 
 import SubmitBenchmarkWrapper from "./SubmitBenchmarkWrapper";
@@ -198,13 +46,6 @@ export default function PhoneSpecs({ specs, className = "", phone }: PhoneSpecsP
 
   const processorDisplay = ext.processor?.cpu_name || (specs.performance?.cpu ? specs.performance.cpu.replace(/Octa-core/i, "Octa core").trim() : "");
 
-  const ratings = {
-    performance: getPerformanceRating(specs),
-    display: getDisplayRating(specs),
-    camera: getCameraRating(specs),
-    battery: getBatteryRating(specs),
-  };
-
   const renderRow = (label: string, value: React.ReactNode) => {
     if (!value || value === "false") return null;
     if (value === "true" || value === true) value = "Yes";
@@ -224,15 +65,8 @@ export default function PhoneSpecs({ specs, className = "", phone }: PhoneSpecsP
     id: string,
     title: string,
     icon: string,
-    rows: React.ReactNode,
-    rating?: { score: number; label: string }
+    rows: React.ReactNode
   ) => {
-    // Determine if the rows fragment actually contains any rendered rows
-    if (!rows || (rows as any).props?.children?.length === 0 || (rows as any).props?.children?.every((c: any) => c === null)) {
-      // We'll just render it anyway, empty rows usually evaluate to empty divs internally
-    }
-    const colors = rating ? getRatingColors(rating.label) : null;
-
     return (
       <details open className="group flex flex-col">
         <summary className="w-full p-5 md:px-6 flex items-center justify-between cursor-pointer select-none bg-surface-container-low/20 hover:bg-surface-container-low/40 transition-colors duration-200 list-none [&::-webkit-details-marker]:hidden border-none outline-none text-left">
@@ -242,20 +76,10 @@ export default function PhoneSpecs({ specs, className = "", phone }: PhoneSpecsP
               {title}
             </span>
           </div>
-          <div className="flex items-center gap-4 ml-auto mr-4">
-            {rating && colors && (
-              <div className="flex items-center gap-2">
-                <div className="hidden sm:block w-16 md:w-24 h-1.5 bg-border-subtle rounded-full overflow-hidden">
-                  <div className={`h-full rounded-full ${colors.bar} transition-all duration-500`} style={{ width: `${rating.score * 10}%` }} />
-                </div>
-                <span className={`text-xs font-semibold ${colors.text}`}>({rating.label})</span>
-              </div>
-            )}
-          </div>
           <AppIcon
             name="keyboard_arrow_down"
             size={20}
-            className="text-text-muted transition-transform duration-200 group-open:rotate-180"
+            className="text-text-muted transition-transform duration-200 group-open:rotate-180 ml-auto"
           />
         </summary>
         <div className="flex flex-col bg-surface-white divide-y divide-border-subtle/30">
@@ -285,7 +109,7 @@ export default function PhoneSpecs({ specs, className = "", phone }: PhoneSpecsP
           {renderRow("Storage Type", ext.ram_storage?.storage_type)}
           {specs.performance?.expandable_storage !== undefined && renderRow("Expandable Storage", specs.performance.expandable_storage ? (ext.ram_storage?.max_expansion || "Yes") : "No")}
         </>
-      ), ratings.performance)}
+      ))}
 
       {renderSection("display", "Display", "smartphone", (
         <>
@@ -308,7 +132,7 @@ export default function PhoneSpecs({ specs, className = "", phone }: PhoneSpecsP
           {renderRow("PWM Dimming", ext.features_listing?.pwm)}
           {renderRow("Display Features", ext.features_listing?.display_features)}
         </>
-      ), ratings.display)}
+      ))}
 
       {renderSection("camera", "Camera", "photo_camera", (
         <>
@@ -326,7 +150,7 @@ export default function PhoneSpecs({ specs, className = "", phone }: PhoneSpecsP
           {renderRow("Video Recording", specs.camera?.video_recording)}
           {renderRow("Video Features", ext.video_recording_features)}
         </>
-      ), ratings.camera)}
+      ))}
 
       {renderSection("battery", "Battery", "battery_charging_full", (
         <>
@@ -340,7 +164,7 @@ export default function PhoneSpecs({ specs, className = "", phone }: PhoneSpecsP
           {renderRow("Charger Included", ext.battery_detailed?.charger_included)}
           {renderRow("Removable", ext.battery_detailed?.removable)}
         </>
-      ), ratings.battery)}
+      ))}
 
       {renderSection("body", "Body & Design", "design_services", (
         <>

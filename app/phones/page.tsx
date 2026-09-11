@@ -51,7 +51,7 @@ export async function generateMetadata({
   const isSoleBrand = !!brand && !brand.includes(",") && !maxPrice && !category && !forLabel;
 
   if (isSoleBrand) {
-    canonicalUrl = `https://zozo.pk/${brand}-phone-price-pakistan`;
+    canonicalUrl = `https://zozo.pk/${brand}-phone-price`;
   } else {
     const queryParams = new URLSearchParams();
     if (brand) queryParams.set("brand", brand);

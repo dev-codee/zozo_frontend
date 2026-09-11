@@ -93,6 +93,7 @@ import {
   Radio,
   Music,
   Eye,
+  Fingerprint,
   type LucideIcon,
 } from "lucide-react";
 
@@ -161,6 +162,10 @@ const iconMap: Record<string, LucideIcon> = {
   battery_full: Battery,
   battery_std: Battery,
   signal_cellular_alt: Signal,
+  cell_tower: Signal,
+  volume_up: Volume2,
+  sensors: Fingerprint,
+  design_services: Layers,
   widgets: LayoutGrid,
   lock: Lock,
   gavel: Gavel,

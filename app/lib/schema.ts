@@ -65,7 +65,7 @@ export function generateProductSchema(phone: SchemaPhone) {
       "@type": "Brand",
       "name": phone.brand_slug.toUpperCase().replace('-', ' ')
     },
-    "url": `${SITE_URL}/${phone.slug}-price-in-pakistan`,
+    "url": `${SITE_URL}/${phone.slug}-price`,
     "category": "Mobile Phone",
   };
 
@@ -110,7 +110,7 @@ export function generateProductSchema(phone: SchemaPhone) {
       "priceCurrency": "PKR",
       "price": lowestPrice,
       "availability": "https://schema.org/InStock",
-      "url": `${SITE_URL}/${phone.slug}-price-in-pakistan`
+      "url": `${SITE_URL}/${phone.slug}-price`
     };
   }
 

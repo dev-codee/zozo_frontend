@@ -20,13 +20,13 @@
 
 ## Top Mobile Brands in Pakistan
 
-- [Samsung Mobile Prices](https://zozo.pk/samsung-phone-price-pakistan): Latest Galaxy S, A, and M series phone prices in Pakistan.
-- [Apple iPhone Prices](https://zozo.pk/apple-phone-price-pakistan): Latest iPhone model prices and specs in Pakistan.
-- [Xiaomi Mobile Prices](https://zozo.pk/xiaomi-phone-price-pakistan): Redmi, Poco, and Xiaomi flagship phone prices.
-- [Vivo Mobile Prices](https://zozo.pk/vivo-phone-price-pakistan): Latest Vivo V and Y series phone prices.
-- [Oppo Mobile Prices](https://zozo.pk/oppo-phone-price-pakistan): Latest Oppo Reno and A series phone prices.
-- [Infinix Mobile Prices](https://zozo.pk/infinix-phone-price-pakistan): Latest Infinix Note and Zero series phone prices.
-- [Tecno Mobile Prices](https://zozo.pk/tecno-phone-price-pakistan): Latest Tecno Camon and Spark series phone prices.
+- [Samsung Mobile Prices](https://zozo.pk/samsung-phone-price): Latest Galaxy S, A, and M series phone prices in Pakistan.
+- [Apple iPhone Prices](https://zozo.pk/apple-phone-price): Latest iPhone model prices and specs in Pakistan.
+- [Xiaomi Mobile Prices](https://zozo.pk/xiaomi-phone-price): Redmi, Poco, and Xiaomi flagship phone prices.
+- [Vivo Mobile Prices](https://zozo.pk/vivo-phone-price): Latest Vivo V and Y series phone prices.
+- [Oppo Mobile Prices](https://zozo.pk/oppo-phone-price): Latest Oppo Reno and A series phone prices.
+- [Infinix Mobile Prices](https://zozo.pk/infinix-phone-price): Latest Infinix Note and Zero series phone prices.
+- [Tecno Mobile Prices](https://zozo.pk/tecno-phone-price): Latest Tecno Camon and Spark series phone prices.
 
 ## Static Information Pages
 

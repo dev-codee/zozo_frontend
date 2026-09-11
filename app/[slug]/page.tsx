@@ -50,6 +50,8 @@ export async function generateMetadata({
   let slug = resolvedParams.slug;
   if (slug.endsWith('-price-in-pakistan')) {
     slug = slug.replace('-price-in-pakistan', '');
+  } else if (slug.endsWith('-price')) {
+    slug = slug.replace('-price', '');
   }
   const phone = await getPhoneBySlug(slug);
 
@@ -65,7 +67,7 @@ export async function generateMetadata({
   }
 
   const primaryImage = phone.images?.find((img) => img.is_primary)?.url || phone.images?.[0]?.url;
-  const canonicalUrl = `https://zozo.pk/${phone.slug}-price-in-pakistan`;
+  const canonicalUrl = `https://zozo.pk/${phone.slug}-price`;
 
   // Auto-updating year (e.g. 2026) appended to the title. Any year already baked
   // into a custom/AI title is stripped first so it never shows stale or doubled.
@@ -73,17 +75,17 @@ export async function generateMetadata({
   const baseTitle =
     phone.seo?.meta_title ||
     phone.seo?.ai_seo_title ||
-    `${phone.name} Latest Price in Pakistan & Specs`;
+    `${phone.name} Latest Price & Specs`;
   const title = `${baseTitle.replace(/\s*\b20\d{2}\b\s*$/, "").trim()} ${year}`;
 
-  const description = phone.seo?.meta_description || phone.seo?.ai_meta_description || `Best price for ${phone.name} in Pakistan. Compare full specifications, camera, battery, features, and user reviews on Zozo.`;
+  const description = phone.seo?.meta_description || phone.seo?.ai_meta_description || `Best price for ${phone.name}. Compare full specifications, camera, battery, features, and user reviews on Zozo.`;
 
   return {
     // `absolute` bypasses the "%s | Zozo" template from the root layout so phone
     // titles read "… & Specs 2026" with no "| Zozo" suffix.
     title: { absolute: title },
     description,
-    keywords: phone.seo?.ai_keywords || [`mobile phones`, `${phone.name} price in pakistan`, `${phone.brand_slug} mobile`, `buy ${phone.name}`],
+    keywords: phone.seo?.ai_keywords || [`mobile phones`, `${phone.name} price`, `${phone.brand_slug} mobile`, `buy ${phone.name}`],
     alternates: {
       canonical: canonicalUrl,
     },
@@ -91,7 +93,7 @@ export async function generateMetadata({
       title,
       description,
       url: canonicalUrl,
-      images: primaryImage ? [{ url: primaryImage, alt: `${phone.name} Price in Pakistan` }] : [],
+      images: primaryImage ? [{ url: primaryImage, alt: `${phone.name} Price` }] : [],
     },
     twitter: {
       card: "summary_large_image",
@@ -110,13 +112,18 @@ export default async function PhoneDetailPage({
   const resolvedParams = await params;
   let slug = resolvedParams.slug;
 
-  if (!slug.endsWith('-price-in-pakistan')) {
+  if (slug.endsWith('-price-in-pakistan')) {
+    const clean = slug.replace('-price-in-pakistan', '');
+    redirect(`/${clean}-price`);
+  }
+
+  if (slug.endsWith('-price')) {
+    slug = slug.replace('-price', '');
+  } else {
     const phoneCheck = await getPhoneBySlug(slug);
     if (phoneCheck) {
-      redirect(`/${slug}-price-in-pakistan`);
+      redirect(`/${slug}-price`);
     }
-  } else {
-    slug = slug.replace('-price-in-pakistan', '');
   }
 
   const phone = await getPhoneBySlug(slug);
@@ -263,15 +270,15 @@ export default async function PhoneDetailPage({
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(generateProductSchema(phone as any)) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{
         __html: JSON.stringify(generateBreadcrumbSchema([
-          { label: phone.brand_slug.toUpperCase().replace("-", " "), href: `/${phone.brand_slug}-phone-price-pakistan` },
+          { label: phone.brand_slug.toUpperCase().replace("-", " "), href: `/${phone.brand_slug}-phone-price` },
           { label: phone.name }
         ]))
       }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{
         __html: JSON.stringify(generateWebPageSchema(
-          phone.seo?.meta_title || `${phone.name} Price in Pakistan, Specs & Reviews`,
-          phone.seo?.meta_description || `Find the best price for ${phone.name} in Pakistan. Read full specifications, features, and user reviews on Zozo.`,
-          `/${phone.slug}-price-in-pakistan`
+          phone.seo?.meta_title || `${phone.name} Price, Specs & Reviews`,
+          phone.seo?.meta_description || `Find the best price for ${phone.name}. Read full specifications, features, and user reviews on Zozo.`,
+          `/${phone.slug}-price`
         ))
       }} />
       {phone.seo?.ai_faq && phone.seo.ai_faq.length > 0 && (
@@ -286,7 +293,7 @@ export default async function PhoneDetailPage({
         {/* Breadcrumb */}
         <Breadcrumb
           items={[
-            { label: phone.brand_slug.toUpperCase().replace("-", " "), href: `/${phone.brand_slug}-phone-price-pakistan` },
+            { label: phone.brand_slug.toUpperCase().replace("-", " "), href: `/${phone.brand_slug}-phone-price` },
             { label: phone.name },
           ]}
         />
@@ -601,7 +608,7 @@ export default async function PhoneDetailPage({
                       return (
                         <Link
                           key={comp._id}
-                          href={`/${comp.slug}-price-in-pakistan`}
+                          href={`/${comp.slug}-price`}
                           className="flex flex-col rounded-lg border border-border-subtle hover:border-primary hover:shadow-sm transition-all bg-white overflow-hidden group"
                         >
                           <div className="relative aspect-[4/5] bg-surface-container-low flex items-center justify-center p-3">
@@ -635,13 +642,13 @@ export default async function PhoneDetailPage({
               {/* Other Brand Phones */}
               <div className="bg-white border border-border-subtle rounded-xl p-4 shadow-sm mt-6">
                 <h3 className="font-headline-sm text-sm font-bold text-text-main mb-3">
-                  Other {phone.brand_slug.toUpperCase().replace("-", " ")} Mobile Prices in Pakistan
+                  Other {phone.brand_slug.toUpperCase().replace("-", " ")} Mobile Prices
                 </h3>
                 <ul className="flex flex-col gap-2">
                   {brandPhones.map(bp => (
                     <li key={bp._id}>
-                      <Link href={`/${bp.slug}-price-in-pakistan`} className="text-sm text-primary hover:underline line-clamp-1">
-                        {bp.name} Price in Pakistan
+                      <Link href={`/${bp.slug}-price`} className="text-sm text-primary hover:underline line-clamp-1">
+                        {bp.name} Price
                       </Link>
                     </li>
                   ))}
@@ -676,7 +683,7 @@ export default async function PhoneDetailPage({
                   <ul className="flex flex-col gap-2">
                     {relatedByProcessor.map(p => (
                       <li key={p._id}>
-                        <Link href={`/${p.slug}-price-in-pakistan`} className="text-sm text-primary hover:underline">
+                        <Link href={`/${p.slug}-price`} className="text-sm text-primary hover:underline">
                           {p.name}
                         </Link>
                       </li>
@@ -694,7 +701,7 @@ export default async function PhoneDetailPage({
                   <ul className="flex flex-col gap-2">
                     {relatedByNetwork.map(p => (
                       <li key={p._id}>
-                        <Link href={`/${p.slug}-price-in-pakistan`} className="text-sm text-primary hover:underline">
+                        <Link href={`/${p.slug}-price`} className="text-sm text-primary hover:underline">
                           {p.name}
                         </Link>
                       </li>

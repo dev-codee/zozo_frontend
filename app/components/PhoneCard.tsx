@@ -111,7 +111,7 @@ export default function PhoneCard({ phone, variant = "list", priority = false }:
         <div className={`flex justify-between items-start mb-2 ${visibleTags.length > 0 ? 'mt-4' : ''}`}>
           <div className="flex items-center gap-3">
             <div className="w-1 h-6 bg-primary rounded-full"></div>
-            <Link href={`/${phone.slug}-price-in-pakistan`} className="hover:text-primary transition-colors">
+            <Link href={`/${phone.slug}-price`} className="hover:text-primary transition-colors">
               <h2 className={`font-headline-md font-bold text-text-main leading-tight ${variant === 'list' ? 'text-xl md:text-2xl' : 'text-lg'}`}>
                 {phone.name}
               </h2>
@@ -146,7 +146,7 @@ export default function PhoneCard({ phone, variant = "list", priority = false }:
 
           {/* Left Column (Image) */}
           <div className={`${variant === 'list' ? 'md:col-span-4 lg:col-span-3' : 'w-full max-w-[200px] mx-auto'} flex flex-col items-center`}>
-            <Link href={`/${phone.slug}-price-in-pakistan`} className="relative w-full aspect-[3/4] bg-surface-container-low rounded-xl p-4 flex items-center justify-center group overflow-hidden">
+            <Link href={`/${phone.slug}-price`} className="relative w-full aspect-[3/4] bg-surface-container-low rounded-xl p-4 flex items-center justify-center group overflow-hidden">
               <div className="relative w-full h-full">
                 <Image
                   src={imageUrl}
@@ -173,7 +173,7 @@ export default function PhoneCard({ phone, variant = "list", priority = false }:
               </button>
             </div>
 
-            <Link href={`/${phone.slug}-price-in-pakistan`} className="text-xs font-bold text-text-main underline underline-offset-2 mt-2 hover:text-primary">
+            <Link href={`/${phone.slug}-price`} className="text-xs font-bold text-text-main underline underline-offset-2 mt-2 hover:text-primary">
               View Photos ({phone.images?.length || 0})
             </Link>
           </div>
@@ -214,7 +214,7 @@ export default function PhoneCard({ phone, variant = "list", priority = false }:
               </ul>
 
               <div className="flex justify-end border-b border-border-subtle/50 pb-4 mb-4">
-                <Link href={`/${phone.slug}-price-in-pakistan`} className="text-xs font-bold text-text-main underline underline-offset-2 hover:text-primary">
+                <Link href={`/${phone.slug}-price`} className="text-xs font-bold text-text-main underline underline-offset-2 hover:text-primary">
                   View All Specs
                 </Link>
               </div>
@@ -261,7 +261,7 @@ export default function PhoneCard({ phone, variant = "list", priority = false }:
               </div>
 
               <div className="flex justify-end mt-2">
-                <Link href={`/${phone.slug}-price-in-pakistan`} className="text-xs font-bold text-text-main underline underline-offset-2 hover:text-primary">
+                <Link href={`/${phone.slug}-price`} className="text-xs font-bold text-text-main underline underline-offset-2 hover:text-primary">
                   Read Full Review
                 </Link>
               </div>
@@ -277,7 +277,7 @@ export default function PhoneCard({ phone, variant = "list", priority = false }:
         </span>
 
         <Link
-          href={`/${phone.slug}-price-in-pakistan`}
+          href={`/${phone.slug}-price`}
           className="text-[#FF9800] font-bold text-sm hover:underline"
         >
           View Details

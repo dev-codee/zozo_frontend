@@ -157,7 +157,7 @@ export default async function SiteMapPage() {
                       return (
                         <li key={phone._id}>
                           <Link
-                            href={`/${phone.slug}-price-in-pakistan`}
+                            href={`/${phone.slug}-price`}
                             className="flex items-center gap-3 py-2.5 group"
                           >
                             <div className="w-12 h-12 flex-shrink-0 bg-surface-container-low rounded-lg flex items-center justify-center overflow-hidden">

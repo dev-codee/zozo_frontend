@@ -52,7 +52,17 @@ const nextConfig: NextConfig = {
     return [
       {
         source: "/phones/:slug",
-        destination: "/:slug-price-in-pakistan",
+        destination: "/:slug-price",
+        permanent: true,
+      },
+      {
+        source: "/:slug-price-in-pakistan",
+        destination: "/:slug-price",
+        permanent: true,
+      },
+      {
+        source: "/:brand-phone-price-pakistan",
+        destination: "/:brand-phone-price",
         permanent: true,
       },
     ];
@@ -60,7 +70,7 @@ const nextConfig: NextConfig = {
   async rewrites() {
     return [
       {
-        source: "/:brand-phone-price-pakistan",
+        source: "/:brand-phone-price",
         destination: "/phones?brand=:brand",
       },
     ];
