@@ -98,8 +98,21 @@ export default async function EarbudDetailPage({
       ? Math.min(...validPrices)
       : null;
 
-  const userRating = earbud.rating?.average || 0;
-  const ratingCount = earbud.rating?.count || 0;
+  const releaseDateStr = earbud.release_date
+    ? (() => {
+        try {
+          const d = new Date(earbud.release_date);
+          if (isNaN(d.getTime())) return String(earbud.release_date);
+          return d.toLocaleDateString("en-US", {
+            year: "numeric",
+            month: "short",
+            day: "numeric",
+          });
+        } catch {
+          return String(earbud.release_date);
+        }
+      })()
+    : null;
 
   const breadcrumbItems = [
     { label: "Earbuds", href: "/earbuds" },
@@ -166,7 +179,7 @@ export default async function EarbudDetailPage({
             {/* Right: Details, Pricing, Highlights (7 cols) */}
             <div className="lg:col-span-7 flex flex-col">
               {/* Brand, Badges & Model */}
-              <div className="flex items-center gap-2 flex-wrap mb-2">
+              <div className="flex items-center gap-2 flex-wrap mb-3">
                 <Link
                   href={`/earbuds?brand=${earbud.brand_slug}`}
                   className="text-xs font-bold px-2.5 py-1 rounded bg-surface-container-high text-primary uppercase tracking-wider hover:bg-primary hover:text-white transition-colors"
@@ -184,30 +197,17 @@ export default async function EarbudDetailPage({
                 {earbud.model_number && (
                   <span className="text-xs text-text-muted">Model: {earbud.model_number}</span>
                 )}
-              </div>
-
-              {/* Title */}
-              <h1 className="text-2xl md:text-3xl lg:text-4xl font-extrabold text-text-main leading-tight mb-3">
-                {earbud.name}
-              </h1>
-
-              {/* Ratings and reviews */}
-              <div className="flex items-center gap-3 mb-5 text-sm">
-                <div className="flex items-center gap-1 text-[#FF9800]">
-                  <AppIcon name="star" size={16} fill="#FF9800" className="text-[#FF9800]" />
-                  <span className="font-bold text-text-main">
-                    {userRating > 0 ? userRating.toFixed(1) : "4.8"}
-                  </span>
-                </div>
-                <span className="text-text-muted text-xs">
-                  • Based on {ratingCount > 0 ? ratingCount : 24} ratings
-                </span>
-                {earbud.release_date && (
-                  <span className="text-text-muted text-xs">
-                    • Released: {earbud.release_date}
+                {releaseDateStr && (
+                  <span className="text-xs font-semibold px-2.5 py-0.5 rounded bg-surface-container-low text-text-muted border border-border-subtle">
+                    Released: {releaseDateStr}
                   </span>
                 )}
               </div>
+
+              {/* Title */}
+              <h1 className="text-2xl md:text-3xl lg:text-4xl font-extrabold text-text-main leading-tight mb-5">
+                {earbud.name}
+              </h1>
 
               {/* Price Banner */}
               <div className="p-4 md:p-5 rounded-2xl bg-surface-container-low/70 border border-border-subtle mb-6">

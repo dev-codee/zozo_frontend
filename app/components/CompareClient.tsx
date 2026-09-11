@@ -365,30 +365,6 @@ export default function CompareClient({ initialPhones = [], allPhones = [] }: Co
         { label: "Supported Features", getValue: (p: Phone) => { const v = p.specs.extra_specs?.ai_features; return Array.isArray(v) ? v.join(", ") : (v || "N/A"); } },
       ],
     },
-    {
-      name: "Benchmarks & Gaming",
-      icon: "sports_esports",
-      fields: [
-        { label: "Antutu Score", getValue: (p: Phone) => p.specs.extra_specs?.benchmarks?.antutu || "N/A", getRawValue: (p: Phone) => p.specs.extra_specs?.benchmarks?.antutu ? parseInt(p.specs.extra_specs.benchmarks.antutu.replace(/[^0-9]/g, '')) : null, better: "higher" },
-        { label: "Geekbench", getValue: (p: Phone) => p.specs.extra_specs?.benchmarks?.geekbench || "N/A" },
-        { label: "3DMark", getValue: (p: Phone) => p.specs.extra_specs?.benchmarks?.["3dmark"] || "N/A" },
-        { label: "PCMark", getValue: (p: Phone) => p.specs.extra_specs?.benchmarks?.pcmark || "N/A" },
-        { label: "GFXBench", getValue: (p: Phone) => p.specs.extra_specs?.benchmarks?.gfxbench || "N/A" },
-        { label: "AI Benchmark", getValue: (p: Phone) => p.specs.extra_specs?.benchmarks?.ai_benchmark || "N/A" },
-        { label: "DXOMARK", getValue: (p: Phone) => p.specs.extra_specs?.benchmarks?.dxomark || "N/A" },
-        { label: "Battery Test", getValue: (p: Phone) => p.specs.extra_specs?.benchmarks?.battery_test || "N/A" },
-        { label: "Charging Test", getValue: (p: Phone) => p.specs.extra_specs?.benchmarks?.charging_test || "N/A" },
-        { label: "PUBG FPS", getValue: (p: Phone) => p.specs.extra_specs?.gaming?.pubg_fps || "N/A" },
-        { label: "CoD Mobile FPS", getValue: (p: Phone) => p.specs.extra_specs?.gaming?.cod_fps || "N/A" },
-        { label: "Free Fire FPS", getValue: (p: Phone) => p.specs.extra_specs?.gaming?.free_fire_fps || "N/A" },
-        { label: "Genshin Impact FPS", getValue: (p: Phone) => p.specs.extra_specs?.gaming?.genshin_fps || "N/A" },
-        { label: "Cooling System", getValue: (p: Phone) => p.specs.extra_specs?.gaming?.cooling || "N/A" },
-        { label: "Heating", getValue: (p: Phone) => p.specs.extra_specs?.gaming?.heating || "N/A" },
-        { label: "Thermal Throttling", getValue: (p: Phone) => p.specs.extra_specs?.gaming?.throttle || "N/A" },
-        { label: "Game Mode", getValue: (p: Phone) => p.specs.extra_specs?.gaming?.game_mode || "N/A" },
-        { label: "Gaming Triggers", getValue: (p: Phone) => p.specs.extra_specs?.gaming?.triggers || "N/A" },
-      ],
-    },
   ];
 
   // Update query parameters in the URL

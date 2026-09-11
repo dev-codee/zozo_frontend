@@ -415,30 +415,6 @@ export default function PhoneSpecs({ specs, className = "", phone }: PhoneSpecsP
           {renderRow("Supported Features", ext.ai_features)}
         </>
       ))}
-
-      {(ext.benchmarks || ext.gaming) && renderSection("benchmarks", "Benchmarks & Gaming", "sports_esports", (
-        <>
-          {renderRow("Antutu Score", ext.benchmarks?.antutu)}
-          {renderRow("Geekbench", ext.benchmarks?.geekbench)}
-          {renderRow("3DMark", ext.benchmarks?.["3dmark"])}
-          {renderRow("PCMark", ext.benchmarks?.pcmark)}
-          {renderRow("GFXBench", ext.benchmarks?.gfxbench)}
-          {renderRow("AI Benchmark", ext.benchmarks?.ai_benchmark)}
-          {renderRow("DXOMARK", ext.benchmarks?.dxomark)}
-          {renderRow("Battery Test", ext.benchmarks?.battery_test)}
-          {renderRow("Charging Test", ext.benchmarks?.charging_test)}
-          {renderRow("PUBG FPS", ext.gaming?.pubg_fps)}
-          {renderRow("CoD Mobile FPS", ext.gaming?.cod_fps)}
-          {renderRow("Free Fire FPS", ext.gaming?.free_fire_fps)}
-          {renderRow("Genshin Impact FPS", ext.gaming?.genshin_fps)}
-          {renderRow("Cooling System", ext.gaming?.cooling)}
-          {renderRow("Heating", ext.gaming?.heating)}
-          {renderRow("Thermal Throttling", ext.gaming?.throttle)}
-          {renderRow("Game Mode", ext.gaming?.game_mode)}
-          {renderRow("Gaming Triggers", ext.gaming?.triggers)}
-          {phone && <SubmitBenchmarkWrapper phone={phone} />}
-        </>
-      ))}
     </section>
   );
 }

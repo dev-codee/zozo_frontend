@@ -79,6 +79,21 @@ export default function EarbudSpecs({ earbud, className = "" }: EarbudSpecsProps
       ? `${audio.frequency_min_hz} Hz - ${audio.frequency_max_hz} Hz`
       : null;
 
+  const formatReleaseDate = (val?: string | Date | null) => {
+    if (!val) return null;
+    try {
+      const d = new Date(val);
+      if (isNaN(d.getTime())) return String(val);
+      return d.toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+      });
+    } catch {
+      return String(val);
+    }
+  };
+
   return (
     <div
       className={`flex flex-col bg-surface-white border border-border-subtle rounded-xl overflow-hidden shadow-xs ${className}`}
@@ -89,7 +104,7 @@ export default function EarbudSpecs({ earbud, className = "" }: EarbudSpecsProps
         renderRow("Brand", earbud.brand_slug.replace(/-/g, " ").toUpperCase()),
         renderRow("Model Number", earbud.model_number),
         renderRow("Wearing Type", earbud.wearing_type),
-        renderRow("Release Date", earbud.release_date),
+        renderRow("Release Date", formatReleaseDate(earbud.release_date)),
         renderRow("Status", earbud.status ? earbud.status.replace(/_/g, " ") : null),
         renderRow("Made In", earbud.made_in),
       ])}

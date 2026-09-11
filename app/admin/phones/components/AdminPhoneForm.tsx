@@ -490,7 +490,7 @@ export default function AdminPhoneForm({ initialData, onSubmit, isEditing = fals
       </div>
 
       <div className="flex space-x-2 mb-6 overflow-x-auto pb-2">
-        {['basic', 'detailed_specs', 'ai_content', 'gaming_benchmarks', 'seo_affiliate', ...(isEditing ? ['history', 'comments'] : [])].map(tab => (
+        {['basic', 'detailed_specs', 'ai_content', 'seo_affiliate', ...(isEditing ? ['history', 'comments'] : [])].map(tab => (
           <button key={tab} type="button" onClick={() => setActiveTab(tab)} className={`px-4 py-2 rounded-full text-xs font-semibold capitalize whitespace-nowrap ${activeTab === tab ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}>
             {tab.replace(/_/g, ' ')}
           </button>
@@ -886,25 +886,6 @@ export default function AdminPhoneForm({ initialData, onSubmit, isEditing = fals
               {renderBooleanFields('software', DEFAULT_EXTRA_SPECS.software)}
             </section>
 
-          </div>
-        )}
-
-        {/* GAMING & BENCHMARKS TAB */}
-        {activeTab === 'gaming_benchmarks' && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <section className="bg-white p-5 rounded-xl border shadow-sm">
-              <h3 className="font-bold mb-3">Benchmarks</h3>
-              <div className="grid grid-cols-2 gap-4">
-                {Object.keys(DEFAULT_EXTRA_SPECS.benchmarks).map(key => renderInput(key, (formData.specs.extra_specs as any).benchmarks[key], v => handleNestedExtraSpec('benchmarks', key, v)))}
-              </div>
-            </section>
-            <section className="bg-white p-5 rounded-xl border shadow-sm">
-              <h3 className="font-bold mb-3">Gaming</h3>
-              <div className="grid grid-cols-2 gap-4">
-                {renderTextFields('gaming', DEFAULT_EXTRA_SPECS.gaming)}
-              </div>
-              {renderBooleanFields('gaming', DEFAULT_EXTRA_SPECS.gaming)}
-            </section>
           </div>
         )}
 
