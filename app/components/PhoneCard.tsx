@@ -10,18 +10,6 @@ interface PhoneCardProps {
   priority?: boolean;
 }
 
-// Helper to extract a short snippet from markdown description
-function getShortDescription(description?: string) {
-  if (!description) return "A solid smartphone choice offering great value and performance for its price segment.";
-  // Remove markdown headers, bolding, and icons
-  let text = description.replace(/#/g, "").replace(/\*/g, "");
-  text = text.replace(/help_outline|thumbs_up_down|check_circle|done|cancel|close/gi, "");
-  // Get first 150 chars, up to a space
-  if (text.length > 200) {
-    return text.substring(0, 200).trim() + "...";
-  }
-  return text.trim();
-}
 
 function formatDate(dateStr?: string) {
   if (!dateStr) return "TBA";
@@ -129,27 +117,29 @@ export default function PhoneCard({ phone, variant = "list", priority = false }:
               </h2>
             </Link>
           </div>
-          {variant === "list" && (
-            <Link
-              href={`/compare?phone=${phone.slug}`}
-              rel="nofollow"
-              className="flex items-center gap-1 text-primary text-sm font-semibold hover:bg-primary/5 px-2 py-1 rounded transition-colors shrink-0"
-            >
-              <AppIcon name="add" size={16} />
-              Compare
-            </Link>
-          )}
+          <div className="flex items-center gap-3 shrink-0">
+            {(phone.view_count !== undefined && phone.view_count !== null && (phone.view_count ?? 0) > 0) && (
+              <span className="inline-flex items-center gap-1.5 text-xs text-text-muted" title={`${phone.view_count} views`}>
+                <AppIcon name="visibility" size={15} className="text-text-muted" />
+                <span>{(phone.view_count).toLocaleString()}</span>
+              </span>
+            )}
+            {variant === "list" && (
+              <Link
+                href={`/compare?phone=${phone.slug}`}
+                rel="nofollow"
+                className="flex items-center gap-1 text-primary text-sm font-semibold hover:bg-primary/5 px-2 py-1 rounded transition-colors shrink-0"
+              >
+                <AppIcon name="add" size={16} />
+                Compare
+              </Link>
+            )}
+          </div>
         </div>
 
-        <div className="text-xs text-text-muted mb-4 pl-4">
+        <div className="text-xs text-text-muted mb-5 pl-4">
           Release Date: <span className="font-medium text-text-main">{formatDate(phone.release_date)}</span>
         </div>
-
-        {variant === "list" && (
-          <p className="text-sm text-text-muted leading-relaxed line-clamp-2 pl-4 mb-6">
-            {getShortDescription(phone.description)} <Link href={`/${phone.slug}-price-in-pakistan`} className="font-bold text-text-main hover:text-primary">read more</Link>
-          </p>
-        )}
 
         {/* Grid for Image and Specs */}
         <div className={`grid grid-cols-1 ${variant === 'list' ? 'md:grid-cols-12 pl-4' : 'px-2'} gap-6`}>
@@ -282,17 +272,9 @@ export default function PhoneCard({ phone, variant = "list", priority = false }:
 
       {/* Pricing Strip */}
       <div className="bg-surface-container-lowest border-t border-border-subtle p-3 px-6 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <span className="font-bold text-text-main text-lg">
-            {lowestPrice ? `Rs. ${lowestPrice.toLocaleString()}` : (phone.price_pkr || "Price TBA")}
-          </span>
-          {(phone.view_count ?? 0) > 0 && (
-            <span className="inline-flex items-center gap-1 text-[11px] text-text-muted">
-              <AppIcon name="visibility" size={13} className="text-text-muted" />
-              {(phone.view_count!).toLocaleString()}
-            </span>
-          )}
-        </div>
+        <span className="font-bold text-text-main text-lg">
+          {lowestPrice ? `Rs. ${lowestPrice.toLocaleString()}` : (phone.price_pkr || "Price TBA")}
+        </span>
 
         <Link
           href={`/${phone.slug}-price-in-pakistan`}

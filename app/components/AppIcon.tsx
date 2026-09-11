@@ -92,6 +92,7 @@ import {
   Droplets,
   Radio,
   Music,
+  Eye,
   type LucideIcon,
 } from "lucide-react";
 
@@ -139,6 +140,8 @@ const iconMap: Record<string, LucideIcon> = {
   fullscreen: Maximize2,
   info: Info,
   lightbulb: Lightbulb,
+  eye: Eye,
+  visibility: Eye,
 
   // Device & Hardware
   smartphone: Smartphone,
