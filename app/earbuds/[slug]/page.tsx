@@ -47,7 +47,8 @@ export async function generateMetadata({
   const priceText = !isNaN(lowestPrice) && lowestPrice > 0 ? `Rs. ${lowestPrice.toLocaleString()}` : "Best Price";
 
   const year = new Date().getFullYear();
-  const title = earbud.seo?.ai_seo_title || earbud.seo?.meta_title || `${earbud.name} Price in Pakistan & Full Specs (${year})`;
+  const rawTitle = earbud.seo?.ai_seo_title || earbud.seo?.meta_title || `${earbud.name} Price in Pakistan & Full Specs (${year})`;
+  const title = rawTitle.replace(/\s*[-–|]?\s*zozo(?:\.pk)?\s*$/i, "").trim();
   const description =
     earbud.seo?.ai_meta_description ||
     earbud.seo?.meta_description ||

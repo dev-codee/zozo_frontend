@@ -65,7 +65,7 @@ export async function generateMetadata({
   }
 
   const year = new Date().getFullYear();
-  const finalTitle = `${title.replace(/\s*\b20\d{2}\b\s*$/, "").trim()} ${year}`;
+  const finalTitle = `${title.replace(/\s*\b20\d{2}\b\s*$/, "").trim()} ${year}`.replace(/\s*[-–|]?\s*zozo(?:\.pk)?\s*$/i, "").trim();
 
   const queryParams = new URLSearchParams();
   if (brand) queryParams.set("brand", brand);
