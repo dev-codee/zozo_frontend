@@ -46,6 +46,73 @@ export default function PhoneSpecs({ specs, className = "", phone }: PhoneSpecsP
 
   const processorDisplay = ext.processor?.cpu_name || (specs.performance?.cpu ? specs.performance.cpu.replace(/Octa-core/i, "Octa core").trim() : "");
 
+  // ─── General Information ───────────────────────────────────────────────────
+  let verifiedByName = "Zozo Team";
+  if (phone) {
+    const reviewer = typeof phone.reviewer === "object" ? phone.reviewer?.name || phone.reviewer?.username : null;
+    const updatedBy = typeof phone.updatedBy === "object" ? phone.updatedBy?.name || phone.updatedBy?.username : null;
+    const createdBy = typeof phone.createdBy === "object" ? phone.createdBy?.name || phone.createdBy?.username : null;
+    const staffName = reviewer || updatedBy || createdBy;
+    if (staffName && typeof staffName === "string" && staffName.trim()) {
+      verifiedByName = staffName.trim();
+    } else if (typeof phone.reviewer === "string" && !phone.reviewer.match(/^[0-9a-fA-F]{24}$/)) {
+      verifiedByName = phone.reviewer;
+    } else if (typeof phone.updatedBy === "string" && !phone.updatedBy.match(/^[0-9a-fA-F]{24}$/)) {
+      verifiedByName = phone.updatedBy;
+    } else if (typeof phone.createdBy === "string" && !phone.createdBy.match(/^[0-9a-fA-F]{24}$/)) {
+      verifiedByName = phone.createdBy;
+    }
+  }
+
+  let sourceDisplay = "Official Manufacturer & Authorized Retailers";
+  if (phone) {
+    if (phone.sources && phone.sources.length > 0) {
+      sourceDisplay = phone.sources.map((s) => s.name || "Official Source").join(", ");
+    } else if (phone.importSource) {
+      sourceDisplay = phone.importSource;
+    } else if (phone.brand_slug) {
+      sourceDisplay = `Official ${phone.brand_slug.toUpperCase().replace("-", " ")} Specifications & Local Market`;
+    }
+  }
+
+  const rawDate = phone?.updatedAt || phone?.updated_at || (phone?.prices && phone.prices[0]?.updated_at);
+  let lastUpdateDisplay = "Recently Updated";
+  if (rawDate) {
+    try {
+      const d = new Date(rawDate);
+      if (!isNaN(d.getTime())) {
+        lastUpdateDisplay = d.toLocaleDateString("en-US", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        });
+      }
+    } catch {
+      lastUpdateDisplay = String(rawDate);
+    }
+  }
+
+  let ratingDisplay: React.ReactNode = "No reviews yet";
+  if (phone?.rating) {
+    const count = Number(phone.rating.count) || 0;
+    const avg = Number(phone.rating.average) || 0;
+    if (count > 0 && avg > 0) {
+      ratingDisplay = (
+        <div className="flex items-center gap-2 flex-wrap">
+          <div className="flex items-center gap-1 text-[#FF9800]">
+            <AppIcon name="star" size={16} fill="#FF9800" className="text-[#FF9800]" />
+            <span className="font-bold text-text-main text-sm">{avg.toFixed(1)} / 5.0</span>
+          </div>
+          <span className="text-text-muted text-xs">({count} customer review{count > 1 ? "s" : ""})</span>
+        </div>
+      );
+    } else if (count > 0) {
+      ratingDisplay = <span className="text-text-muted text-sm">{count} review{count > 1 ? "s" : ""}</span>;
+    } else {
+      ratingDisplay = <span className="text-text-muted text-sm">No reviews yet</span>;
+    }
+  }
+
   const renderRow = (label: string, value: React.ReactNode) => {
     if (!value || value === "false") return null;
     if (value === "true" || value === true) value = "Yes";
@@ -91,6 +158,24 @@ export default function PhoneSpecs({ specs, className = "", phone }: PhoneSpecsP
 
   return (
     <section className={`bg-surface-white border border-border-subtle rounded-xl overflow-hidden shadow-sm flex flex-col divide-y divide-border-subtle ${className}`}>
+      {renderSection("general_info", "General Information", "info", (
+        <>
+          {renderRow(
+            "Verified By",
+            <div className="inline-flex items-center gap-2 flex-wrap">
+              <span className="font-semibold text-text-main">{verifiedByName}</span>
+              <span className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200">
+                <AppIcon name="check_circle" size={13} className="text-emerald-600" />
+                Verified
+              </span>
+            </div>
+          )}
+          {renderRow("Source", sourceDisplay)}
+          {renderRow("Last Update", lastUpdateDisplay)}
+          {renderRow("Total Review and Rating", ratingDisplay)}
+        </>
+      ))}
+
       {renderSection("performance", "Performance", "memory", (
         <>
           {renderRow("Chipset", chipsetClean || specs.performance?.chipset)}

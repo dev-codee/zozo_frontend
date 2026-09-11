@@ -119,6 +119,11 @@ export interface Phone {
   };
   updated_at?: string;
   updatedAt?: string;
+  createdBy?: { _id: string; name?: string; username?: string } | string;
+  updatedBy?: { _id: string; name?: string; username?: string } | string;
+  reviewer?: { _id: string; name?: string; username?: string } | string;
+  sources?: { name?: string; url?: string; updated_at?: string }[];
+  importSource?: string;
 }
 
 export interface Review {
