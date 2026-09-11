@@ -75,7 +75,7 @@ export default function PhoneSpecs({ specs, className = "", phone }: PhoneSpecsP
     }
   }
 
-  const rawDate = phone?.updatedAt || phone?.updated_at || (phone?.prices && phone.prices[0]?.updated_at);
+  const rawDate = phone?.updatedAt || phone?.updated_at || (phone?.price_history && phone.price_history[phone.price_history.length - 1]?.date) || phone?.release_date;
   let lastUpdateDisplay = "Recently Updated";
   if (rawDate) {
     try {
