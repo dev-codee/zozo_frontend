@@ -144,6 +144,7 @@ export default async function PhoneDetailPage({
   const rating = phone.rating?.average;
   const reviewCount = phone.rating?.count || 0;
   const hasAffiliateUrls = phone.prices?.some((p) => !!p.product_url);
+  const priceSource = phone.specs?.extra_specs?.price_section?.price_source || "Official manufacturer";
 
   // Fetch competitor phones
   let competitorPhones: Phone[] = [];
@@ -312,6 +313,12 @@ export default async function PhoneDetailPage({
                       Released: {releaseDateStr}
                     </span>
                   )}
+                  {(phone.view_count !== undefined && phone.view_count !== null && (phone.view_count ?? 0) > 0) && (
+                    <span className="inline-flex items-center gap-1.5 bg-surface-container-low text-text-muted font-label-sm text-xs px-3 py-1 rounded-full border border-border-subtle">
+                      <AppIcon name="visibility" size={14} className="text-text-muted" />
+                      <span>{(phone.view_count).toLocaleString()} views</span>
+                    </span>
+                  )}
                   {filterVisibleTags(phone.tags).map((tag) => {
                     const colors = getTagColorClass(tag);
                     return (
@@ -326,8 +333,8 @@ export default async function PhoneDetailPage({
                 </div>
 
                 {/* Rating */}
-                {rating && (
-                  <div className="flex items-center gap-2 mt-1.5">
+                {rating ? (
+                  <div className="flex items-center gap-2 mt-2">
                     <div className="flex items-center text-yellow-500">
                       <AppIcon name="star" size={18} fill="#FF9800" className="text-yellow-500" />
                       <span className="font-label-md text-sm text-text-main ml-1 font-semibold">
@@ -337,27 +344,17 @@ export default async function PhoneDetailPage({
                     <span className="text-text-muted font-body-sm text-sm">
                       ({reviewCount} reviews)
                     </span>
-                    {(phone.view_count ?? 0) > 0 && (
-                      <span className="inline-flex items-center gap-1 text-text-muted font-body-sm text-sm border-l border-border-subtle pl-2 ml-0.5">
-                        <AppIcon name="visibility" size={15} className="text-text-muted" />
-                        {(phone.view_count!).toLocaleString()} views
-                      </span>
-                    )}
                   </div>
-                )}
-                {/* Show views even when there's no rating yet */}
-                {!rating && (phone.view_count ?? 0) > 0 && (
-                  <div className="flex items-center gap-1 mt-1.5 text-text-muted text-sm">
-                    <AppIcon name="visibility" size={15} className="text-text-muted" />
-                    <span>{(phone.view_count!).toLocaleString()} views</span>
-                  </div>
-                )}
+                ) : null}
               </div>
 
               {/* Price */}
-              <div className="flex items-baseline gap-2">
+              <div className="flex items-baseline gap-3 flex-wrap">
                 <span className="font-display-lg text-2xl md:text-3xl font-bold text-price-green tracking-tight">
                   {lowestPrice ? `Rs. ${lowestPrice.toLocaleString()}` : (phone.price_pkr || "Price TBA")}
+                </span>
+                <span className="text-xs sm:text-sm text-text-muted">
+                  Source: <span className="font-medium text-text-main">{priceSource}</span>
                 </span>
               </div>
 
