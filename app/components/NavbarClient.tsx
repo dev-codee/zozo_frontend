@@ -84,6 +84,7 @@ export default function NavbarClient({
   const baseNavLinks = [
     { label: "Home", href: "/" },
     { label: "Top Phones", href: "#top-phones" },
+    { label: "Earbuds", href: "/earbuds" },
     { label: "EVs", href: "#evs" },
     { label: "Up Coming Phones", href: "/phones?status=upcoming" },
     { label: "Compare", href: "/compare" },
@@ -94,6 +95,7 @@ export default function NavbarClient({
     if (href === '/') return pathname === '/';
     const [path, query] = href.split('?');
     if (href === '/compare' && pathname.startsWith('/compare')) return true;
+    if (href === '/earbuds' && pathname.startsWith('/earbuds')) return true;
     if (path !== pathname) return false;
     if (query) {
        const params = new URLSearchParams(query);
@@ -195,10 +197,10 @@ export default function NavbarClient({
       <div className="hidden md:block border-t border-border-subtle">
         <Suspense fallback={<nav className="flex justify-center items-center px-4 md:px-6 h-12 w-full max-w-[1280px] mx-auto gap-4 overflow-x-auto"></nav>}>
           <nav className="flex justify-center items-center px-4 md:px-6 h-12 w-full max-w-[1280px] mx-auto gap-4 overflow-x-auto custom-scrollbar">
-            {baseNavLinks.map((link, index) => {
-              // Insert the Dropdown at Top Phones (index 1) and EVs (index 2)
-              const isBest = index === 1;
-              const isEvs = index === 2;
+            {baseNavLinks.map((link) => {
+              // Insert the Dropdown at Top Phones and EVs
+              const isBest = link.label === "Top Phones";
+              const isEvs = link.label === "EVs";
               const renderDropdown = isBest || isEvs;
               const ref = isBest ? bestRef : (isEvs ? evsRef : null);
               const open = isBest ? bestOpen : evsOpen;
@@ -386,7 +388,19 @@ export default function NavbarClient({
                 </Link>
               </div>
 
-              {baseNavLinks.slice(3).map((link) => {
+              {/* Mobile Earbuds */}
+              <Link
+                href="/earbuds"
+                onClick={() => setMobileOpen(false)}
+                className={`flex items-center gap-2.5 px-4 py-3 rounded-lg transition-colors text-sm font-semibold tracking-wide uppercase border-l-4 ${
+                  isActive('/earbuds') ? "text-primary bg-surface-container-low border-primary" : "text-on-surface-variant hover:text-primary hover:bg-surface-container-low border-transparent"
+                }`}
+              >
+                <AppIcon name="headphones" size={18} className="text-text-muted" />
+                Earbuds
+              </Link>
+
+              {baseNavLinks.filter(l => ['Up Coming Phones', 'Compare', 'Brands'].includes(l.label)).map((link) => {
                 const active = isActive(link.href);
                 return (
                   <Link

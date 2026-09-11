@@ -85,6 +85,13 @@ import {
   TrendingUp,
   ArrowUp,
   ArrowDown,
+  Headphones,
+  Bluetooth,
+  Volume2,
+  Mic,
+  Droplets,
+  Radio,
+  Music,
   type LucideIcon,
 } from "lucide-react";
 
@@ -213,6 +220,22 @@ const iconMap: Record<string, LucideIcon> = {
   straighten: Ruler,
   settings_suggest: Wrench,
   sports_motorsports: Gauge,
+
+  // Audio, Earbuds & Wearables
+  headphones: Headphones,
+  earbuds: Headphones,
+  headset: Headphones,
+  bluetooth: Bluetooth,
+  volume_up: Volume2,
+  volume: Volume2,
+  graphic_eq: Volume2,
+  speaker: Volume2,
+  mic: Mic,
+  water_drop: Droplets,
+  water: Droplets,
+  droplets: Droplets,
+  radio: Radio,
+  music: Music,
 };
 
 export default function AppIcon({ name, className = "", size, style, fill }: AppIconProps) {

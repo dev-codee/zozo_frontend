@@ -6,30 +6,32 @@ import TrendingSection from "./components/TrendingSection";
 import BrandsSection from "./components/BrandsSection";
 import MobileFinderSection from "./components/MobileFinderSection";
 import FeaturedComparisons from "./components/FeaturedComparisons";
+import EarbudsSection from "./components/EarbudsSection";
 import Footer from "./components/Footer";
-import { getHomeData, getPopularComparisons } from "./lib/api";
+import { getHomeData, getPopularComparisons, getEarbuds } from "./lib/api";
 import AdSlot from "./components/AdSlot";
 
 export const revalidate = 300; // Cache and revalidate page every 5 minutes
 
 export const metadata: Metadata = {
-  title: "zozo.pk — Compare Mobile Phone Prices in Pakistan",
-  description: "Compare latest mobile phone prices in Pakistan across all top retailers. Find the best deals on Samsung, Apple, Xiaomi, Vivo, and more.",
+  title: "zozo.pk — Compare Mobile Phone & Earbuds Prices in Pakistan",
+  description: "Compare latest mobile phone and wireless earbuds prices in Pakistan across all top retailers. Find the best deals on Samsung, Apple, Xiaomi, Anker, and more.",
   alternates: {
     canonical: "https://zozo.pk",
   },
   openGraph: {
-    title: "zozo.pk — Compare Mobile Phone Prices in Pakistan",
-    description: "Compare latest mobile phone prices in Pakistan across all top retailers.",
+    title: "zozo.pk — Compare Mobile Phone & Earbuds Prices in Pakistan",
+    description: "Compare latest mobile phone and wireless earbuds prices in Pakistan across all top retailers.",
     url: "https://zozo.pk",
   },
 };
 
 export default async function Home() {
-  // Fetch home data from backend (server component)
-  const [homeData, popularComparisons] = await Promise.all([
+  // Fetch home data, comparisons, and trending earbuds in parallel
+  const [homeData, popularComparisons, earbudsData] = await Promise.all([
     getHomeData(),
     getPopularComparisons(12),
+    getEarbuds("limit=4").catch(() => null),
   ]);
 
   return (
@@ -52,6 +54,9 @@ export default async function Home() {
             <AdSlot placement="BOTTOM_PAGE" layout="row" showSkeleton={false} />
           </div>
         </div>
+
+        {/* Wireless Earbuds Showcase */}
+        <EarbudsSection earbuds={earbudsData?.earbuds} />
 
         {/* Find a Mobile */}
         <MobileFinderSection />

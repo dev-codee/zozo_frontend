@@ -140,10 +140,156 @@ export interface Brand {
   slug: string;
   name: string;
   logo?: string;
-  type?: "phone" | "ev" | string;
+  type?: "phone" | "ev" | "earbud" | string;
   total_phones?: number;
   total_vehicles?: number;
+  total_earbuds?: number;
   phone_count?: number;
+  earbud_count?: number;
+}
+
+export interface EarbudImage {
+  url: string;
+  cloud_public_id: string;
+  is_primary: boolean;
+  alt_text?: string;
+}
+
+export interface EarbudPrice {
+  retailer_slug: string;
+  retailer_name: string;
+  variant?: string;
+  price_pkr: number;
+  stock_status?: string;
+  product_url?: string;
+  last_checked?: string;
+}
+
+export interface EarbudSpecs {
+  audio?: {
+    driver_type?: string;
+    driver_size_mm?: number;
+    frequency_min_hz?: number;
+    frequency_max_hz?: number;
+    impedance_ohms?: number;
+    sensitivity_db?: number;
+    hi_res_audio?: boolean;
+    spatial_audio?: string;
+    sound_features?: string[];
+  };
+  noise_cancellation?: {
+    has_anc?: boolean;
+    anc_depth_db?: number;
+    anc_type?: string;
+    transparency_mode?: boolean;
+    enc_call_noise_reduction?: boolean;
+    mic_count_total?: number;
+    mic_count_per_earbud?: number;
+    wind_noise_reduction?: boolean;
+    mic_tech_features?: string[];
+  };
+  battery?: {
+    earbud_battery_mah?: number;
+    case_battery_mah?: number;
+    playtime_earbuds_anc_off_hrs?: number;
+    playtime_earbuds_anc_on_hrs?: number;
+    total_playtime_with_case_hrs?: number;
+    charging_port?: string;
+    fast_charging?: boolean;
+    fast_charge_summary?: string;
+    earbud_charge_time_mins?: number;
+    case_charge_time_mins?: number;
+    wireless_charging?: boolean;
+  };
+  connectivity?: {
+    bluetooth_version?: string;
+    bluetooth_range_meters?: number;
+    codecs?: string[];
+    multipoint_pairing?: boolean;
+    google_fast_pair?: boolean;
+    low_latency_gaming_mode?: boolean;
+    latency_ms?: number;
+    app_support?: string;
+  };
+  physical?: {
+    water_resistance?: string;
+    case_water_resistance?: string;
+    earbud_weight_g?: number;
+    case_weight_g?: number;
+    total_weight_g?: number;
+    earbud_dimensions_mm?: string;
+    case_dimensions_mm?: string;
+  };
+  controls?: {
+    control_type?: string;
+    volume_control?: boolean;
+    in_ear_detection?: boolean;
+    voice_assistant?: string[];
+    extra_features?: string[];
+  };
+  in_the_box?: string[];
+  extra_specs?: any;
+}
+
+export interface Earbud {
+  _id: string;
+  slug: string;
+  name: string;
+  brand_slug: string;
+  model_number?: string;
+  release_date?: string;
+  description?: string;
+  status: "available" | "upcoming" | "discontinued" | "out_of_stock" | "rumored" | "released";
+  wearing_type?: string;
+  colors?: string[];
+  country_availability?: string[];
+  made_in?: string;
+  tags?: string[];
+  video_url?: string;
+  price_pkr?: number;
+  price_history?: PriceHistoryPoint[];
+  images: EarbudImage[];
+  specs?: EarbudSpecs;
+  prices: EarbudPrice[];
+  rating?: {
+    average?: number;
+    count?: number;
+  };
+  view_count?: number;
+  seo?: {
+    meta_title?: string;
+    meta_description?: string;
+    meta_keywords?: string;
+    focus_keyword?: string;
+    canonical_url?: string;
+    og_title?: string;
+    og_description?: string;
+    og_image?: string;
+    ai_seo_title?: string;
+    ai_meta_description?: string;
+    ai_faq?: { question: string; answer: string }[];
+    ai_summary?: string;
+    ai_pros?: string[];
+    ai_cons?: string[];
+    ai_buying_advice?: string;
+    ai_snippet?: string;
+    ai_suggested_tags?: string[];
+    ai_keywords?: string[];
+  };
+  approvalStatus?: string;
+  is_published?: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface PaginatedEarbuds {
+  earbuds: Earbud[];
+  pagination: PaginationInfo;
+}
+
+export interface RelatedEarbudsResponse {
+  by_brand?: Earbud[];
+  by_price?: Earbud[];
 }
 
 export interface VehiclePrice {
@@ -465,8 +611,25 @@ export async function getPhones(query?: string): Promise<PaginatedPhones> {
   return { phones: [], pagination: { total: 0, page: 1, limit: 15, totalPages: 1 } };
 }
 
-export async function searchPhones(q: string): Promise<Phone[]> {
-  const data = await apiFetch<Phone[]>(`/search?q=${encodeURIComponent(q)}`);
+export interface SearchResultItem {
+  _id: string;
+  slug: string;
+  name: string;
+  brand_slug: string;
+  item_type?: "phone" | "earbud" | "vehicle";
+  price_pkr?: number;
+  images?: { url: string; alt_text?: string }[];
+  status?: string;
+  specs?: any;
+}
+
+export async function searchPhones(q: string): Promise<SearchResultItem[]> {
+  const data = await apiFetch<SearchResultItem[]>(`/search?q=${encodeURIComponent(q)}`);
+  return data || [];
+}
+
+export async function searchProducts(q: string): Promise<SearchResultItem[]> {
+  const data = await apiFetch<SearchResultItem[]>(`/search?q=${encodeURIComponent(q)}`);
   return data || [];
 }
 
@@ -696,3 +859,23 @@ export async function postReview(payload: { phoneId: string; rating: number; com
     throw error;
   }
 }
+
+// ─── Earbuds (TWS) API Functions ──────────────────────────────────────────────
+
+export async function getEarbuds(query?: string, init?: RequestInit): Promise<PaginatedEarbuds> {
+  const endpoint = query ? `/earbuds?${query}` : "/earbuds";
+  const data = await apiFetch<any>(endpoint, init);
+  if (data && Array.isArray(data.earbuds)) {
+    return data;
+  }
+  return { earbuds: [], pagination: { total: 0, page: 1, limit: 15, totalPages: 1 } };
+}
+
+export async function getEarbudBySlug(slug: string, init?: RequestInit): Promise<Earbud | null> {
+  return apiFetch<Earbud>(`/earbuds/${slug}`, init);
+}
+
+export async function getRelatedEarbuds(slug: string, init?: RequestInit): Promise<RelatedEarbudsResponse | null> {
+  return apiFetch<RelatedEarbudsResponse>(`/earbuds/${slug}/related`, init);
+}
+
