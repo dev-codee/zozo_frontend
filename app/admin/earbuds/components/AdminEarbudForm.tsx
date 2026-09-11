@@ -353,12 +353,6 @@ export default function AdminEarbudForm({ initialData, onSubmit, isEditing = fal
             ...prev.seo,
             ai_seo_title: aiSEO.ai_seo_title || prev.seo.ai_seo_title,
             ai_meta_description: aiSEO.ai_meta_description || prev.seo.ai_meta_description,
-            ai_faq: aiSEO.ai_faq || prev.seo.ai_faq,
-            ai_summary: aiSEO.ai_summary || prev.seo.ai_summary,
-            ai_pros: aiSEO.ai_pros || prev.seo.ai_pros,
-            ai_cons: aiSEO.ai_cons || prev.seo.ai_cons,
-            ai_buying_advice: aiSEO.ai_buying_advice || prev.seo.ai_buying_advice,
-            ai_snippet: aiSEO.ai_snippet || prev.seo.ai_snippet,
             ai_suggested_tags: aiSEO.ai_suggested_tags || prev.seo.ai_suggested_tags,
             ai_keywords: aiSEO.ai_keywords || prev.seo.ai_keywords,
           }
@@ -1559,28 +1553,6 @@ export default function AdminEarbudForm({ initialData, onSubmit, isEditing = fal
                     value={formData.seo?.canonical_url || ''}
                     onChange={e => setSEO('canonical_url', e.target.value)}
                     className="w-full px-3 py-2 border rounded-md text-xs focus:outline-none focus:border-amber-500"
-                  />
-                </div>
-
-                <div className="md:col-span-2">
-                  <label className="block text-xs font-semibold text-indigo-700 mb-1">AI Editorial Summary</label>
-                  <textarea
-                    rows={2}
-                    placeholder="2-3 sentence overview highlighting audio quality, ANC, and value..."
-                    value={formData.seo?.ai_summary || ''}
-                    onChange={e => setSEO('ai_summary', e.target.value)}
-                    className="w-full px-3 py-2 border border-indigo-200 rounded-md text-xs focus:outline-none focus:border-indigo-500 bg-indigo-50/20"
-                  />
-                </div>
-
-                <div className="md:col-span-2">
-                  <label className="block text-xs font-semibold text-indigo-700 mb-1">AI Buying Advice</label>
-                  <textarea
-                    rows={2}
-                    placeholder="Who this earbud is best suited for..."
-                    value={formData.seo?.ai_buying_advice || ''}
-                    onChange={e => setSEO('ai_buying_advice', e.target.value)}
-                    className="w-full px-3 py-2 border border-indigo-200 rounded-md text-xs focus:outline-none focus:border-indigo-500 bg-indigo-50/20"
                   />
                 </div>
               </div>

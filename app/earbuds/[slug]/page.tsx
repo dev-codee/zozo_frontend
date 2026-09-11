@@ -13,7 +13,6 @@ import AppIcon from "@/app/components/AppIcon";
 import {
   generateProductSchema,
   generateBreadcrumbSchema,
-  generateFAQSchema,
   generateVideoSchema,
 } from "@/app/lib/schema";
 
@@ -123,11 +122,6 @@ export default async function EarbudDetailPage({
   const waterRating = earbud.specs?.physical?.water_resistance || "IPX4";
   const earbudWeight = earbud.specs?.physical?.earbud_weight_g;
 
-  // AI Pros and Cons
-  const pros = earbud.seo?.ai_pros || [];
-  const cons = earbud.seo?.ai_cons || [];
-  const faqs = earbud.seo?.ai_faq || [];
-
   return (
     <>
       {/* Schema / SEO */}
@@ -143,14 +137,6 @@ export default async function EarbudDetailPage({
           __html: JSON.stringify(generateBreadcrumbSchema(breadcrumbItems)),
         }}
       />
-      {faqs.length > 0 && (
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify(generateFAQSchema(faqs)),
-          }}
-        />
-      )}
       {youtubeVideoId && (
         <script
           type="application/ld+json"
@@ -358,61 +344,6 @@ export default async function EarbudDetailPage({
                 </div>
               </div>
 
-              {/* AI Summary / Snippet */}
-              {(earbud.seo?.ai_summary || earbud.description) && (
-                <div className="p-4 rounded-xl bg-surface-container-low border border-border-subtle mb-6 text-sm text-text-main leading-relaxed">
-                  <h3 className="font-bold text-xs uppercase tracking-wider text-text-muted mb-2 flex items-center gap-1.5">
-                    <AppIcon name="sparkles" size={14} className="text-primary" />
-                    Overview & Verdict
-                  </h3>
-                  <p>{earbud.seo?.ai_summary || earbud.description}</p>
-                  {earbud.seo?.ai_buying_advice && (
-                    <div className="mt-3 pt-3 border-t border-border-subtle/60 text-xs text-text-muted">
-                      <strong className="text-text-main">Buying Advice: </strong>
-                      {earbud.seo.ai_buying_advice}
-                    </div>
-                  )}
-                </div>
-              )}
-
-              {/* Pros and Cons */}
-              {(pros.length > 0 || cons.length > 0) && (
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
-                  {pros.length > 0 && (
-                    <div className="p-4 rounded-xl bg-emerald-50/50 border border-emerald-200">
-                      <h4 className="text-xs font-bold text-emerald-800 uppercase tracking-wider mb-2.5 flex items-center gap-1.5">
-                        <AppIcon name="check_circle" size={15} className="text-emerald-600" />
-                        Reasons to Buy
-                      </h4>
-                      <ul className="space-y-1.5 text-xs text-text-main">
-                        {pros.map((p, i) => (
-                          <li key={i} className="flex items-start gap-1.5">
-                            <span className="text-emerald-600 font-bold">•</span>
-                            <span>{p}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-
-                  {cons.length > 0 && (
-                    <div className="p-4 rounded-xl bg-rose-50/50 border border-rose-200">
-                      <h4 className="text-xs font-bold text-rose-800 uppercase tracking-wider mb-2.5 flex items-center gap-1.5">
-                        <AppIcon name="close" size={15} className="text-rose-600" />
-                        Reasons to Avoid
-                      </h4>
-                      <ul className="space-y-1.5 text-xs text-text-main">
-                        {cons.map((c, i) => (
-                          <li key={i} className="flex items-start gap-1.5">
-                            <span className="text-rose-600 font-bold">•</span>
-                            <span>{c}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-                </div>
-              )}
             </div>
           </div>
 
@@ -447,39 +378,6 @@ export default async function EarbudDetailPage({
                   allowFullScreen
                   className="w-full h-full border-0"
                 />
-              </div>
-            </div>
-          )}
-
-          {/* FAQ Section */}
-          {faqs.length > 0 && (
-            <div className="mt-12">
-              <div className="border-b border-border-subtle pb-3 mb-6">
-                <h2 className="text-xl md:text-2xl font-bold text-text-main flex items-center gap-2">
-                  <AppIcon name="help_outline" size={22} className="text-primary" />
-                  Frequently Asked Questions about {earbud.name}
-                </h2>
-              </div>
-
-              <div className="flex flex-col gap-3">
-                {faqs.map((faq, idx) => (
-                  <details
-                    key={idx}
-                    className="group bg-surface-white border border-border-subtle rounded-xl p-4 transition-all duration-200"
-                  >
-                    <summary className="flex items-center justify-between cursor-pointer font-bold text-sm md:text-base text-text-main list-none [&::-webkit-details-marker]:hidden">
-                      <span>{faq.question}</span>
-                      <AppIcon
-                        name="keyboard_arrow_down"
-                        size={20}
-                        className="text-text-muted transition-transform group-open:rotate-180 shrink-0 ml-3"
-                      />
-                    </summary>
-                    <p className="mt-3 text-sm text-text-muted leading-relaxed border-t border-border-subtle/50 pt-3">
-                      {faq.answer}
-                    </p>
-                  </details>
-                ))}
               </div>
             </div>
           )}
