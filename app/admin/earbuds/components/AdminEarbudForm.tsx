@@ -162,10 +162,20 @@ export default function AdminEarbudForm({ initialData, onSubmit, isEditing = fal
     };
 
     for (const section of Object.keys(base.specs)) {
+      if (section === 'in_the_box') continue;
       merged.specs[section] = {
         ...(base.specs as any)[section],
         ...((data.specs || {})[section] || {})
       };
+    }
+
+    // in_the_box handling
+    if (Array.isArray(data.specs?.in_the_box)) {
+      merged.specs.in_the_box = data.specs.in_the_box.map((x: any) => typeof x === 'object' ? Object.values(x).join(', ') : x).join(', ');
+    } else if (data.specs?.in_the_box && typeof data.specs.in_the_box === 'object') {
+      merged.specs.in_the_box = Object.values(data.specs.in_the_box).join(', ');
+    } else {
+      merged.specs.in_the_box = data.specs?.in_the_box || '';
     }
 
     // Convert array specs to comma strings for input fields
@@ -175,7 +185,6 @@ export default function AdminEarbudForm({ initialData, onSubmit, isEditing = fal
     if (Array.isArray(s.connectivity?.codecs)) s.connectivity.codecs = s.connectivity.codecs.join(', ');
     if (Array.isArray(s.controls?.voice_assistant)) s.controls.voice_assistant = s.controls.voice_assistant.join(', ');
     if (Array.isArray(s.controls?.extra_features)) s.controls.extra_features = s.controls.extra_features.join(', ');
-    if (Array.isArray(s.in_the_box)) s.in_the_box = s.in_the_box.join(', ');
 
     return merged;
   });
@@ -405,6 +414,25 @@ export default function AdminEarbudForm({ initialData, onSubmit, isEditing = fal
     }));
   };
 
+  // Helper to parse array inputs
+  const parseList = (val: any): string[] => {
+    if (!val) return [];
+    if (Array.isArray(val)) {
+      return val.flatMap((item: any) => {
+        if (typeof item === 'string') return [item.trim()];
+        if (item && typeof item === 'object') return Object.values(item).map((v: any) => String(v).trim());
+        return [];
+      }).filter(Boolean);
+    }
+    if (typeof val === 'string') {
+      return val.split(',').map((s: string) => s.trim()).filter(Boolean);
+    }
+    if (typeof val === 'object') {
+      return Object.values(val).map((v: any) => String(v).trim()).filter(Boolean);
+    }
+    return [];
+  };
+
   // Form Submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -428,10 +456,10 @@ export default function AdminEarbudForm({ initialData, onSubmit, isEditing = fal
         description: formData.description || undefined,
         status: formData.status || 'available',
         wearing_type: formData.wearing_type || 'In-Ear',
-        colors: typeof formData.colors === 'string' ? formData.colors.split(',').map((s: string) => s.trim()).filter(Boolean) : formData.colors,
-        country_availability: typeof formData.country_availability === 'string' ? formData.country_availability.split(',').map((s: string) => s.trim()).filter(Boolean) : formData.country_availability,
+        colors: parseList(formData.colors),
+        country_availability: parseList(formData.country_availability),
         made_in: formData.made_in || undefined,
-        tags: typeof formData.tags === 'string' ? formData.tags.split(',').map((s: string) => s.trim()).filter(Boolean) : formData.tags,
+        tags: parseList(formData.tags),
         video_url: formData.video_url || undefined,
         price_pkr: formData.price_pkr ? Number(formData.price_pkr) : undefined,
         images: formData.images || [],
@@ -452,7 +480,7 @@ export default function AdminEarbudForm({ initialData, onSubmit, isEditing = fal
             sensitivity_db: formData.specs?.audio?.sensitivity_db ? Number(formData.specs.audio.sensitivity_db) : undefined,
             hi_res_audio: !!formData.specs?.audio?.hi_res_audio,
             spatial_audio: formData.specs?.audio?.spatial_audio || undefined,
-            sound_features: typeof formData.specs?.audio?.sound_features === 'string' ? formData.specs.audio.sound_features.split(',').map((s: string) => s.trim()).filter(Boolean) : formData.specs?.audio?.sound_features,
+            sound_features: parseList(formData.specs?.audio?.sound_features),
           },
           noise_cancellation: {
             has_anc: !!formData.specs?.noise_cancellation?.has_anc,
@@ -463,7 +491,7 @@ export default function AdminEarbudForm({ initialData, onSubmit, isEditing = fal
             mic_count_total: formData.specs?.noise_cancellation?.mic_count_total ? Number(formData.specs.noise_cancellation.mic_count_total) : undefined,
             mic_count_per_earbud: formData.specs?.noise_cancellation?.mic_count_per_earbud ? Number(formData.specs.noise_cancellation.mic_count_per_earbud) : undefined,
             wind_noise_reduction: !!formData.specs?.noise_cancellation?.wind_noise_reduction,
-            mic_tech_features: typeof formData.specs?.noise_cancellation?.mic_tech_features === 'string' ? formData.specs.noise_cancellation.mic_tech_features.split(',').map((s: string) => s.trim()).filter(Boolean) : formData.specs?.noise_cancellation?.mic_tech_features,
+            mic_tech_features: parseList(formData.specs?.noise_cancellation?.mic_tech_features),
           },
           battery: {
             earbud_battery_mah: formData.specs?.battery?.earbud_battery_mah ? Number(formData.specs.battery.earbud_battery_mah) : undefined,
@@ -481,7 +509,7 @@ export default function AdminEarbudForm({ initialData, onSubmit, isEditing = fal
           connectivity: {
             bluetooth_version: formData.specs?.connectivity?.bluetooth_version || undefined,
             bluetooth_range_meters: formData.specs?.connectivity?.bluetooth_range_meters ? Number(formData.specs.connectivity.bluetooth_range_meters) : 10,
-            codecs: typeof formData.specs?.connectivity?.codecs === 'string' ? formData.specs.connectivity.codecs.split(',').map((s: string) => s.trim()).filter(Boolean) : formData.specs?.connectivity?.codecs,
+            codecs: parseList(formData.specs?.connectivity?.codecs),
             multipoint_pairing: !!formData.specs?.connectivity?.multipoint_pairing,
             google_fast_pair: !!formData.specs?.connectivity?.google_fast_pair,
             low_latency_gaming_mode: !!formData.specs?.connectivity?.low_latency_gaming_mode,
@@ -501,10 +529,10 @@ export default function AdminEarbudForm({ initialData, onSubmit, isEditing = fal
             control_type: formData.specs?.controls?.control_type || 'Touch Controls',
             volume_control: !!formData.specs?.controls?.volume_control,
             in_ear_detection: !!formData.specs?.controls?.in_ear_detection,
-            voice_assistant: typeof formData.specs?.controls?.voice_assistant === 'string' ? formData.specs.controls.voice_assistant.split(',').map((s: string) => s.trim()).filter(Boolean) : formData.specs?.controls?.voice_assistant,
-            extra_features: typeof formData.specs?.controls?.extra_features === 'string' ? formData.specs.controls.extra_features.split(',').map((s: string) => s.trim()).filter(Boolean) : formData.specs?.controls?.extra_features,
+            voice_assistant: parseList(formData.specs?.controls?.voice_assistant),
+            extra_features: parseList(formData.specs?.controls?.extra_features),
           },
-          in_the_box: typeof formData.specs?.in_the_box === 'string' ? formData.specs.in_the_box.split(',').map((s: string) => s.trim()).filter(Boolean) : formData.specs?.in_the_box,
+          in_the_box: parseList(formData.specs?.in_the_box),
         }
       };
 
