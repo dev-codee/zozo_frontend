@@ -134,6 +134,10 @@ export async function generateMetadata({
     alternates: {
       canonical: canonicalUrl,
     },
+    // When the admin has marked this page as noindex, tell Google not to index it.
+    ...(vehicle.seo?.is_indexable === false && {
+      robots: { index: false, follow: true },
+    }),
     openGraph: {
       title,
       description,

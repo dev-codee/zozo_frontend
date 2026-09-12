@@ -116,6 +116,7 @@ export interface Phone {
     ai_snippet?: string;
     ai_suggested_tags?: string[];
     ai_keywords?: string[];
+    is_indexable?: boolean;
   };
   updated_at?: string;
   updatedAt?: string;
@@ -280,6 +281,7 @@ export interface Earbud {
     ai_snippet?: string;
     ai_suggested_tags?: string[];
     ai_keywords?: string[];
+    is_indexable?: boolean;
   };
   approvalStatus?: string;
   is_published?: boolean;
@@ -459,6 +461,7 @@ export interface Vehicle {
     ai_buying_advice?: string;
     ai_snippet?: string;
     ai_keywords?: string[];
+    is_indexable?: boolean;
   };
   competitor_slugs?: string[];
 }

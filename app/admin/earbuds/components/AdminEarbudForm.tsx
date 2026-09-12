@@ -114,6 +114,7 @@ const emptyEarbud = () => ({
     ai_snippet: '',
     ai_suggested_tags: [] as string[],
     ai_keywords: [] as string[],
+    is_indexable: true,
   },
   approvalStatus: 'APPROVED',
   is_published: true,
@@ -1491,6 +1492,26 @@ export default function AdminEarbudForm({ initialData, onSubmit, isEditing = fal
         {/* TAB 8: SEO & AI */}
         {activeTab === 'seo' && (
           <div className="space-y-6">
+            {/* Google Indexing Toggle */}
+            <section className="bg-white p-5 rounded-xl border shadow-sm">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-sm font-bold text-gray-900">Google Indexing</h3>
+                  <p className="text-xs text-gray-500 mt-0.5">When turned off, this page will have a <code className="bg-gray-100 px-1 py-0.5 rounded text-[10px]">noindex</code> meta tag and be excluded from the sitemap.</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setFormData((p: any) => ({ ...p, seo: { ...p.seo, is_indexable: !p.seo.is_indexable } }))}
+                  className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${formData.seo.is_indexable ? 'bg-green-500' : 'bg-gray-300'}`}
+                >
+                  <span className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${formData.seo.is_indexable ? 'translate-x-5' : 'translate-x-0'}`} />
+                </button>
+              </div>
+              <div className={`mt-2 text-xs font-semibold ${formData.seo.is_indexable ? 'text-green-600' : 'text-red-500'}`}>
+                {formData.seo.is_indexable ? '✓ This page WILL be indexed by Google' : '✗ This page will NOT be indexed by Google'}
+              </div>
+            </section>
+
             <section className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm space-y-4">
               <div className="flex items-center justify-between border-b pb-3">
                 <div>

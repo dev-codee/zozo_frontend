@@ -71,7 +71,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // Dynamic Phone routes
     const phonesData = await getPhones('limit=1000'); // Fetch up to 1000 phones for sitemap
     if (phonesData && phonesData.phones) {
-      const phoneRoutes: MetadataRoute.Sitemap = phonesData.phones.map((phone) => ({
+      // Exclude phones that the admin has marked as noindex
+      const indexablePhones = phonesData.phones.filter((phone) => phone.seo?.is_indexable !== false);
+      const phoneRoutes: MetadataRoute.Sitemap = indexablePhones.map((phone) => ({
         url: `${baseUrl}/${phone.slug}-price`,
         lastModified: phone.updated_at ? new Date(phone.updated_at) : new Date(),
         // 'weekly' (not 'daily') so Google spends crawl budget discovering new
