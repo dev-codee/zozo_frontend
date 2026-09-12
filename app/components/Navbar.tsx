@@ -2,14 +2,16 @@ import { getPages, getBrands } from "@/app/lib/api";
 import NavbarClient from "./NavbarClient";
 import { Suspense } from "react";
 
-// The 8 popular phone brands to show in the dropdown, in this exact order.
+// The 10 popular phone brands to show in the dropdown, in this exact order.
 const POPULAR_BRAND_SLUGS = [
   "samsung",
   "apple",
   "xiaomi",
-  "oppo",
   "vivo",
+  "oppo",
   "realme",
+  "infinix",
+  "tecno",
   "oneplus",
   "google",
 ];
@@ -29,7 +31,11 @@ export default async function Navbar() {
   const popularBrands = POPULAR_BRAND_SLUGS
     .map((slug) => allBrands.find((b) => b.slug === slug))
     .filter((b): b is NonNullable<typeof b> => !!b)
-    .map((b) => ({ slug: b.slug, name: b.name }));
+    .map((b) => ({
+      slug: b.slug,
+      name: b.name,
+      total_phones: b.total_phones || 0,
+    }));
 
   return (
     <Suspense fallback={<div className="h-16 w-full border-b border-border-subtle bg-surface-white"></div>}>

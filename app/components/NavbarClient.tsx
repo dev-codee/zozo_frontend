@@ -7,7 +7,7 @@ import SearchBar from "./SearchBar";
 import { useAuth } from "../context/AuthContext";
 import Image from "next/image";
 import { createPortal } from "react-dom";
-import { phoneCategoryGroups } from "../lib/phoneCategories";
+import BrandLogo from "./BrandLogo";
 import AppIcon from "./AppIcon";
 
 export default function NavbarClient({
@@ -15,7 +15,7 @@ export default function NavbarClient({
   popularBrands = [],
 }: {
   dynamicPages?: any[];
-  popularBrands?: { slug: string; name: string }[];
+  popularBrands?: { slug: string; name: string; total_phones?: number }[];
 }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
@@ -39,7 +39,22 @@ export default function NavbarClient({
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
 
-  const MEGA_WIDTH = 760;
+  const [activeBrandSlug, setActiveBrandSlug] = useState<string>(
+    popularBrands[0]?.slug || "samsung"
+  );
+  const [mobileExpandedBrand, setMobileExpandedBrand] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (popularBrands.length > 0 && !popularBrands.some((b) => b.slug === activeBrandSlug)) {
+      setActiveBrandSlug(popularBrands[0].slug);
+    }
+  }, [popularBrands, activeBrandSlug]);
+
+  const activeBrand =
+    popularBrands.find((b) => b.slug === activeBrandSlug) ||
+    popularBrands[0] || { slug: "samsung", name: "Samsung", total_phones: 0 };
+
+  const MEGA_WIDTH = 780;
   const openBest = () => {
     if (bestTimer.current) clearTimeout(bestTimer.current);
     const r = bestRef.current?.getBoundingClientRect();
@@ -86,7 +101,6 @@ export default function NavbarClient({
     { label: "Top Phones", href: "#top-phones" },
     { label: "Earbuds", href: "/earbuds" },
     { label: "EVs", href: "#evs" },
-    { label: "Up Coming Phones", href: "/phones?status=upcoming" },
     { label: "Compare", href: "/compare" },
     { label: "Brands", href: "/brands" },
   ];
@@ -320,39 +334,121 @@ export default function NavbarClient({
 
               {/* Mobile Top Phones Menu */}
               <div className="flex flex-col mb-2 pb-2 border-b border-border-subtle">
-                <span className="px-4 py-2 text-xs font-bold text-text-muted uppercase tracking-wider">
-                  Popular Brands
-                </span>
-                {popularBrands.map((brand) => (
+                <div className="flex items-center justify-between px-4 py-2">
+                  <span className="text-xs font-bold text-text-muted uppercase tracking-wider">
+                    Top 10 Brands
+                  </span>
                   <Link
-                    key={brand.slug}
-                    href={`/phones?brand=${brand.slug}`}
+                    href="/brands"
                     onClick={() => setMobileOpen(false)}
-                    className="flex items-center gap-2.5 px-4 py-2 rounded-lg transition-colors text-sm font-semibold text-on-surface-variant hover:text-primary hover:bg-surface-container-low"
+                    className="text-xs font-semibold text-primary hover:underline"
                   >
-                    <AppIcon name="smartphone" size={18} className="text-text-muted" />
-                    {brand.name}
+                    All Brands
                   </Link>
-                ))}
+                </div>
 
-                {phoneCategoryGroups.map((group) => (
-                  <div key={group.title} className="flex flex-col mt-2">
-                    <span className="px-4 pt-2 pb-1 text-[10px] font-bold text-primary uppercase tracking-wider">
-                      {group.title}
-                    </span>
-                    {group.items.map((item) => (
-                      <Link
-                        key={item.label}
-                        href={item.href}
-                        onClick={() => setMobileOpen(false)}
-                        className="flex items-center gap-2.5 px-4 py-2 rounded-lg transition-colors text-sm font-semibold text-on-surface-variant hover:text-primary hover:bg-surface-container-low"
+                <div className="flex flex-col gap-1 px-2">
+                  {popularBrands.map((brand) => {
+                    const isExpanded = mobileExpandedBrand === brand.slug;
+                    return (
+                      <div
+                        key={brand.slug}
+                        className="flex flex-col rounded-xl overflow-hidden border border-border-subtle/70 bg-surface-container-lowest/40"
                       >
-                        <AppIcon name={item.icon} size={18} className="text-text-muted" />
-                        {item.label}
-                      </Link>
-                    ))}
-                  </div>
-                ))}
+                        <button
+                          type="button"
+                          onClick={() => setMobileExpandedBrand(isExpanded ? null : brand.slug)}
+                          className="flex items-center justify-between px-3 py-2.5 text-sm font-semibold text-on-surface hover:bg-surface-container-low transition-colors"
+                        >
+                          <div className="flex items-center gap-2.5">
+                            <div className="w-6 h-6 rounded-md bg-surface-container-low flex items-center justify-center p-0.5 shrink-0">
+                              <BrandLogo name={brand.name} slug={brand.slug} />
+                            </div>
+                            <span>{brand.name}</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            {brand.total_phones ? (
+                              <span className="text-[10px] text-text-muted bg-surface-container-low px-1.5 py-0.5 rounded-full font-normal">
+                                {brand.total_phones}
+                              </span>
+                            ) : null}
+                            <AppIcon
+                              name="expand_more"
+                              size={18}
+                              className={`text-text-muted transition-transform duration-200 ${
+                                isExpanded ? "rotate-180" : ""
+                              }`}
+                            />
+                          </div>
+                        </button>
+
+                        {isExpanded && (
+                          <div className="flex flex-col bg-surface-white border-t border-border-subtle px-2 py-1.5 gap-1 text-xs">
+                            <Link
+                              href={`/phones?brand=${brand.slug}&sort=popular`}
+                              onClick={() => setMobileOpen(false)}
+                              className="flex items-center justify-between px-3 py-2 rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors"
+                            >
+                              <div className="flex items-center gap-2">
+                                <AppIcon name="trending_up" size={16} className="text-amber-500" />
+                                <span>Popular {brand.name} Phones</span>
+                              </div>
+                              <span className="text-[10px] text-amber-600 bg-amber-50 px-1.5 py-0.2 rounded font-medium">
+                                Trending
+                              </span>
+                            </Link>
+                            <Link
+                              href={`/phones?brand=${brand.slug}&status=upcoming`}
+                              onClick={() => setMobileOpen(false)}
+                              className="flex items-center justify-between px-3 py-2 rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors"
+                            >
+                              <div className="flex items-center gap-2">
+                                <AppIcon name="schedule" size={16} className="text-blue-500" />
+                                <span>Upcoming {brand.name} Phones</span>
+                              </div>
+                              <span className="text-[10px] text-blue-600 bg-blue-50 px-1.5 py-0.2 rounded font-medium">
+                                Coming Soon
+                              </span>
+                            </Link>
+                            <Link
+                              href={`/phones?brand=${brand.slug}&sort=latest`}
+                              onClick={() => setMobileOpen(false)}
+                              className="flex items-center justify-between px-3 py-2 rounded-lg text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors"
+                            >
+                              <div className="flex items-center gap-2">
+                                <AppIcon name="bolt" size={16} className="text-emerald-500" />
+                                <span>Latest {brand.name} Launches</span>
+                              </div>
+                              <span className="text-[10px] text-emerald-600 bg-emerald-50 px-1.5 py-0.2 rounded font-medium">
+                                New
+                              </span>
+                            </Link>
+                            <Link
+                              href={`/phones?brand=${brand.slug}`}
+                              onClick={() => setMobileOpen(false)}
+                              className="flex items-center justify-between px-3 py-2 rounded-lg text-primary font-semibold hover:bg-primary/5 transition-colors border-t border-border-subtle/50 mt-0.5"
+                            >
+                              <span>View All {brand.name} Phones</span>
+                              <AppIcon name="arrow_forward" size={14} />
+                            </Link>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+
+                  <Link
+                    href="/phones?status=upcoming"
+                    onClick={() => setMobileOpen(false)}
+                    className="flex items-center justify-between px-3 py-2.5 mt-1 rounded-xl bg-primary/5 text-primary text-xs font-semibold hover:bg-primary/10 transition-colors"
+                  >
+                    <div className="flex items-center gap-2">
+                      <AppIcon name="event" size={16} />
+                      <span>All Upcoming Phones</span>
+                    </div>
+                    <AppIcon name="arrow_forward" size={14} />
+                  </Link>
+                </div>
               </div>
 
               {/* Mobile EVs Menu */}
@@ -400,7 +496,7 @@ export default function NavbarClient({
                 Earbuds
               </Link>
 
-              {baseNavLinks.filter(l => ['Up Coming Phones', 'Compare', 'Brands'].includes(l.label)).map((link) => {
+              {baseNavLinks.filter(l => ['Compare', 'Brands'].includes(l.label)).map((link) => {
                 const active = isActive(link.href);
                 return (
                   <Link
@@ -497,55 +593,245 @@ export default function NavbarClient({
         </div>
       )}
 
-      {/* "Best Phones for" mega-menu (portaled to escape overflow clipping) */}
+      {/* Top Phones mega-menu with Brand Tabs */}
       {mounted && bestOpen && createPortal(
         <div
           style={{ position: "fixed", top: bestPos.top, left: bestPos.left, width: MEGA_WIDTH, zIndex: 60 }}
           onMouseEnter={openBest}
           onMouseLeave={closeBestSoon}
-          className="bg-surface-white border border-border-subtle shadow-xl rounded-2xl p-5 max-w-[calc(100vw-24px)] max-h-[calc(100vh-140px)] overflow-y-auto custom-scrollbar"
+          className="bg-surface-white border border-border-subtle shadow-2xl rounded-2xl overflow-hidden max-w-[calc(100vw-24px)] max-h-[calc(100vh-140px)] flex flex-col"
         >
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-4">
-            <div>
-              <h3 className="text-[11px] font-bold text-primary uppercase tracking-wider mb-2 pb-1.5 border-b border-border-subtle">
-                Popular Brands
-              </h3>
-              <ul className="flex flex-col">
-                {popularBrands.map((brand) => (
-                  <li key={brand.slug}>
-                    <Link
-                      href={`/phones?brand=${brand.slug}`}
-                      onClick={() => setBestOpen(false)}
-                      className="flex items-center gap-2.5 px-2 py-1.5 rounded-lg text-sm font-medium text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors group"
-                    >
-                      <AppIcon name="smartphone" size={18} className="text-text-muted group-hover:text-primary transition-colors" />
-                      <span className="leading-tight">{brand.name}</span>
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            {phoneCategoryGroups.map((group) => (
-              <div key={group.title}>
-                <h3 className="text-[11px] font-bold text-primary uppercase tracking-wider mb-2 pb-1.5 border-b border-border-subtle">
-                  {group.title}
-                </h3>
-                <ul className="flex flex-col">
-                  {group.items.map((item) => (
-                    <li key={item.label}>
-                      <Link
-                        href={item.href}
-                        onClick={() => setBestOpen(false)}
-                        className="flex items-center gap-2.5 px-2 py-1.5 rounded-lg text-sm font-medium text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors group"
-                      >
-                        <AppIcon name={item.icon} size={18} className="text-text-muted group-hover:text-primary transition-colors" />
-                        <span className="leading-tight">{item.label}</span>
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
+          <div className="flex flex-col md:flex-row flex-1 min-h-[380px]">
+            {/* Left Rail: 10 Popular Brands */}
+            <div className="w-full md:w-[240px] border-b md:border-b-0 md:border-r border-border-subtle bg-surface-container-lowest/60 p-3 flex flex-col">
+              <div className="flex items-center justify-between px-2 pb-2 mb-1.5 border-b border-border-subtle">
+                <span className="text-[11px] font-bold text-primary uppercase tracking-wider">
+                  Popular Brands
+                </span>
+                <span className="text-[10px] font-semibold text-text-muted bg-surface-container-low px-1.5 py-0.5 rounded">
+                  Top 10
+                </span>
               </div>
-            ))}
+              <div className="flex flex-col gap-0.5 overflow-y-auto custom-scrollbar pr-1 flex-1">
+                {popularBrands.map((brand) => {
+                  const isSelected = brand.slug === activeBrand.slug;
+                  return (
+                    <button
+                      key={brand.slug}
+                      type="button"
+                      onMouseEnter={() => setActiveBrandSlug(brand.slug)}
+                      onClick={() => setActiveBrandSlug(brand.slug)}
+                      className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-sm font-medium transition-all text-left ${
+                        isSelected
+                          ? "bg-primary text-white shadow-sm font-semibold"
+                          : "text-on-surface-variant hover:text-primary hover:bg-surface-container-low"
+                      }`}
+                    >
+                      <div className="flex items-center gap-2.5 min-w-0">
+                        <div
+                          className={`w-6 h-6 rounded-md flex items-center justify-center p-0.5 shrink-0 ${
+                            isSelected ? "bg-white/20" : "bg-surface-container-low"
+                          }`}
+                        >
+                          <BrandLogo name={brand.name} slug={brand.slug} />
+                        </div>
+                        <span className="truncate leading-none">{brand.name}</span>
+                      </div>
+                      <div className="flex items-center gap-1 shrink-0">
+                        {brand.total_phones ? (
+                          <span
+                            className={`text-[10px] px-1.5 py-0.5 rounded-full ${
+                              isSelected
+                                ? "bg-white/20 text-white"
+                                : "bg-surface-container-low text-text-muted"
+                            }`}
+                          >
+                            {brand.total_phones}
+                          </span>
+                        ) : null}
+                        <AppIcon
+                          name="chevron_right"
+                          size={16}
+                          className={isSelected ? "text-white" : "text-text-muted"}
+                        />
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Right Content Area: Active Brand Hub with Tabs & Links */}
+            <div className="flex-1 p-5 flex flex-col justify-between bg-surface-white">
+              <div>
+                {/* Brand Header */}
+                <div className="flex items-center justify-between pb-3.5 mb-4 border-b border-border-subtle">
+                  <div className="flex items-center gap-3">
+                    <div className="w-11 h-11 rounded-xl bg-surface-container-lowest border border-border-subtle flex items-center justify-center p-1.5 shrink-0">
+                      <BrandLogo name={activeBrand.name} slug={activeBrand.slug} />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-bold text-on-surface flex items-center gap-2 leading-tight">
+                        {activeBrand.name} Phones
+                        {activeBrand.total_phones ? (
+                          <span className="text-xs font-normal text-text-muted bg-surface-container-low px-2 py-0.5 rounded-full">
+                            {activeBrand.total_phones} models
+                          </span>
+                        ) : null}
+                      </h3>
+                      <p className="text-xs text-text-muted">
+                        Official prices, upcoming phones & popular models in Pakistan
+                      </p>
+                    </div>
+                  </div>
+
+                  <Link
+                    href={`/phones?brand=${activeBrand.slug}`}
+                    onClick={() => setBestOpen(false)}
+                    className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-surface-container-low hover:bg-primary/10 text-primary text-xs font-semibold transition-colors shrink-0"
+                  >
+                    <span>All {activeBrand.name}</span>
+                    <AppIcon name="arrow_forward" size={14} />
+                  </Link>
+                </div>
+
+                {/* Brand Quick Tabs / Action Cards */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+                  {/* Popular Phones Tab */}
+                  <Link
+                    href={`/phones?brand=${activeBrand.slug}&sort=popular`}
+                    onClick={() => setBestOpen(false)}
+                    className="group flex items-start gap-3 p-3.5 rounded-xl border border-border-subtle hover:border-primary/40 hover:bg-surface-container-low/60 transition-all"
+                  >
+                    <div className="w-9 h-9 rounded-lg bg-amber-500/10 text-amber-600 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                      <AppIcon name="trending_up" size={20} />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-1.5 mb-0.5">
+                        <span className="text-sm font-bold text-on-surface group-hover:text-primary transition-colors">
+                          Popular Phones
+                        </span>
+                        <span className="text-[10px] font-semibold text-amber-600 bg-amber-50 px-1.5 py-0.2 rounded">
+                          Trending
+                        </span>
+                      </div>
+                      <p className="text-xs text-text-muted line-clamp-2 leading-relaxed">
+                        Most viewed & popular {activeBrand.name} phones in Pakistan
+                      </p>
+                    </div>
+                  </Link>
+
+                  {/* Upcoming Phones Tab */}
+                  <Link
+                    href={`/phones?brand=${activeBrand.slug}&status=upcoming`}
+                    onClick={() => setBestOpen(false)}
+                    className="group flex items-start gap-3 p-3.5 rounded-xl border border-border-subtle hover:border-primary/40 hover:bg-surface-container-low/60 transition-all"
+                  >
+                    <div className="w-9 h-9 rounded-lg bg-blue-500/10 text-blue-600 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                      <AppIcon name="schedule" size={20} />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-1.5 mb-0.5">
+                        <span className="text-sm font-bold text-on-surface group-hover:text-primary transition-colors">
+                          Upcoming Phones
+                        </span>
+                        <span className="text-[10px] font-semibold text-blue-600 bg-blue-50 px-1.5 py-0.2 rounded">
+                          Coming Soon
+                        </span>
+                      </div>
+                      <p className="text-xs text-text-muted line-clamp-2 leading-relaxed">
+                        Expected releases & rumors for upcoming {activeBrand.name} devices
+                      </p>
+                    </div>
+                  </Link>
+
+                  {/* Latest Releases Tab */}
+                  <Link
+                    href={`/phones?brand=${activeBrand.slug}&sort=latest`}
+                    onClick={() => setBestOpen(false)}
+                    className="group flex items-start gap-3 p-3.5 rounded-xl border border-border-subtle hover:border-primary/40 hover:bg-surface-container-low/60 transition-all"
+                  >
+                    <div className="w-9 h-9 rounded-lg bg-emerald-500/10 text-emerald-600 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                      <AppIcon name="bolt" size={20} />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-1.5 mb-0.5">
+                        <span className="text-sm font-bold text-on-surface group-hover:text-primary transition-colors">
+                          Latest Launches
+                        </span>
+                        <span className="text-[10px] font-semibold text-emerald-600 bg-emerald-50 px-1.5 py-0.2 rounded">
+                          New
+                        </span>
+                      </div>
+                      <p className="text-xs text-text-muted line-clamp-2 leading-relaxed">
+                        Recently launched {activeBrand.name} models with specs & pricing
+                      </p>
+                    </div>
+                  </Link>
+
+                  {/* Price & Budget Segment Tab */}
+                  <div className="flex flex-col p-3 rounded-xl border border-border-subtle bg-surface-container-lowest/50">
+                    <div className="flex items-center gap-1.5 mb-2">
+                      <AppIcon name="payments" size={16} className="text-primary" />
+                      <span className="text-xs font-bold text-on-surface uppercase tracking-wider">
+                        {activeBrand.name} by Price
+                      </span>
+                    </div>
+                    <div className="grid grid-cols-2 gap-1.5">
+                      <Link
+                        href={`/phones?brand=${activeBrand.slug}&max_price=35000`}
+                        onClick={() => setBestOpen(false)}
+                        className="px-2 py-1 rounded-lg bg-surface-white border border-border-subtle hover:border-primary hover:text-primary text-[11px] font-medium text-text-muted text-center transition-colors truncate"
+                      >
+                        Under 35K
+                      </Link>
+                      <Link
+                        href={`/phones?brand=${activeBrand.slug}&min_price=35000&max_price=70000`}
+                        onClick={() => setBestOpen(false)}
+                        className="px-2 py-1 rounded-lg bg-surface-white border border-border-subtle hover:border-primary hover:text-primary text-[11px] font-medium text-text-muted text-center transition-colors truncate"
+                      >
+                        35K – 70K
+                      </Link>
+                      <Link
+                        href={`/phones?brand=${activeBrand.slug}&min_price=70000&max_price=120000`}
+                        onClick={() => setBestOpen(false)}
+                        className="px-2 py-1 rounded-lg bg-surface-white border border-border-subtle hover:border-primary hover:text-primary text-[11px] font-medium text-text-muted text-center transition-colors truncate"
+                      >
+                        70K – 120K
+                      </Link>
+                      <Link
+                        href={`/phones?brand=${activeBrand.slug}&min_price=120000`}
+                        onClick={() => setBestOpen(false)}
+                        className="px-2 py-1 rounded-lg bg-surface-white border border-border-subtle hover:border-primary hover:text-primary text-[11px] font-medium text-text-muted text-center transition-colors truncate"
+                      >
+                        120K+ Flagships
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Bottom Footer Links */}
+              <div className="pt-3 border-t border-border-subtle flex items-center justify-between text-xs text-text-muted">
+                <Link
+                  href="/phones?status=upcoming"
+                  onClick={() => setBestOpen(false)}
+                  className="flex items-center gap-1 font-semibold text-primary hover:underline"
+                >
+                  <AppIcon name="event" size={15} />
+                  <span>View All Upcoming Phones</span>
+                </Link>
+
+                <Link
+                  href="/brands"
+                  onClick={() => setBestOpen(false)}
+                  className="flex items-center gap-1 text-on-surface-variant hover:text-primary font-medium transition-colors"
+                >
+                  <span>All Brands Directory</span>
+                  <AppIcon name="arrow_forward" size={14} />
+                </Link>
+              </div>
+            </div>
           </div>
         </div>,
         document.body
