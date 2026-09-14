@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Save, ArrowLeft, Wand2 } from 'lucide-react';
+import { Save, ArrowLeft, Wand2, Search, ExternalLink, AlertTriangle, CheckCircle, XCircle } from 'lucide-react';
 import Link from 'next/link';
 import Cookies from 'js-cookie';
 import ImageUploader from '../../../components/ImageUploader';
@@ -55,6 +55,9 @@ export default function AdminPhoneForm({ initialData, onSubmit, isEditing = fals
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isAIFilling, setIsAIFilling] = useState(false);
   const [isAIFillingSEO, setIsAIFillingSEO] = useState(false);
+  const [isResearching, setIsResearching] = useState(false);
+  const [researchResults, setResearchResults] = useState<any>(null);
+  const [showResearchModal, setShowResearchModal] = useState(false);
   const [activeTab, setActiveTab] = useState('basic'); // 'basic', 'ai_content', 'detailed_specs', 'seo'
   const [showAddBrand, setShowAddBrand] = useState(false);
   const [newBrandName, setNewBrandName] = useState('');
@@ -353,6 +356,88 @@ export default function AdminPhoneForm({ initialData, onSubmit, isEditing = fals
     }
   };
 
+  const handleResearchSpecs = async () => {
+    if (!formData.name) {
+      alert("Please enter a Phone Name first (e.g. 'Samsung Galaxy S25 Ultra')");
+      return;
+    }
+    setIsResearching(true);
+    try {
+      const token = Cookies.get('admin_token');
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+      const res = await fetch(`${apiUrl}/admin/phones/research-specs`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        body: JSON.stringify({ phoneName: formData.name, modelNumber: formData.model_number })
+      });
+      const data = await res.json();
+      if (res.ok && data.data) {
+        setResearchResults(data.data);
+        setShowResearchModal(true);
+      } else {
+        alert("Research failed: " + data.message);
+      }
+    } catch (error) {
+      console.error(error);
+      alert("Error occurred during research. Make sure n8n is running.");
+    } finally {
+      setIsResearching(false);
+    }
+  };
+
+  const applyResearchToForm = () => {
+    if (!researchResults?.specs) return;
+    const s = researchResults.specs;
+    const getValue = (key: string) => s[key]?.value || null;
+
+    const parseNum = (val: string | null) => {
+      if (!val) return null;
+      const n = parseFloat(val.replace(/[^0-9.]/g, ''));
+      return isNaN(n) ? null : n;
+    };
+
+    setFormData((prev: any) => ({
+      ...prev,
+      model_number: getValue('model_number') || prev.model_number,
+      specs: {
+        ...prev.specs,
+        display: {
+          ...prev.specs.display,
+          ...(getValue('display_size') && { size_inches: parseNum(getValue('display_size')) }),
+          ...(getValue('display_type') && { type: getValue('display_type') }),
+          ...(getValue('resolution') && { resolution: getValue('resolution') }),
+        },
+        performance: {
+          ...prev.specs.performance,
+          ...(getValue('processor') && { chipset: getValue('processor') }),
+          ...(getValue('ram') && { ram_options_gb: [parseNum(getValue('ram'))].filter(Boolean) }),
+          ...(getValue('storage') && { storage_options_gb: [parseNum(getValue('storage'))].filter(Boolean) }),
+        },
+        camera: {
+          ...prev.specs.camera,
+          ...(getValue('camera_main') && { rear_summary: getValue('camera_main') }),
+          ...(getValue('camera_front') && { front_summary: getValue('camera_front') }),
+        },
+        battery: {
+          ...prev.specs.battery,
+          ...(getValue('battery') && { capacity_mah: parseNum(getValue('battery')) }),
+        },
+        body: {
+          ...prev.specs.body,
+          ...(getValue('weight') && { weight_g: parseNum(getValue('weight')) }),
+          ...(getValue('dimensions') && { materials: getValue('dimensions') }),
+        },
+        connectivity: {
+          ...prev.specs.connectivity,
+          ...(getValue('connectivity') && { network: getValue('connectivity') }),
+        },
+        ...(getValue('operating_system') && { os: getValue('operating_system') }),
+      }
+    }));
+    setShowResearchModal(false);
+    alert(`Specs applied to form! Confidence: ${researchResults.confidence?.toUpperCase()}. Please review all fields before saving.`);
+  };
+
   const handleAIFillSEO = async () => {
     if (!formData.name) {
       alert("Please enter a Phone Name first (e.g. 'iPhone 15 Pro Max')");
@@ -478,6 +563,10 @@ export default function AdminPhoneForm({ initialData, onSubmit, isEditing = fals
           <h2 className="text-2xl font-bold text-gray-900">{isEditing ? 'Edit Mobile' : 'Add New Mobile'}</h2>
         </div>
         <div className="flex items-center space-x-3">
+          <button onClick={handleResearchSpecs} disabled={isResearching} className="flex items-center px-4 py-2 bg-gradient-to-r from-teal-500 to-cyan-600 text-white rounded-md hover:from-teal-600 hover:to-cyan-700 disabled:opacity-50">
+            <Search className="w-4 h-4 mr-2" />
+            {isResearching ? 'Researching...' : 'Research Specs'}
+          </button>
           <button onClick={handleAIFill} disabled={isAIFilling} className="flex items-center px-4 py-2 bg-gradient-to-r from-purple-500 to-indigo-600 text-white rounded-md hover:from-purple-600 hover:to-indigo-700 disabled:opacity-50">
             <Wand2 className="w-4 h-4 mr-2" />
             {isAIFilling ? 'AI Researching...' : 'Auto-fill with AI'}
@@ -1109,6 +1198,102 @@ export default function AdminPhoneForm({ initialData, onSubmit, isEditing = fals
         )}
 
       </form>
+
+      {/* Research Specs Modal */}
+      {showResearchModal && researchResults && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
+          <div className="bg-white rounded-xl shadow-2xl w-full max-w-3xl max-h-[90vh] flex flex-col">
+
+            {/* Modal Header */}
+            <div className="flex items-center justify-between px-6 py-4 border-b">
+              <div>
+                <h2 className="text-lg font-bold text-gray-900">Research Results — {researchResults.product_name}</h2>
+                <div className="flex items-center gap-2 mt-1">
+                  <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${
+                    researchResults.confidence === 'high' ? 'bg-green-100 text-green-700' :
+                    researchResults.confidence === 'medium' ? 'bg-yellow-100 text-yellow-700' :
+                    'bg-red-100 text-red-700'
+                  }`}>
+                    {researchResults.confidence?.toUpperCase()} CONFIDENCE
+                  </span>
+                  <span className="text-xs text-gray-500">{researchResults.sources_used} sources checked</span>
+                </div>
+              </div>
+              <button onClick={() => setShowResearchModal(false)} className="p-2 hover:bg-gray-100 rounded-lg">
+                <XCircle className="w-5 h-5 text-gray-500" />
+              </button>
+            </div>
+
+            {/* Review Warning */}
+            {researchResults.review_required && (
+              <div className="mx-6 mt-4 flex items-start gap-2 bg-yellow-50 border border-yellow-200 rounded-lg p-3">
+                <AlertTriangle className="w-4 h-4 text-yellow-600 mt-0.5 shrink-0" />
+                <p className="text-xs text-yellow-800">
+                  <strong>Manual review recommended.</strong> Some specs have conflicts or low confidence.
+                  {researchResults.conflicts_found?.length > 0 && ` Conflicting fields: ${researchResults.conflicts_found.join(', ')}.`}
+                  {researchResults.missing_fields?.length > 0 && ` Missing fields: ${researchResults.missing_fields.join(', ')}.`}
+                </p>
+              </div>
+            )}
+
+            {/* Specs Table */}
+            <div className="overflow-y-auto flex-1 px-6 py-4">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b">
+                    <th className="text-left py-2 font-semibold text-gray-600 w-1/4">Field</th>
+                    <th className="text-left py-2 font-semibold text-gray-600 w-1/2">Value</th>
+                    <th className="text-left py-2 font-semibold text-gray-600">Source</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {researchResults.specs && Object.entries(researchResults.specs).map(([key, data]: [string, any]) => (
+                    <tr key={key} className={`border-b last:border-0 ${data?.conflict ? 'bg-orange-50' : ''}`}>
+                      <td className="py-2 pr-3 font-medium text-gray-700 capitalize">{key.replace(/_/g, ' ')}</td>
+                      <td className="py-2 pr-3">
+                        {data?.value ? (
+                          <div className="flex items-center gap-1.5">
+                            <CheckCircle className="w-3.5 h-3.5 text-green-500 shrink-0" />
+                            <span className="text-gray-900">{String(data.value)}</span>
+                            {data.conflict && <span className="text-xs bg-orange-100 text-orange-700 px-1.5 py-0.5 rounded font-medium">CONFLICT</span>}
+                          </div>
+                        ) : (
+                          <span className="text-gray-400 italic text-xs">Not found</span>
+                        )}
+                      </td>
+                      <td className="py-2">
+                        {data?.source ? (
+                          <a href={data.source} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-xs text-blue-600 hover:underline truncate max-w-[160px]">
+                            <ExternalLink className="w-3 h-3 shrink-0" />
+                            {new URL(data.source).hostname.replace('www.', '')}
+                          </a>
+                        ) : (
+                          <span className="text-gray-300 text-xs">—</span>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Modal Footer */}
+            <div className="px-6 py-4 border-t flex items-center justify-between">
+              <p className="text-xs text-gray-500">Review specs above and verify sources before applying.</p>
+              <div className="flex gap-3">
+                <button onClick={() => setShowResearchModal(false)} className="px-4 py-2 text-sm border border-gray-300 rounded-lg hover:bg-gray-50">
+                  Cancel
+                </button>
+                <button onClick={applyResearchToForm} className="px-4 py-2 text-sm bg-teal-600 text-white rounded-lg hover:bg-teal-700 font-semibold">
+                  Apply to Form
+                </button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }
