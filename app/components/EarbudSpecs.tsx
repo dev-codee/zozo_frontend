@@ -2,6 +2,7 @@
 
 import React from "react";
 import type { Earbud } from "@/app/lib/api";
+import { isJunk } from "@/app/lib/spec-value";
 import AppIcon from "./AppIcon";
 
 interface EarbudSpecsProps {
@@ -10,13 +11,16 @@ interface EarbudSpecsProps {
 }
 
 const renderRow = (label: string, value: React.ReactNode) => {
-  if (value === null || value === undefined || value === "" || value === "false") return null;
+  if (value === "false") return null;
   if (value === true || value === "true") value = "Yes";
   if (value === false) value = "No";
   if (Array.isArray(value)) {
-    if (value.length === 0) return null;
-    value = value.join(", ");
+    const cleaned = value.filter((v) => !isJunk(v));
+    if (cleaned.length === 0) return null;
+    value = cleaned.join(", ");
   }
+  // Hide the row for empty or placeholder values ("null", "N/A", …).
+  if (isJunk(value)) return null;
   return (
     <div
       key={label}

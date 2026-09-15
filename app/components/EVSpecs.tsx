@@ -2,6 +2,7 @@
 
 import React from "react";
 import type { Vehicle } from "@/app/lib/api";
+import { isJunk } from "@/app/lib/spec-value";
 import AppIcon from "./AppIcon";
 
 interface EVSpecsProps {
@@ -9,15 +10,18 @@ interface EVSpecsProps {
   className?: string;
 }
 
-// Helper to render a single spec row (hides if null/undefined/empty)
+// Helper to render a single spec row (hides if null/undefined/empty or a
+// placeholder string like "null"/"N/A").
 const renderRow = (label: string, value: React.ReactNode) => {
-  if (value === null || value === undefined || value === "" || value === "false") return null;
+  if (value === "false") return null;
   if (value === true || value === "true") value = "Yes";
   if (value === false) value = "No";
   if (Array.isArray(value)) {
-    if (value.length === 0) return null;
-    value = value.join(", ");
+    const cleaned = value.filter((v) => !isJunk(v));
+    if (cleaned.length === 0) return null;
+    value = cleaned.join(", ");
   }
+  if (isJunk(value)) return null;
   return (
     <div key={label} className="grid grid-cols-1 md:grid-cols-[220px_1fr] gap-2 md:gap-6 py-2.5 px-5 md:px-6 border-b border-border-subtle/50 last:border-b-0 hover:bg-surface-container-lowest/50 transition-colors duration-150">
       <span className="text-text-muted font-semibold text-xs md:text-sm capitalize">{label.replace(/_/g, " ")}</span>

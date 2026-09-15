@@ -6,7 +6,13 @@ import Link from "next/link";
 import { Phone, getAIComparisonVerdict } from "@/app/lib/api";
 import AIVerdictClient from "@/app/components/AIVerdictClient";
 import { useAuth } from "@/app/context/AuthContext";
+import { isJunk } from "@/app/lib/spec-value";
 import AppIcon from "./AppIcon";
+
+// Normalizes a spec cell: placeholder strings ("null", "N/A", "-", …) collapse
+// to a single neutral dash so the comparison grid never prints "null".
+const cell = (value: React.ReactNode): React.ReactNode =>
+  isJunk(value) ? <span className="text-text-muted/50 font-normal">—</span> : value;
 
 interface CompareClientProps {
   initialPhones: Phone[];
@@ -546,7 +552,7 @@ export default function CompareClient({ initialPhones = [], allPhones = [] }: Co
                   {slots.map((phone, index) => (
                     <div key={index} className={`py-3 px-5 text-sm flex items-center min-h-[48px] ${bestIndices[index] ? 'bg-green-500/10 text-green-700 dark:text-green-400 font-bold' : 'text-text-main'}`}>
                       {phone ? (
-                        <div className="w-full font-semibold">{field.getValue(phone)}</div>
+                        <div className="w-full font-semibold">{cell(field.getValue(phone))}</div>
                       ) : (
                         <span className="text-text-muted/40 font-light">-</span>
                       )}

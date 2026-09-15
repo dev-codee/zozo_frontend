@@ -1,4 +1,5 @@
 import { Phone } from "@/app/lib/api";
+import { isJunk, clean } from "@/app/lib/spec-value";
 import AppIcon from "./AppIcon";
 
 interface PhoneSpecsProps {
@@ -114,12 +115,17 @@ export default function PhoneSpecs({ specs, className = "", phone }: PhoneSpecsP
   }
 
   const renderRow = (label: string, value: React.ReactNode) => {
-    if (!value || value === "false") return null;
     if (value === "true" || value === true) value = "Yes";
+    if (value === "false" || value === false) return null;
     if (Array.isArray(value)) {
-      if (value.length === 0) return null;
-      value = value.join(", ");
+      const cleaned = value.filter((v) => !isJunk(v));
+      if (cleaned.length === 0) return null;
+      value = cleaned.join(", ");
     }
+    // Hide the row when the value is empty or a placeholder like "null"/"N/A".
+    // React elements (e.g. the rating/verified badges) are objects, so isJunk
+    // returns false for them and they render as intended.
+    if (isJunk(value)) return null;
     return (
       <div className="grid grid-cols-1 md:grid-cols-[200px_1fr] gap-2 md:gap-6 py-1.5 px-6 border-b border-border-subtle last:border-b-0 hover:bg-surface-container-lowest/40 transition-colors duration-150">
         <span className="text-text-main font-bold text-sm capitalize">{label.replace(/_/g, " ")}</span>
@@ -198,19 +204,19 @@ export default function PhoneSpecs({ specs, className = "", phone }: PhoneSpecsP
 
       {renderSection("display", "Display", "smartphone", (
         <>
-          {specs.display?.size_inches && renderRow("Size", `${specs.display.size_inches} inches`)}
+          {clean(specs.display?.size_inches) && renderRow("Size", `${specs.display!.size_inches} inches`)}
           {renderRow("Type", specs.display?.type)}
           {renderRow("Resolution", specs.display?.resolution)}
           {renderRow("Pixels", ext.features_listing?.pixels)}
           {renderRow("PPI", ext.features_listing?.ppi)}
           {renderRow("Aspect Ratio", ext.features_listing?.aspect_ratio)}
-          {specs.display?.refresh_rate_hz && renderRow("Refresh Rate", `${specs.display.refresh_rate_hz} Hz`)}
+          {clean(specs.display?.refresh_rate_hz) && renderRow("Refresh Rate", `${specs.display!.refresh_rate_hz} Hz`)}
           {renderRow("Touch Sampling", ext.features_listing?.touch_sampling)}
           {renderRow("Protection", specs.display?.protection)}
           {renderRow("Screen to Body", ext.features_listing?.screen_to_body)}
           {renderRow("Screen Design", ext.features_listing?.screen_design)}
           {renderRow("Notch Type", ext.features_listing?.notch_type)}
-          {specs.display?.peak_brightness_nits && renderRow("Peak Brightness", `${specs.display.peak_brightness_nits} nits`)}
+          {clean(specs.display?.peak_brightness_nits) && renderRow("Peak Brightness", `${specs.display!.peak_brightness_nits} nits`)}
           {renderRow("Color Depth", ext.features_listing?.color_depth)}
           {renderRow("HDR Support", [ext.features_listing?.hdr && "HDR", ext.features_listing?.hdr10 && "HDR10", ext.features_listing?.hdr10_plus && "HDR10+", ext.features_listing?.dolby_vision && "Dolby Vision"].filter(Boolean).join(", ") || "")}
           {renderRow("Always-On Display", ext.features_listing?.always_on_display)}
@@ -239,9 +245,9 @@ export default function PhoneSpecs({ specs, className = "", phone }: PhoneSpecsP
 
       {renderSection("battery", "Battery", "battery_charging_full", (
         <>
-          {specs.battery?.capacity_mah && renderRow("Capacity", `${specs.battery.capacity_mah} mAh`)}
+          {clean(specs.battery?.capacity_mah) && renderRow("Capacity", `${specs.battery!.capacity_mah} mAh`)}
           {renderRow("Battery Type", ext.battery_detailed?.type)}
-          {specs.battery?.charging_watts && renderRow("Charging Speed", `${specs.battery.charging_watts}W`)}
+          {clean(specs.battery?.charging_watts) && renderRow("Charging Speed", `${specs.battery!.charging_watts}W`)}
           {specs.battery?.fast_charging !== undefined && renderRow("Fast Charging", specs.battery.fast_charging ? "Yes" : "No")}
           {renderRow("Power Delivery / PPS", [ext.battery_detailed?.pd && "PD", ext.battery_detailed?.pps && "PPS"].filter(Boolean).join(", ") || "")}
           {specs.battery?.wireless_charging !== undefined && renderRow("Wireless Charging", specs.battery.wireless_charging ? "Yes" : "No")}
@@ -253,10 +259,10 @@ export default function PhoneSpecs({ specs, className = "", phone }: PhoneSpecsP
 
       {renderSection("body", "Body & Design", "design_services", (
         <>
-          {specs.body?.height_mm && specs.body?.width_mm && specs.body?.thickness_mm && renderRow("Dimensions", `${specs.body.height_mm} x ${specs.body.width_mm} x ${specs.body.thickness_mm} mm`)}
-          {specs.body?.weight_g && renderRow("Weight", `${specs.body.weight_g} g`)}
+          {clean(specs.body?.height_mm) && clean(specs.body?.width_mm) && clean(specs.body?.thickness_mm) && renderRow("Dimensions", `${specs.body!.height_mm} x ${specs.body!.width_mm} x ${specs.body!.thickness_mm} mm`)}
+          {clean(specs.body?.weight_g) && renderRow("Weight", `${specs.body!.weight_g} g`)}
           {renderRow("Build Materials", specs.body?.materials)}
-          {renderRow("Frame & Back", (ext.body_detailed?.frame || ext.body_detailed?.back_material) ? `${ext.body_detailed?.frame || ''} / ${ext.body_detailed?.back_material || ''}`.replace(/^\s*\/\s*|\s*\/\s*$/g, '') : "")}
+          {renderRow("Frame & Back", [clean(ext.body_detailed?.frame), clean(ext.body_detailed?.back_material)].filter(Boolean).join(" / "))}
           {renderRow("Water Resistance", specs.body?.water_resistance || ext.body_detailed?.ip_rating)}
           {renderRow("Military Standard", ext.body_detailed?.mil_std)}
           {renderRow("Colors", ext.colors)}
@@ -311,7 +317,7 @@ export default function PhoneSpecs({ specs, className = "", phone }: PhoneSpecsP
         <>
           {renderRow("Operating System", specs.os)}
           {renderRow("Custom UI", ext.software?.ui)}
-          {renderRow("Software Updates", ext.software?.years_updates ? `${ext.software?.years_updates} Years` : "")}
+          {renderRow("Software Updates", clean(ext.software?.years_updates) ? `${ext.software?.years_updates} Years` : "")}
           {renderRow("Upgrade Promise", ext.software?.upgrade_promise)}
           {renderRow("Security Patch", ext.software?.security_patch)}
           {renderRow("Bootloader", ext.software?.bootloader)}
