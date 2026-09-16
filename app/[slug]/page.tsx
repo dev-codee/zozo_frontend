@@ -279,7 +279,7 @@ export default async function PhoneDetailPage({
       <script type="application/ld+json" dangerouslySetInnerHTML={{
         __html: JSON.stringify(generateWebPageSchema(
           phone.seo?.meta_title || `${phone.name} Price, Specs & Reviews`,
-          phone.seo?.meta_description || `Find the best price for ${phone.name}. Read full specifications, features, and user reviews.`,
+          phone.seo?.meta_description || phone.seo?.ai_meta_description || `Find the best price for ${phone.name}. Read full specifications, features, and user reviews.`,
           `/${phone.slug}-price`
         ))
       }} />

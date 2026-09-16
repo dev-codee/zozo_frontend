@@ -16,6 +16,8 @@ interface SchemaPhone {
   seo?: {
     meta_title?: string;
     meta_description?: string;
+    ai_seo_title?: string;
+    ai_meta_description?: string;
     ai_faq?: { question: string; answer: string }[];
   };
   video_url?: string;
@@ -60,7 +62,11 @@ export function generateProductSchema(phone: SchemaPhone) {
     "@context": "https://schema.org",
     "@type": "Product",
     "name": phone.name,
-    "description": (phone.seo?.meta_description || phone.description || `${phone.name} Price in Pakistan, Specifications and Reviews`).trim().substring(0, 4000),
+    "description": (
+      phone.seo?.meta_description ||
+      phone.seo?.ai_meta_description ||
+      `${phone.name} Price in Pakistan, Specifications and Reviews`
+    ).replace(/\s*on\s+zozo(?:\.pk)?/gi, "").trim().substring(0, 500),
     "brand": {
       "@type": "Brand",
       "name": phone.brand_slug.toUpperCase().replace('-', ' ')
@@ -142,7 +148,11 @@ export function generateVehicleSchema(vehicle: any) {
     "@context": "https://schema.org",
     "@type": isCar ? "Car" : "Vehicle",
     "name": vehicle.name,
-    "description": (vehicle.seo?.meta_description || vehicle.description || `${vehicle.name} Price in Pakistan, Specifications and Features`).trim().substring(0, 4000),
+    "description": (
+      vehicle.seo?.meta_description ||
+      vehicle.seo?.ai_meta_description ||
+      `${vehicle.name} Price in Pakistan, Specifications and Features`
+    ).replace(/\s*on\s+zozo(?:\.pk)?/gi, "").trim().substring(0, 500),
     "brand": {
       "@type": "Brand",
       "name": (vehicle.brand_slug || "").toUpperCase().replace('-', ' ')
