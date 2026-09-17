@@ -391,18 +391,26 @@ export default function AdminPhoneForm({ initialData, onSubmit, isEditing = fals
     const s = researchResults.specs;
     const getValue = (key: string) => s[key]?.value || null;
 
-    const parseNum = (val: string | null) => {
-      if (!val) return null;
-      const n = parseFloat(val.replace(/[^0-9.]/g, ''));
+    const parseNum = (val: any) => {
+      if (val === null || val === undefined || val === '') return null;
+      if (typeof val === 'number') return isNaN(val) ? null : val;
+      const n = parseFloat(String(val).replace(/[^0-9.]/g, ''));
       return isNaN(n) ? null : n;
     };
 
-    const parseBool = (val: string | null): boolean | null => {
-      if (!val) return null;
-      const lower = val.toLowerCase();
+    const parseBool = (val: any): boolean | null => {
+      if (val === null || val === undefined) return null;
+      if (typeof val === 'boolean') return val;
+      const lower = String(val).toLowerCase();
       if (lower === 'yes' || lower === 'true') return true;
       if (lower === 'no' || lower === 'false') return false;
       return null;
+    };
+
+    const splitToArray = (val: any): string[] => {
+      if (!val) return [];
+      if (Array.isArray(val)) return val.map(String).filter(Boolean);
+      return String(val).split(',').map((s: string) => s.trim()).filter(Boolean);
     };
 
     setFormData((prev: any) => ({
@@ -418,7 +426,7 @@ export default function AdminPhoneForm({ initialData, onSubmit, isEditing = fals
           ...(getValue('refresh_rate_hz') && { refresh_rate_hz: parseNum(getValue('refresh_rate_hz')) }),
           ...(getValue('peak_brightness_nits') && { peak_brightness_nits: parseNum(getValue('peak_brightness_nits')) }),
           ...(getValue('display_protection') && { protection: getValue('display_protection') }),
-          ...(getValue('display_features') && { features: getValue('display_features').split(',').map((s: string) => s.trim()).filter(Boolean) }),
+          ...(getValue('display_features') && { features: splitToArray(getValue('display_features')) }),
         },
         performance: {
           ...prev.specs.performance,
@@ -435,7 +443,7 @@ export default function AdminPhoneForm({ initialData, onSubmit, isEditing = fals
           ...(getValue('rear_camera_main_mp') && { rear_summary: getValue('rear_camera_main_mp') }),
           ...(getValue('front_camera_mp') && { front_summary: getValue('front_camera_mp') }),
           ...(getValue('rear_camera_video') && { video_recording: getValue('rear_camera_video') }),
-          ...(getValue('rear_camera_features') && { video_features: getValue('rear_camera_features').split(',').map((s: string) => s.trim()).filter(Boolean) }),
+          ...(getValue('rear_camera_features') && { video_features: splitToArray(getValue('rear_camera_features')) }),
         },
         battery: {
           ...prev.specs.battery,
@@ -460,7 +468,7 @@ export default function AdminPhoneForm({ initialData, onSubmit, isEditing = fals
           ...(getValue('usb_type') && { usb: getValue('usb_type') + (getValue('usb_version') ? ' ' + getValue('usb_version') : '') }),
           ...(getValue('bluetooth') && { bluetooth: getValue('bluetooth') }),
           ...(parseBool(getValue('nfc')) !== null && { nfc: parseBool(getValue('nfc')) }),
-          ...(getValue('wifi') && { network_features: getValue('wifi').split(',').map((s: string) => s.trim()).filter(Boolean) }),
+          ...(getValue('wifi') && { network_features: splitToArray(getValue('wifi')) }),
         },
         ...(getValue('operating_system') && { os: getValue('operating_system') + (getValue('os_version') ? ' ' + getValue('os_version') : '') }),
       }
