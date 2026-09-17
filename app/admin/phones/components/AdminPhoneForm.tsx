@@ -386,6 +386,7 @@ export default function AdminPhoneForm({ initialData, onSubmit, isEditing = fals
   };
 
   const applyResearchToForm = () => {
+    try {
     if (!researchResults?.specs) return;
     const s = researchResults.specs;
     const getValue = (key: string) => s[key]?.value || null;
@@ -466,6 +467,10 @@ export default function AdminPhoneForm({ initialData, onSubmit, isEditing = fals
     }));
     setShowResearchModal(false);
     alert(`Specs applied to form! Confidence: ${researchResults.confidence?.toUpperCase()}. Please review all fields before saving.`);
+    } catch (err: any) {
+      console.error('applyResearchToForm error:', err);
+      alert(`Failed to apply specs: ${err?.message || err}. Check browser console for details.`);
+    }
   };
 
   const handleAIFillSEO = async () => {
