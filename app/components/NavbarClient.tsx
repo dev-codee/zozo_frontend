@@ -424,7 +424,7 @@ export default function NavbarClient({
                               </span>
                             </Link>
                             <Link
-                              href={`/phones?brand=${brand.slug}`}
+                              href={`/${brand.slug}-phone-price`}
                               onClick={() => setMobileOpen(false)}
                               className="flex items-center justify-between px-3 py-2 rounded-lg text-primary font-semibold hover:bg-primary/5 transition-colors border-t border-border-subtle/50 mt-0.5"
                             >
@@ -686,7 +686,7 @@ export default function NavbarClient({
                   </div>
 
                   <Link
-                    href={`/phones?brand=${activeBrand.slug}`}
+                    href={`/${activeBrand.slug}-phone-price`}
                     onClick={() => setBestOpen(false)}
                     className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-surface-container-low hover:bg-primary/10 text-primary text-xs font-semibold transition-colors shrink-0"
                   >

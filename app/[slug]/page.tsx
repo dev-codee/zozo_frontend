@@ -357,6 +357,88 @@ export default async function PhoneDetailPage({
                 ) : null}
               </div>
 
+              {/* Top Features */}
+              <div className="mt-1">
+                <h2 className="text-sm font-bold text-text-main flex items-center gap-2 mb-3">
+                  <span className="w-1 h-5 bg-primary rounded-full"></span>
+                  Top Features of {phone.name}
+                </h2>
+                <div className="grid grid-cols-2 gap-2">
+                  <div className="flex items-center gap-2 p-1.5 sm:p-2 rounded-sm border border-border-subtle bg-surface-white hover:border-primary/50 transition-colors">
+                    <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-sm bg-blue-50 text-primary flex items-center justify-center flex-shrink-0">
+                      <AppIcon name="memory" size={16} />
+                    </div>
+                    <div className="flex flex-col overflow-hidden">
+                      <span className="text-[9px] sm:text-[10px] font-medium text-text-muted uppercase tracking-wider mb-0.5">RAM</span>
+                      <span className="text-[11px] sm:text-xs font-medium text-text-main leading-tight line-clamp-2">{ramDisplay}</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 p-1.5 sm:p-2 rounded-sm border border-border-subtle bg-surface-white hover:border-primary/50 transition-colors">
+                    <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-sm bg-blue-50 text-primary flex items-center justify-center flex-shrink-0">
+                      <AppIcon name="storage" size={16} />
+                    </div>
+                    <div className="flex flex-col overflow-hidden">
+                      <span className="text-[9px] sm:text-[10px] font-medium text-text-muted uppercase tracking-wider mb-0.5">Storage</span>
+                      <span className="text-[11px] sm:text-xs font-medium text-text-main leading-tight line-clamp-2">{storageDisplay}</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 p-1.5 sm:p-2 rounded-sm border border-border-subtle bg-surface-white hover:border-primary/50 transition-colors">
+                    <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-sm bg-blue-50 text-primary flex items-center justify-center flex-shrink-0">
+                      <AppIcon name="signal_cellular_alt" size={16} />
+                    </div>
+                    <div className="flex flex-col overflow-hidden">
+                      <span className="text-[9px] sm:text-[10px] font-medium text-text-muted uppercase tracking-wider mb-0.5">Network</span>
+                      <span className="text-[11px] sm:text-xs font-medium text-text-main leading-tight line-clamp-2">{networkDisplay}</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 p-1.5 sm:p-2 rounded-sm border border-border-subtle bg-surface-white hover:border-primary/50 transition-colors">
+                    <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-sm bg-blue-50 text-primary flex items-center justify-center flex-shrink-0">
+                      <AppIcon name="battery_charging_full" size={16} />
+                    </div>
+                    <div className="flex flex-col overflow-hidden">
+                      <span className="text-[9px] sm:text-[10px] font-medium text-text-muted uppercase tracking-wider mb-0.5">Battery</span>
+                      <span className="text-[11px] sm:text-xs font-medium text-text-main leading-tight line-clamp-2">{batteryDisplay}</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 p-1.5 sm:p-2 rounded-sm border border-border-subtle bg-surface-white hover:border-primary/50 transition-colors">
+                    <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-sm bg-blue-50 text-primary flex items-center justify-center flex-shrink-0">
+                      <AppIcon name="widgets" size={16} />
+                    </div>
+                    <div className="flex flex-col overflow-hidden">
+                      <span className="text-[9px] sm:text-[10px] font-medium text-text-muted uppercase tracking-wider mb-0.5">OS</span>
+                      <span className="text-[11px] sm:text-xs font-medium text-text-main leading-tight line-clamp-2">{osDisplay}</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 p-1.5 sm:p-2 rounded-sm border border-border-subtle bg-surface-white hover:border-primary/50 transition-colors">
+                    <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-sm bg-blue-50 text-primary flex items-center justify-center flex-shrink-0">
+                      <AppIcon name="smartphone" size={16} />
+                    </div>
+                    <div className="flex flex-col overflow-hidden">
+                      <span className="text-[9px] sm:text-[10px] font-medium text-text-muted uppercase tracking-wider mb-0.5">Display</span>
+                      <span className="text-[11px] sm:text-xs font-medium text-text-main leading-tight line-clamp-2">{displayString}</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 p-1.5 sm:p-2 rounded-sm border border-border-subtle bg-surface-white hover:border-primary/50 transition-colors">
+                    <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-sm bg-blue-50 text-primary flex items-center justify-center flex-shrink-0">
+                      <AppIcon name="photo_camera" size={16} />
+                    </div>
+                    <div className="flex flex-col overflow-hidden">
+                      <span className="text-[9px] sm:text-[10px] font-medium text-text-muted uppercase tracking-wider mb-0.5">Camera</span>
+                      <span className="text-[11px] sm:text-xs font-medium text-text-main leading-tight line-clamp-2">{cameraDisplay}</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 p-1.5 sm:p-2 rounded-sm border border-border-subtle bg-surface-white hover:border-primary/50 transition-colors">
+                    <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-sm bg-blue-50 text-primary flex items-center justify-center flex-shrink-0">
+                      <AppIcon name="developer_board" size={16} />
+                    </div>
+                    <div className="flex flex-col overflow-hidden">
+                      <span className="text-[9px] sm:text-[10px] font-medium text-text-muted uppercase tracking-wider mb-0.5">Chipset</span>
+                      <span className="text-[11px] sm:text-xs font-medium text-text-main leading-tight line-clamp-2">{chipsetDisplay}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
               {/* Price */}
               <div className="flex items-baseline gap-3 flex-wrap">
                 <span className="font-display-lg text-2xl md:text-3xl font-bold text-price-green tracking-tight">
@@ -393,122 +475,20 @@ export default async function PhoneDetailPage({
                 </div>
               )}
 
-              {/* Key Specs */}
-              <div className="bg-white p-4 sm:p-5 rounded-xl mt-2">
-                <h2 className="text-base sm:text-lg font-bold text-text-main flex items-center gap-2 mb-4">
-                  <span className="w-1 h-5 sm:h-6 bg-primary rounded-full"></span>
-                  Top Features of {phone.name}
-                </h2>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
-                  {/* Box 1: RAM */}
-                  <div className="flex items-center gap-2 p-1.5 sm:p-2 rounded-sm border border-border-subtle bg-surface-white hover:border-primary/50 transition-colors">
-                    <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-sm bg-blue-50 text-primary flex items-center justify-center flex-shrink-0">
-                      <AppIcon name="memory" size={16} />
-                    </div>
-                    <div className="flex flex-col overflow-hidden">
-                      <span className="text-[9px] sm:text-[10px] font-medium text-text-muted uppercase tracking-wider mb-0.5">RAM</span>
-                      <span className="text-[11px] sm:text-xs font-medium text-text-main leading-tight line-clamp-2">{ramDisplay}</span>
-                    </div>
-                  </div>
-
-                  {/* Box 2: STORAGE */}
-                  <div className="flex items-center gap-2 p-1.5 sm:p-2 rounded-sm border border-border-subtle bg-surface-white hover:border-primary/50 transition-colors">
-                    <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-sm bg-blue-50 text-primary flex items-center justify-center flex-shrink-0">
-                      <AppIcon name="storage" size={16} />
-                    </div>
-                    <div className="flex flex-col overflow-hidden">
-                      <span className="text-[9px] sm:text-[10px] font-medium text-text-muted uppercase tracking-wider mb-0.5">Storage</span>
-                      <span className="text-[11px] sm:text-xs font-medium text-text-main leading-tight line-clamp-2">{storageDisplay}</span>
-                    </div>
-                  </div>
-
-                  {/* Box 3: NETWORK */}
-                  <div className="flex items-center gap-2 p-1.5 sm:p-2 rounded-sm border border-border-subtle bg-surface-white hover:border-primary/50 transition-colors">
-                    <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-sm bg-blue-50 text-primary flex items-center justify-center flex-shrink-0">
-                      <AppIcon name="signal_cellular_alt" size={16} />
-                    </div>
-                    <div className="flex flex-col overflow-hidden">
-                      <span className="text-[9px] sm:text-[10px] font-medium text-text-muted uppercase tracking-wider mb-0.5">Network</span>
-                      <span className="text-[11px] sm:text-xs font-medium text-text-main leading-tight line-clamp-2">{networkDisplay}</span>
-                    </div>
-                  </div>
-
-                  {/* Box 4: BATTERY */}
-                  <div className="flex items-center gap-2 p-1.5 sm:p-2 rounded-sm border border-border-subtle bg-surface-white hover:border-primary/50 transition-colors">
-                    <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-sm bg-blue-50 text-primary flex items-center justify-center flex-shrink-0">
-                      <AppIcon name="battery_charging_full" size={16} />
-                    </div>
-                    <div className="flex flex-col overflow-hidden">
-                      <span className="text-[9px] sm:text-[10px] font-medium text-text-muted uppercase tracking-wider mb-0.5">Battery</span>
-                      <span className="text-[11px] sm:text-xs font-medium text-text-main leading-tight line-clamp-2">{batteryDisplay}</span>
-                    </div>
-                  </div>
-
-                  {/* Box 8: OS */}
-                  <div className="flex items-center gap-2 p-1.5 sm:p-2 rounded-sm border border-border-subtle bg-surface-white hover:border-primary/50 transition-colors">
-                    <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-sm bg-blue-50 text-primary flex items-center justify-center flex-shrink-0">
-                      <AppIcon name="widgets" size={16} />
-                    </div>
-                    <div className="flex flex-col overflow-hidden">
-                      <span className="text-[9px] sm:text-[10px] font-medium text-text-muted uppercase tracking-wider mb-0.5">OS</span>
-                      <span className="text-[11px] sm:text-xs font-medium text-text-main leading-tight line-clamp-2">{osDisplay}</span>
-                    </div>
-                  </div>
-
-                  {/* Box 6: DISPLAY */}
-                  <div className="flex items-center gap-2 p-1.5 sm:p-2 rounded-sm border border-border-subtle bg-surface-white hover:border-primary/50 transition-colors">
-                    <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-sm bg-blue-50 text-primary flex items-center justify-center flex-shrink-0">
-                      <AppIcon name="smartphone" size={16} />
-                    </div>
-                    <div className="flex flex-col overflow-hidden">
-                      <span className="text-[9px] sm:text-[10px] font-medium text-text-muted uppercase tracking-wider mb-0.5">Display</span>
-                      <span className="text-[11px] sm:text-xs font-medium text-text-main leading-tight line-clamp-2">{displayString}</span>
-                    </div>
-                  </div>
-
-                  {/* Box 5: CAMERA */}
-                  <div className="flex items-center gap-2 p-1.5 sm:p-2 rounded-sm border border-border-subtle bg-surface-white hover:border-primary/50 transition-colors">
-                    <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-sm bg-blue-50 text-primary flex items-center justify-center flex-shrink-0">
-                      <AppIcon name="photo_camera" size={16} />
-                    </div>
-                    <div className="flex flex-col overflow-hidden">
-                      <span className="text-[9px] sm:text-[10px] font-medium text-text-muted uppercase tracking-wider mb-0.5">Camera</span>
-                      <span className="text-[11px] sm:text-xs font-medium text-text-main leading-tight line-clamp-2">{cameraDisplay}</span>
-                    </div>
-                  </div>
-
-                  {/* Box 7: CHIPSET */}
-                  <div className="flex items-center gap-2 p-1.5 sm:p-2 rounded-sm border border-border-subtle bg-surface-white hover:border-primary/50 transition-colors">
-                    <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-sm bg-blue-50 text-primary flex items-center justify-center flex-shrink-0">
-                      <AppIcon name="developer_board" size={16} />
-                    </div>
-                    <div className="flex flex-col overflow-hidden">
-                      <span className="text-[9px] sm:text-[10px] font-medium text-text-muted uppercase tracking-wider mb-0.5">Chipset</span>
-                      <span className="text-[11px] sm:text-xs font-medium text-text-main leading-tight line-clamp-2">{chipsetDisplay}</span>
-                    </div>
-                  </div>
-
-                </div>
-
-                {/* Actions */}
-                <div className="flex items-center justify-center sm:justify-start gap-2 mt-3">
-                  {/* Action 1: Compare */}
-                  <Link
-                    href={`/compare?phone=${phone.slug}`}
-                    rel="nofollow"
-                    className="flex items-center justify-center gap-1.5 py-1 px-3 sm:py-1.5 sm:px-4 rounded-sm border border-border-subtle bg-surface-white hover:bg-surface-container-low hover:border-primary font-medium text-[10px] sm:text-[11px] text-text-main transition-colors"
-                  >
-                    <AppIcon name="compare_arrows" size={14} />
-                    Compare
-                  </Link>
-
-                  {/* Action 2: Price Alert */}
-                  <button className="flex items-center justify-center gap-1.5 py-1 px-3 sm:py-1.5 sm:px-4 rounded-sm border border-border-subtle bg-surface-white hover:bg-surface-container-low hover:border-primary font-medium text-[10px] sm:text-[11px] text-text-main transition-colors">
-                    <AppIcon name="flame" size={14} />
-                    Price Alert
-                  </button>
-                </div>
+              {/* Actions */}
+              <div className="flex items-center gap-2 mt-2">
+                <Link
+                  href={`/compare?phone=${phone.slug}`}
+                  rel="nofollow"
+                  className="flex items-center justify-center gap-1.5 py-1 px-3 sm:py-1.5 sm:px-4 rounded-sm border border-border-subtle bg-surface-white hover:bg-surface-container-low hover:border-primary font-medium text-[10px] sm:text-[11px] text-text-main transition-colors"
+                >
+                  <AppIcon name="compare_arrows" size={14} />
+                  Compare
+                </Link>
+                <button className="flex items-center justify-center gap-1.5 py-1 px-3 sm:py-1.5 sm:px-4 rounded-sm border border-border-subtle bg-surface-white hover:bg-surface-container-low hover:border-primary font-medium text-[10px] sm:text-[11px] text-text-main transition-colors">
+                  <AppIcon name="flame" size={14} />
+                  Price Alert
+                </button>
               </div>
             </div>
           </div>

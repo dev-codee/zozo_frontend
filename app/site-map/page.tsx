@@ -93,7 +93,7 @@ export default async function SiteMapPage() {
 
   const brandLinks: LinkItem[] = activeBrands.map((b: Brand) => ({
     label: `${b.name} Mobiles`,
-    href: `/phones?brand=${b.slug}`,
+    href: `/${b.slug}-phone-price`,
   }));
 
   return (
