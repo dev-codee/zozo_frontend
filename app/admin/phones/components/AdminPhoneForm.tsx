@@ -1295,7 +1295,7 @@ export default function AdminPhoneForm({ initialData, onSubmit, isEditing = fals
                         {data?.source ? (
                           <a href={data.source} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 text-xs text-blue-600 hover:underline truncate max-w-[160px]">
                             <ExternalLink className="w-3 h-3 shrink-0" />
-                            {new URL(data.source).hostname.replace('www.', '')}
+                            {(() => { try { return new URL(data.source).hostname.replace('www.', ''); } catch { return data.source; } })()}
                           </a>
                         ) : (
                           <span className="text-gray-300 text-xs">—</span>
