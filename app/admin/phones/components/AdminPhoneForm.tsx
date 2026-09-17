@@ -396,6 +396,14 @@ export default function AdminPhoneForm({ initialData, onSubmit, isEditing = fals
       return isNaN(n) ? null : n;
     };
 
+    const parseBool = (val: string | null): boolean | null => {
+      if (!val) return null;
+      const lower = val.toLowerCase();
+      if (lower === 'yes' || lower === 'true') return true;
+      if (lower === 'no' || lower === 'false') return false;
+      return null;
+    };
+
     setFormData((prev: any) => ({
       ...prev,
       model_number: getValue('model_number') || prev.model_number,
@@ -416,9 +424,10 @@ export default function AdminPhoneForm({ initialData, onSubmit, isEditing = fals
           ...(getValue('chipset') && { chipset: getValue('chipset') }),
           ...(getValue('cpu') && { cpu: getValue('cpu') }),
           ...(getValue('gpu') && { gpu: getValue('gpu') }),
-          ...(getValue('ram_gb') && { ram_options_gb: [parseNum(getValue('ram_gb'))].filter(Boolean) }),
-          ...(getValue('storage_gb') && { storage_options_gb: [parseNum(getValue('storage_gb'))].filter(Boolean) }),
-          ...(getValue('expandable_storage') && { expandable_storage: getValue('expandable_storage') }),
+          // Keep as comma-separated string to match the form's text input format
+          ...(getValue('ram_gb') && { ram_options_gb: String(parseNum(getValue('ram_gb')) ?? getValue('ram_gb')) }),
+          ...(getValue('storage_gb') && { storage_options_gb: String(parseNum(getValue('storage_gb')) ?? getValue('storage_gb')) }),
+          ...(parseBool(getValue('expandable_storage')) !== null && { expandable_storage: parseBool(getValue('expandable_storage')) }),
         },
         camera: {
           ...prev.specs.camera,
@@ -431,8 +440,8 @@ export default function AdminPhoneForm({ initialData, onSubmit, isEditing = fals
           ...prev.specs.battery,
           ...(getValue('battery_mah') && { capacity_mah: parseNum(getValue('battery_mah')) }),
           ...(getValue('charging_watts') && { charging_watts: parseNum(getValue('charging_watts')) }),
-          ...(getValue('fast_charging') && { fast_charging: getValue('fast_charging') }),
-          ...(getValue('wireless_charging') && { wireless_charging: getValue('wireless_charging') }),
+          ...(parseBool(getValue('fast_charging')) !== null && { fast_charging: parseBool(getValue('fast_charging')) }),
+          ...(parseBool(getValue('wireless_charging')) !== null && { wireless_charging: parseBool(getValue('wireless_charging')) }),
         },
         body: {
           ...prev.specs.body,
@@ -449,7 +458,7 @@ export default function AdminPhoneForm({ initialData, onSubmit, isEditing = fals
           ...(getValue('sim_type') && { sim: getValue('sim_type') }),
           ...(getValue('usb_type') && { usb: getValue('usb_type') + (getValue('usb_version') ? ' ' + getValue('usb_version') : '') }),
           ...(getValue('bluetooth') && { bluetooth: getValue('bluetooth') }),
-          ...(getValue('nfc') && { nfc: getValue('nfc') }),
+          ...(parseBool(getValue('nfc')) !== null && { nfc: parseBool(getValue('nfc')) }),
           ...(getValue('wifi') && { network_features: getValue('wifi').split(',').map((s: string) => s.trim()).filter(Boolean) }),
         },
         ...(getValue('operating_system') && { os: getValue('operating_system') + (getValue('os_version') ? ' ' + getValue('os_version') : '') }),
