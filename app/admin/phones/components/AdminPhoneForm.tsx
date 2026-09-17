@@ -1302,10 +1302,10 @@ export default function AdminPhoneForm({ initialData, onSubmit, isEditing = fals
             <div className="px-6 py-4 border-t flex items-center justify-between">
               <p className="text-xs text-gray-500">Review specs above and verify sources before applying.</p>
               <div className="flex gap-3">
-                <button onClick={() => setShowResearchModal(false)} className="px-4 py-2 text-sm border border-gray-300 rounded-lg hover:bg-gray-50">
+                <button type="button" onClick={() => setShowResearchModal(false)} className="px-4 py-2 text-sm border border-gray-300 rounded-lg hover:bg-gray-50">
                   Cancel
                 </button>
-                <button onClick={applyResearchToForm} className="px-4 py-2 text-sm bg-teal-600 text-white rounded-lg hover:bg-teal-700 font-semibold">
+                <button type="button" onClick={applyResearchToForm} className="px-4 py-2 text-sm bg-teal-600 text-white rounded-lg hover:bg-teal-700 font-semibold">
                   Apply to Form
                 </button>
               </div>
