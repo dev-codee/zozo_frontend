@@ -47,7 +47,7 @@ export default function AdminLayout({
       <aside className="w-64 bg-white border-r border-gray-200 flex flex-col h-screen sticky top-0">
         <div className="h-16 flex flex-col justify-center px-6 border-b border-gray-200 shrink-0 py-2">
           <div className="flex items-center">
-            <Image src="/ZOZO-Logo-v2.png" unoptimized alt="Zozo Admin" width={180} height={56} className="h-14 w-auto object-contain" />
+            <Image src="/mobile-rates-logo.svg" unoptimized alt="Mobile Rates Admin" width={180} height={56} className="h-8 w-[160px] object-contain" />
             <span className="ml-2 text-sm font-semibold text-gray-700">Admin</span>
           </div>
           {role ? (

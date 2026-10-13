@@ -201,7 +201,7 @@ export default function EVDescriptionClient({
           <div className="flex items-center gap-2 mb-3">
             <AppIcon name="lightbulb" size={22} className="text-blue-600" />
             <h3 className="font-headline-md text-base md:text-lg font-bold text-text-main">
-              ZOZO Buying Advice
+              Mobile Rates Buying Advice
             </h3>
           </div>
           <p className="text-xs md:text-sm text-text-main/90 leading-relaxed text-justify">

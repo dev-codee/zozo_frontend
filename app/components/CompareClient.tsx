@@ -496,7 +496,7 @@ export default function CompareClient({ initialPhones = [], allPhones = [] }: Co
 
                   {/* Action Link to Details */}
                   <Link
-                    href={`/${phone.slug}-price`}
+                    href={`/${phone.slug}`}
                     className="w-full mt-4 bg-surface-container-low hover:bg-primary/10 hover:text-primary text-text-main font-semibold text-xs py-2 px-4 rounded-lg text-center transition-colors border border-border-subtle"
                   >
                     View Details

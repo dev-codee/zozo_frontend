@@ -1,5 +1,7 @@
 "use client";
 
+import { notify, mutationError } from "@/app/lib/notifications";
+
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
@@ -19,12 +21,14 @@ export default function CategoriesListPage() {
     setIsLoading(true);
     try {
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/categories`);
+      if (!res.ok) throw new Error(await mutationError(res, "load these records"));
       const data = await res.json();
       if (res.ok) {
         setCategories(data);
       }
     } catch (error) {
       console.error('Failed to fetch categories', error);
+      notify(error instanceof Error ? error.message : "Unable to load the list. Check your connection and try again.", "error");
     } finally {
       setIsLoading(false);
     }
@@ -38,9 +42,11 @@ export default function CategoriesListPage() {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` }
       });
-      if (res.ok) fetchCategories();
+      if (res.ok) { notify("Category deleted successfully.", "success"); fetchCategories(); }
+      else throw new Error(await mutationError(res, "delete this category"));
     } catch (error) {
       console.error(error);
+      notify(error instanceof Error ? error.message : "Unable to complete this action. Check your connection and try again.", "error");
     }
   };
 

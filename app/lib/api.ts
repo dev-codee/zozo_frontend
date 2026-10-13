@@ -616,7 +616,7 @@ export async function getPhones(query?: string): Promise<PaginatedPhones> {
     return data;
   }
 
-  return { phones: [], pagination: { total: 0, page: 1, limit: 15, totalPages: 1 } };
+  throw new Error("Invalid phone list response");
 }
 
 export interface SearchResultItem {
@@ -682,7 +682,7 @@ export async function trackComparison(slugs: string[]): Promise<void> {
   }
 }
 
-export async function getPopularComparisons(limit: number = 5): Promise<any[]> {
+export async function getPopularComparisons(limit: number | "all" = 5): Promise<any[]> {
   const data = await apiFetch<any[]>(`/compare/popular?limit=${limit}`);
   return data || [];
 }
@@ -716,7 +716,7 @@ export async function trackVehicleComparison(slugs: string[]): Promise<void> {
   }
 }
 
-export async function getPopularVehicleComparisons(limit: number = 8): Promise<any[]> {
+export async function getPopularVehicleComparisons(limit: number | "all" = 8): Promise<any[]> {
   const data = await apiFetch<any[]>(`/vehicles/compare/popular?limit=${limit}`);
   return data || [];
 }
@@ -876,7 +876,7 @@ export async function getEarbuds(query?: string, init?: RequestInit): Promise<Pa
   if (data && Array.isArray(data.earbuds)) {
     return data;
   }
-  return { earbuds: [], pagination: { total: 0, page: 1, limit: 15, totalPages: 1 } };
+  throw new Error("Invalid earbud list response");
 }
 
 export async function getEarbudBySlug(slug: string, init?: RequestInit): Promise<Earbud | null> {

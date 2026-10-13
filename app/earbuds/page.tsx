@@ -1,3 +1,7 @@
+import { notFound } from "next/navigation";
+import { serializeJsonLd } from "@/app/lib/schema";
+import { listingIndexing, isValidListingPage } from "@/app/lib/indexing";
+import { cleanMetadata } from "@/app/lib/seo";
 import type { Metadata } from "next";
 import { getEarbuds, getBrands, type Brand } from "@/app/lib/api";
 import Navbar from "@/app/components/Navbar";
@@ -5,7 +9,6 @@ import Footer from "@/app/components/Footer";
 import EarbudCard from "@/app/components/EarbudCard";
 import Breadcrumb from "@/app/components/Breadcrumb";
 import Pagination from "@/app/components/Pagination";
-import AppIcon from "@/app/components/AppIcon";
 import Link from "next/link";
 import { Headphones, X } from "lucide-react";
 import { generateCollectionPageSchema, generateBreadcrumbSchema } from "@/app/lib/schema";
@@ -30,7 +33,6 @@ export async function generateMetadata({
   const resolvedParams = await searchParams;
   const brand = resolvedParams.brand as string;
   const maxPrice = resolvedParams.max_price as string;
-  const minPrice = resolvedParams.min_price as string;
   const status = resolvedParams.status as string;
   const anc = resolvedParams.has_anc as string;
 
@@ -65,20 +67,22 @@ export async function generateMetadata({
   }
 
   const year = new Date().getFullYear();
-  const finalTitle = `${title.replace(/\s*\b20\d{2}\b\s*$/, "").trim()} ${year}`.replace(/\s*[-–|]?\s*zozo(?:\.pk)?\s*$/i, "").trim();
+  const finalTitle = `${title.replace(/\s*\b20\d{2}\b\s*$/, "").trim()} ${year}`.trim();
 
-  const queryParams = new URLSearchParams();
-  if (brand) queryParams.set("brand", brand);
-  if (maxPrice) queryParams.set("max_price", maxPrice);
-  if (minPrice) queryParams.set("min_price", minPrice);
-  if (anc) queryParams.set("has_anc", anc);
-  if (status) queryParams.set("status", status);
-  const queryString = queryParams.toString();
-  const canonicalUrl = `https://zozo.pk/earbuds${queryString ? `?${queryString}` : ""}`;
+  const indexing = listingIndexing("/earbuds", resolvedParams);
+  if (indexing.robots.index) {
+    const query = new URLSearchParams();
+    if (brand) query.set("brand", brand);
+    if (typeof resolvedParams.page === "string") query.set("page", resolvedParams.page);
+    const result = await getEarbuds(query.toString());
+    indexing.robots.index = !!result.pagination.total && result.pagination.total > 0;
+  }
+  const canonicalUrl = indexing.canonical;
 
-  return {
-    title: { absolute: finalTitle },
+  return cleanMetadata({
+    title: { absolute: Number(resolvedParams.page) > 1 ? `${finalTitle} — Page ${resolvedParams.page}` : finalTitle },
     description,
+    robots: indexing.robots,
     alternates: {
       canonical: canonicalUrl,
     },
@@ -87,7 +91,7 @@ export async function generateMetadata({
       description,
       url: canonicalUrl,
     },
-  };
+  });
 }
 
 export default async function EarbudsPage({
@@ -96,6 +100,7 @@ export default async function EarbudsPage({
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
   const resolvedParams = await searchParams;
+  if (!isValidListingPage(resolvedParams)) notFound();
   const brand = resolvedParams.brand as string;
   const wearingType = resolvedParams.wearing_type as string;
   const minPrice = resolvedParams.min_price as string;
@@ -127,6 +132,7 @@ export default async function EarbudsPage({
   ]);
 
   const earbuds = paginatedData?.earbuds || [];
+  if (!isValidListingPage(resolvedParams, paginatedData.pagination.totalPages)) notFound();
   const total = paginatedData?.pagination?.total || 0;
   const totalPages = paginatedData?.pagination?.totalPages || 1;
   const currentPage = paginatedData?.pagination?.page || 1;
@@ -231,14 +237,14 @@ export default async function EarbudsPage({
     { label: "Upcoming", key: "upcoming", params: { status: "upcoming" } },
   ];
 
-  const canonicalUrl = `/earbuds${queryParams.toString() ? `?${queryParams.toString()}` : ""}`;
+  const canonicalUrl = listingIndexing("/earbuds", resolvedParams).canonical.replace("https://mobilerates.info", "");
 
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify(
+          __html: serializeJsonLd(
             generateCollectionPageSchema(pageHeading, `Explore ${pageHeading}`, canonicalUrl)
           ),
         }}
@@ -246,7 +252,7 @@ export default async function EarbudsPage({
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify(generateBreadcrumbSchema(breadcrumbItems)),
+          __html: serializeJsonLd(generateBreadcrumbSchema(breadcrumbItems)),
         }}
       />
       <div className="min-h-screen bg-surface-white flex flex-col selection:bg-primary/20">

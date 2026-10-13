@@ -1,19 +1,24 @@
-import { notFound, redirect } from "next/navigation";
+import { verifiedRating } from "@/app/lib/content-quality";
+import { serializeJsonLd } from "@/app/lib/schema";
+import { cleanMetadata, withoutSiteBrand } from "@/app/lib/seo";
+import { resolveProduct } from "@/app/lib/products";
+import VehicleDetailPage, { generateMetadata as vehicleMetadata } from "@/app/components/details/VehicleDetailPage";
+import EarbudDetailPage, { generateMetadata as earbudMetadata } from "@/app/components/details/EarbudDetailPage";
+import { notFound } from "next/navigation";
 import { Metadata } from "next";
 import Link from "next/link";
-import { getPhoneBySlug, getPhones, getRelatedPhones, getVehicleBySlug, Phone } from "@/app/lib/api";
+import { getPhones, getRelatedPhones, Phone } from "@/app/lib/api";
 import Navbar from "@/app/components/Navbar";
 import Footer from "@/app/components/Footer";
 import Breadcrumb from "@/app/components/Breadcrumb";
 import PhoneGallery from "@/app/components/PhoneGallery";
 import PhoneSpecs from "@/app/components/PhoneSpecs";
-import PhoneDescriptionClient from "@/app/components/PhoneDescriptionClient";
 import PriceHistoryChart from "@/app/components/PriceHistoryChart";
 import UserFeedbackWidget from "@/app/components/UserFeedbackWidget";
 import ReviewSection from "@/app/components/ReviewSection";
 import AdSlot from "@/app/components/AdSlot";
 import AppIcon from "@/app/components/AppIcon";
-import { generateProductSchema, generateBreadcrumbSchema, generateFAQSchema, generateVideoSchema, generateWebPageSchema } from "@/app/lib/schema";
+import { generateProductSchema, generateBreadcrumbSchema, generateVideoSchema, generateWebPageSchema } from "@/app/lib/schema";
 import { filterVisibleTags } from "@/app/lib/tags";
 
 export const revalidate = 3600; // Cache phone detail pages for 1 hour
@@ -47,27 +52,25 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const resolvedParams = await params;
-  let slug = resolvedParams.slug;
-  if (slug.endsWith('-price-in-pakistan')) {
-    slug = slug.replace('-price-in-pakistan', '');
-  } else if (slug.endsWith('-price')) {
-    slug = slug.replace('-price', '');
-  }
-  const phone = await getPhoneBySlug(slug);
+  const slug = resolvedParams.slug;
+  const product = await resolveProduct(slug);
+  if (product?.type === "vehicle") return vehicleMetadata({ params });
+  if (product?.type === "earbud") return earbudMetadata({ params });
+  const phone = product?.type === "phone" ? product.data : null;
 
   if (!phone) {
     // The page component calls notFound() (→ HTTP 404) for this case, but if a
     // stale/edge cache ever serves this metadata with a 200, noindex stops Google
     // from indexing the soft-404.
-    return {
+    return cleanMetadata({
       title: "Phone Not Found",
       description: "The requested phone could not be found.",
       robots: { index: false, follow: false },
-    };
+    });
   }
 
   const primaryImage = phone.images?.find((img) => img.is_primary)?.url || phone.images?.[0]?.url;
-  const canonicalUrl = `https://zozo.pk/${phone.slug}-price`;
+  const canonicalUrl = `https://mobilerates.info/${phone.slug}`;
 
   // Auto-updating year (e.g. 2026) appended to the title. Any year already baked
   // into a custom/AI title is stripped first so it never shows stale or doubled.
@@ -76,11 +79,11 @@ export async function generateMetadata({
     phone.seo?.meta_title ||
     phone.seo?.ai_seo_title ||
     `${phone.name} Latest Price & Specs`;
-  const title = `${baseTitle.replace(/\s*[-–|]?\s*zozo(?:\.pk)?\s*$/i, "").replace(/\s*\b20\d{2}\b\s*$/, "").trim()} ${year}`.replace(/\s*[-–|]?\s*zozo(?:\.pk)?\s*$/i, "").trim();
+  const title = `${withoutSiteBrand(baseTitle).replace(/\s*\b20\d{2}\b\s*$/, "").trim()} ${year}`.trim();
 
-  const description = (phone.seo?.meta_description || phone.seo?.ai_meta_description || `Best price for ${phone.name}. Compare full specifications, camera, battery, features, and user reviews.`).replace(/\s*on\s+zozo(?:\.pk)?/gi, "").trim();
+  const description = (phone.seo?.meta_description || phone.seo?.ai_meta_description || `Best price for ${phone.name}. Compare full specifications, camera, battery, features, and user reviews.`).trim();
 
-  return {
+  return cleanMetadata({
     title: { absolute: title },
     description,
     keywords: phone.seo?.ai_keywords || [`mobile phones`, `${phone.name} price`, `${phone.brand_slug} mobile`, `buy ${phone.name}`],
@@ -103,7 +106,7 @@ export async function generateMetadata({
       description,
       images: primaryImage ? [primaryImage] : [],
     },
-  };
+  });
 }
 
 export default async function PhoneDetailPage({
@@ -112,32 +115,12 @@ export default async function PhoneDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const resolvedParams = await params;
-  let slug = resolvedParams.slug;
-
-  if (slug.endsWith('-price-in-pakistan')) {
-    const clean = slug.replace('-price-in-pakistan', '');
-    redirect(`/${clean}-price`);
-  }
-
-  if (slug.endsWith('-price')) {
-    slug = slug.replace('-price', '');
-  } else {
-    const phoneCheck = await getPhoneBySlug(slug);
-    if (phoneCheck) {
-      redirect(`/${slug}-price`);
-    }
-  }
-
-  const phone = await getPhoneBySlug(slug);
-
-  if (!phone) {
-    // Check if it's an EV vehicle
-    const vehicleCheck = await getVehicleBySlug(slug);
-    if (vehicleCheck?.vehicle) {
-      redirect(`/vehicles/${slug}`);
-    }
-    notFound();
-  }
+  const slug = resolvedParams.slug;
+  const product = await resolveProduct(slug);
+  if (product?.type === "vehicle") return VehicleDetailPage({ params });
+  if (product?.type === "earbud") return EarbudDetailPage({ params });
+  if (!product) notFound();
+  const phone = product.data;
 
   // Guard against records with missing fields — an undefined brand_slug/name
   // would throw on `.toUpperCase()`/`.replace()` during render and surface to
@@ -150,7 +133,7 @@ export default async function PhoneDetailPage({
   const parsedPricePkr = Number(rawPriceStr.replace(/[^0-9.]/g, ''));
   const validPrices = (phone.prices || []).map((p) => Number(p.price_pkr)).filter(p => !isNaN(p) && p > 0);
   const lowestPrice = (!isNaN(parsedPricePkr) && parsedPricePkr > 0) ? parsedPricePkr : (validPrices.length ? Math.min(...validPrices) : null);
-  const rating = phone.rating?.average;
+  const rating = verifiedRating(phone.rating);
   const reviewCount = phone.rating?.count || 0;
   const hasAffiliateUrls = phone.prices?.some((p) => !!p.product_url);
   const priceSource = phone.specs?.extra_specs?.price_section?.price_source || "Official manufacturer";
@@ -269,25 +252,22 @@ export default async function PhoneDetailPage({
   return (
     <>
       {/* JSON-LD Schemas */}
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(generateProductSchema(phone as any)) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeJsonLd(generateProductSchema(phone as any)) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{
-        __html: JSON.stringify(generateBreadcrumbSchema([
-          { label: phone.brand_slug.toUpperCase().replace("-", " "), href: `/${phone.brand_slug}-phone-price` },
+        __html: serializeJsonLd(generateBreadcrumbSchema([
+          { label: phone.brand_slug.toUpperCase().replace("-", " "), href: `/brands/${phone.brand_slug}` },
           { label: phone.name }
         ]))
       }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{
-        __html: JSON.stringify(generateWebPageSchema(
+        __html: serializeJsonLd(generateWebPageSchema(
           phone.seo?.meta_title || `${phone.name} Price, Specs & Reviews`,
           phone.seo?.meta_description || phone.seo?.ai_meta_description || `Find the best price for ${phone.name}. Read full specifications, features, and user reviews.`,
-          `/${phone.slug}-price`
+          `/${phone.slug}`
         ))
       }} />
-      {phone.seo?.ai_faq && phone.seo.ai_faq.length > 0 && (
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(generateFAQSchema(phone.seo.ai_faq)) }} />
-      )}
       {phone.video_url && generateVideoSchema(phone as any) && (
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(generateVideoSchema(phone as any)) }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeJsonLd(generateVideoSchema(phone as any)) }} />
       )}
 
       <Navbar />
@@ -295,7 +275,7 @@ export default async function PhoneDetailPage({
         {/* Breadcrumb */}
         <Breadcrumb
           items={[
-            { label: phone.brand_slug.toUpperCase().replace("-", " "), href: `/${phone.brand_slug}-phone-price` },
+            { label: phone.brand_slug.toUpperCase().replace("-", " "), href: `/brands/${phone.brand_slug}` },
             { label: phone.name },
           ]}
         />
@@ -590,7 +570,7 @@ export default async function PhoneDetailPage({
                       return (
                         <Link
                           key={comp._id}
-                          href={`/${comp.slug}-price`}
+                          href={`/${comp.slug}`}
                           className="flex flex-col rounded-lg border border-border-subtle hover:border-primary hover:shadow-sm transition-all bg-white overflow-hidden group"
                         >
                           <div className="relative aspect-[4/5] bg-surface-container-low flex items-center justify-center p-3">
@@ -629,7 +609,7 @@ export default async function PhoneDetailPage({
                 <ul className="flex flex-col gap-2">
                   {brandPhones.map(bp => (
                     <li key={bp._id}>
-                      <Link href={`/${bp.slug}-price`} className="text-sm text-primary hover:underline line-clamp-1">
+                      <Link href={`/${bp.slug}`} className="text-sm text-primary hover:underline line-clamp-1">
                         {bp.name} Price
                       </Link>
                     </li>
@@ -665,7 +645,7 @@ export default async function PhoneDetailPage({
                   <ul className="flex flex-col gap-2">
                     {relatedByProcessor.map(p => (
                       <li key={p._id}>
-                        <Link href={`/${p.slug}-price`} className="text-sm text-primary hover:underline">
+                        <Link href={`/${p.slug}`} className="text-sm text-primary hover:underline">
                           {p.name}
                         </Link>
                       </li>
@@ -683,7 +663,7 @@ export default async function PhoneDetailPage({
                   <ul className="flex flex-col gap-2">
                     {relatedByNetwork.map(p => (
                       <li key={p._id}>
-                        <Link href={`/${p.slug}-price`} className="text-sm text-primary hover:underline">
+                        <Link href={`/${p.slug}`} className="text-sm text-primary hover:underline">
                           {p.name}
                         </Link>
                       </li>

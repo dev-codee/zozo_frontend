@@ -1,5 +1,7 @@
 "use client";
 
+import { notify, mutationError } from "@/app/lib/notifications";
+
 import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Cookies from 'js-cookie';
@@ -17,12 +19,14 @@ export default function EditCategoryPage() {
   const fetchCategory = async () => {
     try {
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/categories/${id}`);
+      if (!res.ok) throw new Error(await mutationError(res, "load these records"));
       if (res.ok) {
         const data = await res.json();
         setFormData({ name: data.name, slug: data.slug, description: data.description || '' });
       }
     } catch (error) {
       console.error(error);
+      notify(error instanceof Error ? error.message : "Unable to complete this action. Check your connection and try again.", "error");
     }
   };
 
@@ -38,9 +42,11 @@ export default function EditCategoryPage() {
         },
         body: JSON.stringify(formData)
       });
-      if (res.ok) router.push('/admin/categories');
+      if (res.ok) { notify("Category saved successfully.", "success"); router.push('/admin/categories'); }
+      else throw new Error(await mutationError(res, "save this category"));
     } catch (error) {
       console.error(error);
+      notify(error instanceof Error ? error.message : "Unable to complete this action. Check your connection and try again.", "error");
     }
   };
 

@@ -1,5 +1,8 @@
 "use client";
 
+import { rebrandSiteContent } from "@/app/lib/branding";
+
+
 import { useState, Suspense, useRef, useEffect } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 import Link from "next/link";
@@ -128,12 +131,12 @@ export default function NavbarClient({
       <div className="flex justify-between items-center px-4 md:px-6 h-16 w-full max-w-[1280px] mx-auto gap-4">
         <Link href="/" className="flex items-center gap-2 shrink-0">
           <Image
-            src="/ZOZO-Logo-v2.png"
-            alt="zozo.pk"
-            width={180}
-            height={48}
+            src="/mobile-rates-logo.svg"
+            alt="Mobile Rates"
+            width={280}
+            height={56}
             priority
-            className="h-12 md:h-14 w-auto object-contain"
+            className="h-9 md:h-10 w-[180px] md:w-[200px] object-contain"
           />
         </Link>
 
@@ -277,7 +280,7 @@ export default function NavbarClient({
                       active ? "text-primary border-primary bg-surface-container-low/50" : "text-on-surface-variant hover:text-primary hover:bg-surface-container-low border-transparent"
                     }`}
                   >
-                    {page.title}
+                    {rebrandSiteContent(page.title || "")}
                   </Link>
                 );
               }
@@ -287,7 +290,7 @@ export default function NavbarClient({
               return (
                 <div key={page._id} className="relative h-full group flex items-center shrink-0">
                   <button className="h-full flex items-center gap-1 transition-colors text-sm font-semibold tracking-wide uppercase px-3 border-b-2 text-on-surface-variant hover:text-primary hover:bg-surface-container-low border-transparent">
-                    {page.title}
+                    {rebrandSiteContent(page.title || "")}
                     <AppIcon name="expand_more" size={16} />
                   </button>
                   {children.length > 0 && (
@@ -298,7 +301,7 @@ export default function NavbarClient({
                           href={`/pages/${child.slug}`}
                           className="px-4 py-2 text-sm font-semibold text-on-surface-variant hover:text-primary hover:bg-surface-container-low transition-colors"
                         >
-                          {child.title}
+                          {rebrandSiteContent(child.title || "")}
                         </Link>
                       ))}
                     </div>
@@ -424,7 +427,7 @@ export default function NavbarClient({
                               </span>
                             </Link>
                             <Link
-                              href={`/${brand.slug}-phone-price`}
+                              href={`/brands/${brand.slug}`}
                               onClick={() => setMobileOpen(false)}
                               className="flex items-center justify-between px-3 py-2 rounded-lg text-primary font-semibold hover:bg-primary/5 transition-colors border-t border-border-subtle/50 mt-0.5"
                             >
@@ -525,7 +528,7 @@ export default function NavbarClient({
                         active ? "text-primary bg-surface-container-low border-primary" : "text-on-surface-variant hover:text-primary hover:bg-surface-container-low border-transparent"
                       }`}
                     >
-                      {page.title}
+                      {rebrandSiteContent(page.title || "")}
                     </Link>
                   );
                 }
@@ -533,7 +536,7 @@ export default function NavbarClient({
                 const children = dynamicPages.filter(p => p.pageType === 'CHILD' && p.parentPage === page._id);
                 return (
                   <div key={page._id} className="flex flex-col gap-1 pl-2">
-                    <span className="px-2 py-2 text-xs font-bold text-text-muted uppercase tracking-widest">{page.title}</span>
+                    <span className="px-2 py-2 text-xs font-bold text-text-muted uppercase tracking-widest">{rebrandSiteContent(page.title || "")}</span>
                     {children.map(child => {
                       const active = isActive(`/pages/${child.slug}`);
                       return (
@@ -545,7 +548,7 @@ export default function NavbarClient({
                             active ? "text-primary bg-surface-container-low border-primary" : "text-on-surface-variant hover:text-primary hover:bg-surface-container-low border-transparent"
                           }`}
                         >
-                          {child.title}
+                          {rebrandSiteContent(child.title || "")}
                         </Link>
                       );
                     })}
@@ -686,7 +689,7 @@ export default function NavbarClient({
                   </div>
 
                   <Link
-                    href={`/${activeBrand.slug}-phone-price`}
+                    href={`/brands/${activeBrand.slug}`}
                     onClick={() => setBestOpen(false)}
                     className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-surface-container-low hover:bg-primary/10 text-primary text-xs font-semibold transition-colors shrink-0"
                   >

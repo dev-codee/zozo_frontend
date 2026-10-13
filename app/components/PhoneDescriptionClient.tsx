@@ -1,5 +1,7 @@
 "use client";
 
+import { publishableDescription } from "@/app/lib/content-quality";
+
 import { useState, useEffect } from "react";
 import AppIcon from "./AppIcon";
 
@@ -47,7 +49,7 @@ function parseMarkdownToJSX(text: string, phoneName: string) {
 
   const lines = text.split('\n');
   const renderedElements: React.ReactNode[] = [];
-  
+
   let currentSection = ''; // 'pros-cons', 'faqs', 'normal'
   let pros: string[] = [];
   let cons: string[] = [];
@@ -174,7 +176,7 @@ function parseMarkdownToJSX(text: string, phoneName: string) {
 
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i].trim();
-    
+
     // Detect empty line or raw material icon text
     if (!line || ignoredIcons.has(line)) {
       if (!line && currentSection === 'normal') {
@@ -344,7 +346,7 @@ export default function PhoneDescriptionClient({
     );
   }
 
-  if (!description) return null;
+  if (!description || !publishableDescription(description)) return null;
 
   return (
     <section className="bg-surface-white border border-border-subtle rounded-xl p-6 md:p-8 mt-2">

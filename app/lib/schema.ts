@@ -1,3 +1,4 @@
+import { withoutSiteBrand } from "./seo";
 // ─── JSON-LD Structured Data Generators ─────────────────────────────────────
 // These helper functions generate Google-compliant JSON-LD structured data
 // for better SEO and rich snippets in search results.
@@ -21,7 +22,7 @@ interface SchemaPhone {
     ai_faq?: { question: string; answer: string }[];
   };
   video_url?: string;
-  specs?: any;
+  product_type?: string;
 }
 
 interface SchemaReview {
@@ -36,51 +37,69 @@ interface BreadcrumbItem {
   href?: string;
 }
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://zozo.pk';
+const SITE_URL = 'https://mobilerates.info';
+
+// Serialize CMS data safely inside script elements.
+export function serializeJsonLd(value: unknown): string {
+  return JSON.stringify(value).replace(/</g, "\\u003c");
+}
+
+function validRating(rating?: { average?: number; count?: number }) {
+  return !!rating && Number.isFinite(rating.average) && rating.average! >= 1 && rating.average! <= 5
+    && Number.isInteger(rating.count) && rating.count! > 0;
+}
+
+function productOffers(product: SchemaPhone) {
+  const availability: Record<string, string> = {
+    'in stock': 'InStock', 'in_stock': 'InStock', 'instock': 'InStock',
+    'out of stock': 'OutOfStock', 'out_of_stock': 'OutOfStock', 'outofstock': 'OutOfStock',
+    'preorder': 'PreOrder', 'pre-order': 'PreOrder', 'discontinued': 'Discontinued',
+  };
+  const offers = (product.prices || []).filter(price =>
+    Number.isFinite(price.price_pkr) && price.price_pkr > 0 && /^https?:\/\//i.test(price.product_url || '')
+  ).map(price => {
+    const stock = availability[(price.stock_status || '').trim().toLowerCase()];
+    return {
+      '@type': 'Offer', url: price.product_url, priceCurrency: 'PKR', price: price.price_pkr,
+      ...(stock ? { availability: `https://schema.org/${stock}` } : {}),
+      ...(price.retailer_name ? { seller: { '@type': 'Organization', name: price.retailer_name } } : {}),
+    };
+  });
+  if (offers.length === 1) return offers[0];
+  if (offers.length > 1) return {
+    '@type': 'AggregateOffer', priceCurrency: 'PKR',
+    lowPrice: Math.min(...offers.map(offer => offer.price)),
+    highPrice: Math.max(...offers.map(offer => offer.price)), offerCount: offers.length, offers,
+  };
+  // A displayed reference price does not prove retailer availability.
+  if (Number.isFinite(product.price_pkr) && product.price_pkr! > 0) return {
+    '@type': 'Offer', priceCurrency: 'PKR', price: product.price_pkr, url: `${SITE_URL}/${product.slug}`,
+  };
+  return undefined;
+}
 
 // ─── Product Schema ──────────────────────────────────────────────────────────
 
 export function generateProductSchema(phone: SchemaPhone) {
   const primaryImage = phone.images?.find(img => img.url)?.url;
-  const lowestPrice = phone.price_pkr || (phone.prices?.length ? Math.min(...phone.prices.map(p => p.price_pkr)) : null);
-
-  const offers = phone.prices?.filter(p => p.product_url).map(p => ({
-    "@type": "Offer",
-    "url": p.product_url,
-    "priceCurrency": "PKR",
-    "price": p.price_pkr,
-    "availability": p.stock_status?.toLowerCase().includes('out') 
-      ? "https://schema.org/OutOfStock" 
-      : "https://schema.org/InStock",
-    "seller": {
-      "@type": "Organization",
-      "name": p.retailer_name
-    }
-  })) || [];
-
-  const schema: any = {
+  const schema: Record<string, unknown> = {
     "@context": "https://schema.org",
     "@type": "Product",
     "name": phone.name,
-    "description": (
+    "description": withoutSiteBrand(
       phone.seo?.meta_description ||
       phone.seo?.ai_meta_description ||
       `${phone.name} Price in Pakistan, Specifications and Reviews`
-    ).replace(/\s*on\s+zozo(?:\.pk)?/gi, "").trim().substring(0, 500),
+    ).substring(0, 500),
     "brand": {
       "@type": "Brand",
       "name": phone.brand_slug.toUpperCase().replace('-', ' ')
     },
-    "url": `${SITE_URL}/${phone.slug}-price`,
-    "category": "Mobile Phone",
+    "url": `${SITE_URL}/${phone.slug}`,
+    "category": phone.product_type || "Mobile Phone",
   };
 
-  if (primaryImage) {
-    schema.image = primaryImage;
-  } else {
-    // Fallback image to fix the "Missing field 'image'" error in GSC
-    schema.image = `${SITE_URL}/ZOZO-Logo-v2.png`;
-  }
+  if (primaryImage) schema.image = primaryImage;
 
   if (phone.model_number) {
     schema.sku = phone.model_number;
@@ -91,73 +110,47 @@ export function generateProductSchema(phone: SchemaPhone) {
     schema.releaseDate = phone.release_date;
   }
 
-  if (phone.rating?.average && phone.rating?.count) {
+  if (!phone.product_type && validRating(phone.rating)) {
     schema.aggregateRating = {
       "@type": "AggregateRating",
-      "ratingValue": phone.rating.average.toFixed(1),
+      "ratingValue": phone.rating!.average!.toFixed(1),
       "bestRating": "5",
       "worstRating": "1",
-      "ratingCount": phone.rating.count
+      "ratingCount": phone.rating!.count
     };
   }
 
-  if (offers.length > 0) {
-    schema.offers = offers.length === 1 ? offers[0] : {
-      "@type": "AggregateOffer",
-      "lowPrice": Math.min(...phone.prices!.map(p => p.price_pkr)),
-      "highPrice": Math.max(...phone.prices!.map(p => p.price_pkr)),
-      "priceCurrency": "PKR",
-      "offerCount": offers.length,
-      "offers": offers
-    };
-  } else if (lowestPrice) {
-    schema.offers = {
-      "@type": "Offer",
-      "priceCurrency": "PKR",
-      "price": lowestPrice,
-      "availability": "https://schema.org/InStock",
-      "url": `${SITE_URL}/${phone.slug}-price`
-    };
-  }
+  const offers = productOffers(phone);
+  if (offers) schema.offers = offers;
 
   return schema;
 }
 
 // ─── Vehicle Schema ──────────────────────────────────────────────────────────
 
-export function generateVehicleSchema(vehicle: any) {
-  const primaryImage = vehicle.images?.find((img: any) => img.url)?.url || vehicle.images?.[0]?.url;
-  const lowestPrice = vehicle.price_pkr || (vehicle.prices?.length ? Math.min(...vehicle.prices.map((p: any) => p.price_pkr)) : null);
+interface SchemaVehicle extends SchemaPhone {
+  ev_category?: string; vehicle_type?: string; model_name?: string; body_type?: string;
+  seats?: number; doors?: number;
+  specs?: { powertrain?: { drive_layout?: string } };
+}
 
-  const offers = vehicle.prices?.filter((p: any) => p.product_url).map((p: any) => ({
-    "@type": "Offer",
-    "url": p.product_url,
-    "priceCurrency": "PKR",
-    "price": p.price_pkr,
-    "availability": p.stock_status?.toLowerCase().includes('out')
-      ? "https://schema.org/OutOfStock"
-      : "https://schema.org/InStock",
-    "seller": {
-      "@type": "Organization",
-      "name": p.retailer_name
-    }
-  })) || [];
-
+export function generateVehicleSchema(vehicle: SchemaVehicle) {
+  const primaryImage = vehicle.images?.find((img) => img.url)?.url || vehicle.images?.[0]?.url;
   const isCar = (vehicle.ev_category || 'Car').toLowerCase() === 'car';
-  const schema: any = {
+  const schema: Record<string, unknown> = {
     "@context": "https://schema.org",
     "@type": isCar ? "Car" : "Vehicle",
     "name": vehicle.name,
-    "description": (
+    "description": withoutSiteBrand(
       vehicle.seo?.meta_description ||
       vehicle.seo?.ai_meta_description ||
       `${vehicle.name} Price in Pakistan, Specifications and Features`
-    ).replace(/\s*on\s+zozo(?:\.pk)?/gi, "").trim().substring(0, 500),
+    ).substring(0, 500),
     "brand": {
       "@type": "Brand",
       "name": (vehicle.brand_slug || "").toUpperCase().replace('-', ' ')
     },
-    "url": `${SITE_URL}/vehicles/${vehicle.slug}`,
+    "url": `${SITE_URL}/${vehicle.slug}`,
     "fuelType": vehicle.vehicle_type === 'PHEV' ? "Hybrid" : "Electric",
     "vehicleEngine": {
       "@type": "EngineSpecification",
@@ -165,11 +158,7 @@ export function generateVehicleSchema(vehicle: any) {
     },
   };
 
-  if (primaryImage) {
-    schema.image = primaryImage;
-  } else {
-    schema.image = `${SITE_URL}/ZOZO-Logo-v2.png`;
-  }
+  if (primaryImage) schema.image = primaryImage;
 
   if (vehicle.model_name) schema.model = vehicle.model_name;
   if (vehicle.body_type) schema.bodyType = vehicle.body_type;
@@ -181,34 +170,18 @@ export function generateVehicleSchema(vehicle: any) {
     schema.driveWheelConfiguration = vehicle.specs.powertrain.drive_layout;
   }
 
-  if (vehicle.rating?.average && vehicle.rating?.count) {
+  if (validRating(vehicle.rating)) {
     schema.aggregateRating = {
       "@type": "AggregateRating",
-      "ratingValue": vehicle.rating.average.toFixed(1),
+      "ratingValue": vehicle.rating!.average!.toFixed(1),
       "bestRating": "5",
       "worstRating": "1",
-      "ratingCount": vehicle.rating.count
+      "ratingCount": vehicle.rating!.count
     };
   }
 
-  if (offers.length > 0) {
-    schema.offers = offers.length === 1 ? offers[0] : {
-      "@type": "AggregateOffer",
-      "lowPrice": Math.min(...vehicle.prices.map((p: any) => p.price_pkr)),
-      "highPrice": Math.max(...vehicle.prices.map((p: any) => p.price_pkr)),
-      "priceCurrency": "PKR",
-      "offerCount": offers.length,
-      "offers": offers
-    };
-  } else if (lowestPrice) {
-    schema.offers = {
-      "@type": "Offer",
-      "priceCurrency": "PKR",
-      "price": lowestPrice,
-      "availability": "https://schema.org/InStock",
-      "url": `${SITE_URL}/vehicles/${vehicle.slug}`
-    };
-  }
+  const offers = productOffers(vehicle);
+  if (offers) schema.offers = offers;
 
   return schema;
 }
@@ -278,25 +251,9 @@ export function generateBreadcrumbSchema(items: BreadcrumbItem[]) {
 // ─── Video Schema ────────────────────────────────────────────────────────────
 
 export function generateVideoSchema(phone: SchemaPhone) {
-  if (!phone.video_url) return null;
-
-  // Extract YouTube video ID
-  const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
-  const match = phone.video_url.match(regExp);
-  const videoId = match && match[2].length === 11 ? match[2] : null;
-
-  if (!videoId) return null;
-
-  return {
-    "@context": "https://schema.org",
-    "@type": "VideoObject",
-    "name": `${phone.name} Review & Hands-on`,
-    "description": `Watch the video review and hands-on of ${phone.name}`,
-    "thumbnailUrl": `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`,
-    "uploadDate": phone.release_date || new Date().toISOString(),
-    "contentUrl": phone.video_url,
-    "embedUrl": `https://www.youtube.com/embed/${videoId}`
-  };
+  // The API has no actual video upload date; a product release date is not a substitute.
+  void phone;
+  return null;
 }
 
 // ─── Organization Schema ─────────────────────────────────────────────────────
@@ -305,9 +262,8 @@ export function generateOrganizationSchema() {
   return {
     "@context": "https://schema.org",
     "@type": "Organization",
-    "name": "ZOZO.pk",
+    "name": "Mobile price comparison website",
     "url": SITE_URL,
-    "logo": `${SITE_URL}/ZOZO-Logo-v2.png`,
     "description": "Compare latest mobile phone prices in Pakistan across all top retailers.",
     "sameAs": []
   };
@@ -319,16 +275,9 @@ export function generateWebSiteSchema() {
   return {
     "@context": "https://schema.org",
     "@type": "WebSite",
-    "name": "ZOZO.pk",
+    "name": "Mobile price comparison website",
     "url": SITE_URL,
-    "potentialAction": {
-      "@type": "SearchAction",
-      "target": {
-        "@type": "EntryPoint",
-        "urlTemplate": `${SITE_URL}/search?q={search_term_string}`
-      },
-      "query-input": "required name=search_term_string"
-    }
+
   };
 }
 
@@ -338,12 +287,12 @@ export function generateWebPageSchema(title: string, description: string, url: s
   return {
     "@context": "https://schema.org",
     "@type": "WebPage",
-    "name": title,
-    "description": description,
+    "name": withoutSiteBrand(title),
+    "description": withoutSiteBrand(description),
     "url": `${SITE_URL}${url}`,
     "isPartOf": {
       "@type": "WebSite",
-      "name": "ZOZO.pk",
+      "name": "Mobile price comparison website",
       "url": SITE_URL
     }
   };
@@ -355,8 +304,8 @@ export function generateCollectionPageSchema(title: string, description: string,
   return {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
-    "name": title,
-    "description": description,
+    "name": withoutSiteBrand(title),
+    "description": withoutSiteBrand(description),
     "url": `${SITE_URL}${url}`
   };
 }

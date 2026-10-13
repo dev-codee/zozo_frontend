@@ -1,5 +1,7 @@
 "use client";
 
+import { notify, mutationError } from "@/app/lib/notifications";
+
 import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Cookies from 'js-cookie';
@@ -26,15 +28,18 @@ export default function EditBlogPage() {
   const fetchCategories = async () => {
     try {
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/categories`);
+      if (!res.ok) throw new Error(await mutationError(res, "load these records"));
       if (res.ok) setCategories(await res.json());
     } catch (error) {
       console.error(error);
+      notify(error instanceof Error ? error.message : "Unable to complete this action. Check your connection and try again.", "error");
     }
   };
 
   const fetchBlog = async () => {
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/blogs/${id}`);
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/blogs/${id}`, { headers: { Authorization: `Bearer ${Cookies.get("admin_token")}` } });
+      if (!res.ok) throw new Error(await mutationError(res, "load these records"));
       if (res.ok) {
         const data = await res.json();
         setFormData({
@@ -52,6 +57,7 @@ export default function EditBlogPage() {
       }
     } catch (error) {
       console.error(error);
+      notify(error instanceof Error ? error.message : "Unable to complete this action. Check your connection and try again.", "error");
     } finally {
       setIsLoading(false);
     }
@@ -69,9 +75,11 @@ export default function EditBlogPage() {
         },
         body: JSON.stringify(formData)
       });
-      if (res.ok) router.push('/admin/blogs');
+      if (res.ok) { notify("Article saved successfully.", "success"); router.push('/admin/blogs'); }
+      else throw new Error(await mutationError(res, "save this article"));
     } catch (error) {
       console.error(error);
+      notify(error instanceof Error ? error.message : "Unable to complete this action. Check your connection and try again.", "error");
     }
   };
 

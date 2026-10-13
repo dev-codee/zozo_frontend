@@ -1,4 +1,6 @@
 "use client";
+import { notify } from "@/app/lib/notifications";
+
 
 import { useState, useEffect } from 'react';
 import Cookies from 'js-cookie';
@@ -42,6 +44,7 @@ export default function TeamManagementPage() {
       }
     } catch (err) {
       console.error(err);
+      notify("Unable to update the team. Check your connection and try again.", "error");
     } finally {
       setLoading(false);
     }
@@ -108,14 +111,16 @@ export default function TeamManagementPage() {
       });
 
       if (res.ok) {
+        notify("Team member saved successfully.", "success");
         setShowModal(false);
         fetchTeam();
       } else {
         const errData = await res.json();
-        alert(errData.message || 'Action failed');
+        notify(errData.message || 'Action failed');
       }
     } catch (err) {
       console.error(err);
+      notify("Unable to update the team. Check your connection and try again.", "error");
     }
   };
 
@@ -128,13 +133,15 @@ export default function TeamManagementPage() {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (res.ok) {
+        notify("Team member deleted successfully.", "success");
         fetchTeam();
       } else {
         const errData = await res.json();
-        alert(errData.message || 'Delete failed');
+        notify(errData.message || 'Delete failed');
       }
     } catch (err) {
       console.error(err);
+      notify("Unable to update the team. Check your connection and try again.", "error");
     }
   };
 
@@ -288,7 +295,7 @@ export default function TeamManagementPage() {
                     value={email} 
                     onChange={e => setEmail(e.target.value)} 
                     className="w-full px-4 py-2 border rounded-xl text-xs" 
-                    placeholder="faizan@zozo.pk"
+                    placeholder="admin@mobilerates.info"
                   />
                 </div>
               </div>

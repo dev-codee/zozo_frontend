@@ -1,4 +1,6 @@
 "use client";
+import { notify } from "@/app/lib/notifications";
+
 
 import { useState, useEffect } from 'react';
 import Cookies from 'js-cookie';
@@ -73,7 +75,7 @@ export default function AdminPhoneComments({ phoneId }: AdminPhoneCommentsProps)
         setEditingId(null);
         fetchComments(page, search);
       } else {
-        alert("Failed to update comment");
+        notify("Failed to update comment");
       }
     } catch (error) {
       console.error("Error updating comment", error);
@@ -92,7 +94,7 @@ export default function AdminPhoneComments({ phoneId }: AdminPhoneCommentsProps)
       if (res.ok) {
         fetchComments(page, search);
       } else {
-        alert("Failed to delete comment");
+        notify("Failed to delete comment");
       }
     } catch (error) {
       console.error("Error deleting comment", error);

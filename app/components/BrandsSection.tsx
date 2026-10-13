@@ -81,7 +81,7 @@ export default function BrandsSection({ brands }: BrandsSectionProps) {
             {displayBrands.map((brand) => (
               <Link
                 key={brand._id}
-                href={`/${brand.slug}-phone-price`}
+                href={`/brands/${brand.slug}`}
                 className="group flex flex-col items-center flex-shrink-0 w-[92px] md:w-[104px]"
               >
                 <div className="w-full aspect-square rounded-xl bg-surface-container-lowest border border-border-subtle flex items-center justify-center p-4 group-hover:border-primary/40 group-hover:shadow-sm transition-all">

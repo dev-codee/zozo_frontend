@@ -1,4 +1,6 @@
 "use client";
+import { notify, mutationError } from "@/app/lib/notifications";
+
 
 import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
@@ -30,12 +32,12 @@ export default function EditEarbudPage() {
           Cookies.remove('admin_token');
           router.push('/login');
         } else {
-          alert("Failed to load earbud data");
+          notify("Failed to load earbud data");
           router.push('/admin/earbuds');
         }
       } catch (error) {
         console.error('Failed to fetch earbud', error);
-        alert("An error occurred while loading earbud data");
+        notify("An error occurred while loading earbud data");
       } finally {
         setIsLoading(false);
       }
@@ -55,15 +57,14 @@ export default function EditEarbudPage() {
         body: JSON.stringify(payload)
       });
       if (response.ok) {
-        alert("Wireless Earbud updated successfully!");
+        notify("Wireless Earbud updated successfully!");
         router.push('/admin/earbuds');
       } else {
-        const errorData = await response.json();
-        alert(`Failed to update earbud: ${errorData.message}`);
+        notify(await mutationError(response, "save this earbud"), "error");
       }
     } catch (error) {
       console.error(error);
-      alert("An error occurred while updating earbud");
+      notify("An error occurred while updating earbud");
     }
   };
 

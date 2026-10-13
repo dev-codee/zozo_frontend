@@ -1,4 +1,6 @@
 "use client";
+import { notify } from "@/app/lib/notifications";
+
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
@@ -70,16 +72,17 @@ export default function PhonesListPage() {
         headers: { 'Authorization': `Bearer ${token}` }
       });
       if (res.ok) {
+        notify("Phone approved successfully.", "success");
         fetchPhones(currentPage, searchQuery);
       } else {
         const error = await res.json();
-        alert(`Failed to approve: ${error.message}`);
+        notify(`Failed to approve: ${error.message}`);
       }
     } catch (error) {
       console.error(error);
+      notify("Unable to complete this action. Check your connection and try again.", "error");
     }
   };
-
   const handleReject = async (id: string) => {
     const note = prompt("Enter rejection reason/note:");
     if (note === null) return;
@@ -94,16 +97,17 @@ export default function PhonesListPage() {
         body: JSON.stringify({ note })
       });
       if (res.ok) {
+        notify("Phone rejected successfully.", "success");
         fetchPhones(currentPage, searchQuery);
       } else {
         const error = await res.json();
-        alert(`Failed to reject: ${error.message}`);
+        notify(`Failed to reject: ${error.message}`);
       }
     } catch (error) {
       console.error(error);
+      notify("Unable to complete this action. Check your connection and try again.", "error");
     }
   };
-
   const handleDelete = async (id: string, name: string) => {
     if (!window.confirm(`Are you sure you want to delete ${name}?`)) return;
 
@@ -117,17 +121,17 @@ export default function PhonesListPage() {
       });
       
       if (res.ok) {
+        notify("Phone deleted successfully.", "success");
         setPhones(prev => prev.filter(p => p._id !== id));
       } else {
         const error = await res.json();
-        alert(`Failed to delete: ${error.message}`);
+        notify(`Failed to delete: ${error.message}`);
       }
     } catch (error) {
       console.error('Failed to delete phone', error);
-      alert('An error occurred while deleting the phone');
+      notify('An error occurred while deleting the phone');
     }
   };
-
   return (
     <div className="p-8 max-w-7xl mx-auto pb-24">
       <div className="flex items-center justify-between mb-8">

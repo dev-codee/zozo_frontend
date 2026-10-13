@@ -19,10 +19,10 @@ export default function Error({
     <main className="w-full max-w-[1280px] mx-auto px-4 md:px-6 py-24 flex flex-col items-center justify-center text-center min-h-[60vh] bg-surface">
       <AppIcon name="error" size={64} className="text-outline mb-4 opacity-70" />
       <h1 className="text-2xl md:text-3xl font-bold text-text-main mb-2">
-        Something went wrong
+        This page is temporarily unavailable
       </h1>
       <p className="text-text-muted max-w-md mx-auto mb-6">
-        We hit an unexpected problem loading this page. Please try again in a moment.
+        We could not load this page. Your connection or our service may be temporarily unavailable. Try again in a moment.
       </p>
       <div className="flex items-center gap-3">
         <button

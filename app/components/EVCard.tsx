@@ -41,7 +41,7 @@ export default function EVCard({ vehicle, variant = "list", priority = false }: 
       {/* Title & Price Row */}
       <div className="flex items-start justify-between gap-3 mb-4">
         <div className="min-w-0">
-          <Link href={`/vehicles/${vehicle.slug}`} className="block">
+          <Link href={`/${vehicle.slug}`} className="block">
             <h2 className="text-lg font-bold text-text-main group-hover:text-primary transition-colors line-clamp-2 leading-tight">
               {vehicle.name}
             </h2>
@@ -80,7 +80,7 @@ export default function EVCard({ vehicle, variant = "list", priority = false }: 
       </div>
 
       {/* Image */}
-      <Link href={`/vehicles/${vehicle.slug}`} className="relative w-full aspect-[16/9] bg-surface-container-low rounded-lg p-3 flex items-center justify-center group overflow-hidden mb-4">
+      <Link href={`/${vehicle.slug}`} className="relative w-full aspect-[16/9] bg-surface-container-low rounded-lg p-3 flex items-center justify-center group overflow-hidden mb-4">
         <div className="relative w-full h-full">
           <Image
             src={imageUrl}
@@ -118,7 +118,7 @@ export default function EVCard({ vehicle, variant = "list", priority = false }: 
       </ul>
 
       <div className="flex justify-end mb-4">
-        <Link href={`/vehicles/${vehicle.slug}`} className="text-[10px] font-bold text-text-main underline underline-offset-2 hover:text-primary">
+        <Link href={`/${vehicle.slug}`} className="text-[10px] font-bold text-text-main underline underline-offset-2 hover:text-primary">
           View All Specs
         </Link>
       </div>
@@ -144,7 +144,7 @@ export default function EVCard({ vehicle, variant = "list", priority = false }: 
           </div>
         </div>
         <Link
-          href={`/vehicles/${vehicle.slug}`}
+          href={`/${vehicle.slug}`}
           className="inline-flex items-center gap-1 px-3 py-1.5 bg-text-main text-surface-white hover:bg-primary hover:text-on-primary rounded-md transition-colors text-[10px] font-bold uppercase tracking-wider"
         >
           Details

@@ -1,17 +1,22 @@
+import NotificationHost from "@/app/components/NotificationHost";
+import { serializeJsonLd } from "@/app/lib/schema";
+import { cleanMetadata } from "@/app/lib/seo";
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 
-const inter = Inter({
+const inter = localFont({
   variable: "--font-inter",
-  subsets: ["latin"],
+  src: "../public/fonts/inter-latin-variable.woff2",
+  weight: "100 900",
+  style: "normal",
   display: "swap",
 });
 
 import { generateOrganizationSchema, generateWebSiteSchema } from "./lib/schema";
 
-export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://zozo.pk'),
+export const metadata: Metadata = cleanMetadata({
+  metadataBase: new URL('https://mobilerates.info'),
   title: {
     default: "Compare Mobile Phone Prices in Pakistan",
     template: "%s",
@@ -24,16 +29,16 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_PK",
-    url: "https://zozo.pk",
+    url: "https://mobilerates.info",
     title: "Compare Mobile Phone Prices in Pakistan",
     description: "Compare latest mobile phone prices in Pakistan across all top retailers. Find the best deals on Samsung, Apple, Xiaomi, Vivo, and more.",
-    siteName: "zozo.pk",
+    siteName: "Mobile phone prices and specifications",
     images: [
       {
-        url: "/ZOZO-Logo-v2.png",
+        url: "/social-preview.png",
         width: 1200,
         height: 630,
-        alt: "Logo",
+        alt: "Phone prices and specifications",
       },
     ],
   },
@@ -41,7 +46,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Compare Mobile Phone Prices in Pakistan",
     description: "Compare latest mobile phone prices in Pakistan across all top retailers.",
-    images: ["/ZOZO-Logo-v2.png"],
+    images: ["/social-preview.png"],
   },
   robots: {
     index: true,
@@ -65,7 +70,7 @@ export const metadata: Metadata = {
       { url: '/icon.png', type: 'image/png' },
     ],
   },
-};
+});
 
 import { AuthProvider } from './context/AuthContext';
 import ActivityTracker from './components/ActivityTracker';
@@ -101,15 +106,16 @@ export default function RootLayout({
         </Script>
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(generateOrganizationSchema()) }}
+          dangerouslySetInnerHTML={{ __html: serializeJsonLd(generateOrganizationSchema()) }}
         />
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(generateWebSiteSchema()) }}
+          dangerouslySetInnerHTML={{ __html: serializeJsonLd(generateWebSiteSchema()) }}
         />
       </head>
       <body className="min-h-full flex flex-col font-sans">
         <AuthProvider>
+          <NotificationHost />
           <ActivityTracker />
           {children}
         </AuthProvider>

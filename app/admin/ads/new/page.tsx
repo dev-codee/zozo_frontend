@@ -1,5 +1,7 @@
 "use client";
 
+import { notify } from "@/app/lib/notifications";
+
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Cookies from 'js-cookie';
@@ -69,6 +71,7 @@ export default function NewAdPage() {
 
       const data = await res.json();
       if (res.ok && data.success) {
+        notify('Advertisement saved successfully.', 'success');
         router.push('/admin/ads');
       } else {
         setError(data.message || 'Something went wrong');

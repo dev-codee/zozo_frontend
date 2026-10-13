@@ -1,4 +1,6 @@
 "use client";
+import { notify } from "@/app/lib/notifications";
+
 
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
@@ -81,10 +83,10 @@ export default function BrandsAdminPage() {
       });
       const data = await res.json();
       if (res.ok && data.data?.url) setForm(f => ({ ...f, logo: data.data.url }));
-      else alert('Logo upload failed: ' + (data.message || 'Unknown error'));
+      else notify('Logo upload failed: ' + (data.message || 'Unknown error'));
     } catch (err) {
       console.error(err);
-      alert('Logo upload failed');
+      notify('Logo upload failed');
     } finally {
       setIsUploading(false);
       if (e.target) e.target.value = '';
@@ -92,7 +94,7 @@ export default function BrandsAdminPage() {
   };
 
   const handleSave = async () => {
-    if (!form.name.trim()) { alert('Brand name is required'); return; }
+    if (!form.name.trim()) { notify('Brand name is required'); return; }
     setIsSaving(true);
     try {
       const token = Cookies.get('admin_token');
@@ -107,11 +109,11 @@ export default function BrandsAdminPage() {
         setShowModal(false);
         fetchBrands();
       } else {
-        alert(`Failed to save brand: ${data.message}`);
+        notify(`Failed to save brand: ${data.message}`);
       }
     } catch (e) {
       console.error(e);
-      alert('An error occurred');
+      notify('An error occurred');
     } finally {
       setIsSaving(false);
     }
@@ -126,10 +128,10 @@ export default function BrandsAdminPage() {
       });
       const data = await res.json();
       if (res.ok) setBrands(prev => prev.filter(x => x._id !== b._id));
-      else alert(data.message || 'Failed to delete brand');
+      else notify(data.message || 'Failed to delete brand');
     } catch (e) {
       console.error(e);
-      alert('An error occurred while deleting the brand');
+      notify('An error occurred while deleting the brand');
     }
   };
 

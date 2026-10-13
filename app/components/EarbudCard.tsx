@@ -45,7 +45,7 @@ export default function EarbudCard({ earbud, variant = "grid", priority = false 
     : "Battery TBA";
 
   const driverSize = earbud.specs?.audio?.driver_size_mm;
-  const driverType = earbud.specs?.audio?.driver_type || "Dynamic";
+  const driverType = earbud.specs?.audio?.driver_type || "Not specified";
   const driverLabel = driverSize ? `${driverSize}mm ${driverType} Driver` : "High-Res Driver";
 
   const btVersion = earbud.specs?.connectivity?.bluetooth_version;
@@ -89,7 +89,7 @@ export default function EarbudCard({ earbud, variant = "grid", priority = false 
             )}
           </div>
 
-          <Link href={`/earbuds/${earbud.slug}`} className="block">
+          <Link href={`/${earbud.slug}`} className="block">
             <h2 className="text-base md:text-lg font-bold text-text-main group-hover:text-primary transition-colors line-clamp-2 leading-tight">
               {earbud.name}
             </h2>
@@ -112,7 +112,7 @@ export default function EarbudCard({ earbud, variant = "grid", priority = false 
 
       {/* Earbud Image */}
       <Link
-        href={`/earbuds/${earbud.slug}`}
+        href={`/${earbud.slug}`}
         className="relative w-full aspect-square max-h-[190px] bg-surface-container-low rounded-lg p-3 flex items-center justify-center group overflow-hidden mb-4"
       >
         <div className="relative w-full h-full">
@@ -198,7 +198,7 @@ export default function EarbudCard({ earbud, variant = "grid", priority = false 
         </div>
 
         <Link
-          href={`/earbuds/${earbud.slug}`}
+          href={`/${earbud.slug}`}
           className="inline-flex items-center gap-1 px-3 py-1.5 bg-primary text-on-primary hover:bg-primary-hover rounded-md transition-colors text-xs font-bold uppercase tracking-wider shadow-sm"
         >
           View Specs

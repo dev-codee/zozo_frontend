@@ -17,8 +17,9 @@ export default function Pagination({ currentPage, totalPages }: PaginationProps)
 
   const createPageURL = (pageNumber: number | string) => {
     const params = new URLSearchParams(searchParams);
-    params.set("page", pageNumber.toString());
-    return `${pathname}?${params.toString()}`;
+    if (Number(pageNumber) === 1) params.delete("page");
+    else params.set("page", pageNumber.toString());
+    return `${pathname}${params.size ? `?${params.toString()}` : ""}`;
   };
 
   // Helper to generate page numbers with ellipses

@@ -589,7 +589,7 @@ export default function VehicleCompareClient({
                   </div>
 
                   <Link
-                    href={`/vehicles/${vehicle.slug}`}
+                    href={`/${vehicle.slug}`}
                     className="w-full mt-4 bg-surface-container-low hover:bg-primary/10 hover:text-primary text-text-main font-semibold text-xs py-2 px-4 rounded-lg text-center transition-colors border border-border-subtle"
                   >
                     View Details

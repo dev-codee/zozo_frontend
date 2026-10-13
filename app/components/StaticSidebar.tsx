@@ -1,3 +1,4 @@
+import { rebrandSiteContent } from "@/app/lib/branding";
 import Link from 'next/link';
 import { getPages } from '@/app/lib/api';
 
@@ -37,7 +38,7 @@ export default async function StaticSidebar({ activeSlug }: { activeSlug?: strin
                       : 'text-text-muted hover:bg-surface-container-low hover:text-text-main'
                   }`}
                 >
-                  {page.title}
+                  {rebrandSiteContent(page.title || "")}
                 </Link>
                 {isParent && children.length > 0 && (
                   <div className="flex flex-col ml-4 mt-1 border-l-2 border-border-subtle pl-2">
@@ -51,7 +52,7 @@ export default async function StaticSidebar({ activeSlug }: { activeSlug?: strin
                             : 'text-text-muted hover:bg-surface-container-low hover:text-text-main'
                         }`}
                       >
-                        {child.title}
+                        {rebrandSiteContent(child.title || "")}
                       </Link>
                     ))}
                   </div>

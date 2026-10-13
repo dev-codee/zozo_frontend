@@ -1,4 +1,6 @@
 "use client";
+import { notify } from "@/app/lib/notifications";
+
 
 import { useState, useEffect } from 'react';
 import { ShieldAlert, Trash2 } from 'lucide-react';
@@ -34,10 +36,10 @@ export default function SessionsPage() {
         setSessions(s => s.filter(x => x._id !== id));
       } else {
         const data = await res.json();
-        alert(data.message);
+        notify(data.message);
       }
     } catch (err) {
-      alert('Error revoking session');
+      notify('Error revoking session');
     }
   };
 

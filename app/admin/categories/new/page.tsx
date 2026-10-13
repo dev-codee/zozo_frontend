@@ -1,5 +1,7 @@
 "use client";
 
+import { notify, mutationError } from "@/app/lib/notifications";
+
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Cookies from 'js-cookie';
@@ -20,9 +22,11 @@ export default function NewCategoryPage() {
         },
         body: JSON.stringify(formData)
       });
-      if (res.ok) router.push('/admin/categories');
+      if (res.ok) { notify("Category saved successfully.", "success"); router.push('/admin/categories'); }
+      else throw new Error(await mutationError(res, "save this category"));
     } catch (error) {
       console.error(error);
+      notify(error instanceof Error ? error.message : "Unable to complete this action. Check your connection and try again.", "error");
     }
   };
 

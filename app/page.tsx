@@ -1,3 +1,4 @@
+import { cleanMetadata } from "@/app/lib/seo";
 import type { Metadata } from "next";
 import Navbar from "./components/Navbar";
 import HeroSection from "./components/HeroSection";
@@ -13,18 +14,18 @@ import AdSlot from "./components/AdSlot";
 
 export const revalidate = 300; // Cache and revalidate page every 5 minutes
 
-export const metadata: Metadata = {
+export const metadata: Metadata = cleanMetadata({
   title: "Compare Mobile Phone & Earbuds Prices",
   description: "Compare latest mobile phone and wireless earbuds prices across all top retailers. Find the best deals on Samsung, Apple, Xiaomi, Anker, and more.",
   alternates: {
-    canonical: "https://zozo.pk",
+    canonical: "https://mobilerates.info",
   },
   openGraph: {
     title: "Compare Mobile Phone & Earbuds Prices",
     description: "Compare latest mobile phone and wireless earbuds prices across all top retailers.",
-    url: "https://zozo.pk",
+    url: "https://mobilerates.info",
   },
-};
+});
 
 export default async function Home() {
   // Fetch home data, comparisons, and trending earbuds in parallel

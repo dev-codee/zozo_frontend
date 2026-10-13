@@ -1,3 +1,4 @@
+import { cleanMetadata } from "@/app/lib/seo";
 import { Metadata } from "next";
 import { getPhones, getComparisonData, trackComparison, getPopularComparisons } from "@/app/lib/api";
 import Navbar from "@/app/components/Navbar";
@@ -5,7 +6,7 @@ import Footer from "@/app/components/Footer";
 import Breadcrumb from "@/app/components/Breadcrumb";
 import CompareClient from "@/app/components/CompareClient";
 import PopularComparisons from "@/app/components/PopularComparisons";
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 
 export const revalidate = 60; // ISR validation time
 
@@ -17,7 +18,7 @@ function parseCompareSlugs(slugParam: string): [string, string] | null {
     if (parts.length >= 2) {
       const slug1 = parts[0]?.trim();
       const slug2 = parts.slice(1).join("-vs-")?.trim();
-      if (slug1 && slug2) {
+      if (slug1 && slug2 && slug1 !== slug2) {
         return [slug1, slug2];
       }
     }
@@ -41,12 +42,13 @@ export async function generateMetadata({
       if (comparisonPhones && comparisonPhones.length === 2) {
         const title = `${comparisonPhones[0].name} vs ${comparisonPhones[1].name} — Price & Specs Comparison`;
         const description = `Compare ${comparisonPhones[0].name} vs ${comparisonPhones[1].name} prices in Pakistan, full specifications, camera, battery, display, and features.`;
-        const canonicalUrl = `https://zozo.pk/compare/${parsedSlugs[0]}-vs-${parsedSlugs[1]}`;
+        const canonicalUrl = `https://mobilerates.info/compare/${[...parsedSlugs].sort()[0]}-vs-${[...parsedSlugs].sort()[1]}`;
         const img1 = comparisonPhones[0].images?.[0]?.url;
 
-        return {
+        return cleanMetadata({
           title,
           description,
+          robots: { index: comparisonPhones.every(product => product.seo?.is_indexable !== false), follow: true },
           alternates: {
             canonical: canonicalUrl,
           },
@@ -62,20 +64,21 @@ export async function generateMetadata({
             description,
             images: img1 ? [img1] : [],
           },
-        };
+        });
       }
     }
   } catch (err) {
     console.error("Metadata generation error:", err);
   }
 
-  return {
+  return cleanMetadata({
+    robots: { index: false, follow: true },
     title: "Phone Comparison — Compare Mobile Prices in Pakistan",
     description: "Compare smartphone prices and specifications side by side in Pakistan.",
     alternates: {
-      canonical: "https://zozo.pk/compare",
+      canonical: "https://mobilerates.info/compare",
     },
-  };
+  });
 }
 
 export default async function CompareCanonicalPage({
@@ -92,6 +95,8 @@ export default async function CompareCanonicalPage({
 
   const [slug1, slug2] = parsedSlugs;
   const selectedSlugs = [slug1, slug2];
+  const ordered = [...selectedSlugs].sort();
+  if (selectedSlugs.join("-vs-") !== ordered.join("-vs-")) permanentRedirect(`/compare/${ordered.join("-vs-")}`);
 
   // Fetch data safely with Promise.allSettled
   const [comparisonPhonesResult, allPhonesResult, popularComparisonsResult] = await Promise.allSettled([
@@ -112,6 +117,9 @@ export default async function CompareCanonicalPage({
     popularComparisonsResult.status === "fulfilled" && Array.isArray(popularComparisonsResult.value)
       ? popularComparisonsResult.value
       : [];
+
+  if (comparisonPhonesResult.status === "rejected") throw comparisonPhonesResult.reason;
+  if (comparisonPhones.length !== 2) notFound();
 
   // Track this comparison
   if (comparisonPhones.length >= 2) {

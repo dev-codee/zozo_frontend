@@ -1,3 +1,6 @@
+import { serializeJsonLd } from "@/app/lib/schema";
+import { rebrandSiteContent } from "@/app/lib/branding";
+import { cleanMetadata } from "@/app/lib/seo";
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import Navbar from '@/app/components/Navbar';
@@ -7,18 +10,23 @@ import { getApiBaseUrl } from '@/app/lib/api';
 import { generateCollectionPageSchema } from '@/app/lib/schema';
 import AppIcon from '@/app/components/AppIcon';
 
-export const metadata: Metadata = {
+export const metadata: Metadata = cleanMetadata({
   title: 'Tech News & Smartphone Reviews',
   description: 'Latest mobile phone news, smartphone reviews, leaks, buying guides, and comparisons in Pakistan.',
   alternates: {
-    canonical: 'https://zozo.pk/news',
+    canonical: 'https://mobilerates.info/news',
   },
   openGraph: {
     title: 'Tech News & Smartphone Reviews',
     description: 'Latest mobile phone news, reviews, and comparisons in Pakistan.',
-    url: 'https://zozo.pk/news',
+    url: 'https://mobilerates.info/news',
   },
-};
+});
+
+interface NewsPreview {
+  _id: string; slug: string; title: string; excerpt?: string; createdAt: string;
+  status: string; featured?: boolean; categories?: { _id: string; name: string }[];
+}
 
 async function getBlogs() {
   try {
@@ -26,26 +34,28 @@ async function getBlogs() {
     const res = await fetch(`${API_BASE_URL}/blogs?status=PUBLISHED`, {
       next: { revalidate: 60 }
     });
-    if (!res.ok) return [];
+    if (!res.ok) throw new Error(`News fetch failed: ${res.status}`);
     const data = await res.json();
-    return data.data || [];
-  } catch (e) {
-    return [];
+    const blogs = Array.isArray(data) ? data : data.data;
+    if (!Array.isArray(blogs)) throw new Error("Invalid news response");
+    return (blogs as NewsPreview[]).filter(blog => blog.status === "PUBLISHED");
+  } catch (error) {
+    throw error;
   }
 }
 
 export default async function NewsPage() {
   const blogs = await getBlogs();
 
-  const featuredBlogs = blogs.filter((b: any) => b.isFeatured);
-  const regularBlogs = blogs.filter((b: any) => !b.isFeatured);
+  const featuredBlogs = blogs.filter((b) => b.featured);
+  const regularBlogs = blogs.filter((b) => b._id !== featuredBlogs[0]?._id);
 
   return (
     <div className="min-h-screen bg-surface-white flex flex-col font-sans">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify(generateCollectionPageSchema("Tech News & Reviews", "Latest tech news, reviews and mobile updates", "/news")),
+          __html: serializeJsonLd(generateCollectionPageSchema("Tech News & Reviews", "Latest tech news, reviews and mobile updates", "/news")),
         }}
       />
       <Navbar />
@@ -69,16 +79,16 @@ export default async function NewsPage() {
                   </div>
                   <div className="p-6 flex flex-col justify-center">
                     <div className="flex gap-2 mb-3">
-                      {featuredBlogs[0].categories.map((c: any) => (
+                      {(featuredBlogs[0].categories || []).map((c) => (
                         <span key={c._id} className="text-xs font-bold uppercase tracking-wider text-primary">{c.name}</span>
                       ))}
                     </div>
                     <h3 className="text-xl font-bold text-on-surface mb-3 leading-snug">
                       <Link href={`/news/${featuredBlogs[0].slug}`} className="hover:text-primary transition-colors">
-                        {featuredBlogs[0].title}
+                        {rebrandSiteContent(featuredBlogs[0].title || "")}
                       </Link>
                     </h3>
-                    <p className="text-text-muted mb-4 line-clamp-3">{featuredBlogs[0].excerpt}</p>
+                    <p className="text-text-muted mb-4 line-clamp-3">{rebrandSiteContent(featuredBlogs[0].excerpt || "")}</p>
                     <div className="mt-auto flex items-center text-sm text-text-muted">
                       <span>{new Date(featuredBlogs[0].createdAt).toLocaleDateString()}</span>
                     </div>
@@ -93,23 +103,23 @@ export default async function NewsPage() {
                 <p className="text-text-muted">No articles found.</p>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {regularBlogs.map((blog: any) => (
+                  {regularBlogs.map((blog) => (
                     <div key={blog._id} className="bg-surface-container-lowest border border-border-subtle rounded-xl overflow-hidden flex flex-col hover:shadow-sm transition-shadow">
                       <div className="bg-surface-container-low h-48 flex items-center justify-center text-text-muted">
                         <AppIcon name="article" size={36} />
                       </div>
                       <div className="p-5 flex flex-col flex-1">
                         <div className="flex gap-2 mb-2">
-                          {blog.categories.map((c: any) => (
+                          {(blog.categories || []).map((c) => (
                             <span key={c._id} className="text-[10px] font-bold uppercase tracking-wider text-primary">{c.name}</span>
                           ))}
                         </div>
                         <h3 className="text-base md:text-lg font-bold text-on-surface mb-2 line-clamp-2 leading-snug">
                           <Link href={`/news/${blog.slug}`} className="hover:text-primary transition-colors">
-                            {blog.title}
+                            {rebrandSiteContent(blog.title || "")}
                           </Link>
                         </h3>
-                        <p className="text-text-muted text-sm line-clamp-2 mb-4 flex-1">{blog.excerpt}</p>
+                        <p className="text-text-muted text-sm line-clamp-2 mb-4 flex-1">{rebrandSiteContent(blog.excerpt || "")}</p>
                         <div className="mt-auto text-xs text-text-muted">
                           {new Date(blog.createdAt).toLocaleDateString()}
                         </div>

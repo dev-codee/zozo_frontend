@@ -1,4 +1,6 @@
 "use client";
+import { notify, mutationError } from "@/app/lib/notifications";
+
 
 import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -49,15 +51,14 @@ function AddEarbudContent() {
         body: JSON.stringify(payload)
       });
       if (response.ok) {
-        alert("Wireless Earbud created successfully!");
+        notify("Wireless Earbud created successfully!");
         router.push('/admin/earbuds');
       } else {
-        const errorData = await response.json();
-        alert(`Failed to create earbud: ${errorData.message}`);
+        notify(await mutationError(response, "save this earbud"), "error");
       }
     } catch (error) {
       console.error(error);
-      alert("An error occurred while creating earbud");
+      notify("An error occurred while creating earbud");
     }
   };
 

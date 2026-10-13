@@ -1,3 +1,6 @@
+import { serializeJsonLd } from "@/app/lib/schema";
+import { rebrandSiteContent } from "@/app/lib/branding";
+import { cleanMetadata } from "@/app/lib/seo";
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Navbar from '@/app/components/Navbar';
@@ -11,24 +14,25 @@ async function getPage(slug: string) {
     const res = await fetch(`${getApiBaseUrl()}/pages/slug/${slug}`, {
       next: { revalidate: 60 }
     });
-    if (!res.ok) return null;
+    if (res.status === 404) return null;
+    if (!res.ok) throw new Error(`pages fetch failed: ${res.status}`);
     return await res.json();
   } catch (error) {
     console.error('Failed to fetch page', error);
-    return null;
+    throw error;
   }
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const resolvedParams = await params;
   const page = await getPage(resolvedParams.slug);
-  if (!page) return { title: 'Page Not Found', robots: { index: false, follow: false } };
+  if (!page || page.status !== "PUBLISHED") return cleanMetadata({ title: 'Page Not Found', robots: { index: false, follow: false } });
   
-  const canonicalUrl = `https://zozo.pk/pages/${resolvedParams.slug}`;
+  const canonicalUrl = `https://mobilerates.info/pages/${resolvedParams.slug}`;
   const title = page.title;
   const description = page.excerpt || page.title;
 
-  return {
+  return cleanMetadata({
     title,
     description,
     alternates: {
@@ -39,7 +43,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       description,
       url: canonicalUrl,
     },
-  };
+  });
 }
 
 export default async function StaticPagePage({ params }: { params: Promise<{ slug: string }> }) {
@@ -55,7 +59,7 @@ export default async function StaticPagePage({ params }: { params: Promise<{ slu
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify(generateWebPageSchema(page.title, page.excerpt || page.title, `/pages/${page.slug}`)),
+          __html: serializeJsonLd(generateWebPageSchema(page.title, page.excerpt || page.title, `/pages/${page.slug}`)),
         }}
       />
       <Navbar />
@@ -64,12 +68,12 @@ export default async function StaticPagePage({ params }: { params: Promise<{ slu
         
         <main className="flex-1 bg-surface-white p-8 md:p-12 min-h-[calc(100vh-64px)]">
           <div className="mb-8 max-w-4xl border-b border-border-subtle pb-6">
-        <h1 className="text-2xl md:text-3xl font-bold text-on-surface leading-tight mb-4">{page.title}</h1>
+        <h1 className="text-2xl md:text-3xl font-bold text-on-surface leading-tight mb-4">{rebrandSiteContent(page.title)}</h1>
       </div>
 
       <div 
         className="prose prose-sm md:prose-base max-w-4xl text-on-surface prose-headings:text-on-surface prose-a:text-primary hover:prose-a:text-primary-hover"
-        dangerouslySetInnerHTML={{ __html: page.body }}
+        dangerouslySetInnerHTML={{ __html: rebrandSiteContent(page.body) }}
       />
       </main>
       </div>

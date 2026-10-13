@@ -145,7 +145,7 @@ export default function SidebarFilter({
       filterKeys[0] === "brand" &&
       params.get("brand")?.split(",").length === 1
     ) {
-      router.push(`/${params.get("brand")}-phone-price`);
+      router.push(`/brands/${params.get("brand")}`);
       return;
     }
 

@@ -1,4 +1,6 @@
 "use client";
+import { notify } from "@/app/lib/notifications";
+
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
@@ -13,7 +15,7 @@ export default function NewPagePage() {
   const [parentPages, setParentPages] = useState<any[]>([]);
 
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/pages`)
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/pages/admin`, { headers: { Authorization: `Bearer ${Cookies.get("admin_token")}` } })
       .then(res => res.json())
       .then(data => {
         if (Array.isArray(data)) {
@@ -40,15 +42,15 @@ export default function NewPagePage() {
         },
         body: JSON.stringify(payload)
       });
-      if (res.ok) router.push('/admin/pages');
+      if (res.ok) { notify("Page saved successfully.", "success"); router.push('/admin/pages'); }
       else {
         const errorData = await res.json();
         console.error('API Error:', errorData);
-        alert(`Error: ${errorData.message}`);
+        notify(`Error: ${errorData.message}`);
       }
     } catch (error) {
       console.error(error);
-      alert('Failed to save page.');
+      notify('Failed to save page.');
     }
   };
 

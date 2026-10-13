@@ -1,4 +1,6 @@
 "use client";
+import { notify } from "@/app/lib/notifications";
+
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
@@ -250,7 +252,7 @@ export default function AdminEarbudForm({ initialData, onSubmit, isEditing = fal
   // AI Fill specs
   const handleAIFill = async () => {
     if (!formData.name) {
-      alert("Please enter an earbud name first (e.g. 'Sony WF-1000XM5')");
+      notify("Please enter an earbud name first (e.g. 'Sony WF-1000XM5')");
       return;
     }
     setIsAIFilling(true);
@@ -319,13 +321,13 @@ export default function AdminEarbudForm({ initialData, onSubmit, isEditing = fal
           }
           return merged;
         });
-        alert("AI successfully researched and populated earbud specs!");
+        notify("AI successfully researched and populated earbud specs!");
       } else {
-        alert(`Failed to auto-fill: ${data.message || 'Unknown error'}`);
+        notify(`Failed to auto-fill: ${data.message || 'Unknown error'}`);
       }
     } catch (e: any) {
       console.error(e);
-      alert(`Error during AI auto-fill: ${e.message}`);
+      notify(`Error during AI auto-fill: ${e.message}`);
     } finally {
       setIsAIFilling(false);
     }
@@ -334,7 +336,7 @@ export default function AdminEarbudForm({ initialData, onSubmit, isEditing = fal
   // AI Fill SEO
   const handleAIFillSEO = async () => {
     if (!formData.name) {
-      alert("Please enter an earbud name first.");
+      notify("Please enter an earbud name first.");
       return;
     }
     setIsAIFillingSEO(true);
@@ -367,13 +369,13 @@ export default function AdminEarbudForm({ initialData, onSubmit, isEditing = fal
             ai_keywords: aiSEO.ai_keywords || prev.seo.ai_keywords,
           }
         }));
-        alert("AI successfully generated SEO content!");
+        notify("AI successfully generated SEO content!");
       } else {
-        alert(`Failed to auto-fill SEO: ${data.message}`);
+        notify(`Failed to auto-fill SEO: ${data.message}`);
       }
     } catch (e: any) {
       console.error(e);
-      alert(`Error during AI SEO generation: ${e.message}`);
+      notify(`Error during AI SEO generation: ${e.message}`);
     } finally {
       setIsAIFillingSEO(false);
     }
@@ -382,7 +384,7 @@ export default function AdminEarbudForm({ initialData, onSubmit, isEditing = fal
   // Add retailer price
   const handleAddPrice = () => {
     if (!newPrice.retailer_name || !newPrice.price_pkr) {
-      alert("Please enter Retailer Name and Price");
+      notify("Please enter Retailer Name and Price");
       return;
     }
     const slug = newPrice.retailer_slug || newPrice.retailer_name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
@@ -438,11 +440,11 @@ export default function AdminEarbudForm({ initialData, onSubmit, isEditing = fal
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.name || !formData.name.trim()) {
-      alert("Earbud Name is required");
+      notify("Earbud Name is required");
       return;
     }
     if (!formData.brand_slug) {
-      alert("Brand is required");
+      notify("Brand is required");
       return;
     }
 
@@ -540,7 +542,7 @@ export default function AdminEarbudForm({ initialData, onSubmit, isEditing = fal
       await onSubmit(payload);
     } catch (err: any) {
       console.error(err);
-      alert(`Error submitting form: ${err.message}`);
+      notify(`Error submitting form: ${err.message}`);
     } finally {
       setIsSubmitting(false);
     }
@@ -1595,7 +1597,7 @@ export default function AdminEarbudForm({ initialData, onSubmit, isEditing = fal
                   <label className="block text-xs font-semibold text-gray-700 mb-1">Canonical URL</label>
                   <input
                     type="url"
-                    placeholder="https://zozo.pk/earbuds/sony-wf-1000xm5"
+                    placeholder="https://mobilerates.info/sony-wf-1000xm5"
                     value={formData.seo?.canonical_url || ''}
                     onChange={e => setSEO('canonical_url', e.target.value)}
                     className="w-full px-3 py-2 border rounded-md text-xs focus:outline-none focus:border-amber-500"

@@ -1,4 +1,6 @@
 "use client";
+import { notify } from "@/app/lib/notifications";
+
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
@@ -54,11 +56,10 @@ export default function VehiclesListPage() {
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/vehicles/${id}/approve`, {
         method: 'POST', headers: { 'Authorization': `Bearer ${Cookies.get('admin_token')}` }
       });
-      if (res.ok) fetchVehicles(currentPage, searchQuery, category);
-      else alert(`Failed to approve: ${(await res.json()).message}`);
-    } catch (error) { console.error(error); }
+      if (res.ok) { notify("Vehicle approved successfully.", "success"); fetchVehicles(currentPage, searchQuery, category); }
+      else notify(`Failed to approve: ${(await res.json()).message}`);
+    } catch (error) { console.error(error); notify("Unable to complete this action. Check your connection and try again.", "error"); }
   };
-
   const handleReject = async (id: string) => {
     const note = prompt("Enter rejection reason/note:");
     if (note === null) return;
@@ -68,25 +69,23 @@ export default function VehiclesListPage() {
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${Cookies.get('admin_token')}` },
         body: JSON.stringify({ note })
       });
-      if (res.ok) fetchVehicles(currentPage, searchQuery, category);
-      else alert(`Failed to reject: ${(await res.json()).message}`);
-    } catch (error) { console.error(error); }
+      if (res.ok) { notify("Vehicle rejected successfully.", "success"); fetchVehicles(currentPage, searchQuery, category); }
+      else notify(`Failed to reject: ${(await res.json()).message}`);
+    } catch (error) { console.error(error); notify("Unable to complete this action. Check your connection and try again.", "error"); }
   };
-
   const handleDelete = async (id: string, name: string) => {
     if (!window.confirm(`Are you sure you want to delete ${name}?`)) return;
     try {
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/vehicles/${id}`, {
         method: 'DELETE', headers: { 'Authorization': `Bearer ${Cookies.get('admin_token')}` }
       });
-      if (res.ok) setVehicles(prev => prev.filter(v => v._id !== id));
-      else alert(`Failed to delete: ${(await res.json()).message}`);
+      if (res.ok) { notify("Vehicle deleted successfully.", "success"); setVehicles(prev => prev.filter(v => v._id !== id)); }
+      else notify(`Failed to delete: ${(await res.json()).message}`);
     } catch (error) {
       console.error('Failed to delete vehicle', error);
-      alert('An error occurred while deleting the EV');
+      notify('An error occurred while deleting the EV');
     }
   };
-
   return (
     <div className="p-8 max-w-7xl mx-auto pb-24">
       <div className="flex items-center justify-between mb-8">

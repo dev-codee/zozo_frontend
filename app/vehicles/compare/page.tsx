@@ -1,3 +1,4 @@
+import { cleanMetadata } from "@/app/lib/seo";
 import type { Metadata } from "next";
 import {
   getVehicles,
@@ -13,20 +14,20 @@ import Link from "next/link";
 
 export const revalidate = 60;
 
-export const metadata: Metadata = {
+export const metadata: Metadata = cleanMetadata({
   title: "Compare Electric Vehicles Side-by-Side — Prices & Specifications",
   description:
     "Compare electric vehicle prices, range, charging speed, battery, performance, and features side by side in Pakistan.",
   alternates: {
-    canonical: "https://zozo.pk/vehicles/compare",
+    canonical: "https://mobilerates.info/vehicles/compare",
   },
   openGraph: {
     title: "Compare Electric Vehicles Side-by-Side",
     description:
       "Compare EV prices, range, charging speed, battery, and specs side by side in Pakistan.",
-    url: "https://zozo.pk/vehicles/compare",
+    url: "https://mobilerates.info/vehicles/compare",
   },
-};
+});
 
 export default async function VehicleComparePage({
   searchParams,
@@ -48,8 +49,8 @@ export default async function VehicleComparePage({
 
   // Redirect to canonical URL if exactly 2 vehicles are compared
   if (selectedSlugs.length === 2) {
-    const { redirect } = await import("next/navigation");
-    redirect(`/vehicles/compare/${selectedSlugs[0]}-vs-${selectedSlugs[1]}`);
+    const { permanentRedirect } = await import("next/navigation");
+    permanentRedirect(`/vehicles/compare/${[...selectedSlugs].sort().join("-vs-")}`);
   }
 
   const [comparisonResult, allVehiclesResult, popularResult] = await Promise.allSettled([

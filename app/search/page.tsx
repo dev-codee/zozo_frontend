@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { searchProducts, type SearchResultItem, type Phone, type Earbud } from "@/app/lib/api";
 import Navbar from "@/app/components/Navbar";
 import Footer from "@/app/components/Footer";
@@ -5,6 +6,8 @@ import PhoneCard from "@/app/components/PhoneCard";
 import EarbudCard from "@/app/components/EarbudCard";
 import Breadcrumb from "@/app/components/Breadcrumb";
 import AppIcon from "@/app/components/AppIcon";
+
+export const metadata: Metadata = { title: "Search Results", robots: { index: false, follow: true } };
 
 export default async function SearchPage({
   searchParams,

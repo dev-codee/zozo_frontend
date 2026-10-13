@@ -1,4 +1,6 @@
 "use client";
+import { notify, mutationError } from "@/app/lib/notifications";
+
 
 import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -46,15 +48,14 @@ function AddVehicleContent() {
         body: JSON.stringify(payload)
       });
       if (response.ok) {
-        alert("EV created successfully!");
+        notify("EV created successfully!");
         router.push('/admin/vehicles');
       } else {
-        const errorData = await response.json();
-        alert(`Failed to create EV: ${errorData.message}`);
+        notify(await mutationError(response, "save this vehicle"), "error");
       }
     } catch (error) {
       console.error(error);
-      alert("An error occurred");
+      notify("Unable to save this vehicle. Check your connection and try again.", "error");
     }
   };
 

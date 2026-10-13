@@ -1,26 +1,27 @@
+import { cleanMetadata } from "@/app/lib/seo";
 import type { Metadata } from "next";
 import Link from "next/link";
 import Navbar from "@/app/components/Navbar";
 import Footer from "@/app/components/Footer";
 import Breadcrumb from "@/app/components/Breadcrumb";
 import AppIcon from "@/app/components/AppIcon";
-import { getBrands, getHomeData, type Brand, type Phone } from "@/app/lib/api";
+import { getBrands, getHomeData, getPages, type Brand, type Phone } from "@/app/lib/api";
 
 export const revalidate = 3600;
 
-export const metadata: Metadata = {
+export const metadata: Metadata = cleanMetadata({
   title: "HTML Sitemap — All Mobile Phones, Brands & Prices",
   description:
     "Browse the full sitemap — mobile phones, popular brands, price ranges, comparisons and more, all in one place.",
   alternates: {
-    canonical: "https://zozo.pk/site-map",
+    canonical: "https://mobilerates.info/site-map",
   },
   openGraph: {
     title: "HTML Sitemap",
     description: "Browse all mobile phone pages, brands, and price ranges.",
-    url: "https://zozo.pk/site-map",
+    url: "https://mobilerates.info/site-map",
   },
-};
+});
 
 type LinkItem = { label: string; href: string };
 
@@ -53,7 +54,7 @@ function LinkGrid({ links }: { links: LinkItem[] }) {
 }
 
 export default async function SiteMapPage() {
-  const [brands, homeData] = await Promise.all([getBrands(), getHomeData()]);
+  const [brands, homeData, pages] = await Promise.all([getBrands("phone"), getHomeData(), getPages()]);
 
   const activeBrands = (brands ?? []).filter(
     (b: Brand) => (b.total_phones ?? b.phone_count ?? 0) > 0
@@ -62,11 +63,8 @@ export default async function SiteMapPage() {
   const topMobiles: Phone[] = (homeData?.trending ?? []).slice(0, 10);
 
   const generalInfo: LinkItem[] = [
-    { label: "About Us", href: "/pages/about" },
-    { label: "Contact Us", href: "/pages/contact" },
     { label: "News & Reviews", href: "/news" },
-    { label: "Privacy Policy", href: "/pages/privacy" },
-    { label: "Terms & Conditions", href: "/pages/terms" },
+    ...pages.filter(page => page.status === 'PUBLISHED').map(page => ({ label: page.title, href: `/pages/${page.slug}` })),
   ];
 
   const mobilePhones: LinkItem[] = [
@@ -85,15 +83,11 @@ export default async function SiteMapPage() {
     { label: "Mobiles under 150,000", href: "/phones?max_price=150000" },
   ];
 
-  const byFeature: LinkItem[] = [
-    { label: "Best Processor Phones", href: "/phones?feature=processor" },
-    { label: "Best RAM Phones", href: "/phones?feature=ram" },
-    { label: "Best Camera Phones", href: "/phones?feature=camera" },
-  ];
+
 
   const brandLinks: LinkItem[] = activeBrands.map((b: Brand) => ({
     label: `${b.name} Mobiles`,
-    href: `/${b.slug}-phone-price`,
+    href: `/brands/${b.slug}`,
   }));
 
   return (
@@ -104,16 +98,16 @@ export default async function SiteMapPage() {
           <Breadcrumb items={[{ label: "Sitemap" }]} />
 
           <h1 className="text-2xl md:text-3xl font-bold text-text-main mt-4 mb-2">
-            Zozo Sitemap
+            Mobile Rates Sitemap
           </h1>
           <p className="text-sm text-text-muted mb-6">
-            Everything on Zozo in one place — phones, brands, price ranges and comparisons.
+            Everything on Mobile Rates in one place — phones, brands, price ranges and comparisons.
           </p>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
             {/* Main column */}
             <div className="lg:col-span-2 bg-surface-white border border-border-subtle rounded-xl p-5 md:p-6 shadow-sm">
-              <SectionHeading>General Info On Zozo</SectionHeading>
+              <SectionHeading>General Info On Mobile Rates</SectionHeading>
               <LinkGrid links={generalInfo} />
 
               <SectionHeading>Mobile Phones</SectionHeading>
@@ -122,8 +116,6 @@ export default async function SiteMapPage() {
               <SectionHeading>Mobiles By Price</SectionHeading>
               <LinkGrid links={byPrice} />
 
-              <SectionHeading>Mobiles By Feature</SectionHeading>
-              <LinkGrid links={byFeature} />
 
               <SectionHeading>Popular Mobile Brands</SectionHeading>
               {brandLinks.length > 0 ? (
@@ -133,7 +125,7 @@ export default async function SiteMapPage() {
               )}
 
               <div className="mt-6 pt-4 border-t border-border-subtle text-xs text-text-muted">
-                <span className="font-bold text-text-main">Zozo</span> › Sitemap
+                <span className="font-bold text-text-main">Mobile Rates</span> › Sitemap
               </div>
             </div>
 
@@ -157,7 +149,7 @@ export default async function SiteMapPage() {
                       return (
                         <li key={phone._id}>
                           <Link
-                            href={`/${phone.slug}-price`}
+                            href={`/${phone.slug}`}
                             className="flex items-center gap-3 py-2.5 group"
                           >
                             <div className="w-12 h-12 flex-shrink-0 bg-surface-container-low rounded-lg flex items-center justify-center overflow-hidden">

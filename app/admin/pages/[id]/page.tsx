@@ -1,4 +1,6 @@
 "use client";
+import { notify, mutationError } from "@/app/lib/notifications";
+
 
 import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
@@ -17,7 +19,7 @@ export default function EditPagePage() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/pages`)
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/pages/admin`, { headers: { Authorization: `Bearer ${Cookies.get("admin_token")}` } })
       .then(res => res.json())
       .then(data => {
         if (Array.isArray(data)) {
@@ -30,7 +32,8 @@ export default function EditPagePage() {
 
   const fetchPage = async () => {
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/pages/${id}`);
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/pages/${id}`, { headers: { Authorization: `Bearer ${Cookies.get("admin_token")}` } });
+      if (!res.ok) throw new Error(await mutationError(res, "load these records"));
       if (res.ok) {
         const data = await res.json();
         setFormData({
@@ -45,6 +48,7 @@ export default function EditPagePage() {
       }
     } catch (error) {
       console.error(error);
+      notify(error instanceof Error ? error.message : "Unable to complete this action. Check your connection and try again.", "error");
     } finally {
       setIsLoading(false);
     }
@@ -67,15 +71,15 @@ export default function EditPagePage() {
         },
         body: JSON.stringify(payload)
       });
-      if (res.ok) router.push('/admin/pages');
+      if (res.ok) { notify("Page saved successfully.", "success"); router.push('/admin/pages'); }
       else {
         const errorData = await res.json();
         console.error('API Error:', errorData);
-        alert(`Error: ${errorData.message}`);
+        notify(`Error: ${errorData.message}`);
       }
     } catch (error) {
       console.error(error);
-      alert('Failed to update page.');
+      notify('Failed to update page.');
     }
   };
 

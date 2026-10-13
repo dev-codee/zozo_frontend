@@ -1,5 +1,7 @@
 "use client";
 
+import { notify, mutationError } from "@/app/lib/notifications";
+
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { PlusCircle, Trash2, Pencil } from 'lucide-react';
@@ -39,9 +41,11 @@ export default function AdsListPage() {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` }
       });
-      if (res.ok) fetchAds();
+      if (res.ok) { notify("Advertisement deleted successfully.", "success"); fetchAds(); }
+      else throw new Error(await mutationError(res, "delete this advertisement"));
     } catch (error) {
       console.error(error);
+      notify(error instanceof Error ? error.message : "Unable to complete this action. Please try again.", "error");
     }
   };
 

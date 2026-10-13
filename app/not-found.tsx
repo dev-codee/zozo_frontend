@@ -1,17 +1,19 @@
+import { cleanMetadata } from "@/app/lib/seo";
 import Link from 'next/link';
-import Navbar from '@/app/components/Navbar';
+import NavbarClient from '@/app/components/NavbarClient';
 import Footer from '@/app/components/Footer';
 import AppIcon from '@/app/components/AppIcon';
 
-export const metadata = {
+export const metadata = cleanMetadata({
   title: 'Page Not Found',
+  robots: { index: false, follow: true },
   description: 'The page you are looking for could not be found.',
-};
+});
 
 export default function NotFound() {
   return (
     <div className="flex flex-col min-h-screen bg-surface">
-      <Navbar />
+      <NavbarClient dynamicPages={[]} popularBrands={[]} />
       
       <main className="flex-grow flex items-center justify-center px-4 py-16 md:py-24">
         <div className="max-w-2xl w-full flex flex-col items-center text-center space-y-6">
@@ -24,11 +26,11 @@ export default function NotFound() {
           </div>
           
           <h1 className="font-headline-lg text-3xl md:text-5xl font-black text-text-main tracking-tight">
-            Oops! Page Not Found
+            404 — Page not found
           </h1>
           
           <p className="font-body-lg text-text-muted text-base md:text-lg max-w-md mx-auto leading-relaxed">
-            We couldn't find the page you're looking for. It might have been moved, deleted, or perhaps the URL is incorrect.
+            This page may have moved or been removed, or the address may be incorrect. Check the URL or use the links below to find a product.
           </p>
           
           {/* Actions */}
@@ -61,7 +63,7 @@ export default function NotFound() {
                 <Link href="/phones" className="text-text-muted hover:text-primary hover:underline transition-colors p-2 text-center rounded-lg hover:bg-primary/5 font-medium">All Mobile Phones</Link>
                 <Link href="/compare" className="text-text-muted hover:text-primary hover:underline transition-colors p-2 text-center rounded-lg hover:bg-primary/5 font-medium">Compare Phones</Link>
                 <Link href="/news" className="text-text-muted hover:text-primary hover:underline transition-colors p-2 text-center rounded-lg hover:bg-primary/5 font-medium">Tech News</Link>
-                <Link href="/evs" className="text-text-muted hover:text-primary hover:underline transition-colors p-2 text-center rounded-lg hover:bg-primary/5 font-medium">Electric Vehicles</Link>
+                <Link href="/vehicles" className="text-text-muted hover:text-primary hover:underline transition-colors p-2 text-center rounded-lg hover:bg-primary/5 font-medium">Electric Vehicles</Link>
               </div>
             </div>
           </div>

@@ -96,7 +96,7 @@ export default function MobileFinderSection() {
               </div>
 
               {/* Dual range slider */}
-              <div className="zozo-dual-range relative h-5 mb-5">
+              <div className="mobile-rates-dual-range relative h-5 mb-5">
                 <div className="absolute top-1/2 -translate-y-1/2 w-full h-1.5 rounded-full bg-border-subtle" />
                 <div
                   className="absolute top-1/2 -translate-y-1/2 h-1.5 rounded-full bg-price-green"
@@ -195,7 +195,7 @@ export default function MobileFinderSection() {
 
       {/* Slider thumb styling (scoped) */}
       <style>{`
-        .zozo-dual-range input[type="range"] {
+        .mobile-rates-dual-range input[type="range"] {
           position: absolute;
           top: 0;
           left: 0;
@@ -207,7 +207,7 @@ export default function MobileFinderSection() {
           appearance: none;
           pointer-events: none;
         }
-        .zozo-dual-range input[type="range"]::-webkit-slider-thumb {
+        .mobile-rates-dual-range input[type="range"]::-webkit-slider-thumb {
           -webkit-appearance: none;
           appearance: none;
           pointer-events: auto;
@@ -219,7 +219,7 @@ export default function MobileFinderSection() {
           box-shadow: 0 1px 3px rgba(0,0,0,0.2);
           cursor: pointer;
         }
-        .zozo-dual-range input[type="range"]::-moz-range-thumb {
+        .mobile-rates-dual-range input[type="range"]::-moz-range-thumb {
           pointer-events: auto;
           height: 18px;
           width: 18px;
@@ -229,10 +229,10 @@ export default function MobileFinderSection() {
           box-shadow: 0 1px 3px rgba(0,0,0,0.2);
           cursor: pointer;
         }
-        .zozo-dual-range input[type="range"]::-webkit-slider-runnable-track {
+        .mobile-rates-dual-range input[type="range"]::-webkit-slider-runnable-track {
           background: transparent;
         }
-        .zozo-dual-range input[type="range"]::-moz-range-track {
+        .mobile-rates-dual-range input[type="range"]::-moz-range-track {
           background: transparent;
         }
       `}</style>

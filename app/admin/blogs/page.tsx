@@ -1,5 +1,7 @@
 "use client";
 
+import { notify, mutationError } from "@/app/lib/notifications";
+
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
@@ -18,13 +20,15 @@ export default function BlogsListPage() {
   const fetchBlogs = async () => {
     setIsLoading(true);
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/blogs`);
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/blogs/admin`, { headers: { Authorization: `Bearer ${Cookies.get("admin_token")}` } });
+      if (!res.ok) throw new Error(await mutationError(res, "load these records"));
       const data = await res.json();
       if (res.ok) {
         setBlogs(data);
       }
     } catch (error) {
       console.error('Failed to fetch blogs', error);
+      notify(error instanceof Error ? error.message : "Unable to load the list. Check your connection and try again.", "error");
     } finally {
       setIsLoading(false);
     }
@@ -38,9 +42,11 @@ export default function BlogsListPage() {
         method: 'DELETE',
         headers: { 'Authorization': `Bearer ${token}` }
       });
-      if (res.ok) fetchBlogs();
+      if (res.ok) { notify("Article deleted successfully.", "success"); fetchBlogs(); }
+      else throw new Error(await mutationError(res, "delete this article"));
     } catch (error) {
       console.error(error);
+      notify(error instanceof Error ? error.message : "Unable to complete this action. Check your connection and try again.", "error");
     }
   };
 

@@ -1,4 +1,6 @@
 "use client";
+import { notify } from "@/app/lib/notifications";
+
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
@@ -168,11 +170,11 @@ export default function AdminVehicleForm({ initialData, onSubmit, isEditing = fa
         setNewBrandName('');
         setShowAddBrand(false);
       } else {
-        alert(`Failed to add brand: ${data.message}`);
+        notify(`Failed to add brand: ${data.message}`);
       }
     } catch (e) {
       console.error(e);
-      alert('Error adding brand');
+      notify('Error adding brand');
     } finally {
       setAddingBrand(false);
     }
@@ -203,7 +205,7 @@ export default function AdminVehicleForm({ initialData, onSubmit, isEditing = fa
 
   // ── AI auto-fill (specs) ──────────────────────────────────────────────────────
   const handleAIFill = async () => {
-    if (!formData.name) { alert("Please enter a Vehicle Name first (e.g. 'BYD Seal Performance AWD')"); return; }
+    if (!formData.name) { notify("Please enter a Vehicle Name first (e.g. 'BYD Seal Performance AWD')"); return; }
     setIsAIFilling(true);
     try {
       const token = Cookies.get('admin_token');
@@ -240,13 +242,13 @@ export default function AdminVehicleForm({ initialData, onSubmit, isEditing = fa
           if (ai.description) next.description = ai.description;
           return next;
         });
-        alert("AI researched and populated the EV fields. Review each tab and fill any values the AI safely left blank.");
+        notify("AI researched and populated the EV fields. Review each tab and fill any values the AI safely left blank.");
       } else {
-        alert("Failed to auto-fill: " + (data.message || 'Unknown error'));
+        notify("Failed to auto-fill: " + (data.message || 'Unknown error'));
       }
     } catch (e) {
       console.error(e);
-      alert("Error occurred during AI auto-fill.");
+      notify("Error occurred during AI auto-fill.");
     } finally {
       setIsAIFilling(false);
     }
@@ -254,7 +256,7 @@ export default function AdminVehicleForm({ initialData, onSubmit, isEditing = fa
 
   // ── AI auto-fill (SEO) ────────────────────────────────────────────────────────
   const handleAIFillSEO = async () => {
-    if (!formData.name) { alert("Please enter a Vehicle Name first"); return; }
+    if (!formData.name) { notify("Please enter a Vehicle Name first"); return; }
     setIsAIFillingSEO(true);
     try {
       const token = Cookies.get('admin_token');
@@ -266,13 +268,13 @@ export default function AdminVehicleForm({ initialData, onSubmit, isEditing = fa
       const data = await res.json();
       if (res.ok && data.data) {
         setFormData((prev: any) => ({ ...prev, seo: { ...prev.seo, ...data.data } }));
-        alert("AI successfully generated SEO content!");
+        notify("AI successfully generated SEO content!");
       } else {
-        alert("Failed to auto-fill SEO: " + (data.message || 'Unknown error'));
+        notify("Failed to auto-fill SEO: " + (data.message || 'Unknown error'));
       }
     } catch (e) {
       console.error(e);
-      alert("Error occurred during AI SEO generation.");
+      notify("Error occurred during AI SEO generation.");
     } finally {
       setIsAIFillingSEO(false);
     }
@@ -281,9 +283,9 @@ export default function AdminVehicleForm({ initialData, onSubmit, isEditing = fa
   // ── Prices ────────────────────────────────────────────────────────────────────
   const [newPrice, setNewPrice] = useState({ retailer_name: '', price_pkr: '', stock_status: 'available', product_url: '', variant: '' });
   const addPriceItem = () => {
-    if (!newPrice.retailer_name || !newPrice.price_pkr) { alert("Retailer Name and Price are required."); return; }
+    if (!newPrice.retailer_name || !newPrice.price_pkr) { notify("Retailer Name and Price are required."); return; }
     const priceNum = Number(newPrice.price_pkr);
-    if (isNaN(priceNum)) { alert("Price must be a valid number."); return; }
+    if (isNaN(priceNum)) { notify("Price must be a valid number."); return; }
     setFormData((p: any) => ({
       ...p,
       prices: [...(p.prices || []), {
@@ -322,7 +324,7 @@ export default function AdminVehicleForm({ initialData, onSubmit, isEditing = fa
 
   const onFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.name) { alert("Vehicle name is required."); return; }
+    if (!formData.name) { notify("Vehicle name is required."); return; }
     setIsSubmitting(true);
     try {
       const payload = JSON.parse(JSON.stringify(formData));
@@ -519,7 +521,7 @@ export default function AdminVehicleForm({ initialData, onSubmit, isEditing = fa
             </section>
 
             <section className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
-              <h3 className="text-lg font-bold mb-4">Zozo Ratings (1.0 – 10.0)</h3>
+              <h3 className="text-lg font-bold mb-4">Mobile Rates Ratings (1.0 – 10.0)</h3>
               <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                 {Object.keys(formData.ratings).map(k => input(k, formData.ratings[k], v => setGroup('ratings', k, v), 'number'))}
               </div>

@@ -48,7 +48,7 @@ export default function PhoneSpecs({ specs, className = "", phone }: PhoneSpecsP
   const processorDisplay = ext.processor?.cpu_name || (specs.performance?.cpu ? specs.performance.cpu.replace(/Octa-core/i, "Octa core").trim() : "");
 
   // ─── General Information ───────────────────────────────────────────────────
-  let verifiedByName = "Zozo Team";
+  let verifiedByName = "Mobile Rates Team";
   if (phone) {
     const reviewer = typeof phone.reviewer === "object" ? phone.reviewer?.name || phone.reviewer?.username : null;
     const updatedBy = typeof phone.updatedBy === "object" ? phone.updatedBy?.name || phone.updatedBy?.username : null;

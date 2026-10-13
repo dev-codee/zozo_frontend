@@ -1,3 +1,7 @@
+import { notFound } from "next/navigation";
+import { serializeJsonLd } from "@/app/lib/schema";
+import { listingIndexing, isValidListingPage } from "@/app/lib/indexing";
+import { cleanMetadata } from "@/app/lib/seo";
 import type { Metadata } from "next";
 import { getPhones, getBrands } from "@/app/lib/api";
 import Navbar from "@/app/components/Navbar";
@@ -41,35 +45,26 @@ export async function generateMetadata({
     title = `Best ${category.charAt(0).toUpperCase() + category.slice(1)} Mobile Phones in Pakistan`;
   }
 
-  // Canonical resolution.
-  // The pretty brand landing URL `/{brand}-phone-price-pakistan` is internally
-  // rewritten to `/phones?brand={brand}`. When brand is the *only* active filter
-  // we must canonicalize back to the pretty URL (which is what lives in the
-  // sitemap), otherwise Google reports the branded page as "Alternate page with
-  // proper canonical tag" and indexes the ugly query URL instead — or nothing.
-  let canonicalUrl: string;
-  const isSoleBrand = !!brand && !brand.includes(",") && !maxPrice && !category && !forLabel;
-
-  if (isSoleBrand) {
-    canonicalUrl = `https://zozo.pk/${brand}-phone-price`;
-  } else {
-    const queryParams = new URLSearchParams();
-    if (brand) queryParams.set("brand", brand);
-    if (maxPrice) queryParams.set("max_price", maxPrice);
-    if (category) queryParams.set("category", category);
-    const queryString = queryParams.toString();
-    canonicalUrl = `https://zozo.pk/phones${queryString ? `?${queryString}` : ""}`;
+  const isBrandPage = !!brand && !brand.includes(",") && !maxPrice && !category && !forLabel;
+  const indexing = listingIndexing(isBrandPage ? `/brands/${brand}` : "/phones", resolvedParams, isBrandPage);
+  if (indexing.robots.index) {
+    const query = new URLSearchParams();
+    if (brand) query.set("brand", brand);
+    if (typeof resolvedParams.page === "string") query.set("page", resolvedParams.page);
+    const result = await getPhones(query.toString());
+    indexing.robots.index = !!result.pagination.total && result.pagination.total > 0;
   }
-
+  const canonicalUrl = indexing.canonical;
   // Append the auto-updating current year (stripping any pre-existing year so it
   // never doubles or goes stale) and expose it as an `absolute` title so the
-  // "%s | Zozo" template from the root layout is not applied to listing pages.
+  // the root title template is not applied to listing pages.
   const year = new Date().getFullYear();
   const finalTitle = `${title.replace(/\s*\b20\d{2}\b\s*$/, "").trim()} ${year}`;
 
-  return {
-    title: { absolute: finalTitle },
+  return cleanMetadata({
+    title: { absolute: Number(resolvedParams.page) > 1 ? `${finalTitle} — Page ${resolvedParams.page}` : finalTitle },
     description,
+    robots: indexing.robots,
     alternates: {
       canonical: canonicalUrl,
     },
@@ -78,7 +73,7 @@ export async function generateMetadata({
       description,
       url: canonicalUrl,
     },
-  };
+  });
 }
 
 export default async function PhonesPage({
@@ -87,6 +82,7 @@ export default async function PhonesPage({
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
   const resolvedParams = await searchParams;
+  if (!isValidListingPage(resolvedParams)) notFound();
   const maxPrice = resolvedParams.max_price as string;
   const minPrice = resolvedParams.min_price as string;
   const sort = resolvedParams.sort as string;
@@ -107,7 +103,7 @@ export default async function PhonesPage({
   const forLabel = resolvedParams.for as string;
 
   // Build the query string
-  let queryParts = [];
+  const queryParts = [];
   if (page) queryParts.push(`page=${page}`);
   if (minPrice) queryParts.push(`min_price=${minPrice}`);
   if (maxPrice) queryParts.push(`max_price=${maxPrice}`);
@@ -134,6 +130,7 @@ export default async function PhonesPage({
   ]);
 
   const { phones, pagination } = paginatedData;
+  if (!isValidListingPage(resolvedParams, pagination.totalPages)) notFound();
 
   let title = "All Phones";
   if (forLabel) {
@@ -162,13 +159,13 @@ export default async function PhonesPage({
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify(generateCollectionPageSchema(title, `Explore ${title}`, `/phones`)),
+          __html: serializeJsonLd(generateCollectionPageSchema(title, `Explore ${title}`, (listingIndexing(brand && !brand.includes(",") ? `/brands/${brand}` : "/phones", resolvedParams, !!brand && !brand.includes(",")).canonical.replace("https://mobilerates.info", "")))),
         }}
       />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify(generateBreadcrumbSchema([{ label: title }])),
+          __html: serializeJsonLd(generateBreadcrumbSchema([{ label: title }])),
         }}
       />
       <Navbar />
@@ -214,7 +211,7 @@ export default async function PhonesPage({
                 No Phones Found
               </h2>
               <p className="text-text-muted max-w-md mx-auto">
-                We couldn't find any phones matching your filters. Try adjusting them or clearing the selections.
+                We couldn&apos;t find any phones matching your filters. Try adjusting them or clearing the selections.
               </p>
             </div>
           )}

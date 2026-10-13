@@ -1,4 +1,6 @@
 "use client";
+import { notify } from "@/app/lib/notifications";
+
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
@@ -73,12 +75,12 @@ export default function AdminPhoneForm({ initialData, onSubmit, isEditing = fals
 
   const addPriceItem = () => {
     if (!newPrice.retailer_name || !newPrice.price_pkr) {
-      alert("Retailer Name and Price are required.");
+      notify("Retailer Name and Price are required.");
       return;
     }
     const priceNum = Number(newPrice.price_pkr);
     if (isNaN(priceNum)) {
-      alert("Price must be a valid number.");
+      notify("Price must be a valid number.");
       return;
     }
 
@@ -180,11 +182,11 @@ export default function AdminPhoneForm({ initialData, onSubmit, isEditing = fals
         setNewBrandName('');
         setShowAddBrand(false);
       } else {
-        alert(`Failed to add brand: ${data.message}`);
+        notify(`Failed to add brand: ${data.message}`);
       }
     } catch (e) {
       console.error(e);
-      alert('Error adding brand');
+      notify('Error adding brand');
     } finally {
       setAddingBrand(false);
     }
@@ -286,7 +288,7 @@ export default function AdminPhoneForm({ initialData, onSubmit, isEditing = fals
 
   const handleAIFill = async () => {
     if (!formData.name) {
-      alert("Please enter a Phone Name first (e.g. 'iPhone 15 Pro Max')");
+      notify("Please enter a Phone Name first (e.g. 'iPhone 15 Pro Max')");
       return;
     }
     setIsAIFilling(true);
@@ -344,13 +346,13 @@ export default function AdminPhoneForm({ initialData, onSubmit, isEditing = fals
           msg += `\n\nNOTE: The AI safely left ${missing.length} fields empty because it could not verify them from trusted sources. Please fill them manually if applicable:\n\n${missing.slice(0, 15).join(', ')}${missing.length > 15 ? '...' : ''}`;
         }
         
-        alert(msg);
+        notify(msg);
       } else {
-        alert("Failed to auto-fill: " + data.message);
+        notify("Failed to auto-fill: " + data.message);
       }
     } catch (error) {
       console.error(error);
-      alert("Error occurred during AI auto-fill.");
+      notify("Error occurred during AI auto-fill.");
     } finally {
       setIsAIFilling(false);
     }
@@ -358,7 +360,7 @@ export default function AdminPhoneForm({ initialData, onSubmit, isEditing = fals
 
   const handleResearchSpecs = async () => {
     if (!formData.name) {
-      alert("Please enter a Phone Name first (e.g. 'Samsung Galaxy S25 Ultra')");
+      notify("Please enter a Phone Name first (e.g. 'Samsung Galaxy S25 Ultra')");
       return;
     }
     setIsResearching(true);
@@ -375,11 +377,11 @@ export default function AdminPhoneForm({ initialData, onSubmit, isEditing = fals
         setResearchResults(data.data);
         setShowResearchModal(true);
       } else {
-        alert("Research failed: " + data.message);
+        notify("Research failed: " + data.message);
       }
     } catch (error) {
       console.error(error);
-      alert("Error occurred during research. Make sure n8n is running.");
+      notify("Error occurred during research. Make sure n8n is running.");
     } finally {
       setIsResearching(false);
     }
@@ -474,16 +476,16 @@ export default function AdminPhoneForm({ initialData, onSubmit, isEditing = fals
       }
     }));
     setShowResearchModal(false);
-    alert(`Specs applied to form! Confidence: ${researchResults.confidence?.toUpperCase()}. Please review all fields before saving.`);
+    notify(`Specs applied to form! Confidence: ${researchResults.confidence?.toUpperCase()}. Please review all fields before saving.`);
     } catch (err: any) {
       console.error('applyResearchToForm error:', err);
-      alert(`Failed to apply specs: ${err?.message || err}. Check browser console for details.`);
+      notify(`Failed to apply specs: ${err?.message || err}. Check browser console for details.`);
     }
   };
 
   const handleAIFillSEO = async () => {
     if (!formData.name) {
-      alert("Please enter a Phone Name first (e.g. 'iPhone 15 Pro Max')");
+      notify("Please enter a Phone Name first (e.g. 'iPhone 15 Pro Max')");
       return;
     }
     setIsAIFillingSEO(true);
@@ -519,13 +521,13 @@ export default function AdminPhoneForm({ initialData, onSubmit, isEditing = fals
             ai_keywords: aiSEO.ai_keywords || prev.seo.ai_keywords
           }
         }));
-        alert("AI successfully generated SEO content!");
+        notify("AI successfully generated SEO content!");
       } else {
-        alert("Failed to auto-fill SEO: " + data.message);
+        notify("Failed to auto-fill SEO: " + data.message);
       }
     } catch (error) {
       console.error(error);
-      alert("Error occurred during AI SEO generation.");
+      notify("Error occurred during AI SEO generation.");
     } finally {
       setIsAIFillingSEO(false);
     }
@@ -1052,7 +1054,7 @@ export default function AdminPhoneForm({ initialData, onSubmit, isEditing = fals
                       meta_description: p.seo.ai_meta_description || p.seo.meta_description,
                       meta_keywords: (p.seo.ai_keywords || []).join(', ') || p.seo.meta_keywords,
                     }}));
-                    alert('AI content copied to manual fields!');
+                    notify('AI content copied to manual fields!');
                   }} className="px-3 py-1.5 bg-white border border-indigo-300 text-indigo-700 rounded-md text-xs font-semibold hover:bg-indigo-100">
                     Copy AI → Manual
                   </button>
@@ -1179,7 +1181,7 @@ export default function AdminPhoneForm({ initialData, onSubmit, isEditing = fals
                   </div>
                   <div>
                     <label className="block text-xs font-semibold text-gray-600 mb-1">Canonical URL</label>
-                    <input type="text" value={formData.seo.canonical_url || ''} onChange={e => setFormData((p: any) => ({ ...p, seo: { ...p.seo, canonical_url: e.target.value } }))} className="w-full px-3 py-2 border rounded-md text-xs" placeholder="https://zozo.pk/phones/samsung-galaxy-s25-ultra" />
+                    <input type="text" value={formData.seo.canonical_url || ''} onChange={e => setFormData((p: any) => ({ ...p, seo: { ...p.seo, canonical_url: e.target.value } }))} className="w-full px-3 py-2 border rounded-md text-xs" placeholder="https://mobilerates.info/samsung-galaxy-s25-ultra" />
                   </div>
                   <div>
                     <label className="block text-xs font-semibold text-gray-600 mb-1">OG Title</label>

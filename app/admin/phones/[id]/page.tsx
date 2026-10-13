@@ -1,4 +1,6 @@
 "use client";
+import { notify, mutationError } from "@/app/lib/notifications";
+
 
 import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
@@ -36,12 +38,12 @@ export default function EditMobilePage() {
           Cookies.remove('admin_token');
           router.push('/login');
         } else {
-          alert("Failed to load phone data");
+          notify("Failed to load phone data");
           router.push('/admin/phones');
         }
       } catch (error) {
         console.error('Failed to fetch phone', error);
-        alert("An error occurred while loading phone data");
+        notify("An error occurred while loading phone data");
       } finally {
         setIsLoading(false);
       }
@@ -65,15 +67,14 @@ export default function EditMobilePage() {
       });
 
       if (response.ok) {
-        alert("Phone updated successfully!");
+        notify("Phone updated successfully!");
         router.push('/admin/phones');
       } else {
-        const errorData = await response.json();
-        alert(`Failed to update phone: ${errorData.message}`);
+        notify(await mutationError(response, "save this phone"), "error");
       }
     } catch (error) {
       console.error(error);
-      alert("An error occurred");
+      notify("Unable to save this phone. Check your connection and try again.", "error");
     }
   };
 

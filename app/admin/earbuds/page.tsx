@@ -1,4 +1,6 @@
 "use client";
+import { notify } from "@/app/lib/notifications";
+
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
@@ -92,15 +94,16 @@ export default function EarbudsListPage() {
         headers: { 'Authorization': `Bearer ${Cookies.get('admin_token')}` }
       });
       if (res.ok) {
+        notify("Earbud approved successfully.", "success");
         fetchEarbuds(currentPage, searchQuery, selectedBrand, selectedStatus);
       } else {
-        alert(`Failed to approve: ${(await res.json()).message}`);
+        notify(`Failed to approve: ${(await res.json()).message}`);
       }
     } catch (error) {
       console.error(error);
+      notify("Unable to complete this action. Check your connection and try again.", "error");
     }
   };
-
   const handleReject = async (id: string) => {
     const note = prompt("Enter rejection reason/note:");
     if (note === null) return;
@@ -114,15 +117,16 @@ export default function EarbudsListPage() {
         body: JSON.stringify({ note })
       });
       if (res.ok) {
+        notify("Earbud rejected successfully.", "success");
         fetchEarbuds(currentPage, searchQuery, selectedBrand, selectedStatus);
       } else {
-        alert(`Failed to reject: ${(await res.json()).message}`);
+        notify(`Failed to reject: ${(await res.json()).message}`);
       }
     } catch (error) {
       console.error(error);
+      notify("Unable to complete this action. Check your connection and try again.", "error");
     }
   };
-
   const handleDelete = async (id: string, name: string) => {
     if (!window.confirm(`Are you sure you want to delete ${name}? This cannot be undone.`)) return;
     try {
@@ -131,16 +135,16 @@ export default function EarbudsListPage() {
         headers: { 'Authorization': `Bearer ${Cookies.get('admin_token')}` }
       });
       if (res.ok) {
+        notify("Earbud deleted successfully.", "success");
         setEarbuds(prev => prev.filter(e => e._id !== id));
       } else {
-        alert(`Failed to delete: ${(await res.json()).message}`);
+        notify(`Failed to delete: ${(await res.json()).message}`);
       }
     } catch (error) {
       console.error('Failed to delete earbud', error);
-      alert('An error occurred while deleting the earbud');
+      notify('An error occurred while deleting the earbud');
     }
   };
-
   return (
     <div className="p-8 max-w-7xl mx-auto pb-24">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
@@ -323,7 +327,7 @@ export default function EarbudsListPage() {
                             </>
                           )}
                           <Link
-                            href={`/earbuds/${eb.slug}`}
+                            href={`/${eb.slug}`}
                             target="_blank"
                             title="View on Website"
                             className="p-1 rounded text-gray-400 hover:text-gray-600 hover:bg-gray-100"

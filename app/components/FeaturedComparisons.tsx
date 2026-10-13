@@ -38,6 +38,13 @@ export default function FeaturedComparisons({ comparisons }: FeaturedComparisons
     el.scrollBy({ left: dir * Math.round(el.clientWidth * 0.8), behavior: "smooth" });
   };
 
+  const seenPairs = new Set<string>();
+  for (let index = validComparisons.length - 1; index >= 0; index--) {
+    const key = validComparisons[index].phones.map((product: { slug: string }) => product.slug).sort().join("-vs-");
+    if (seenPairs.has(key)) validComparisons.splice(index, 1);
+    else seenPairs.add(key);
+  }
+
   if (validComparisons.length === 0) return null;
 
   const imgOf = (phone: any) =>

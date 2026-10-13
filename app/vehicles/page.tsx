@@ -1,3 +1,7 @@
+import { notFound } from "next/navigation";
+import { serializeJsonLd } from "@/app/lib/schema";
+import { listingIndexing, isValidListingPage } from "@/app/lib/indexing";
+import { cleanMetadata } from "@/app/lib/seo";
 import type { Metadata } from "next";
 import { getVehicles, getBrands, type Brand } from "@/app/lib/api";
 import Navbar from "@/app/components/Navbar";
@@ -30,7 +34,6 @@ export async function generateMetadata({
   const brand = resolvedParams.brand as string;
   const category = resolvedParams.category as string;
   const maxPrice = resolvedParams.max_price as string;
-  const minPrice = resolvedParams.min_price as string;
   const status = resolvedParams.status as string;
 
   let brands: Brand[] = [];
@@ -67,17 +70,20 @@ export async function generateMetadata({
   const year = new Date().getFullYear();
   const finalTitle = `${title.replace(/\s*\b20\d{2}\b\s*$/, "").trim()} ${year}`;
 
-  const queryParams = new URLSearchParams();
-  if (brand) queryParams.set("brand", brand);
-  if (category) queryParams.set("category", category);
-  if (maxPrice) queryParams.set("max_price", maxPrice);
-  if (minPrice) queryParams.set("min_price", minPrice);
-  const queryString = queryParams.toString();
-  const canonicalUrl = `https://zozo.pk/vehicles${queryString ? `?${queryString}` : ""}`;
+  const indexing = listingIndexing("/vehicles", resolvedParams);
+  if (indexing.robots.index) {
+    const query = new URLSearchParams();
+    if (brand) query.set("brand", brand);
+    if (typeof resolvedParams.page === "string") query.set("page", resolvedParams.page);
+    const result = await getVehicles(query.toString());
+    indexing.robots.index = !!result?.total && result?.total > 0;
+  }
+  const canonicalUrl = indexing.canonical;
 
-  return {
-    title: { absolute: finalTitle },
+  return cleanMetadata({
+    title: { absolute: Number(resolvedParams.page) > 1 ? `${finalTitle} — Page ${resolvedParams.page}` : finalTitle },
     description,
+    robots: indexing.robots,
     alternates: {
       canonical: canonicalUrl,
     },
@@ -86,7 +92,7 @@ export async function generateMetadata({
       description,
       url: canonicalUrl,
     },
-  };
+  });
 }
 
 export default async function VehiclesPage({
@@ -95,6 +101,7 @@ export default async function VehiclesPage({
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
   const resolvedParams = await searchParams;
+  if (!isValidListingPage(resolvedParams)) notFound();
   const brand = resolvedParams.brand as string;
   const category = resolvedParams.category as string;
   const bodyType = resolvedParams.body_type as string;
@@ -122,6 +129,7 @@ export default async function VehiclesPage({
   ]);
 
   const vehicles = paginatedData?.data || [];
+  if (!isValidListingPage(resolvedParams, paginatedData?.totalPages || 0)) notFound();
   const brandName = brand ? formatBrandName(brand, evBrands) : "";
   const formattedCategory = category ? category.charAt(0).toUpperCase() + category.slice(1) : "";
 
@@ -202,14 +210,14 @@ export default async function VehiclesPage({
     { label: "Cycles", slug: "Cycle" },
   ];
 
-  const canonicalUrl = `/vehicles${queryParams.toString() ? `?${queryParams.toString()}` : ""}`;
+  const canonicalUrl = listingIndexing("/vehicles", resolvedParams).canonical.replace("https://mobilerates.info", "");
 
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify(
+          __html: serializeJsonLd(
             generateCollectionPageSchema(title, `Explore ${title}`, canonicalUrl)
           ),
         }}
@@ -217,7 +225,7 @@ export default async function VehiclesPage({
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify(generateBreadcrumbSchema(breadcrumbItems)),
+          __html: serializeJsonLd(generateBreadcrumbSchema(breadcrumbItems)),
         }}
       />
       <div className="min-h-screen bg-surface-white flex flex-col selection:bg-primary/20">

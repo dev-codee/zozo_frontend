@@ -1,3 +1,4 @@
+import { cleanMetadata } from "@/app/lib/seo";
 import type { Metadata } from "next";
 import { getPopularVehicleComparisons } from "@/app/lib/api";
 import Navbar from "@/app/components/Navbar";
@@ -8,20 +9,20 @@ import Link from "next/link";
 
 export const revalidate = 60; // ISR validation time
 
-export const metadata: Metadata = {
+export const metadata: Metadata = cleanMetadata({
   title: "All EV Comparisons",
   description:
     "Browse our full list of electric vehicle comparisons. Compare EV prices, range, charging, and specs side by side in Pakistan.",
   alternates: {
-    canonical: "https://zozo.pk/vehicles/comparisons",
+    canonical: "https://mobilerates.info/vehicles/comparisons",
   },
   openGraph: {
     title: "All EV Comparisons",
     description:
       "Browse our full list of electric vehicle comparisons. Compare EV prices, range, charging, and specs side by side in Pakistan.",
-    url: "https://zozo.pk/vehicles/comparisons",
+    url: "https://mobilerates.info/vehicles/comparisons",
   },
-};
+});
 
 export default async function VehicleComparisonsPage({
   searchParams,

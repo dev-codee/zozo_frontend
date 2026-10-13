@@ -33,7 +33,7 @@ export default function SortSelect() {
     params.delete("page");
 
     // Push to the current pathname (not a hard-coded `/phones`) so that on the
-    // pretty brand landing URLs (`/{brand}-phone-price-pakistan`) the brand is
+    // pretty brand landing URLs (`/brands/{brand}`) the brand is
     // preserved via the rewrite instead of being dropped.
     const qs = params.toString();
     router.push(qs ? `${pathname}?${qs}` : pathname);

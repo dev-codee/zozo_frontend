@@ -1,3 +1,4 @@
+import { cleanMetadata } from "@/app/lib/seo";
 import { Metadata } from "next";
 import {
   getVehicles,
@@ -10,7 +11,7 @@ import Footer from "@/app/components/Footer";
 import Breadcrumb from "@/app/components/Breadcrumb";
 import VehicleCompareClient from "@/app/components/VehicleCompareClient";
 import PopularVehicleComparisons from "@/app/components/PopularVehicleComparisons";
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 
 export const revalidate = 60;
 
@@ -22,7 +23,7 @@ function parseCompareSlugs(slugParam: string): [string, string] | null {
     if (parts.length >= 2) {
       const slug1 = parts[0]?.trim();
       const slug2 = parts.slice(1).join("-vs-")?.trim();
-      if (slug1 && slug2) {
+      if (slug1 && slug2 && slug1 !== slug2) {
         return [slug1, slug2];
       }
     }
@@ -46,12 +47,13 @@ export async function generateMetadata({
       if (vehicles && vehicles.length === 2) {
         const title = `${vehicles[0].name} vs ${vehicles[1].name} — Price & Specs Comparison`;
         const description = `Compare ${vehicles[0].name} vs ${vehicles[1].name} prices in Pakistan, full specifications, range, charging, battery, and performance.`;
-        const canonicalUrl = `https://zozo.pk/vehicles/compare/${parsedSlugs[0]}-vs-${parsedSlugs[1]}`;
+        const canonicalUrl = `https://mobilerates.info/vehicles/compare/${[...parsedSlugs].sort()[0]}-vs-${[...parsedSlugs].sort()[1]}`;
         const img1 = vehicles[0].images?.[0]?.url;
 
-        return {
+        return cleanMetadata({
           title,
           description,
+          robots: { index: vehicles.every(product => product.seo?.is_indexable !== false), follow: true },
           alternates: { canonical: canonicalUrl },
           openGraph: {
             title,
@@ -65,18 +67,18 @@ export async function generateMetadata({
             description,
             images: img1 ? [img1] : [],
           },
-        };
+        });
       }
     }
   } catch (err) {
     console.error("Metadata generation error:", err);
   }
 
-  return {
+  return cleanMetadata({
     title: "EV Comparison — Compare Electric Vehicle Prices in Pakistan",
     description: "Compare electric vehicle prices and specifications side by side in Pakistan.",
-    alternates: { canonical: "https://zozo.pk/vehicles/compare" },
-  };
+    alternates: { canonical: "https://mobilerates.info/vehicles/compare" },
+  });
 }
 
 export default async function VehicleCompareCanonicalPage({
@@ -93,6 +95,8 @@ export default async function VehicleCompareCanonicalPage({
 
   const [slug1, slug2] = parsedSlugs;
   const selectedSlugs = [slug1, slug2];
+  const ordered = [...selectedSlugs].sort();
+  if (selectedSlugs.join("-vs-") !== ordered.join("-vs-")) permanentRedirect(`/vehicles/compare/${ordered.join("-vs-")}`);
 
   const [comparisonResult, allVehiclesResult, popularResult] = await Promise.allSettled([
     getVehicleComparisonData(selectedSlugs),
@@ -112,6 +116,9 @@ export default async function VehicleCompareCanonicalPage({
     popularResult.status === "fulfilled" && Array.isArray(popularResult.value)
       ? popularResult.value
       : [];
+
+  if (comparisonResult.status === "rejected") throw comparisonResult.reason;
+  if (comparisonVehicles.length !== 2) notFound();
 
   // Track this comparison (fire and forget)
   if (comparisonVehicles.length >= 2) {

@@ -1,4 +1,6 @@
 "use client";
+import { notify, mutationError } from "@/app/lib/notifications";
+
 
 import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
@@ -33,12 +35,12 @@ export default function EditVehiclePage() {
           Cookies.remove('admin_token');
           router.push('/login');
         } else {
-          alert("Failed to load EV data");
+          notify("Failed to load EV data");
           router.push('/admin/vehicles');
         }
       } catch (error) {
         console.error('Failed to fetch vehicle', error);
-        alert("An error occurred while loading EV data");
+        notify("An error occurred while loading EV data");
       } finally {
         setIsLoading(false);
       }
@@ -55,15 +57,14 @@ export default function EditVehiclePage() {
         body: JSON.stringify(payload)
       });
       if (response.ok) {
-        alert("EV updated successfully!");
+        notify("EV updated successfully!");
         router.push('/admin/vehicles');
       } else {
-        const errorData = await response.json();
-        alert(`Failed to update EV: ${errorData.message}`);
+        notify(await mutationError(response, "save this vehicle"), "error");
       }
     } catch (error) {
       console.error(error);
-      alert("An error occurred");
+      notify("Unable to save this vehicle. Check your connection and try again.", "error");
     }
   };
 

@@ -1,6 +1,6 @@
-# Zozo.pk — Full Information & Directory for AI Agents
+# This website — Full Information & Directory for AI Agents
 
-> Zozo.pk is Pakistan's leading mobile phone price comparison engine, tracking live prices, full hardware specifications, PTA tax estimations, store availability, user reviews, and side-by-side comparisons.
+> This website is Pakistan's leading mobile phone price comparison engine, tracking live prices, full hardware specifications, PTA tax estimations, store availability, user reviews, and side-by-side comparisons.
 
 ## Platform Capabilities
 
@@ -12,11 +12,11 @@
 
 ## Key URLs
 
-- [Homepage](https://zozo.pk)
-- [Phone Catalog](https://zozo.pk/phones)
-- [Brands Directory](https://zozo.pk/brands)
-- [Comparison Tool](https://zozo.pk/compare)
-- [Tech News](https://zozo.pk/news)
-- [Sitemap](https://zozo.pk/site-map)
-- [XML Sitemap](https://zozo.pk/sitemap.xml)
-- [Robots Directive](https://zozo.pk/robots.txt)
+- [Homepage](https://mobilerates.info)
+- [Phone Catalog](https://mobilerates.info/phones)
+- [Brands Directory](https://mobilerates.info/brands)
+- [Comparison Tool](https://mobilerates.info/compare)
+- [Tech News](https://mobilerates.info/news)
+- [Sitemap](https://mobilerates.info/site-map)
+- [XML Sitemap](https://mobilerates.info/sitemap.xml)
+- [Robots Directive](https://mobilerates.info/robots.txt)

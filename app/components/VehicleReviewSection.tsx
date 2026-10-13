@@ -1,4 +1,6 @@
 "use client";
+import { notify } from "@/app/lib/notifications";
+
 
 import { useState, useEffect } from "react";
 import { VehicleReview, getVehicleReviews, postVehicleReview } from "@/app/lib/api";
@@ -57,11 +59,11 @@ export default function VehicleReviewSection({
     e.preventDefault();
     if (!user) return;
     if (rating === 0) {
-      alert("Please select a star rating.");
+      notify("Please select a star rating.");
       return;
     }
     if (!comment.trim()) {
-      alert("Please write a comment.");
+      notify("Please write a comment.");
       return;
     }
 
@@ -75,10 +77,10 @@ export default function VehicleReviewSection({
       setReviews([newRev, ...reviews]);
       setComment("");
       setRating(0);
-      alert("Review submitted successfully!");
+      notify("Review submitted successfully!");
     } catch (err: any) {
       console.error(err);
-      alert(err.message || "Failed to submit review.");
+      notify(err.message || "Failed to submit review.");
     } finally {
       setSubmitting(false);
     }

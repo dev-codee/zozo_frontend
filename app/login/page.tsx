@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { GoogleLogin } from '@react-oauth/google';
 import { useAuth } from '../context/AuthContext';
-import Link from 'next/link';
+import PublishedPolicyLinks from "@/app/components/PublishedPolicyLinks";
 import Image from 'next/image';
 
 export default function LoginPage() {
@@ -48,7 +48,7 @@ export default function LoginPage() {
       <div className="max-w-md w-full space-y-8 bg-white/80 backdrop-blur-xl p-10 rounded-3xl shadow-xl border border-white/50">
         <div>
           <div className="flex justify-center">
-            <Image src="/ZOZO-Logo-v2.png" unoptimized alt="zozo.pk" width={240} height={80} className="h-20 w-auto object-contain" />
+            <Image src="/mobile-rates-logo.svg" unoptimized alt="Mobile Rates" width={240} height={80} className="h-14 w-[280px] max-w-full object-contain" />
           </div>
           <h2 className="mt-4 text-center text-3xl font-extrabold text-gray-900">
             Sign in
@@ -99,9 +99,7 @@ export default function LoginPage() {
           </div>
         </div>
 
-        <div className="mt-6 text-center text-xs text-gray-500">
-          By signing in, you agree to our <Link href="/terms" className="text-indigo-600 hover:underline">Terms of Service</Link> and <Link href="/privacy" className="text-indigo-600 hover:underline">Privacy Policy</Link>.
-        </div>
+        <PublishedPolicyLinks />
       </div>
     </div>
   );

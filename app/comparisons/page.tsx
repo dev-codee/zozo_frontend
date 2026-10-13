@@ -1,3 +1,4 @@
+import { cleanMetadata } from "@/app/lib/seo";
 import type { Metadata } from "next";
 import { getPopularComparisons } from "@/app/lib/api";
 import Navbar from "@/app/components/Navbar";
@@ -8,18 +9,18 @@ import Link from "next/link";
 
 export const revalidate = 60; // ISR validation time
 
-export const metadata: Metadata = {
+export const metadata: Metadata = cleanMetadata({
   title: "All Phone Comparisons",
   description: "Browse our extensive list of all mobile phone comparisons. Compare prices, specs, and features side by side.",
   alternates: {
-    canonical: "https://zozo.pk/comparisons",
+    canonical: "https://mobilerates.info/comparisons",
   },
   openGraph: {
     title: "All Phone Comparisons",
     description: "Browse our extensive list of all mobile phone comparisons. Compare prices, specs, and features side by side.",
-    url: "https://zozo.pk/comparisons",
+    url: "https://mobilerates.info/comparisons",
   },
-};
+});
 
 export default async function ComparisonsPage({
   searchParams,

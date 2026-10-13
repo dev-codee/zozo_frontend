@@ -1,3 +1,6 @@
+import { serializeJsonLd } from "@/app/lib/schema";
+import { rebrandSiteContent } from "@/app/lib/branding";
+import { cleanMetadata, withoutSiteBrand } from "@/app/lib/seo";
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
@@ -8,25 +11,26 @@ async function getBlog(slug: string) {
     const res = await fetch(`${getApiBaseUrl()}/blogs/slug/${slug}`, {
       next: { revalidate: 60 }
     });
-    if (!res.ok) return null;
+    if (res.status === 404) return null;
+    if (!res.ok) throw new Error(`news fetch failed: ${res.status}`);
     return await res.json();
   } catch (error) {
     console.error('Failed to fetch blog', error);
-    return null;
+    throw error;
   }
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const resolvedParams = await params;
   const blog = await getBlog(resolvedParams.slug);
-  if (!blog) return { title: 'Not Found', robots: { index: false, follow: false } };
+  if (!blog || blog.status !== "PUBLISHED") return cleanMetadata({ title: 'Not Found', robots: { index: false, follow: false } });
   
-  const canonicalUrl = `https://zozo.pk/news/${resolvedParams.slug}`;
-  const title = `${blog.title} — Mobile News & Reviews`;
-  const description = blog.excerpt || blog.title;
-  const image = blog.coverImage || '/ZOZO-Logo-v2.png';
+  const canonicalUrl = `https://mobilerates.info/news/${resolvedParams.slug}`;
+  const title = blog.seo?.meta_title || `${blog.title} — Mobile News & Reviews`;
+  const description = blog.seo?.meta_description || blog.excerpt || blog.title;
+  const image = blog.coverImage || '/social-preview.png';
 
-  return {
+  return cleanMetadata({
     title,
     description,
     alternates: {
@@ -37,7 +41,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       description,
       url: canonicalUrl,
       type: 'article',
-      publishedTime: blog.createdAt,
+      publishedTime: blog.publish_date || blog.createdAt,
       modifiedTime: blog.updatedAt || blog.createdAt,
       images: [{ url: image, alt: blog.title }],
     },
@@ -47,7 +51,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       description,
       images: [image],
     },
-  };
+  });
 }
 
 export default async function SingleBlogPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -61,23 +65,16 @@ export default async function SingleBlogPage({ params }: { params: Promise<{ slu
   const newsArticleSchema = {
     "@context": "https://schema.org",
     "@type": "NewsArticle",
-    "headline": blog.title,
-    "description": blog.excerpt || blog.title,
+    "headline": withoutSiteBrand(blog.title),
+    "description": withoutSiteBrand(blog.excerpt || blog.title),
     "image": blog.coverImage ? [blog.coverImage] : [],
-    "datePublished": blog.createdAt,
+    "datePublished": blog.publish_date || blog.createdAt,
     "dateModified": blog.updatedAt || blog.createdAt,
-    "author": {
-      "@type": "Organization",
-      "name": "ZOZO.pk",
-      "url": "https://zozo.pk"
-    },
+    ...(blog.author ? { author: { "@type": "Person", name: withoutSiteBrand(blog.author) } } : {}),
     "publisher": {
       "@type": "Organization",
-      "name": "ZOZO.pk",
-      "logo": {
-        "@type": "ImageObject",
-        "url": "https://zozo.pk/ZOZO-Logo-v2.png"
-      }
+      "name": "Mobile price comparison website",
+      "url": "https://mobilerates.info"
     }
   };
 
@@ -85,7 +82,7 @@ export default async function SingleBlogPage({ params }: { params: Promise<{ slu
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(newsArticleSchema) }}
+        dangerouslySetInnerHTML={{ __html: serializeJsonLd(newsArticleSchema) }}
       />
       <div className="max-w-[800px] mx-auto px-4 md:px-6 py-12">
       <div className="mb-8">
@@ -99,9 +96,9 @@ export default async function SingleBlogPage({ params }: { params: Promise<{ slu
             </span>
           ))}
         </div>
-        <h1 className="text-3xl md:text-5xl font-bold text-on-surface leading-tight mb-4">{blog.title}</h1>
+        <h1 className="text-3xl md:text-5xl font-bold text-on-surface leading-tight mb-4">{rebrandSiteContent(blog.title)}</h1>
         {blog.excerpt && (
-          <p className="text-xl text-text-muted mb-6">{blog.excerpt}</p>
+          <p className="text-xl text-text-muted mb-6">{rebrandSiteContent(blog.excerpt)}</p>
         )}
         <div className="flex items-center text-sm text-text-muted border-t border-b border-border-subtle py-3">
           <span>Published on {new Date(blog.createdAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</span>
@@ -110,7 +107,7 @@ export default async function SingleBlogPage({ params }: { params: Promise<{ slu
 
       <div 
         className="prose prose-lg max-w-none text-on-surface prose-headings:text-on-surface prose-a:text-primary hover:prose-a:text-primary-hover"
-        dangerouslySetInnerHTML={{ __html: blog.body }}
+        dangerouslySetInnerHTML={{ __html: rebrandSiteContent(blog.body) }}
       />
     </div>
   </>

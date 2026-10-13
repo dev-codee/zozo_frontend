@@ -58,12 +58,7 @@ export default function SearchBar({ className = "w-72" }: { className?: string }
     }
   };
 
-  const getItemHref = (item: SearchResultItem) => {
-    if (item.item_type === "earbud" || item.specs?.audio) {
-      return `/earbuds/${item.slug}`;
-    }
-    return `/${item.slug}-price`;
-  };
+  const getItemHref = (item: SearchResultItem) => `/${item.slug}`;
 
   const isEarbud = (item: SearchResultItem) => {
     return item.item_type === "earbud" || !!item.specs?.audio;

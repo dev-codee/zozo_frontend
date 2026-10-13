@@ -1,4 +1,6 @@
 "use client";
+import { notify } from "@/app/lib/notifications";
+
 
 import { useState } from 'react';
 import { UploadCloud, X, Loader2 } from 'lucide-react';
@@ -65,7 +67,7 @@ export default function ImageUploader({ onImagesChange, existingImages = [] }: I
       onImagesChange(updatedImages);
     } catch (error) {
       console.error("Error uploading images:", error);
-      alert("Failed to upload one or more images");
+      notify("Failed to upload one or more images");
     } finally {
       setIsUploading(false);
       if (e.target) e.target.value = '';

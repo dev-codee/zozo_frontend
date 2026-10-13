@@ -1,4 +1,6 @@
 "use client";
+import { notify, mutationError } from "@/app/lib/notifications";
+
 
 import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -51,15 +53,14 @@ function AddMobileContent() {
       });
 
       if (response.ok) {
-        alert("Phone created successfully!");
+        notify("Phone created successfully!");
         router.push('/admin/phones');
       } else {
-        const errorData = await response.json();
-        alert(`Failed to create phone: ${errorData.message}`);
+        notify(await mutationError(response, "save this phone"), "error");
       }
     } catch (error) {
       console.error(error);
-      alert("An error occurred");
+      notify("Unable to save this phone. Check your connection and try again.", "error");
     }
   };
 

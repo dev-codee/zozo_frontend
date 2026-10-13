@@ -1,3 +1,5 @@
+import { serializeJsonLd } from "@/app/lib/schema";
+import { cleanMetadata } from "@/app/lib/seo";
 import type { Metadata } from "next";
 import { getBrands } from "@/app/lib/api";
 import Navbar from "@/app/components/Navbar";
@@ -7,28 +9,28 @@ import BrandLogo from "@/app/components/BrandLogo";
 import AppIcon from "@/app/components/AppIcon";
 import { generateCollectionPageSchema } from "@/app/lib/schema";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = cleanMetadata({
   title: "All Mobile Phone Brands in Pakistan — Samsung, Apple, Xiaomi & More",
   description: "Browse all mobile phone brands. Find latest smartphones, prices, and specs from your favorite manufacturers in Pakistan.",
   alternates: {
-    canonical: "https://zozo.pk/brands",
+    canonical: "https://mobilerates.info/brands",
   },
   openGraph: {
     title: "All Mobile Phone Brands in Pakistan",
     description: "Browse all mobile phone brands. Find latest smartphones and specs.",
-    url: "https://zozo.pk/brands",
+    url: "https://mobilerates.info/brands",
   },
-};
+});
 
 export default async function BrandsPage() {
-  const brands = await getBrands();
+  const brands = await getBrands("phone");
 
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify(generateCollectionPageSchema("Mobile Phone Brands", "Browse all mobile phone brands", "/brands")),
+          __html: serializeJsonLd(generateCollectionPageSchema("Mobile Phone Brands", "Browse all mobile phone brands", "/brands")),
         }}
       />
       <Navbar />
@@ -47,7 +49,7 @@ export default async function BrandsPage() {
             {brands.map((brand) => (
               <Link
                 key={brand._id}
-                href={`/${brand.slug}-phone-price`}
+                href={`/brands/${brand.slug}`}
                 className="group flex flex-col items-center bg-surface-white border border-border-subtle rounded-xl p-6 hover:shadow-md hover:border-primary/30 transition-all duration-300"
               >
                 <div className="w-20 h-20 mb-4 relative flex items-center justify-center bg-surface-container-lowest rounded-full p-2 group-hover:scale-105 transition-transform duration-300">

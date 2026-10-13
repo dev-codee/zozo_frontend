@@ -1,18 +1,12 @@
+import { rebrandSiteContent } from "@/app/lib/branding";
 import Link from "next/link";
 import Image from "next/image";
 import { getPages } from "@/app/lib/api";
 
 export default async function Footer() {
   const pages = await getPages();
-  // Slugs we always render explicitly below, so exclude any CMS duplicates.
-  const reservedSlugs = new Set([
-    "about", "about-us", "contact", "contact-us",
-    "terms", "terms-and-conditions", "terms-conditions",
-  ]);
-  const footerPages = pages.filter((p: any) =>
-    p.status === 'PUBLISHED' &&
-    (p.placement === 'FOOTER' || p.placement === 'BOTH') &&
-    !reservedSlugs.has(p.slug)
+  const footerPages = pages.filter((page: { status: string; placement: string; slug?: string }) =>
+    page.status === 'PUBLISHED' && !!page.slug && (page.placement === 'FOOTER' || page.placement === 'BOTH')
   );
 
   return (
@@ -20,7 +14,7 @@ export default async function Footer() {
       <div className="max-w-[1280px] mx-auto flex flex-col items-center justify-center gap-6 text-center">
         {/* Brand */}
         <Link href="/" className="inline-block hover:opacity-90 transition-opacity">
-          <Image src="/ZOZO-Logo-v2.png" unoptimized alt="zozo.pk" width={160} height={45} className="h-12 w-auto object-contain" />
+          <Image src="/mobile-rates-logo.svg" unoptimized alt="Mobile Rates" width={160} height={45} className="h-12 w-auto object-contain" />
         </Link>
 
         {/* Links */}
@@ -31,23 +25,20 @@ export default async function Footer() {
               href={`/pages/${page.slug}`}
               className="text-text-main hover:text-primary transition-colors text-sm font-semibold"
             >
-              {page.title}
+              {rebrandSiteContent(page.title || "")}
             </Link>
           ))}
-          <Link href="/pages/about" className="text-text-main hover:text-primary transition-colors text-sm font-semibold">About Us</Link>
-          <Link href="/pages/contact" className="text-text-main hover:text-primary transition-colors text-sm font-semibold">Contact Us</Link>
-          <Link href="/pages/terms" className="text-text-main hover:text-primary transition-colors text-sm font-semibold">Terms and Conditions</Link>
           <Link href="/site-map" className="text-text-main hover:text-primary transition-colors text-sm font-semibold">Sitemap</Link>
         </nav>
 
         {/* Disclaimer */}
         <p className="text-text-muted text-xs leading-relaxed max-w-3xl mx-auto">
-          Prices, specifications, and availability on ZOZO are provided for informational purposes only and are based on information available in the Pakistani market. Information may change over time, and errors or outdated details may occur. All trademarks, logos, and product images belong to their respective owners. Users should verify product details, pricing, availability, and specifications with the official brand or retailer before making a purchase.
+          Prices, specifications, and availability on Mobile Rates are provided for informational purposes only and are based on information available in the Pakistani market. Information may change over time, and errors or outdated details may occur. All trademarks, logos, and product images belong to their respective owners. Users should verify product details, pricing, availability, and specifications with the official brand or retailer before making a purchase.
         </p>
 
         {/* Copyright */}
         <div className="text-text-muted text-xs mt-2">
-          © {new Date().getFullYear()} zozo.pk. All rights reserved.
+          © {new Date().getFullYear()} Mobile Rates. All rights reserved.
         </div>
       </div>
     </footer>

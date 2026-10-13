@@ -33,12 +33,16 @@ const nextConfig: NextConfig = {
         headers: [
           {
             key: "X-Robots-Tag",
-            value: "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1",
+            value: "max-image-preview:large, max-snippet:-1, max-video-preview:-1",
           },
         ],
       },
+      ...["/admin/:path*", "/admin-login", "/login", "/profile/:path*", "/search"].map(source => ({
+        source,
+        headers: [{ key: "X-Robots-Tag", value: "noindex, follow" }],
+      })),
       {
-        source: "/(brands|fonts|icons)/(.*)",
+        source: "/(fonts|icons)/(.*)",
         headers: [
           {
             key: "Cache-Control",
@@ -49,29 +53,24 @@ const nextConfig: NextConfig = {
     ];
   },
   async redirects() {
+    // Specific legacy paths come first; every destination is region-free.
     return [
+      { source: "/:brand-phone-price-:region", destination: "https://mobilerates.info/brands/:brand", permanent: true },
+      { source: "/:brand-phone-price", destination: "https://mobilerates.info/brands/:brand", permanent: true },
+      { source: "/:slug-price-in-:region", destination: "https://mobilerates.info/:slug", permanent: true },
+      { source: "/:slug-price", destination: "https://mobilerates.info/:slug", permanent: true },
+      { source: "/phones/:slug", destination: "https://mobilerates.info/:slug", permanent: true },
       {
-        source: "/phones/:slug",
-        destination: "/:slug-price",
+        source: "/:path*",
+        has: [{ type: "host", value: "(?:www\\.)?zozo\\.pk" }],
+        destination: "https://mobilerates.info/:path*",
         permanent: true,
       },
       {
-        source: "/:slug-price-in-pakistan",
-        destination: "/:slug-price",
+        source: "/:path*",
+        has: [{ type: "host", value: "www\\.mobilerates\\.info" }],
+        destination: "https://mobilerates.info/:path*",
         permanent: true,
-      },
-      {
-        source: "/:brand-phone-price-pakistan",
-        destination: "/:brand-phone-price",
-        permanent: true,
-      },
-    ];
-  },
-  async rewrites() {
-    return [
-      {
-        source: "/:brand-phone-price",
-        destination: "/phones?brand=:brand",
       },
     ];
   },

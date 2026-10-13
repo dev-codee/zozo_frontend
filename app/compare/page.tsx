@@ -1,3 +1,4 @@
+import { cleanMetadata } from "@/app/lib/seo";
 import type { Metadata } from "next";
 import { getPhones, getComparisonData, getPopularComparisons } from "@/app/lib/api";
 import Navbar from "@/app/components/Navbar";
@@ -9,18 +10,18 @@ import Link from "next/link";
 
 export const revalidate = 60; // ISR validation time
 
-export const metadata: Metadata = {
+export const metadata: Metadata = cleanMetadata({
   title: "Compare Mobile Phones Side-by-Side — Prices & Specifications",
   description: "Compare mobile phone prices, camera specs, battery life, performance, and features side by side in Pakistan.",
   alternates: {
-    canonical: "https://zozo.pk/compare",
+    canonical: "https://mobilerates.info/compare",
   },
   openGraph: {
     title: "Compare Mobile Phones Side-by-Side",
     description: "Compare mobile phone prices, camera specs, battery life, performance, and features side by side in Pakistan.",
-    url: "https://zozo.pk/compare",
+    url: "https://mobilerates.info/compare",
   },
-};
+});
 
 export default async function ComparePage({
   searchParams,
@@ -43,8 +44,8 @@ export default async function ComparePage({
 
   // Redirect to canonical URL if exactly 2 phones are compared
   if (selectedSlugs.length === 2) {
-    const { redirect } = await import("next/navigation");
-    redirect(`/compare/${selectedSlugs[0]}-vs-${selectedSlugs[1]}`);
+    const { permanentRedirect } = await import("next/navigation");
+    permanentRedirect(`/compare/${[...selectedSlugs].sort().join("-vs-")}`);
   }
 
   // Fetch full details safely

@@ -1,4 +1,6 @@
 "use client";
+import { notify } from "@/app/lib/notifications";
+
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
@@ -77,7 +79,7 @@ export default function AdminBenchmarksPage() {
           setSelectedBenchmark({ ...selectedBenchmark, status: newStatus });
         }
       } else {
-        alert('Failed to update status');
+        notify('Failed to update status');
       }
     } catch (error) {
       console.error('Error updating status', error);
