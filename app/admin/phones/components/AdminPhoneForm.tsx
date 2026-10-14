@@ -129,7 +129,7 @@ export default function AdminPhoneForm({ initialData, onSubmit, isEditing = fals
         ai_features: [],
         extra_specs: { ...EXTRA_SPEC_FIELDS.reduce((acc, field) => ({ ...acc, [field]: '' }), {}), ...DEFAULT_EXTRA_SPECS }
       },
-      prices: [] as any[], seo: { meta_title: '', meta_description: '', meta_keywords: '', focus_keyword: '', long_tail_keywords: [] as string[], canonical_url: '', og_title: '', og_description: '', og_image: '', ai_seo_title: '', ai_meta_description: '', ai_faq: [] as any[], ai_summary: '', ai_pros: [] as string[], ai_cons: [] as string[], ai_buying_advice: '', ai_snippet: '', ai_suggested_tags: [] as string[], ai_keywords: [] as string[], is_indexable: true }, is_published: false
+      prices: [] as any[], seo: { meta_title: '', meta_description: '', meta_keywords: '', focus_keyword: '', long_tail_keywords: [] as string[], canonical_url: '', og_title: '', og_description: '', og_image: '', ai_seo_title: '', ai_meta_description: '', ai_faq: [] as any[], ai_summary: '', ai_pros: [] as string[], ai_cons: [] as string[], ai_buying_advice: '', ai_snippet: '', ai_suggested_tags: [] as string[], ai_keywords: [] as string[], is_indexable: false }, is_published: false
     };
 
     if (initialData) {
@@ -140,6 +140,7 @@ export default function AdminPhoneForm({ initialData, onSubmit, isEditing = fals
       return {
         ...defaultData,
         ...dataToLoad,
+        seo: { ...defaultData.seo, ...(dataToLoad.seo || {}), is_indexable: isEditing && dataToLoad.seo?.is_indexable === true },
         specs: {
           ...defaultData.specs,
           ...dataToLoad.specs,
@@ -1140,7 +1141,7 @@ export default function AdminPhoneForm({ initialData, onSubmit, isEditing = fals
                 </button>
               </div>
               <div className={`mt-2 text-xs font-semibold ${formData.seo.is_indexable ? 'text-green-600' : 'text-red-500'}`}>
-                {formData.seo.is_indexable ? '✓ This page WILL be indexed by Google' : '✗ This page will NOT be indexed by Google'}
+                {formData.seo.is_indexable ? '✓ Indexing enabled — search engines may index this page' : '✗ Noindex — search engines are asked not to index this page'}
               </div>
             </section>
 

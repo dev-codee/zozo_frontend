@@ -116,7 +116,7 @@ const emptyEarbud = () => ({
     ai_snippet: '',
     ai_suggested_tags: [] as string[],
     ai_keywords: [] as string[],
-    is_indexable: true,
+    is_indexable: false,
   },
   approvalStatus: 'APPROVED',
   is_published: true,
@@ -161,7 +161,7 @@ export default function AdminEarbudForm({ initialData, onSubmit, isEditing = fal
       ...base,
       ...data,
       specs: { ...base.specs, ...(data.specs || {}) },
-      seo: { ...base.seo, ...(data.seo || {}) },
+      seo: { ...base.seo, ...(data.seo || {}), is_indexable: isEditing && data.seo?.is_indexable === true },
     };
 
     for (const section of Object.keys(base.specs)) {
@@ -1510,7 +1510,7 @@ export default function AdminEarbudForm({ initialData, onSubmit, isEditing = fal
                 </button>
               </div>
               <div className={`mt-2 text-xs font-semibold ${formData.seo.is_indexable ? 'text-green-600' : 'text-red-500'}`}>
-                {formData.seo.is_indexable ? '✓ This page WILL be indexed by Google' : '✗ This page will NOT be indexed by Google'}
+                {formData.seo.is_indexable ? '✓ Indexing enabled — search engines may index this page' : '✗ Noindex — search engines are asked not to index this page'}
               </div>
             </section>
 
