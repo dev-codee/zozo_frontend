@@ -36,6 +36,13 @@ function cleanTitle<T>(title: T): T {
 }
 
 export function cleanMetadata(metadata: Metadata): Metadata {
+  // Child routes must not inherit the homepage's Twitter copy.
+  const twitter = metadata.twitter || (metadata.openGraph ? {
+    card: 'summary_large_image' as const,
+    title: metadata.openGraph.title || metadata.title || undefined,
+    description: metadata.openGraph.description || metadata.description || undefined,
+    images: metadata.openGraph.images || ['/social-preview.png'],
+  } : undefined);
   return {
     ...metadata,
     title: cleanTitle(metadata.title),
@@ -52,12 +59,26 @@ export function cleanMetadata(metadata: Metadata): Metadata {
         description: metadata.openGraph.description ? withoutSiteBrand(metadata.openGraph.description) : metadata.openGraph.description,
       },
     }),
-    ...(metadata.twitter && {
+    ...(twitter && {
       twitter: {
-        ...metadata.twitter,
-        title: cleanTitle(metadata.twitter.title),
-        description: metadata.twitter.description ? withoutSiteBrand(metadata.twitter.description) : metadata.twitter.description,
+        ...twitter,
+        title: cleanTitle(twitter.title),
+        description: twitter.description ? withoutSiteBrand(twitter.description) : twitter.description,
       },
     }),
   };
+}
+
+// Use actual CMS text when an editor has not supplied a search description.
+export function contentDescription(html: string | undefined, fallback: string): string {
+  const text = (html || '')
+    .replace(/<(script|style)\b[^>]*>[\s\S]*?<\/\1>/gi, ' ')
+    .replace(/<[^>]*>/g, ' ')
+    .replace(/&(?:nbsp|#160);/gi, ' ')
+    .replace(/&amp;/gi, '&').replace(/&quot;/gi, '"').replace(/&#(?:39|x27);/gi, "'")
+    .replace(/&lt;/gi, '<').replace(/&gt;/gi, '>')
+    .replace(/\s+/g, ' ').trim();
+  const clean = withoutSiteBrand(text) || fallback;
+  if (clean.length <= 160) return clean;
+  return `${clean.slice(0, 157).replace(/\s+\S*$/, '').trimEnd()}…`;
 }

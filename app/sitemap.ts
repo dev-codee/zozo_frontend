@@ -23,7 +23,7 @@ async function allProducts(fetchPage: (page: number) => Promise<{ records: Recor
   for (let page = 1; page <= pages; page++) {
     const result = await fetchPage(page);
     if (!Number.isInteger(result.pages) || result.pages < 0) throw new Error('Invalid sitemap pagination');
-    if (page < result.pages && !result.records.length) throw new Error('Incomplete sitemap product response');
+    if (result.pages > 0 && !result.records.length) throw new Error('Incomplete sitemap product response');
     pages = result.pages;
     records.push(...result.records);
   }
@@ -41,14 +41,14 @@ async function publishedCollection(endpoint: string) {
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const [phones, earbuds, vehicles, brands, pages, publishedBlogs] = await Promise.all([
-    allProducts(async page => {
-      const result = await getPhones(`limit=${BATCH_SIZE}&page=${page}`);
+    Promise.all(['', '&status=upcoming'].map(status => allProducts(async page => {
+      const result = await getPhones(`limit=${BATCH_SIZE}&page=${page}${status}`);
       return { records: result.phones, pages: result.pagination.totalPages };
-    }),
-    allProducts(async page => {
-      const result = await getEarbuds(`limit=${BATCH_SIZE}&page=${page}`);
+    }))).then(groups => [...new Map(groups.flat().map(record => [record.slug, record])).values()]),
+    Promise.all(['', '&status=upcoming'].map(status => allProducts(async page => {
+      const result = await getEarbuds(`limit=${BATCH_SIZE}&page=${page}${status}`);
       return { records: result.earbuds, pages: result.pagination.totalPages };
-    }),
+    }))).then(groups => [...new Map(groups.flat().map(record => [record.slug, record])).values()]),
     allProducts(async page => {
       const result = await getVehicles(`limit=${BATCH_SIZE}&page=${page}`);
       if (!result) throw new Error('Missing sitemap vehicle response');

@@ -28,7 +28,7 @@ export async function generateMetadata({
   const forLabel = resolvedParams.for as string;
 
   let title = "Mobile Phone Prices — Full Phone List";
-  let description = "Browse and filter latest mobile phone prices, specifications, and features. Compare specs across top brands.";
+  let description = "Browse mobile phone prices and specifications. Filter by brand, budget, camera, memory, and battery to compare phones and find a suitable model.";
 
   if (forLabel) {
     title = `${forLabel} — Price`;

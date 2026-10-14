@@ -90,8 +90,8 @@ export async function generateMetadata({
     alternates: {
       canonical: canonicalUrl,
     },
-    // When the admin has marked this page as noindex, tell Google not to index it.
-    ...(phone.seo?.is_indexable === false && {
+    // Only explicitly approved product content is eligible for indexing.
+    ...(phone.seo?.is_indexable !== true && {
       robots: { index: false, follow: true },
     }),
     openGraph: {
@@ -136,7 +136,7 @@ export default async function PhoneDetailPage({
   const rating = verifiedRating(phone.rating);
   const reviewCount = phone.rating?.count || 0;
   const hasAffiliateUrls = phone.prices?.some((p) => !!p.product_url);
-  const priceSource = phone.specs?.extra_specs?.price_section?.price_source || "Official manufacturer";
+  const priceSource = phone.specs?.extra_specs?.price_section?.price_source || "Source not provided";
 
   // Fetch competitor phones
   let competitorPhones: Phone[] = [];
@@ -666,7 +666,7 @@ export default async function PhoneDetailPage({
             <div className="p-6 flex justify-center">
               {getYouTubeEmbedId(phone.video_url) ? (
                 <div className="w-full max-w-3xl aspect-video rounded-lg overflow-hidden border border-border-subtle shadow-sm">
-                  <iframe
+                  <iframe loading="lazy"
                     className="w-full h-full"
                     src={`https://www.youtube.com/embed/${getYouTubeEmbedId(phone.video_url)}`}
                     title={`${phone.name} Video Review`}

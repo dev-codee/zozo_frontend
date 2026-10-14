@@ -1,36 +1,28 @@
-# This website — Mobile Phone Prices & Specifications
+# Mobile Rates — Product Prices and Specifications
 
-> This website is a mobile phone comparison platform, providing up-to-date prices, detailed technical specifications, retailer comparisons, and user reviews across all major mobile brands.
+> Mobile Rates provides catalogs and comparison tools for mobile phones, wireless earbuds, and electric vehicles. Prices and specifications depend on the information available for each product; confirm price and availability with the listed retailer or manufacturer.
 
-## Main Navigation
+## Catalogs
 
-- [Phone Catalog](https://mobilerates.info/phones): Search, filter, and browse all mobile phones by brand, price, RAM, camera, and battery.
-- [Mobile Brands](https://mobilerates.info/brands): View all smartphone manufacturers and their complete phone lineups.
-- [Phone Comparison](https://mobilerates.info/compare): Compare two or more smartphones side-by-side on price, specs, display, processor, camera, and battery.
-- [Tech News & Reviews](https://mobilerates.info/news): Read latest mobile phone news, reviews, launch updates, and buying guides.
-- [HTML Sitemap](https://mobilerates.info/site-map): Complete index of all static and dynamic pages on This website.
+- [Mobile phones](https://mobilerates.info/phones): Browse phone prices and hardware specifications.
+- [Wireless earbuds](https://mobilerates.info/earbuds): Browse audio features, battery specifications, and prices.
+- [Electric vehicles](https://mobilerates.info/vehicles): Browse vehicle specifications, range, and prices where provided.
+- [Phone brands](https://mobilerates.info/brands): Browse mobile manufacturers and their product catalogs.
 
-## Mobiles by Budget Range
+## Comparison tools
 
-- [Mobiles under Rs. 15,000](https://mobilerates.info/phones?max_price=15000): Budget entry-level smartphones.
-- [Mobiles under Rs. 30,000](https://mobilerates.info/phones?max_price=30000): Affordable mid-range devices.
-- [Mobiles under Rs. 50,000](https://mobilerates.info/phones?max_price=50000): Value-for-money feature-packed phones.
-- [Mobiles under Rs. 80,000](https://mobilerates.info/phones?max_price=80000): Premium mid-range and upper tier smartphones.
-- [Mobiles under Rs. 150,000](https://mobilerates.info/phones?max_price=150000): Flagship and high-performance smartphones.
+- [Compare phones](https://mobilerates.info/compare): Compare selected phone specifications side by side.
+- [Compare electric vehicles](https://mobilerates.info/vehicles/compare): Compare selected vehicles.
 
-## Top Mobile Brands
+## Editorial and information
 
-- [Samsung Mobile Prices](https://mobilerates.info/brands/samsung): Latest Galaxy S, A, and M series phone prices.
-- [Apple iPhone Prices](https://mobilerates.info/brands/apple): Latest iPhone model prices and specs.
-- [Xiaomi Mobile Prices](https://mobilerates.info/brands/xiaomi): Redmi, Poco, and Xiaomi flagship phone prices.
-- [Vivo Mobile Prices](https://mobilerates.info/brands/vivo): Latest Vivo V and Y series phone prices.
-- [Oppo Mobile Prices](https://mobilerates.info/brands/oppo): Latest Oppo Reno and A series phone prices.
-- [Infinix Mobile Prices](https://mobilerates.info/brands/infinix): Latest Infinix Note and Zero series phone prices.
-- [Tecno Mobile Prices](https://mobilerates.info/brands/tecno): Latest Tecno Camon and Spark series phone prices.
+- [News](https://mobilerates.info/news): Published articles and product updates.
+- [About](https://mobilerates.info/pages/about): Information about the website.
+- [Contact](https://mobilerates.info/pages/contact): Contact information.
+- [Privacy](https://mobilerates.info/pages/privacy-policy): Privacy policy.
+- [Terms](https://mobilerates.info/pages/terms): Terms of use.
+- [XML sitemap](https://mobilerates.info/sitemap.xml): Canonical URLs currently eligible for indexing.
 
-## Static Information Pages
+## Reading product information
 
-- [About Us](https://mobilerates.info/pages/about): Learn more about This website and our mission.
-- [Contact Us](https://mobilerates.info/pages/contact): Get in touch with our team.
-- [Privacy Policy](https://mobilerates.info/pages/privacy): Privacy policy and data handling guidelines.
-- [Terms & Conditions](https://mobilerates.info/pages/terms): Terms of service for using This website.
+Product URLs use https://mobilerates.info/{product-slug}. Reference prices do not establish retailer stock or an offer to sell. Missing specifications, estimated values, and user contributions should not be treated as independently verified manufacturer claims. Some products remain excluded from indexing pending editorial approval.

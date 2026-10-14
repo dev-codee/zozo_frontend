@@ -53,7 +53,7 @@ export async function generateMetadata({
         return cleanMetadata({
           title,
           description,
-          robots: { index: vehicles.every(product => product.seo?.is_indexable !== false), follow: true },
+          robots: { index: vehicles.every(product => product.seo?.is_indexable === true), follow: true },
           alternates: { canonical: canonicalUrl },
           openGraph: {
             title,

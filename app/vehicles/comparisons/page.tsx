@@ -1,5 +1,8 @@
 import { cleanMetadata } from "@/app/lib/seo";
 import type { Metadata } from "next";
+import { cache } from "react";
+import { notFound } from "next/navigation";
+import { isValidListingPage } from "@/app/lib/indexing";
 import { getPopularVehicleComparisons } from "@/app/lib/api";
 import Navbar from "@/app/components/Navbar";
 import Footer from "@/app/components/Footer";
@@ -9,41 +12,51 @@ import Link from "next/link";
 
 export const revalidate = 60; // ISR validation time
 
-export const metadata: Metadata = cleanMetadata({
-  title: "All EV Comparisons",
-  description:
-    "Browse our full list of electric vehicle comparisons. Compare EV prices, range, charging, and specs side by side.",
-  alternates: {
-    canonical: "https://mobilerates.info/vehicles/comparisons",
-  },
-  openGraph: {
-    title: "All EV Comparisons",
-    description:
-      "Browse our full list of electric vehicle comparisons. Compare EV prices, range, charging, and specs side by side.",
-    url: "https://mobilerates.info/vehicles/comparisons",
-  },
+type ArchiveProps = { searchParams: Promise<{ [key: string]: string | string[] | undefined }> };
+
+const getArchiveComparisons = cache(async () => {
+  const comparisons = await getPopularVehicleComparisons(100);
+  const seen = new Set<string>();
+  return comparisons.filter(comparison => {
+    const products = comparison.vehicles as { slug?: string }[] | undefined;
+    if (!products || products.length !== 2 || !products[0]?.slug || !products[1]?.slug || products[0].slug === products[1].slug) return false;
+    const pair = products.map(product => product.slug).sort().join("-vs-");
+    if (seen.has(pair)) return false;
+    seen.add(pair);
+    return true;
+  });
 });
+
+async function getArchivePage(searchParams: ArchiveProps["searchParams"]) {
+  const params = await searchParams;
+  if (!isValidListingPage(params)) notFound();
+  const comparisons = await getArchiveComparisons();
+  const totalPages = Math.max(1, Math.ceil(comparisons.length / 15));
+  if (!isValidListingPage(params, totalPages)) notFound();
+  return { params, comparisons, totalPages, page: Number(params.page || 1) };
+}
+
+export async function generateMetadata({ searchParams }: ArchiveProps): Promise<Metadata> {
+  const { params, page } = await getArchivePage(searchParams);
+  const title = page > 1 ? "All EV Comparisons — Page " + page : "All EV Comparisons";
+  const description = "Browse electric vehicle comparisons. Compare EV prices, range, charging, and specifications side by side.";
+  const canonical = `https://mobilerates.info/vehicles/comparisons${page > 1 ? `?page=${page}` : ""}`;
+  const index = Object.keys(params).every(key => key === "page");
+  return cleanMetadata({
+    title, description, alternates: { canonical }, robots: { index, follow: true },
+    openGraph: { title, description, url: canonical },
+    twitter: { card: "summary_large_image", title, description, images: ["/social-preview.png"] },
+  });
+}
 
 export default async function VehicleComparisonsPage({
   searchParams,
 }: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
-  const resolvedParams = await searchParams;
-  const pageParam = resolvedParams.page;
-  const currentPage = typeof pageParam === "string" ? parseInt(pageParam, 10) : 1;
-  const validPage = isNaN(currentPage) || currentPage < 1 ? 1 : currentPage;
-
-  // Fetch a large batch of saved comparisons, then paginate on the server so the
-  // HTML payload stays small.
-  const allComparisons = await getPopularVehicleComparisons(100);
-
-  const itemsPerPage = 15;
-  const totalItems = allComparisons?.length || 0;
-  const totalPages = Math.ceil(totalItems / itemsPerPage) || 1;
-
-  const startIndex = (validPage - 1) * itemsPerPage;
-  const currentComparisons = allComparisons?.slice(startIndex, startIndex + itemsPerPage) || [];
+  const { comparisons: allComparisons, totalPages, page: validPage } = await getArchivePage(searchParams);
+  const startIndex = (validPage - 1) * 15;
+  const currentComparisons = allComparisons.slice(startIndex, startIndex + 15);
 
   return (
     <>
@@ -60,9 +73,10 @@ export default async function VehicleComparisonsPage({
         </div>
 
         <div className="max-w-[1280px] mx-auto px-4 md:px-6 py-8 w-full flex-grow">
+          <h1 className="text-3xl font-bold text-text-main mb-6">All EV Comparisons</h1>
           {currentComparisons.length > 0 ? (
             <>
-              <PopularVehicleComparisons comparisons={currentComparisons} title="All EV Comparisons" />
+              <PopularVehicleComparisons comparisons={currentComparisons} title="Compare Prices and Specifications" />
 
               {/* Server-side Pagination Controls */}
               {totalPages > 1 && (

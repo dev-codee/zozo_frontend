@@ -49,11 +49,11 @@ export async function generateMetadata({
   const priceText = !isNaN(lowestPrice) && lowestPrice > 0 ? `Rs. ${lowestPrice.toLocaleString()}` : "Best Price";
 
   const year = new Date().getFullYear();
-  const rawTitle = earbud.seo?.ai_seo_title || earbud.seo?.meta_title || `${earbud.name} Price & Full Specs (${year})`;
+  const rawTitle = earbud.seo?.meta_title || earbud.seo?.ai_seo_title || `${earbud.name} Price & Full Specs (${year})`;
   const title = rawTitle.trim();
   const description =
-    (earbud.seo?.ai_meta_description ||
-    earbud.seo?.meta_description ||
+    (earbud.seo?.meta_description ||
+    earbud.seo?.ai_meta_description ||
     `Check ${earbud.name} official price (${priceText}), battery life, ANC noise cancellation, Bluetooth specs, sound quality, and customer reviews.`).trim();
 
   const primaryImage = earbud.images?.find((img) => img.is_primary) || earbud.images?.[0];
@@ -65,8 +65,8 @@ export async function generateMetadata({
     alternates: {
       canonical: canonicalUrl,
     },
-    // When the admin has marked this page as noindex, tell Google not to index it.
-    ...(earbud.seo?.is_indexable === false && {
+    // Only explicitly approved product content is eligible for indexing.
+    ...(earbud.seo?.is_indexable !== true && {
       robots: { index: false, follow: true },
     }),
     openGraph: {
@@ -157,7 +157,7 @@ export default async function EarbudDetailPage({
           __html: serializeJsonLd(generateBreadcrumbSchema(breadcrumbItems)),
         }}
       />
-      {youtubeVideoId && (
+      {youtubeVideoId && generateVideoSchema(earbud as any) && (
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -378,7 +378,7 @@ export default async function EarbudDetailPage({
                 </h2>
               </div>
               <div className="w-full aspect-video max-w-3xl mx-auto rounded-2xl overflow-hidden bg-black shadow-lg">
-                <iframe
+                <iframe loading="lazy"
                   src={`https://www.youtube.com/embed/${youtubeVideoId}`}
                   title={`${earbud.name} Video Review`}
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"

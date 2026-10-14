@@ -47,7 +47,7 @@ export async function generateMetadata({
   const formattedCategory = category ? category.charAt(0).toUpperCase() + category.slice(1) : "";
 
   let title = "Electric Vehicles Prices";
-  let description = "Browse the latest Electric Vehicles prices and specifications.";
+  let description = "Browse electric vehicle prices and specifications. Compare battery capacity, driving range, charging details, and features across electric cars and bikes.";
 
   if (brand && category) {
     title = `${brandName} Electric ${formattedCategory}s Prices & Specifications`;

@@ -153,8 +153,10 @@ export default function PhoneCard({ phone, variant = "list", priority = false }:
                   src={imageUrl}
                   alt={imageAlt}
                   fill
-                  priority={priority}
-                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 33vw, 250px"
+                  preload={priority}
+                  sizes={variant === "grid"
+                    ? "168px"
+                    : "(max-width: 767px) calc(100vw - 120px), (max-width: 1023px) calc(33.33vw - 182px), (max-width: 1279px) calc(25vw - 150px), 170px"}
                   className="object-contain mix-blend-darken group-hover:scale-105 transition-transform duration-500"
                 />
               </div>
@@ -169,9 +171,9 @@ export default function PhoneCard({ phone, variant = "list", priority = false }:
               >
                 <AppIcon name="compare_arrows" size={16} />
               </Link>
-              <button className="w-8 h-8 rounded border border-border-subtle flex items-center justify-center text-text-muted hover:border-primary hover:text-primary transition-colors" aria-label="View photos">
+              <Link href={`/${phone.slug}`} className="w-8 h-8 rounded border border-border-subtle flex items-center justify-center text-text-muted hover:border-primary hover:text-primary transition-colors" aria-label={`View ${phone.name} photos`}>
                 <AppIcon name="photo_camera" size={16} />
-              </button>
+              </Link>
             </div>
 
             <Link href={`/${phone.slug}`} className="text-xs font-bold text-text-main underline underline-offset-2 mt-2 hover:text-primary">

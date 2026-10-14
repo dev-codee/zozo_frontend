@@ -446,7 +446,7 @@ export default function CompareClient({ initialPhones = [], allPhones = [] }: Co
                     <div className="relative w-28 h-36 flex items-center justify-center bg-surface-container-lowest/50 p-2 rounded-lg border border-border-subtle/50">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
-                        src={phone.images?.[0]?.url || "/placeholder-phone.webp"}
+                        src={phone.images?.[0]?.url || "/placeholder-phone.svg"}
                         alt={phone.name}
                         className="max-h-full max-w-full object-contain transition-transform duration-300 group-hover/slot:scale-105"
                       />
@@ -645,7 +645,7 @@ function PhoneSearchSelector({ index, onSelect, allPhones, selectedSlugs }: Sear
                 <div className="w-8 h-8 rounded bg-surface-container flex items-center justify-center p-1 border border-border-subtle/30 shrink-0">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
-                    src={phone.images?.[0]?.url || "/placeholder-phone.webp"}
+                    src={phone.images?.[0]?.url || "/placeholder-phone.svg"}
                     alt={phone.name}
                     className="max-h-full max-w-full object-contain"
                   />

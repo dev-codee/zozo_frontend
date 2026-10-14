@@ -138,8 +138,8 @@ export async function generateMetadata({
     alternates: {
       canonical: canonicalUrl,
     },
-    // When the admin has marked this page as noindex, tell Google not to index it.
-    ...(vehicle.seo?.is_indexable === false && {
+    // Only explicitly approved product content is eligible for indexing.
+    ...(vehicle.seo?.is_indexable !== true && {
       robots: { index: false, follow: true },
     }),
     openGraph: {
@@ -693,7 +693,7 @@ export default async function EVDetailPage({
                   <div className="p-6 flex justify-center">
                     {getYouTubeEmbedId(vehicle.video_url) ? (
                       <div className="w-full max-w-3xl aspect-video rounded-lg overflow-hidden border border-border-subtle shadow-sm">
-                        <iframe
+                        <iframe loading="lazy"
                           className="w-full h-full"
                           src={`https://www.youtube.com/embed/${getYouTubeEmbedId(vehicle.video_url)}`}
                           title={`${vehicle.name} Video Review`}

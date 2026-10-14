@@ -46,7 +46,7 @@ export async function generateMetadata({
   const brandName = brand ? formatBrandName(brand, brands) : "";
 
   let title = "Wireless Earbuds Prices";
-  let description = "Browse latest TWS wireless earbuds prices and complete specifications.";
+  let description = "Browse wireless earbuds prices and specifications. Compare noise cancellation, battery life, Bluetooth connectivity, and audio features across brands.";
 
   if (brand && anc === "true") {
     title = `${brandName} ANC Wireless Earbuds Prices`;

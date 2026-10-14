@@ -7,9 +7,10 @@ interface EarbudCardProps {
   earbud: Earbud;
   variant?: "list" | "grid";
   priority?: boolean;
+  sizes?: string;
 }
 
-export default function EarbudCard({ earbud, variant = "grid", priority = false }: EarbudCardProps) {
+export default function EarbudCard({ earbud, variant = "grid", priority = false, sizes = "(max-width: 639px) calc(100vw - 90px), (max-width: 767px) calc(50vw - 84px), (max-width: 1023px) calc(33.33vw - 96px), (max-width: 1279px) calc(25vw - 94px), 226px" }: EarbudCardProps) {
   const primaryImage = earbud.images?.find((img) => img.is_primary) || earbud.images?.[0];
   const imageUrl = primaryImage?.url || "/placeholder-phone.svg";
   const imageAlt = primaryImage?.alt_text || earbud.name;
@@ -120,8 +121,8 @@ export default function EarbudCard({ earbud, variant = "grid", priority = false 
             src={imageUrl}
             alt={imageAlt}
             fill
-            priority={priority}
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 320px"
+            preload={priority}
+            sizes={sizes}
             className="object-contain mix-blend-multiply group-hover:scale-105 transition-transform duration-500"
           />
         </div>

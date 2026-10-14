@@ -48,7 +48,7 @@ export default function EarbudsSection({ earbuds }: EarbudsSectionProps) {
         {/* 4 Columns Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {displayEarbuds.map((earbud) => (
-            <EarbudCard key={earbud._id} earbud={earbud} />
+            <EarbudCard key={earbud._id} earbud={earbud} sizes="(max-width: 639px) calc(100vw - 90px), (max-width: 767px) calc(50vw - 86px), (max-width: 1023px) calc(50vw - 102px), (max-width: 1447px) calc(25vw - 96px), 264px" />
           ))}
         </div>
 

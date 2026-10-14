@@ -1,6 +1,6 @@
 import { serializeJsonLd } from "@/app/lib/schema";
 import { rebrandSiteContent } from "@/app/lib/branding";
-import { cleanMetadata } from "@/app/lib/seo";
+import { cleanMetadata, contentDescription } from "@/app/lib/seo";
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Navbar from '@/app/components/Navbar';
@@ -29,12 +29,14 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   if (!page || page.status !== "PUBLISHED") return cleanMetadata({ title: 'Page Not Found', robots: { index: false, follow: false } });
   
   const canonicalUrl = `https://mobilerates.info/pages/${resolvedParams.slug}`;
-  const title = page.title;
-  const description = page.excerpt || page.title;
+  const title = page.seo?.meta_title || page.title;
+  const description = page.seo?.meta_description || page.excerpt || contentDescription(page.body, page.title);
 
   return cleanMetadata({
     title,
     description,
+    keywords: page.seo?.keywords,
+    robots: { index: page.seo?.is_indexable !== false, follow: true },
     alternates: {
       canonical: canonicalUrl,
     },
@@ -59,7 +61,7 @@ export default async function StaticPagePage({ params }: { params: Promise<{ slu
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: serializeJsonLd(generateWebPageSchema(page.title, page.excerpt || page.title, `/pages/${page.slug}`)),
+          __html: serializeJsonLd(generateWebPageSchema(page.seo?.meta_title || page.title, page.seo?.meta_description || page.excerpt || contentDescription(page.body, page.title), `/pages/${page.slug}`)),
         }}
       />
       <Navbar />

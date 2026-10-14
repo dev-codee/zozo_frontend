@@ -86,8 +86,8 @@ export default function EVCard({ vehicle, variant = "list", priority = false }: 
             src={imageUrl}
             alt={imageAlt}
             fill
-            priority={priority}
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 400px"
+            preload={priority}
+            sizes="(max-width: 767px) calc(100vw - 90px), (max-width: 1023px) calc(50vw - 102px), (max-width: 1279px) calc(33.33vw - 96px), 332px"
             className="object-contain mix-blend-darken group-hover:scale-105 transition-transform duration-500"
           />
         </div>

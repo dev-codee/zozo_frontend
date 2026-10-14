@@ -25,7 +25,7 @@ export const metadata: Metadata = cleanMetadata({
 });
 
 interface NewsPreview {
-  _id: string; slug: string; title: string; excerpt?: string; createdAt: string;
+  _id: string; slug: string; title: string; excerpt?: string; createdAt: string; publish_date?: string;
   status: string; featured?: boolean; categories?: { _id: string; name: string }[];
 }
 
@@ -91,7 +91,7 @@ export default async function NewsPage() {
                     </h3>
                     <p className="text-text-muted mb-4 line-clamp-3">{rebrandSiteContent(featuredBlogs[0].excerpt || "")}</p>
                     <div className="mt-auto flex items-center text-sm text-text-muted">
-                      <span>{new Date(featuredBlogs[0].createdAt).toLocaleDateString()}</span>
+                      <span>{new Date(featuredBlogs[0].publish_date || featuredBlogs[0].createdAt).toLocaleDateString()}</span>
                     </div>
                   </div>
                 </div>
@@ -122,7 +122,7 @@ export default async function NewsPage() {
                         </h3>
                         <p className="text-text-muted text-sm line-clamp-2 mb-4 flex-1">{rebrandSiteContent(blog.excerpt || "")}</p>
                         <div className="mt-auto text-xs text-text-muted">
-                          {new Date(blog.createdAt).toLocaleDateString()}
+                          {new Date(blog.publish_date || blog.createdAt).toLocaleDateString()}
                         </div>
                       </div>
                     </div>
