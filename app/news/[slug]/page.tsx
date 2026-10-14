@@ -1,3 +1,4 @@
+import { isIndexableArticle } from "@/app/lib/editorial";
 import { serializeJsonLd } from "@/app/lib/schema";
 import { rebrandSiteContent } from "@/app/lib/branding";
 import { cleanMetadata, withoutSiteBrand } from "@/app/lib/seo";
@@ -33,6 +34,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   return cleanMetadata({
     title,
     description,
+    robots: { index: isIndexableArticle(blog), follow: true },
     alternates: {
       canonical: canonicalUrl,
     },

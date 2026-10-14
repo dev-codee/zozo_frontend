@@ -1,5 +1,6 @@
+import { isIndexableArticle } from "./lib/editorial";
 import type { MetadataRoute } from 'next';
-import { getPhones, getEarbuds, getVehicles, getBrands, getApiBaseUrl, getPopularComparisons, getPopularVehicleComparisons } from './lib/api';
+import { getPhones, getEarbuds, getVehicles, getBrands, getApiBaseUrl } from './lib/api';
 
 export const revalidate = 3600;
 const SITE = 'https://mobilerates.info';
@@ -39,7 +40,7 @@ async function publishedCollection(endpoint: string) {
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [phones, earbuds, vehicles, brands, pages, blogs, comparisons, vehicleComparisons] = await Promise.all([
+  const [phones, earbuds, vehicles, brands, pages, publishedBlogs] = await Promise.all([
     allProducts(async page => {
       const result = await getPhones(`limit=${BATCH_SIZE}&page=${page}`);
       return { records: result.phones, pages: result.pagination.totalPages };
@@ -54,29 +55,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       return { records: result.data, pages: result.totalPages };
     }),
     getBrands('phone'), publishedCollection('pages'), publishedCollection('blogs'),
-    getPopularComparisons("all"), getPopularVehicleComparisons("all"),
   ]);
-  const routes = ['/', '/phones', '/earbuds', '/vehicles', '/brands', '/compare', '/comparisons', '/vehicles/compare', '/vehicles/comparisons', '/news', '/site-map'].map(path => entry(path));
+  const blogs = publishedBlogs.filter(isIndexableArticle);
+  const routes = ['/', '/phones', '/earbuds', '/vehicles', '/brands'].map(path => entry(path));
+  if (blogs.length) routes.push(entry('/news'));
   const products = [...phones, ...earbuds, ...vehicles];
   const seen = new Set<string>();
   for (const product of products) {
     if (seen.has(product.slug)) throw new Error(`Product slug collision: ${product.slug}`);
     seen.add(product.slug);
-    if (product.seo?.is_indexable !== false) routes.push(entry(`/${product.slug}`, product));
+    if (product.seo?.is_indexable === true) routes.push(entry(`/${product.slug}`, product));
   }
-  routes.push(...brands.filter(brand => phones.some(phone => phone.brand_slug === brand.slug)).map(brand => entry(`/brands/${brand.slug}`)));
+  routes.push(...brands.filter(brand => phones.some(phone => phone.brand_slug === brand.slug && phone.seo?.is_indexable === true)).map(brand => entry(`/brands/${brand.slug}`)));
   routes.push(...pages.map(page => entry(`/pages/${page.slug}`, page)), ...blogs.map(blog => entry(`/news/${blog.slug}`, blog)));
-  const addComparisons = (records: { slugs?: string[] }[], available: RecordForSitemap[], prefix: string) => {
-    const indexable = new Set(available.filter(product => product.seo?.is_indexable !== false).map(product => product.slug));
-    for (const comparison of records) {
-      const slugs: string[] = comparison.slugs || [];
-      if (slugs.length === 2 && slugs[0] !== slugs[1] && slugs.every(slug => indexable.has(slug))) {
-        routes.push(entry(`${prefix}/${[...slugs].sort().join('-vs-')}`));
-      }
-    }
-  };
-  addComparisons(comparisons, phones, '/compare');
-  addComparisons(vehicleComparisons, vehicles, '/vehicles/compare');
   const unique = [...new Map(routes.map(route => [route.url, route])).values()];
   if (unique.length > 50000) throw new Error('Sitemap requires splitting before exceeding 50,000 URLs');
   return unique;

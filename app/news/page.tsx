@@ -1,3 +1,4 @@
+import { isIndexableArticle } from "@/app/lib/editorial";
 import { serializeJsonLd } from "@/app/lib/schema";
 import { rebrandSiteContent } from "@/app/lib/branding";
 import { cleanMetadata } from "@/app/lib/seo";
@@ -38,7 +39,7 @@ async function getBlogs() {
     const data = await res.json();
     const blogs = Array.isArray(data) ? data : data.data;
     if (!Array.isArray(blogs)) throw new Error("Invalid news response");
-    return (blogs as NewsPreview[]).filter(blog => blog.status === "PUBLISHED");
+    return (blogs as NewsPreview[]).filter(isIndexableArticle);
   } catch (error) {
     throw error;
   }
