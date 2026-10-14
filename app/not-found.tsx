@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { cleanMetadata } from "@/app/lib/seo";
 import Link from 'next/link';
 import NavbarClient from '@/app/components/NavbarClient';
@@ -13,7 +14,7 @@ export const metadata = cleanMetadata({
 export default function NotFound() {
   return (
     <div className="flex flex-col min-h-screen bg-surface">
-      <NavbarClient dynamicPages={[]} popularBrands={[]} />
+      <Suspense fallback={<div className="h-16 border-b border-border-subtle" />}><NavbarClient dynamicPages={[]} popularBrands={[]} /></Suspense>
       
       <main className="flex-grow flex items-center justify-center px-4 py-16 md:py-24">
         <div className="max-w-2xl w-full flex flex-col items-center text-center space-y-6">

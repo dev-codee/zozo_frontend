@@ -69,3 +69,16 @@ UI brand: Mobile Rates. Search titles and descriptions omit the site brand.
 - Accurate sitemap lastmod: https://developers.google.com/search/docs/crawling-indexing/sitemaps/build-sitemap
 - URL/canonical guidance: https://developers.google.com/search/docs/specialty/ecommerce/designing-a-url-structure-for-ecommerce-sites
 - Structured-data policies: https://developers.google.com/search/docs/appearance/structured-data/sd-policies
+
+## Deployment update — 14 October 2026
+
+The previous TLS/build blocker is resolved. Mobile Rates is deployed at https://mobilerates.info from /root/mobile-deployment on the authorized server.
+
+- Separate Compose project `mobilerates`, with localhost ports 3002 (frontend) and 5002 (backend), restart policies, resource limits, log rotation and health checks.
+- Dedicated Nginx virtual host, valid Let's Encrypt certificate, HTTP-to-HTTPS redirect and renewal reload hook.
+- Full Docker production build passes. The 404 navigation has its required Suspense boundary.
+- Product route loading fallback was removed so missing products can return HTTP 404 before streaming. Missing products and invalid pagination were verified as 404 live.
+- Homepage, API, robots.txt and sitemap.xml return HTTP 200. A sampled product emits noindex metadata. Account routes have noindex response headers.
+- Existing Zozo, Foxzil, n8n and Qadam service checks pass. Their original containers and Nginx site configurations were preserved.
+- `www.mobilerates.info` still requires a DNS record before its HTTPS certificate/redirect can be configured.
+- Search Console diagnosis and editorial verification remain outstanding; deployment does not establish that the previous traffic drop was a penalty.
