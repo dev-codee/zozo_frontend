@@ -10,13 +10,13 @@ import AppIcon from "@/app/components/AppIcon";
 import { generateCollectionPageSchema } from "@/app/lib/schema";
 
 export const metadata: Metadata = cleanMetadata({
-  title: "All Mobile Phone Brands in Pakistan — Samsung, Apple, Xiaomi & More",
-  description: "Browse all mobile phone brands. Find latest smartphones, prices, and specs from your favorite manufacturers in Pakistan.",
+  title: "All Mobile Phone Brands — Samsung, Apple, Xiaomi & More",
+  description: "Browse all mobile phone brands. Find latest smartphones, prices, and specs from your favorite manufacturers.",
   alternates: {
     canonical: "https://mobilerates.info/brands",
   },
   openGraph: {
-    title: "All Mobile Phone Brands in Pakistan",
+    title: "All Mobile Phone Brands",
     description: "Browse all mobile phone brands. Find latest smartphones and specs.",
     url: "https://mobilerates.info/brands",
   },

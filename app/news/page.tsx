@@ -13,13 +13,13 @@ import AppIcon from '@/app/components/AppIcon';
 
 export const metadata: Metadata = cleanMetadata({
   title: 'Tech News & Smartphone Reviews',
-  description: 'Latest mobile phone news, smartphone reviews, leaks, buying guides, and comparisons in Pakistan.',
+  description: 'Latest mobile phone news, smartphone reviews, leaks, buying guides, and comparisons.',
   alternates: {
     canonical: 'https://mobilerates.info/news',
   },
   openGraph: {
     title: 'Tech News & Smartphone Reviews',
-    description: 'Latest mobile phone news, reviews, and comparisons in Pakistan.',
+    description: 'Latest mobile phone news, reviews, and comparisons.',
     url: 'https://mobilerates.info/news',
   },
 });

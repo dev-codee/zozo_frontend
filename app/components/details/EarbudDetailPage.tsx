@@ -221,7 +221,7 @@ export default async function EarbudDetailPage({
                 <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-2">
                   <div>
                     <span className="text-xs text-text-muted uppercase font-bold tracking-wider">
-                      Best Price in Pakistan
+                      Best Price
                     </span>
                     <div className="flex items-baseline gap-1 mt-0.5">
                       <span className="text-sm font-bold text-primary">Rs.</span>

@@ -45,25 +45,25 @@ export async function generateMetadata({
 
   const brandName = brand ? formatBrandName(brand, brands) : "";
 
-  let title = "Wireless Earbuds Prices in Pakistan";
-  let description = "Browse latest TWS wireless earbuds prices and complete specifications in Pakistan.";
+  let title = "Wireless Earbuds Prices";
+  let description = "Browse latest TWS wireless earbuds prices and complete specifications.";
 
   if (brand && anc === "true") {
-    title = `${brandName} ANC Wireless Earbuds Prices in Pakistan`;
-    description = `Compare ${brandName} active noise cancelling earbuds prices, battery life, and specs in Pakistan.`;
+    title = `${brandName} ANC Wireless Earbuds Prices`;
+    description = `Compare ${brandName} active noise cancelling earbuds prices, battery life, and specs.`;
   } else if (brand) {
-    title = `${brandName} Earbuds Prices & Specifications in Pakistan`;
-    description = `Compare all ${brandName} wireless earbuds prices, sound features, battery life, and reviews in Pakistan.`;
+    title = `${brandName} Earbuds Prices & Specifications`;
+    description = `Compare all ${brandName} wireless earbuds prices, sound features, battery life, and reviews.`;
   } else if (maxPrice) {
     const formattedPrice = Number(maxPrice).toLocaleString();
-    title = `Best Wireless Earbuds Under Rs. ${formattedPrice} in Pakistan`;
-    description = `Find the best wireless earbuds priced under Rs. ${formattedPrice} in Pakistan. Compare ANC, playtime, and sound quality.`;
+    title = `Best Wireless Earbuds Under Rs. ${formattedPrice}`;
+    description = `Find the best wireless earbuds priced under Rs. ${formattedPrice}. Compare ANC, playtime, and sound quality.`;
   } else if (anc === "true") {
-    title = "Best ANC Noise Cancelling Earbuds in Pakistan";
+    title = "Best ANC Noise Cancelling Earbuds";
     description = "Discover top rated Active Noise Cancellation (ANC) wireless earbuds with deep bass and high playtime.";
   } else if (status === "upcoming") {
-    title = "Upcoming Wireless Earbuds in Pakistan";
-    description = "Discover upcoming wireless earbuds and TWS launching soon in Pakistan.";
+    title = "Upcoming Wireless Earbuds";
+    description = "Discover upcoming wireless earbuds and TWS launching soon.";
   }
 
   const year = new Date().getFullYear();
@@ -276,7 +276,7 @@ export default async function EarbudsPage({
                 {pageHeading}
               </h1>
               <p className="text-sm text-text-muted mt-1.5 max-w-2xl">
-                Showing {earbuds.length} of {total} products with verified Pakistan retail prices
+                Showing {earbuds.length} of {total} products with retailer prices
               </p>
             </div>
 

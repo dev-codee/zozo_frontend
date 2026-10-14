@@ -46,7 +46,7 @@ export async function generateMetadata({
       const vehicles = await getVehicleComparisonData(parsedSlugs);
       if (vehicles && vehicles.length === 2) {
         const title = `${vehicles[0].name} vs ${vehicles[1].name} — Price & Specs Comparison`;
-        const description = `Compare ${vehicles[0].name} vs ${vehicles[1].name} prices in Pakistan, full specifications, range, charging, battery, and performance.`;
+        const description = `Compare ${vehicles[0].name} vs ${vehicles[1].name} prices, full specifications, range, charging, battery, and performance.`;
         const canonicalUrl = `https://mobilerates.info/vehicles/compare/${[...parsedSlugs].sort()[0]}-vs-${[...parsedSlugs].sort()[1]}`;
         const img1 = vehicles[0].images?.[0]?.url;
 
@@ -75,8 +75,8 @@ export async function generateMetadata({
   }
 
   return cleanMetadata({
-    title: "EV Comparison — Compare Electric Vehicle Prices in Pakistan",
-    description: "Compare electric vehicle prices and specifications side by side in Pakistan.",
+    title: "EV Comparison — Compare Electric Vehicle Prices",
+    description: "Compare electric vehicle prices and specifications side by side.",
     alternates: { canonical: "https://mobilerates.info/vehicles/compare" },
   });
 }

@@ -683,7 +683,7 @@ export default function NavbarClient({
                         ) : null}
                       </h3>
                       <p className="text-xs text-text-muted">
-                        Official prices, upcoming phones & popular models in Pakistan
+                        Official prices, upcoming phones & popular models
                       </p>
                     </div>
                   </div>
@@ -719,7 +719,7 @@ export default function NavbarClient({
                         </span>
                       </div>
                       <p className="text-xs text-text-muted line-clamp-2 leading-relaxed">
-                        Most viewed & popular {activeBrand.name} phones in Pakistan
+                        Most viewed & popular {activeBrand.name} phones
                       </p>
                     </div>
                   </Link>

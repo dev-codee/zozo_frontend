@@ -33,7 +33,7 @@ export default async function Footer() {
 
         {/* Disclaimer */}
         <p className="text-text-muted text-xs leading-relaxed max-w-3xl mx-auto">
-          Prices, specifications, and availability on Mobile Rates are provided for informational purposes only and are based on information available in the Pakistani market. Information may change over time, and errors or outdated details may occur. All trademarks, logos, and product images belong to their respective owners. Users should verify product details, pricing, availability, and specifications with the official brand or retailer before making a purchase.
+          Prices, specifications, and availability on Mobile Rates are provided for informational purposes only and are based on available product and retailer information. Information may change over time, and errors or outdated details may occur. All trademarks, logos, and product images belong to their respective owners. Users should verify product details, pricing, availability, and specifications with the official brand or retailer before making a purchase.
         </p>
 
         {/* Copyright */}

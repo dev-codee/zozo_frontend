@@ -18,20 +18,19 @@ import { generateOrganizationSchema, generateWebSiteSchema } from "./lib/schema"
 export const metadata: Metadata = cleanMetadata({
   metadataBase: new URL('https://mobilerates.info'),
   title: {
-    default: "Compare Mobile Phone Prices in Pakistan",
+    default: "Compare Mobile Phone Prices",
     template: "%s",
   },
-  description: "Compare latest mobile phone prices in Pakistan across all top retailers. Find the best deals on Samsung, Apple, Xiaomi, Vivo, and more.",
-  keywords: "mobile phones, prices, Pakistan, compare, Samsung, Apple, Xiaomi, Vivo, Oppo, Infinix, Tecno",
+  description: "Compare latest mobile phone prices across all top retailers. Find the best deals on Samsung, Apple, Xiaomi, Vivo, and more.",
+  keywords: "mobile phones, prices, compare, Samsung, Apple, Xiaomi, Vivo, Oppo, Infinix, Tecno",
   alternates: {
     canonical: "./",
   },
   openGraph: {
     type: "website",
-    locale: "en_PK",
     url: "https://mobilerates.info",
-    title: "Compare Mobile Phone Prices in Pakistan",
-    description: "Compare latest mobile phone prices in Pakistan across all top retailers. Find the best deals on Samsung, Apple, Xiaomi, Vivo, and more.",
+    title: "Compare Mobile Phone Prices",
+    description: "Compare latest mobile phone prices across all top retailers. Find the best deals on Samsung, Apple, Xiaomi, Vivo, and more.",
     siteName: "Mobile phone prices and specifications",
     images: [
       {
@@ -44,8 +43,8 @@ export const metadata: Metadata = cleanMetadata({
   },
   twitter: {
     card: "summary_large_image",
-    title: "Compare Mobile Phone Prices in Pakistan",
-    description: "Compare latest mobile phone prices in Pakistan across all top retailers.",
+    title: "Compare Mobile Phone Prices",
+    description: "Compare latest mobile phone prices across all top retailers.",
     images: ["/social-preview.png"],
   },
   robots: {

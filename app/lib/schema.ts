@@ -89,7 +89,7 @@ export function generateProductSchema(phone: SchemaPhone) {
     "description": withoutSiteBrand(
       phone.seo?.meta_description ||
       phone.seo?.ai_meta_description ||
-      `${phone.name} Price in Pakistan, Specifications and Reviews`
+      `${phone.name} Price, Specifications and Reviews`
     ).substring(0, 500),
     "brand": {
       "@type": "Brand",
@@ -144,7 +144,7 @@ export function generateVehicleSchema(vehicle: SchemaVehicle) {
     "description": withoutSiteBrand(
       vehicle.seo?.meta_description ||
       vehicle.seo?.ai_meta_description ||
-      `${vehicle.name} Price in Pakistan, Specifications and Features`
+      `${vehicle.name} Price, Specifications and Features`
     ).substring(0, 500),
     "brand": {
       "@type": "Brand",
@@ -264,7 +264,7 @@ export function generateOrganizationSchema() {
     "@type": "Organization",
     "name": "Mobile price comparison website",
     "url": SITE_URL,
-    "description": "Compare latest mobile phone prices in Pakistan across all top retailers.",
+    "description": "Compare latest mobile phone prices across all top retailers.",
     "sameAs": []
   };
 }

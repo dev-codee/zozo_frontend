@@ -12,13 +12,13 @@ export const revalidate = 60; // ISR validation time
 
 export const metadata: Metadata = cleanMetadata({
   title: "Compare Mobile Phones Side-by-Side — Prices & Specifications",
-  description: "Compare mobile phone prices, camera specs, battery life, performance, and features side by side in Pakistan.",
+  description: "Compare mobile phone prices, camera specs, battery life, performance, and features side by side.",
   alternates: {
     canonical: "https://mobilerates.info/compare",
   },
   openGraph: {
     title: "Compare Mobile Phones Side-by-Side",
-    description: "Compare mobile phone prices, camera specs, battery life, performance, and features side by side in Pakistan.",
+    description: "Compare mobile phone prices, camera specs, battery life, performance, and features side by side.",
     url: "https://mobilerates.info/compare",
   },
 });

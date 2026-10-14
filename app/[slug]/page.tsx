@@ -291,7 +291,7 @@ export default async function PhoneDetailPage({
             <div className="flex flex-col gap-3">
               <div>
                 <h1 className="font-headline-lg text-xl md:text-2xl lg:text-[28px] text-text-main mb-1.5 font-bold tracking-tight">
-                  {phone.name} Price in Pakistan & Specs
+                  {phone.name} Price & Specs
                 </h1>
                 <div className="flex flex-wrap items-center gap-2 mb-0">
                   <span className="inline-flex items-center gap-1 bg-surface-container-low text-text-muted font-label-sm text-xs px-3 py-1 rounded-full uppercase border border-border-subtle">
@@ -428,32 +428,6 @@ export default async function PhoneDetailPage({
                   Source: <span className="font-medium text-text-main">{priceSource}</span>
                 </span>
               </div>
-
-              {phone.pta_tax && (phone.pta_tax.passport_pkr || phone.pta_tax.cnic_pkr) && (
-                <div className="p-4 bg-surface-container-low/50 border border-border-subtle rounded-xl flex flex-col gap-2">
-                  <h3 className="text-xs font-bold text-text-main flex items-center gap-1.5 uppercase tracking-wider">
-                    <AppIcon name="gavel" size={16} className="text-primary" />
-                    PTA Tax Estimate
-                  </h3>
-                  <div className="grid grid-cols-2 gap-4 mt-1">
-                    {phone.pta_tax.passport_pkr ? (
-                      <div>
-                        <span className="text-[10px] text-text-muted block">On Passport</span>
-                        <span className="text-sm font-bold text-text-main mt-0.5">Rs. {phone.pta_tax.passport_pkr.toLocaleString()}</span>
-                      </div>
-                    ) : null}
-                    {phone.pta_tax.cnic_pkr ? (
-                      <div>
-                        <span className="text-[10px] text-text-muted block">On CNIC</span>
-                        <span className="text-sm font-bold text-text-main mt-0.5">Rs. {phone.pta_tax.cnic_pkr.toLocaleString()}</span>
-                      </div>
-                    ) : null}
-                  </div>
-                  {phone.pta_tax.source_note && (
-                    <p className="text-[10px] text-text-muted italic border-t border-border-subtle/50 pt-1.5 mt-1">{phone.pta_tax.source_note}</p>
-                  )}
-                </div>
-              )}
 
               {/* Actions */}
               <div className="flex items-center gap-2 mt-2">

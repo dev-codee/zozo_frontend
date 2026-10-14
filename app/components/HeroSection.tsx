@@ -64,7 +64,7 @@ export default function HeroSection() {
           <span className="text-primary-container">Right Price</span>
         </h1>
         <p className="text-lg text-text-muted mb-10 max-w-2xl mx-auto leading-relaxed">
-          Compare latest mobile phone prices in Pakistan across all top
+          Compare latest mobile phone prices across all top
           retailers. Make objective, data-driven purchasing decisions.
         </p>
 

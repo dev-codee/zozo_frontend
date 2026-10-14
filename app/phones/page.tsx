@@ -27,22 +27,22 @@ export async function generateMetadata({
   const category = resolvedParams.category as string;
   const forLabel = resolvedParams.for as string;
 
-  let title = "Mobile Phone Prices in Pakistan — Full Phone List";
-  let description = "Browse and filter latest mobile phone prices, specifications, and features in Pakistan. Compare specs across top brands.";
+  let title = "Mobile Phone Prices — Full Phone List";
+  let description = "Browse and filter latest mobile phone prices, specifications, and features. Compare specs across top brands.";
 
   if (forLabel) {
-    title = `${forLabel} — Price in Pakistan`;
-    description = `Discover the best phones for ${forLabel} in Pakistan. Detailed specs, current prices, and comparison.`;
+    title = `${forLabel} — Price`;
+    description = `Discover the best phones for ${forLabel}. Detailed specs, current prices, and comparison.`;
   } else if (brand && !brand.includes(",")) {
     const formattedBrand = brand.charAt(0).toUpperCase() + brand.slice(1);
-    title = `${formattedBrand} Mobile Phone Prices in Pakistan`;
-    description = `Compare all ${formattedBrand} mobile phone prices, full specifications, and latest deals in Pakistan.`;
+    title = `${formattedBrand} Mobile Phone Prices`;
+    description = `Compare all ${formattedBrand} mobile phone prices, full specifications, and latest deals.`;
   } else if (maxPrice) {
     const formattedPrice = Number(maxPrice).toLocaleString();
-    title = `Best Mobile Phones Under Rs. ${formattedPrice} in Pakistan`;
-    description = `Find the best smartphones priced under Rs. ${formattedPrice} in Pakistan. Compare camera, battery, RAM, and performance.`;
+    title = `Best Mobile Phones Under Rs. ${formattedPrice}`;
+    description = `Find the best smartphones priced under Rs. ${formattedPrice}. Compare camera, battery, RAM, and performance.`;
   } else if (category) {
-    title = `Best ${category.charAt(0).toUpperCase() + category.slice(1)} Mobile Phones in Pakistan`;
+    title = `Best ${category.charAt(0).toUpperCase() + category.slice(1)} Mobile Phones`;
   }
 
   const isBrandPage = !!brand && !brand.includes(",") && !maxPrice && !category && !forLabel;
@@ -181,7 +181,7 @@ export default async function PhonesPage({
                 {title}
               </h1>
               <p className="text-sm text-text-muted">
-                Compare prices, features, and full specifications across top online retailers in Pakistan.
+                Compare prices, features, and full specifications across top online retailers.
               </p>
             </div>
 

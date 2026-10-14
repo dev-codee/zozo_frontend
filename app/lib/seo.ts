@@ -1,9 +1,22 @@
 import type { Metadata } from "next";
 
+// Clean previously saved market-targeted SEO copy as well as new defaults.
+export function withoutRegionalTargeting(text: string): string {
+  return text
+    .replace(/\b(?:(?:in|across|throughout|within|for)\s+)?(?:pakistan|karachi|lahore|islamabad)(?:['’]s)?\b/gi, "")
+    .replace(/\bpakistani\s+/gi, "")
+    .replace(/\s+([,.;:!?])/g, "$1")
+    .replace(/,\s*(?=,|$)/g, "")
+    .replace(/\s*([|–—])\s*(?=[|–—]|$)/g, "")
+    .replace(/^[\s|–—,:-]+|[\s|–—,:-]+$/g, "")
+    .replace(/\s{2,}/g, " ")
+    .trim();
+}
+
 // The site brand is shown in the UI, never appended to search or share copy.
 // Apply this to CMS fields as well as defaults to handle previously saved copy.
 export function withoutSiteBrand(text: string): string {
-  return text
+  return withoutRegionalTargeting(text)
     .replace(/\b(?:(?:on|at|by|from|visit)\s+)?(?:zozo(?:\.pk)?|mobile\s*rates(?:\.info)?)(?:['’]s)?\b/gi, "")
     .replace(/\s+([,.;:!?])/g, "$1")
     .replace(/\s*([|–—])\s*(?=[|–—]|$)/g, "")

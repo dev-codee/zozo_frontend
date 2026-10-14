@@ -46,25 +46,25 @@ export async function generateMetadata({
   const brandName = brand ? formatBrandName(brand, brands) : "";
   const formattedCategory = category ? category.charAt(0).toUpperCase() + category.slice(1) : "";
 
-  let title = "Electric Vehicles Prices in Pakistan";
-  let description = "Browse the latest Electric Vehicles prices and specifications in Pakistan.";
+  let title = "Electric Vehicles Prices";
+  let description = "Browse the latest Electric Vehicles prices and specifications.";
 
   if (brand && category) {
-    title = `${brandName} Electric ${formattedCategory}s Prices & Specifications in Pakistan`;
-    description = `Compare all ${brandName} electric ${category.toLowerCase()}s prices, full specifications, range, and battery details in Pakistan.`;
+    title = `${brandName} Electric ${formattedCategory}s Prices & Specifications`;
+    description = `Compare all ${brandName} electric ${category.toLowerCase()}s prices, full specifications, range, and battery details.`;
   } else if (brand) {
-    title = `${brandName} Electric Vehicles Prices in Pakistan`;
-    description = `Compare all ${brandName} electric vehicle prices, full specifications, range, and battery details in Pakistan.`;
+    title = `${brandName} Electric Vehicles Prices`;
+    description = `Compare all ${brandName} electric vehicle prices, full specifications, range, and battery details.`;
   } else if (maxPrice) {
     const formattedPrice = Number(maxPrice).toLocaleString();
-    title = `Best Electric Vehicles Under Rs. ${formattedPrice} in Pakistan`;
-    description = `Find the best electric vehicles priced under Rs. ${formattedPrice} in Pakistan. Compare battery capacity, range, and acceleration.`;
+    title = `Best Electric Vehicles Under Rs. ${formattedPrice}`;
+    description = `Find the best electric vehicles priced under Rs. ${formattedPrice}. Compare battery capacity, range, and acceleration.`;
   } else if (category) {
-    title = `${formattedCategory}s Prices & Specifications in Pakistan`;
-    description = `Browse the latest Electric ${formattedCategory}s prices, specifications, and features in Pakistan.`;
+    title = `${formattedCategory}s Prices & Specifications`;
+    description = `Browse the latest Electric ${formattedCategory}s prices, specifications, and features.`;
   } else if (status === "upcoming") {
-    title = "Upcoming Electric Vehicles in Pakistan";
-    description = "Discover upcoming electric cars, bikes, and scooters launching soon in Pakistan.";
+    title = "Upcoming Electric Vehicles";
+    description = "Discover upcoming electric cars, bikes, and scooters launching soon.";
   }
 
   const year = new Date().getFullYear();

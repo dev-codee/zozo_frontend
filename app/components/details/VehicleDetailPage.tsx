@@ -43,11 +43,11 @@ function getBudgetLinks(category?: string) {
     return {
       title: `Electric ${catTitle} by Budget`,
       items: [
-        { label: `Under Rs. 1.5 Lakh`, price: 150000 },
-        { label: `Under Rs. 2.5 Lakh`, price: 250000 },
-        { label: `Under Rs. 4 Lakh`, price: 400000 },
-        { label: `Under Rs. 6 Lakh`, price: 600000 },
-        { label: `Under Rs. 10 Lakh`, price: 1000000 },
+        { label: `Under Rs. 150,000`, price: 150000 },
+        { label: `Under Rs. 250,000`, price: 250000 },
+        { label: `Under Rs. 400,000`, price: 400000 },
+        { label: `Under Rs. 600,000`, price: 600000 },
+        { label: `Under Rs. 1,000,000`, price: 1000000 },
       ],
       queryParam: `category=${cat}`,
     };
@@ -57,10 +57,10 @@ function getBudgetLinks(category?: string) {
     return {
       title: `Electric Rickshaws by Budget`,
       items: [
-        { label: `Under Rs. 3 Lakh`, price: 300000 },
-        { label: `Under Rs. 5 Lakh`, price: 500000 },
-        { label: `Under Rs. 8 Lakh`, price: 800000 },
-        { label: `Under Rs. 12 Lakh`, price: 1200000 },
+        { label: `Under Rs. 300,000`, price: 300000 },
+        { label: `Under Rs. 500,000`, price: 500000 },
+        { label: `Under Rs. 800,000`, price: 800000 },
+        { label: `Under Rs. 1,200,000`, price: 1200000 },
       ],
       queryParam: `category=Rickshaw`,
     };
@@ -73,22 +73,22 @@ function getBudgetLinks(category?: string) {
         { label: `Under Rs. 35,000`, price: 35000 },
         { label: `Under Rs. 50,000`, price: 50000 },
         { label: `Under Rs. 75,000`, price: 75000 },
-        { label: `Under Rs. 1 Lakh`, price: 100000 },
+        { label: `Under Rs. 100,000`, price: 100000 },
       ],
       queryParam: `category=Cycle`,
     };
   }
 
-  // Cars (max 3 Crore)
+  // Cars
   return {
     title: `Electric Cars by Budget`,
     items: [
-      { label: `Under Rs. 50 Lakh`, price: 5000000 },
-      { label: `Under Rs. 80 Lakh`, price: 8000000 },
-      { label: `Under Rs. 1 Crore`, price: 10000000 },
-      { label: `Under Rs. 1.5 Crore`, price: 15000000 },
-      { label: `Under Rs. 2 Crore`, price: 20000000 },
-      { label: `Under Rs. 3 Crore`, price: 30000000 },
+      { label: `Under Rs. 5,000,000`, price: 5000000 },
+      { label: `Under Rs. 8,000,000`, price: 8000000 },
+      { label: `Under Rs. 10,000,000`, price: 10000000 },
+      { label: `Under Rs. 15,000,000`, price: 15000000 },
+      { label: `Under Rs. 20,000,000`, price: 20000000 },
+      { label: `Under Rs. 30,000,000`, price: 30000000 },
     ],
     queryParam: `category=Car`,
   };
@@ -130,10 +130,10 @@ export async function generateMetadata({
     title: { absolute: title },
     description,
     keywords: vehicle.seo?.ai_keywords || [
-      `${vehicle.name} price in pakistan`,
+      `${vehicle.name} price`,
       `${vehicle.brand_slug} electric car`,
       `${vehicle.name} specs`,
-      `electric vehicles pakistan`,
+      `electric vehicles`,
     ],
     alternates: {
       canonical: canonicalUrl,
@@ -146,7 +146,7 @@ export async function generateMetadata({
       title,
       description,
       url: canonicalUrl,
-      images: primaryImage ? [{ url: primaryImage, alt: `${vehicle.name} Price in Pakistan` }] : [],
+      images: primaryImage ? [{ url: primaryImage, alt: `${vehicle.name} Price` }] : [],
     },
     twitter: {
       card: "summary_large_image",
@@ -391,7 +391,7 @@ export default async function EVDetailPage({
               <div className="flex flex-col gap-5">
                 <div>
                   <h1 className="font-headline-lg text-xl md:text-2xl lg:text-[28px] text-text-main mb-1.5 font-bold tracking-tight">
-                    {vehicle.name} Price in Pakistan & Specs
+                    {vehicle.name} Price & Specs
                   </h1>
 
                   {/* Badges & Meta Row */}
@@ -453,13 +453,8 @@ export default async function EVDetailPage({
                           }`}
                         />
                         {(() => {
-                          const availabilityStr = Array.isArray(vehicle.country_availability)
-                            ? vehicle.country_availability.join(",").toLowerCase()
-                            : (vehicle.country_availability || "").toString().toLowerCase();
-                          const isPak = availabilityStr.includes("pakistan") || availabilityStr.includes("global") || (!availabilityStr && vehicle.price_pkr);
-
-                          if (vehicle.status === "available") return isPak ? "Available in Pakistan" : "Available Internationally";
-                          if (vehicle.status === "upcoming") return isPak ? "Upcoming in Pakistan" : "Upcoming Internationally";
+                          if (vehicle.status === "available") return "Available";
+                          if (vehicle.status === "upcoming") return "Upcoming";
                           return vehicle.status.charAt(0).toUpperCase() + vehicle.status.slice(1);
                         })()}
                       </span>
@@ -550,7 +545,7 @@ export default async function EVDetailPage({
                             <span>{v.variant_name || v.name}</span>
                             {v.price_pkr && (
                               <span className={`ml-1.5 opacity-80 ${isCurrent ? "text-white" : "text-text-muted"}`}>
-                                (Rs. {(v.price_pkr / 100000).toFixed(1)} Lac)
+                                (Rs. {v.price_pkr.toLocaleString()})
                               </span>
                             )}
                           </Link>
@@ -615,7 +610,7 @@ export default async function EVDetailPage({
               <div className="p-4 md:px-6 border-b border-border-subtle bg-surface-container-low/30 flex items-center justify-between">
                 <h2 className="font-headline-md text-base md:text-lg font-bold text-text-main flex items-center gap-2">
                   <AppIcon name="storefront" size={20} className="text-primary" />
-                  Dealership & Retailer Prices in Pakistan
+                  Dealership & Retailer Prices
                 </h2>
               </div>
 
@@ -736,9 +731,7 @@ export default async function EVDetailPage({
                     {competitors.map((comp) => {
                       const compImg = comp.images?.find((img) => img.url)?.url;
                       const formattedPrice = comp.price_pkr
-                        ? comp.price_pkr >= 1000000
-                          ? `Rs. ${(comp.price_pkr / 100000).toFixed(1)} Lac`
-                          : `Rs. ${comp.price_pkr.toLocaleString()}`
+                        ? `Rs. ${comp.price_pkr.toLocaleString()}`
                         : "(Upcoming)";
 
                       return (
@@ -807,7 +800,7 @@ export default async function EVDetailPage({
                           <span>{bv.name}</span>
                           {bv.price_pkr && (
                             <span className="text-text-muted text-xs font-normal">
-                              Rs. {(bv.price_pkr / 100000).toFixed(1)} Lac
+                              Rs. {bv.price_pkr.toLocaleString()}
                             </span>
                           )}
                         </Link>

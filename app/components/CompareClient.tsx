@@ -98,13 +98,6 @@ export default function CompareClient({ initialPhones = [], allPhones = [] }: Co
           better: "lower"
         },
         {
-          label: "PTA Tax (Passport)",
-          getValue: (p: Phone) =>
-            p.pta_tax?.passport_pkr ? `Rs. ${p.pta_tax.passport_pkr.toLocaleString()}` : "Unavailable",
-          getRawValue: (p: Phone) => p.pta_tax?.passport_pkr || null,
-          better: "lower"
-        },
-        {
           label: "Release Status",
           getValue: (p: Phone) => (
             <span className="capitalize">{p.status.replace("_", " ")}</span>
@@ -413,7 +406,7 @@ export default function CompareClient({ initialPhones = [], allPhones = [] }: Co
           Compare Phones
         </h1>
         <p className="font-body-md text-text-muted text-sm md:text-base">
-          Add up to {maxSlots} devices to compare prices, PTA taxes, and full specifications side-by-side.
+          Add up to {maxSlots} devices to compare prices and full specifications side-by-side.
         </p>
       </div>
 

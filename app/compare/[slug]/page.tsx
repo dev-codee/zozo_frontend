@@ -41,7 +41,7 @@ export async function generateMetadata({
       const comparisonPhones = await getComparisonData(parsedSlugs);
       if (comparisonPhones && comparisonPhones.length === 2) {
         const title = `${comparisonPhones[0].name} vs ${comparisonPhones[1].name} — Price & Specs Comparison`;
-        const description = `Compare ${comparisonPhones[0].name} vs ${comparisonPhones[1].name} prices in Pakistan, full specifications, camera, battery, display, and features.`;
+        const description = `Compare ${comparisonPhones[0].name} vs ${comparisonPhones[1].name} prices, full specifications, camera, battery, display, and features.`;
         const canonicalUrl = `https://mobilerates.info/compare/${[...parsedSlugs].sort()[0]}-vs-${[...parsedSlugs].sort()[1]}`;
         const img1 = comparisonPhones[0].images?.[0]?.url;
 
@@ -73,8 +73,8 @@ export async function generateMetadata({
 
   return cleanMetadata({
     robots: { index: false, follow: true },
-    title: "Phone Comparison — Compare Mobile Prices in Pakistan",
-    description: "Compare smartphone prices and specifications side by side in Pakistan.",
+    title: "Phone Comparison — Compare Mobile Prices",
+    description: "Compare smartphone prices and specifications side by side.",
     alternates: {
       canonical: "https://mobilerates.info/compare",
     },

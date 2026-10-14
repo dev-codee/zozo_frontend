@@ -32,7 +32,7 @@ export default function EarbudsSection({ earbuds }: EarbudsSectionProps) {
               Popular Wireless Earbuds
             </h2>
             <p className="text-sm text-text-muted mt-1.5">
-              Compare prices, active noise cancellation, and battery life on top earbuds in Pakistan.
+              Compare prices, active noise cancellation, and battery life on top earbuds.
             </p>
           </div>
 

@@ -1154,7 +1154,7 @@ export default function AdminPhoneForm({ initialData, onSubmit, isEditing = fals
                 <div className="space-y-4">
                   <div>
                     <label className="block text-xs font-semibold text-gray-600 mb-1">Meta Title</label>
-                    <input type="text" value={formData.seo.meta_title || ''} onChange={e => setFormData((p: any) => ({ ...p, seo: { ...p.seo, meta_title: e.target.value } }))} className="w-full px-3 py-2 border rounded-md text-xs" placeholder="e.g. Samsung Galaxy S25 Ultra Price in Pakistan | Specs & Reviews" />
+                    <input type="text" value={formData.seo.meta_title || ''} onChange={e => setFormData((p: any) => ({ ...p, seo: { ...p.seo, meta_title: e.target.value } }))} className="w-full px-3 py-2 border rounded-md text-xs" placeholder="e.g. Samsung Galaxy S25 Ultra Price | Specs & Reviews" />
                     <div className={`text-[10px] mt-1 ${(formData.seo.meta_title || '').length > 60 ? 'text-red-500 font-bold' : 'text-gray-400'}`}>
                       {(formData.seo.meta_title || '').length}/60 characters
                     </div>
@@ -1168,17 +1168,17 @@ export default function AdminPhoneForm({ initialData, onSubmit, isEditing = fals
                   </div>
                   <div>
                     <label className="block text-xs font-semibold text-gray-600 mb-1">Meta Keywords</label>
-                    <input type="text" value={formData.seo.meta_keywords || ''} onChange={e => setFormData((p: any) => ({ ...p, seo: { ...p.seo, meta_keywords: e.target.value } }))} className="w-full px-3 py-2 border rounded-md text-xs" placeholder="samsung galaxy s25, price in pakistan, specs" />
+                    <input type="text" value={formData.seo.meta_keywords || ''} onChange={e => setFormData((p: any) => ({ ...p, seo: { ...p.seo, meta_keywords: e.target.value } }))} className="w-full px-3 py-2 border rounded-md text-xs" placeholder="samsung galaxy s25, price, specs" />
                   </div>
                   <div>
                     <label className="block text-xs font-semibold text-gray-600 mb-1">Focus Keyword</label>
-                    <input type="text" value={formData.seo.focus_keyword || ''} onChange={e => setFormData((p: any) => ({ ...p, seo: { ...p.seo, focus_keyword: e.target.value } }))} className="w-full px-3 py-2 border rounded-md text-xs border-indigo-300 bg-indigo-50/30" placeholder="samsung galaxy s25 ultra price in pakistan" />
+                    <input type="text" value={formData.seo.focus_keyword || ''} onChange={e => setFormData((p: any) => ({ ...p, seo: { ...p.seo, focus_keyword: e.target.value } }))} className="w-full px-3 py-2 border rounded-md text-xs border-indigo-300 bg-indigo-50/30" placeholder="samsung galaxy s25 ultra price" />
                   </div>
                 </div>
                 <div className="space-y-4">
                   <div>
                     <label className="block text-xs font-semibold text-gray-600 mb-1">Long-tail Keywords (comma-separated)</label>
-                    <textarea value={(formData.seo.long_tail_keywords || []).join(', ')} onChange={e => setFormData((p: any) => ({ ...p, seo: { ...p.seo, long_tail_keywords: e.target.value.split(',').map((k: string) => k.trim()).filter(Boolean) } }))} className="w-full px-3 py-2 border rounded-md text-xs" rows={2} placeholder="samsung galaxy s25 ultra price in pakistan 2025, best samsung phone under 300000" />
+                    <textarea value={(formData.seo.long_tail_keywords || []).join(', ')} onChange={e => setFormData((p: any) => ({ ...p, seo: { ...p.seo, long_tail_keywords: e.target.value.split(',').map((k: string) => k.trim()).filter(Boolean) } }))} className="w-full px-3 py-2 border rounded-md text-xs" rows={2} placeholder="samsung galaxy s25 ultra price 2025, best samsung phone under 300000" />
                   </div>
                   <div>
                     <label className="block text-xs font-semibold text-gray-600 mb-1">Canonical URL</label>

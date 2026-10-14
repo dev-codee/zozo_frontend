@@ -12,14 +12,14 @@ export const revalidate = 60; // ISR validation time
 export const metadata: Metadata = cleanMetadata({
   title: "All EV Comparisons",
   description:
-    "Browse our full list of electric vehicle comparisons. Compare EV prices, range, charging, and specs side by side in Pakistan.",
+    "Browse our full list of electric vehicle comparisons. Compare EV prices, range, charging, and specs side by side.",
   alternates: {
     canonical: "https://mobilerates.info/vehicles/comparisons",
   },
   openGraph: {
     title: "All EV Comparisons",
     description:
-      "Browse our full list of electric vehicle comparisons. Compare EV prices, range, charging, and specs side by side in Pakistan.",
+      "Browse our full list of electric vehicle comparisons. Compare EV prices, range, charging, and specs side by side.",
     url: "https://mobilerates.info/vehicles/comparisons",
   },
 });

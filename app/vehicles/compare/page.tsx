@@ -17,14 +17,14 @@ export const revalidate = 60;
 export const metadata: Metadata = cleanMetadata({
   title: "Compare Electric Vehicles Side-by-Side — Prices & Specifications",
   description:
-    "Compare electric vehicle prices, range, charging speed, battery, performance, and features side by side in Pakistan.",
+    "Compare electric vehicle prices, range, charging speed, battery, performance, and features side by side.",
   alternates: {
     canonical: "https://mobilerates.info/vehicles/compare",
   },
   openGraph: {
     title: "Compare Electric Vehicles Side-by-Side",
     description:
-      "Compare EV prices, range, charging speed, battery, and specs side by side in Pakistan.",
+      "Compare EV prices, range, charging speed, battery, and specs side by side.",
     url: "https://mobilerates.info/vehicles/compare",
   },
 });
