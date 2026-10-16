@@ -39,6 +39,9 @@ export default async function Footer() {
         {/* Copyright */}
         <div className="text-text-muted text-xs mt-2">
           © {new Date().getFullYear()} Mobile Rates. All rights reserved.
+          <a href="https://www.exchangerate-api.com" target="_blank" rel="noopener noreferrer" className="block mt-2 text-[10px] hover:underline">
+            Rates by ExchangeRate-API
+          </a>
         </div>
       </div>
     </footer>
