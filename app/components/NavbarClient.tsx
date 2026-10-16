@@ -6,6 +6,8 @@ import { rebrandSiteContent } from "@/app/lib/branding";
 import { useState, Suspense, useRef, useEffect } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 import Link from "next/link";
+import Price from "./Price";
+import CurrencySelector from "./CurrencySelector";
 import SearchBar from "./SearchBar";
 import { useAuth } from "../context/AuthContext";
 import Image from "next/image";
@@ -786,28 +788,28 @@ export default function NavbarClient({
                         onClick={() => setBestOpen(false)}
                         className="px-2 py-1 rounded-lg bg-surface-white border border-border-subtle hover:border-primary hover:text-primary text-[11px] font-medium text-text-muted text-center transition-colors truncate"
                       >
-                        Under 35K
+                        Under <Price amount={35000} estimate={false} />
                       </Link>
                       <Link
                         href={`/phones?brand=${activeBrand.slug}&min_price=35000&max_price=70000`}
                         onClick={() => setBestOpen(false)}
                         className="px-2 py-1 rounded-lg bg-surface-white border border-border-subtle hover:border-primary hover:text-primary text-[11px] font-medium text-text-muted text-center transition-colors truncate"
                       >
-                        35K – 70K
+                        <Price amount={35000} estimate={false} /> – <Price amount={70000} estimate={false} />
                       </Link>
                       <Link
                         href={`/phones?brand=${activeBrand.slug}&min_price=70000&max_price=120000`}
                         onClick={() => setBestOpen(false)}
                         className="px-2 py-1 rounded-lg bg-surface-white border border-border-subtle hover:border-primary hover:text-primary text-[11px] font-medium text-text-muted text-center transition-colors truncate"
                       >
-                        70K – 120K
+                        <Price amount={70000} estimate={false} /> – <Price amount={120000} estimate={false} />
                       </Link>
                       <Link
                         href={`/phones?brand=${activeBrand.slug}&min_price=120000`}
                         onClick={() => setBestOpen(false)}
                         className="px-2 py-1 rounded-lg bg-surface-white border border-border-subtle hover:border-primary hover:text-primary text-[11px] font-medium text-text-muted text-center transition-colors truncate"
                       >
-                        120K+ Flagships
+                        <Price amount={120000} estimate={false} />+ Flagships
                       </Link>
                     </div>
                   </div>
@@ -865,6 +867,7 @@ export default function NavbarClient({
         </div>,
         document.body
       )}
+    <CurrencySelector />
     </header>
   );
 }

@@ -1,3 +1,5 @@
+import { CurrencyText } from "@/app/components/Price";
+import { displayCurrency } from "@/app/lib/pricing-server";
 import { notFound } from "next/navigation";
 import { serializeJsonLd } from "@/app/lib/schema";
 import { listingIndexing, isValidListingPage } from "@/app/lib/indexing";
@@ -103,7 +105,7 @@ export default async function PhonesPage({
   const forLabel = resolvedParams.for as string;
 
   // Build the query string
-  const queryParts = [];
+  const queryParts = [`display_currency=${await displayCurrency()}`];
   if (page) queryParts.push(`page=${page}`);
   if (minPrice) queryParts.push(`min_price=${minPrice}`);
   if (maxPrice) queryParts.push(`max_price=${maxPrice}`);
@@ -159,7 +161,7 @@ export default async function PhonesPage({
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: serializeJsonLd(generateCollectionPageSchema(title, `Explore ${title}`, (listingIndexing(brand && !brand.includes(",") ? `/brands/${brand}` : "/phones", resolvedParams, !!brand && !brand.includes(",")).canonical.replace("https://mobilerates.info", "")))),
+          __html: serializeJsonLd(generateCollectionPageSchema(title, `Explore $<CurrencyText text={title} />`, (listingIndexing(brand && !brand.includes(",") ? `/brands/${brand}` : "/phones", resolvedParams, !!brand && !brand.includes(",")).canonical.replace("https://mobilerates.info", "")))),
         }}
       />
       <script
@@ -178,7 +180,7 @@ export default async function PhonesPage({
 
             <div>
               <h1 className="text-2xl md:text-3xl font-bold text-text-main tracking-tight mb-1">
-                {title}
+                <CurrencyText text={title} />
               </h1>
               <p className="text-sm text-text-muted">
                 Compare prices, features, and full specifications across top online retailers.

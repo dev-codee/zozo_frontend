@@ -1,4 +1,8 @@
 "use client";
+import { useCurrency } from "@/app/context/CurrencyContext";
+import { resolvePrice } from "@/app/lib/currency";
+import Price from "@/app/components/Price";
+
 
 import { useState, useRef, useEffect } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
@@ -34,6 +38,7 @@ interface SpecCategory {
 
 export default function CompareClient({ initialPhones = [], allPhones = [] }: CompareClientProps) {
   const router = useRouter();
+  const { rates } = useCurrency();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const { user } = useAuth();
@@ -82,19 +87,8 @@ export default function CompareClient({ initialPhones = [], allPhones = [] }: Co
       fields: [
         {
           label: "Price (lowest)",
-          getValue: (p: Phone) => {
-            const rawStr = String(p.price_pkr || "");
-            const parsedPricePkr = Number(rawStr.replace(/[^0-9.]/g, ''));
-            const validPrices = (p.prices || []).map(pr => Number(pr.price_pkr)).filter(pr => !isNaN(pr) && pr > 0);
-            const lowest = (!isNaN(parsedPricePkr) && parsedPricePkr > 0) ? parsedPricePkr : (validPrices.length ? Math.min(...validPrices) : null);
-            return lowest ? `Rs. ${lowest.toLocaleString()}` : (p.price_pkr || "Price TBA");
-          },
-          getRawValue: (p: Phone) => {
-            const rawStr = String(p.price_pkr || "");
-            const parsedPricePkr = Number(rawStr.replace(/[^0-9.]/g, ''));
-            const validPrices = (p.prices || []).map(pr => Number(pr.price_pkr)).filter(pr => !isNaN(pr) && pr > 0);
-            return (!isNaN(parsedPricePkr) && parsedPricePkr > 0) ? parsedPricePkr : (validPrices.length ? Math.min(...validPrices) : null);
-          },
+          getValue: (p: Phone) => <Price product={p} />,
+          getRawValue: (p: Phone) => { const price = resolvePrice(p, 'USD', rates); return price?.currency === 'USD' ? price.amount : null; },
           better: "lower"
         },
         {
@@ -459,14 +453,7 @@ export default function CompareClient({ initialPhones = [], allPhones = [] }: Co
                         {phone.name}
                       </h3>
                       <p className="font-headline-md text-sm font-bold text-price-green mt-1">
-                        {Number(phone.price_pkr) > 0 || (phone.prices || []).filter(pr => !isNaN(Number(pr.price_pkr)) && Number(pr.price_pkr) > 0).length > 0
-                          ? `Rs. ${(
-                            Number(phone.price_pkr) > 0 ? Number(phone.price_pkr) :
-                            Math.min(
-                              ...(phone.prices || []).map(pr => Number(pr.price_pkr)).filter(pr => !isNaN(pr) && pr > 0)
-                            )
-                          ).toLocaleString()}`
-                          : "Price TBA"}
+                        <Price product={phone} />
                       </p>
                     </div>
                     {/* Key Differences AI section */}

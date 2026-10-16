@@ -1,3 +1,5 @@
+import { CurrencyText } from "@/app/components/Price";
+import { displayCurrency } from "@/app/lib/pricing-server";
 import { notFound } from "next/navigation";
 import { serializeJsonLd } from "@/app/lib/schema";
 import { listingIndexing, isValidListingPage } from "@/app/lib/indexing";
@@ -113,6 +115,7 @@ export default async function VehiclesPage({
   const limit = resolvedParams.limit as string;
 
   const queryParams = new URLSearchParams();
+  queryParams.set("display_currency", await displayCurrency());
   if (brand) queryParams.set("brand", brand);
   if (category) queryParams.set("category", category);
   if (bodyType) queryParams.set("body_type", bodyType);
@@ -218,7 +221,7 @@ export default async function VehiclesPage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: serializeJsonLd(
-            generateCollectionPageSchema(title, `Explore ${title}`, canonicalUrl)
+            generateCollectionPageSchema(title, `Explore $<CurrencyText text={title} />`, canonicalUrl)
           ),
         }}
       />
@@ -238,7 +241,7 @@ export default async function VehiclesPage({
           <div className="mt-4 md:mt-6 pb-4 border-b border-border-subtle flex flex-col md:flex-row gap-4 justify-between items-start md:items-end">
             <div>
               <h1 className="text-2xl md:text-3xl font-bold text-text-main">
-                {title}
+                <CurrencyText text={title} />
               </h1>
               <p className="text-sm text-text-muted mt-2 max-w-2xl">
                 Showing {vehicles.length} of {paginatedData?.total || 0} results
@@ -293,7 +296,7 @@ export default async function VehiclesPage({
                   href={f.removeHref}
                   className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 transition-colors"
                 >
-                  <span>{f.label}</span>
+                  <span><CurrencyText text={f.label} /></span>
                   <X className="w-3.5 h-3.5" />
                 </Link>
               ))}

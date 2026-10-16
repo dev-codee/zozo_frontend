@@ -1,4 +1,6 @@
 "use client";
+import Price from "@/app/components/Price";
+
 
 import React from "react";
 import type { Vehicle } from "@/app/lib/api";
@@ -210,11 +212,11 @@ export default function EVSpecs({ vehicle, className = "" }: EVSpecsProps) {
 
       {/* 10. Pricing & Global Markets */}
       {renderSection("pricing", "Pricing & Global Markets", "payments", [
-        renderRow("Ex-Factory Price (PKR)", pricing.price_pkr_ex_factory ? `Rs. ${pricing.price_pkr_ex_factory.toLocaleString()}` : ""),
-        renderRow("Estimated On-Road Price (PKR)", pricing.price_pkr_on_road ? `Rs. ${pricing.price_pkr_on_road.toLocaleString()}` : ""),
-        renderRow("Global Base Price (USD)", pricing.price_global_base_usd ? `$${pricing.price_global_base_usd.toLocaleString()} USD` : ""),
-        renderRow("Base Price (EUR)", pricing.price_global_base_eur ? `€${pricing.price_global_base_eur.toLocaleString()} EUR` : ""),
-        renderRow("Base Price (CNY)", pricing.price_global_base_cny ? `¥${pricing.price_global_base_cny.toLocaleString()} CNY` : ""),
+        renderRow("Pakistan Ex-Factory Price", pricing.price_pkr_ex_factory ? <Price amount={pricing.price_pkr_ex_factory} /> : ""),
+        renderRow("Pakistan Estimated On-Road Price", pricing.price_pkr_on_road ? <Price amount={pricing.price_pkr_on_road} /> : ""),
+        renderRow("Global Base Price", pricing.price_global_base_usd ? <Price amount={pricing.price_global_base_usd} source="USD" /> : ""),
+        renderRow("European Base Price", pricing.price_global_base_eur ? <Price amount={pricing.price_global_base_eur} source="EUR" /> : ""),
+        renderRow("Chinese Base Price", pricing.price_global_base_cny ? <Price amount={pricing.price_global_base_cny} source="CNY" /> : ""),
       ])}
     </section>
   );

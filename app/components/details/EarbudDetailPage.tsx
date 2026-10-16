@@ -1,3 +1,4 @@
+import Price from "@/app/components/Price";
 import { serializeJsonLd } from "@/app/lib/schema";
 import { cleanMetadata } from "@/app/lib/seo";
 import { getProductEarbudBySlug as getEarbudBySlug } from "@/app/lib/products";
@@ -224,9 +225,8 @@ export default async function EarbudDetailPage({
                       Best Price
                     </span>
                     <div className="flex items-baseline gap-1 mt-0.5">
-                      <span className="text-sm font-bold text-primary">Rs.</span>
                       <span className="text-3xl md:text-4xl font-extrabold text-text-main tracking-tight">
-                        {lowestPrice ? lowestPrice.toLocaleString() : "TBA"}
+                        <Price product={earbud} />
                       </span>
                     </div>
                   </div>
@@ -256,7 +256,7 @@ export default async function EarbudDetailPage({
                           </div>
                           <div className="flex items-center gap-2 shrink-0">
                             <span className="font-bold text-text-main">
-                              Rs. {Number(p.price_pkr).toLocaleString()}
+                              <Price amount={Number(p.price_pkr)} />
                             </span>
                             {p.product_url && (
                               <a

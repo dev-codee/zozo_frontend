@@ -1,4 +1,8 @@
 "use client";
+import { useCurrency } from "@/app/context/CurrencyContext";
+import { resolvePrice } from "@/app/lib/currency";
+import Price from "@/app/components/Price";
+
 
 import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
@@ -53,6 +57,7 @@ export default function VehicleCompareClient({
   allVehicles = [],
 }: VehicleCompareClientProps) {
   const router = useRouter();
+  const { rates } = useCurrency();
 
   const maxSlots = 2;
   const slots: (Vehicle | null)[] = Array.from(
@@ -103,10 +108,9 @@ export default function VehicleCompareClient({
         {
           label: "Price (lowest)",
           getValue: (v) => {
-            const p = lowestPrice(v);
-            return p ? `Rs. ${p.toLocaleString()}` : "Price TBA";
+            return <Price product={v} />;
           },
-          getRawValue: (v) => lowestPrice(v),
+          getRawValue: (v) => { const price = resolvePrice(v, 'USD', rates); return price?.currency === 'USD' ? price.amount : null; },
           better: "lower",
         },
         { label: "Type", getValue: (v) => v.vehicle_type || "N/A" },
@@ -565,9 +569,7 @@ export default function VehicleCompareClient({
                         {vehicle.name}
                       </h3>
                       <p className="font-headline-md text-sm font-bold text-price-green mt-1">
-                        {lowestPrice(vehicle)
-                          ? `Rs. ${lowestPrice(vehicle)!.toLocaleString()}`
-                          : "Price TBA"}
+                        <Price product={vehicle} />
                       </p>
                     </div>
 

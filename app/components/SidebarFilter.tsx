@@ -1,5 +1,6 @@
 "use client";
 
+import { useCurrency } from "@/app/context/CurrencyContext";
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { Brand } from "@/app/lib/api";
@@ -36,6 +37,8 @@ export default function SidebarFilter({
   totalResults?: number;
 }) {
   const router = useRouter();
+  const { currency, convertAmount, rates } = useCurrency();
+  const filterCurrency = currency === "PKR" || (rates.PKR && rates[currency]) ? currency : "PKR";
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
@@ -76,9 +79,9 @@ export default function SidebarFilter({
     setSelectedBatteries(getParamArray("battery"));
     setSelectedVideos(getParamArray("video"));
 
-    setMinPrice(searchParams.get("min_price") || "");
-    setMaxPrice(searchParams.get("max_price") || "");
-  }, [searchParams]);
+    setMinPrice(searchParams.get("min_price") ? String(Number((convertAmount(Number(searchParams.get("min_price")), "PKR", filterCurrency) ?? 0).toFixed(2))) : "");
+    setMaxPrice(searchParams.get("max_price") ? String(Number((convertAmount(Number(searchParams.get("max_price")), "PKR", filterCurrency) ?? 0).toFixed(2))) : "");
+  }, [searchParams, filterCurrency, rates]);
 
   // Lock body scroll when mobile drawer is open
   useEffect(() => {
@@ -166,7 +169,10 @@ export default function SidebarFilter({
   };
 
   const handlePriceApply = () => {
-    updateFilters({ minPrice, maxPrice });
+    const min = minPrice === '' ? '' : convertAmount(Number(minPrice), filterCurrency, 'PKR');
+    const max = maxPrice === '' ? '' : convertAmount(Number(maxPrice), filterCurrency, 'PKR');
+    if (min === null || max === null || (min !== '' && min < 0) || (max !== '' && max < 0) || (min !== '' && max !== '' && min > max)) return;
+    updateFilters({ minPrice: String(min), maxPrice: String(max) });
   };
 
   const handleClearAll = () => {
@@ -203,12 +209,13 @@ export default function SidebarFilter({
     <div className="space-y-4">
       {/* Price Range Filter */}
       <div className={boxClasses}>
-        <h3 className={titleClasses}>Price Range (PKR)</h3>
+        <h3 className={titleClasses}>Price Range ({filterCurrency})</h3>
         <div className="space-y-3">
           <div className="flex items-center gap-2">
             <input
               type="number"
               placeholder="Min"
+              min="0" step="any" aria-label={`Minimum price in ${filterCurrency}`}
               value={minPrice}
               onChange={(e) => setMinPrice(e.target.value)}
               className="w-full bg-surface-container-low border border-border-subtle rounded-lg px-3 py-2 text-xs focus:ring-1 focus:ring-primary focus:border-primary text-text-main"
@@ -217,6 +224,7 @@ export default function SidebarFilter({
             <input
               type="number"
               placeholder="Max"
+              min="0" step="any" aria-label={`Maximum price in ${filterCurrency}`}
               value={maxPrice}
               onChange={(e) => setMaxPrice(e.target.value)}
               className="w-full bg-surface-container-low border border-border-subtle rounded-lg px-3 py-2 text-xs focus:ring-1 focus:ring-primary focus:border-primary text-text-main"

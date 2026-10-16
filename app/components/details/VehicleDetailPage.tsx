@@ -1,3 +1,5 @@
+import { CurrencyText } from "@/app/components/Price";
+import Price from "@/app/components/Price";
 import { verifiedRating, publishableDescription } from "@/app/lib/content-quality";
 import { serializeJsonLd } from "@/app/lib/schema";
 import { cleanMetadata, withoutSiteBrand } from "@/app/lib/seo";
@@ -498,7 +500,7 @@ export default async function EVDetailPage({
                 <div className="flex flex-col gap-2">
                   <div className="flex items-baseline gap-2">
                     <span className="font-display-lg text-2xl md:text-3xl font-bold text-price-green tracking-tight">
-                      {lowestPrice ? `Rs. ${lowestPrice.toLocaleString()}` : (vehicle.price_pkr || "Price TBA")}
+                      <Price product={vehicle} />
                     </span>
                     {lowestPrice ? (
                       <span className="text-[10px] text-text-muted uppercase tracking-wider font-semibold">Starting</span>
@@ -511,13 +513,13 @@ export default async function EVDetailPage({
                   {(pricing.price_global_base_usd || pricing.price_global_base_eur || pricing.price_global_base_cny) && (
                     <div className="flex flex-wrap items-center gap-3 text-xs text-text-muted border border-border-subtle bg-surface-container-low/50 px-3 py-2 rounded-lg inline-block w-fit">
                       {pricing.price_global_base_usd && (
-                        <span>MSRP: <strong className="text-text-main">${pricing.price_global_base_usd.toLocaleString()}</strong></span>
+                        <span>MSRP: <strong className="text-text-main"><Price amount={pricing.price_global_base_usd} source="USD" /></strong></span>
                       )}
                       {pricing.price_global_base_eur && (
-                        <span>• <strong className="text-text-main">€{pricing.price_global_base_eur.toLocaleString()}</strong></span>
+                        <span>• <strong className="text-text-main"><Price amount={pricing.price_global_base_eur} source="EUR" /></strong></span>
                       )}
                       {pricing.price_global_base_cny && (
-                        <span>• <strong className="text-text-main">¥{pricing.price_global_base_cny.toLocaleString()}</strong></span>
+                        <span>• <strong className="text-text-main"><Price amount={pricing.price_global_base_cny} source="CNY" /></strong></span>
                       )}
                     </div>
                   )}
@@ -543,9 +545,9 @@ export default async function EVDetailPage({
                             }`}
                           >
                             <span>{v.variant_name || v.name}</span>
-                            {v.price_pkr && (
+                            {(v.price_pkr || v.price_usd) && (
                               <span className={`ml-1.5 opacity-80 ${isCurrent ? "text-white" : "text-text-muted"}`}>
-                                (Rs. {v.price_pkr.toLocaleString()})
+                                (<Price product={v} />)
                               </span>
                             )}
                           </Link>
@@ -637,7 +639,7 @@ export default async function EVDetailPage({
                       </div>
                       <div className="flex items-center justify-between md:justify-end gap-4 w-full md:w-auto pt-3 md:pt-0 border-t border-border-subtle md:border-0">
                         <div className="font-headline-md text-lg font-bold text-text-main">
-                          Rs. {priceItem.price_pkr.toLocaleString()}
+                          <Price amount={priceItem.price_pkr} />
                         </div>
                         {priceItem.product_url ? (
                           <a
@@ -730,9 +732,7 @@ export default async function EVDetailPage({
                   <div className="grid grid-cols-2 gap-3">
                     {competitors.map((comp) => {
                       const compImg = comp.images?.find((img) => img.url)?.url;
-                      const formattedPrice = comp.price_pkr
-                        ? `Rs. ${comp.price_pkr.toLocaleString()}`
-                        : "(Upcoming)";
+                      const formattedPrice = <Price product={comp} />;
 
                       return (
                         <div
@@ -798,9 +798,9 @@ export default async function EVDetailPage({
                           className="text-xs md:text-sm text-primary hover:underline line-clamp-1 flex items-center justify-between"
                         >
                           <span>{bv.name}</span>
-                          {bv.price_pkr && (
+                          {(bv.price_pkr || bv.price_usd) && (
                             <span className="text-text-muted text-xs font-normal">
-                              Rs. {bv.price_pkr.toLocaleString()}
+                              <Price product={bv} />
                             </span>
                           )}
                         </Link>
@@ -825,7 +825,7 @@ export default async function EVDetailPage({
                             href={`/vehicles?${budgetGroup.queryParam}&max_price=${p.price}`}
                             className="text-xs md:text-sm text-text-main hover:text-primary transition-colors flex items-center justify-between"
                           >
-                            <span>{p.label}</span>
+                            <span><CurrencyText text={p.label} /></span>
                             <AppIcon name="chevron_right" size={14} className="text-text-muted" />
                           </Link>
                         </li>

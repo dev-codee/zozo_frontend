@@ -90,6 +90,8 @@ export interface Phone {
   };
   prices: PhonePrice[];
   price_pkr?: number;
+  price_usd?: number;
+  price_usd_source?: string;
   price_history?: PriceHistoryPoint[];
   pta_tax?: {
     passport_pkr?: number;
@@ -253,6 +255,8 @@ export interface Earbud {
   tags?: string[];
   video_url?: string;
   price_pkr?: number;
+  price_usd?: number;
+  price_usd_source?: string;
   price_history?: PriceHistoryPoint[];
   images: EarbudImage[];
   specs?: EarbudSpecs;
@@ -335,6 +339,8 @@ export interface Vehicle {
   country_availability?: string[];
   video_url?: string;
   price_pkr?: number;
+  price_usd?: number;
+  price_usd_source?: string;
   images: { url: string; is_primary?: boolean; alt_text?: string }[];
   prices?: VehiclePrice[];
   pricing?: {
@@ -626,6 +632,8 @@ export interface SearchResultItem {
   brand_slug: string;
   item_type?: "phone" | "earbud" | "vehicle";
   price_pkr?: number;
+  price_usd?: number;
+  price_usd_source?: string;
   images?: { url: string; alt_text?: string }[];
   status?: string;
   specs?: any;

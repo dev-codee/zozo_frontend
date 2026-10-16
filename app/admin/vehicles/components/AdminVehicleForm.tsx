@@ -1,4 +1,5 @@
 "use client";
+import ReferencePriceFields from "@/app/admin/components/ReferencePriceFields";
 import { notify } from "@/app/lib/notifications";
 
 
@@ -27,7 +28,7 @@ const emptyVehicle = () => ({
   segment: '', platform: '', doors: '', seats: '', status: 'available',
   release_date: '', announcement_date: '', assembly_country: '', made_in: '',
   description: '', tags: [] as string[], country_availability: '', competitor_slugs: '',
-  video_url: '', price_pkr: '', images: [] as any[],
+  video_url: '', price_pkr: '', price_usd: '', price_usd_source: '', images: [] as any[],
   specs: {
     battery: {
       chemistry: '', capacity_gross_kwh: '', capacity_usable_kwh: '', system_voltage: '',
@@ -328,6 +329,9 @@ export default function AdminVehicleForm({ initialData, onSubmit, isEditing = fa
     setIsSubmitting(true);
     try {
       const payload = JSON.parse(JSON.stringify(formData));
+      payload.price_usd = formData.price_usd === '' || formData.price_usd == null ? null : Number(formData.price_usd);
+      payload.price_usd_source = formData.price_usd_source || '';
+      if (payload.price_usd !== null && (!Number.isFinite(payload.price_usd) || payload.price_usd < 0)) { notify('Enter a valid USD price'); return; }
       // Convert comma-string fields into arrays
       for (const path of COMMA_ARRAY_PATHS) {
         const raw = getPath(payload, path);
@@ -338,6 +342,7 @@ export default function AdminVehicleForm({ initialData, onSubmit, isEditing = fa
         }
       }
       const cleaned = stripEmpty(payload);
+      cleaned.price_usd_source = formData.price_usd_source || "";
       await onSubmit(cleaned);
     } finally {
       setIsSubmitting(false);
@@ -478,6 +483,7 @@ export default function AdminVehicleForm({ initialData, onSubmit, isEditing = fa
                   {input('Release Date', formData.release_date, v => setTop('release_date', v), 'date')}
                   {input('Assembly Country', formData.assembly_country, v => setTop('assembly_country', v))}
                   {input('Made In', formData.made_in, v => setTop('made_in', v))}
+                  <ReferencePriceFields value={formData.price_usd} source={formData.price_usd_source} onPrice={v => setFormData((p: any) => ({ ...p, price_usd: v }))} onSource={v => setFormData((p: any) => ({ ...p, price_usd_source: v }))} />
                   {input('Header Price (PKR)', formData.price_pkr, v => setTop('price_pkr', v), 'number')}
                   {input('Video URL (YouTube)', formData.video_url, v => setTop('video_url', v))}
                   {input('Tags (comma separated)', formData.tags?.join(', ') || '', v => setTop('tags', v.split(',').map((t: string) => t.trim()).filter(Boolean)))}

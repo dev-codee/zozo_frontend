@@ -1,3 +1,5 @@
+import { CurrencyText } from "@/app/components/Price";
+import { displayCurrency } from "@/app/lib/pricing-server";
 import { notFound } from "next/navigation";
 import { serializeJsonLd } from "@/app/lib/schema";
 import { listingIndexing, isValidListingPage } from "@/app/lib/indexing";
@@ -114,6 +116,7 @@ export default async function EarbudsPage({
   const limit = (resolvedParams.limit as string) || "12";
 
   const queryParams = new URLSearchParams();
+  queryParams.set("display_currency", await displayCurrency());
   if (brand) queryParams.set("brand", brand);
   if (wearingType) queryParams.set("wearing_type", wearingType);
   if (minPrice) queryParams.set("min_price", minPrice);
@@ -245,7 +248,7 @@ export default async function EarbudsPage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: serializeJsonLd(
-            generateCollectionPageSchema(pageHeading, `Explore ${pageHeading}`, canonicalUrl)
+            generateCollectionPageSchema(pageHeading, `Explore $<CurrencyText text={pageHeading} />`, canonicalUrl)
           ),
         }}
       />
@@ -273,7 +276,7 @@ export default async function EarbudsPage({
                 </span>
               </div>
               <h1 className="text-2xl md:text-3xl font-bold text-text-main">
-                {pageHeading}
+                <CurrencyText text={pageHeading} />
               </h1>
               <p className="text-sm text-text-muted mt-1.5 max-w-2xl">
                 Showing {earbuds.length} of {total} products with retailer prices
@@ -312,7 +315,7 @@ export default async function EarbudsPage({
                       : "text-text-muted hover:text-text-main"
                   }`}
                 >
-                  Price: Low to High
+                  USD Price: Low to High
                 </Link>
                 <Link
                   href={`/earbuds?${(() => {
@@ -327,7 +330,7 @@ export default async function EarbudsPage({
                       : "text-text-muted hover:text-text-main"
                   }`}
                 >
-                  Price: High to Low
+                  USD Price: High to Low
                 </Link>
               </div>
             </div>
@@ -368,7 +371,7 @@ export default async function EarbudsPage({
                       : "bg-surface-container-low text-text-muted border-border-subtle hover:bg-surface-container hover:text-text-main"
                   }`}
                 >
-                  {pill.label}
+                  <CurrencyText text={pill.label} />
                 </Link>
               );
             })}
@@ -420,7 +423,7 @@ export default async function EarbudsPage({
                   href={f.removeHref}
                   className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 transition-colors"
                 >
-                  <span>{f.label}</span>
+                  <span><CurrencyText text={f.label} /></span>
                   <X className="w-3.5 h-3.5" />
                 </Link>
               ))}

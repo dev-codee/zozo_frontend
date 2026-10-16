@@ -1,3 +1,4 @@
+import Price from "@/app/components/Price";
 import { verifiedRating, publishableDescription } from "@/app/lib/content-quality";
 import Image from "next/image";
 import Link from "next/link";
@@ -276,7 +277,7 @@ export default function PhoneCard({ phone, variant = "list", priority = false }:
       {/* Pricing Strip */}
       <div className="bg-surface-container-lowest border-t border-border-subtle p-3 px-6 flex items-center justify-between">
         <span className="font-bold text-text-main text-lg">
-          {lowestPrice ? `Rs. ${lowestPrice.toLocaleString()}` : (phone.price_pkr || "Price TBA")}
+          <Price product={phone} />
         </span>
 
         <Link

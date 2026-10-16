@@ -1,5 +1,7 @@
 "use client";
 
+import Price from "@/app/components/Price";
+import { useCurrency } from "@/app/context/CurrencyContext";
 import { useMemo, useState } from "react";
 import type { PriceHistoryPoint } from "@/app/lib/api";
 import AppIcon from "@/app/components/AppIcon";
@@ -19,9 +21,6 @@ const PAD_X = 10;
 const PAD_TOP = 14;
 const PAD_BOTTOM = 14;
 
-function formatPrice(n: number) {
-  return `Rs. ${Math.round(n).toLocaleString()}`;
-}
 
 function formatDate(iso: string) {
   const d = new Date(iso);
@@ -30,6 +29,8 @@ function formatDate(iso: string) {
 }
 
 export default function PriceHistoryChart({ points, phoneName }: PriceHistoryChartProps) {
+  const { rates, updatedAt } = useCurrency();
+  const formatPrice = (amount: number) => <Price amount={amount} />;
   const [open, setOpen] = useState(false);
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
 
@@ -211,7 +212,8 @@ export default function PriceHistoryChart({ points, phoneName }: PriceHistoryCha
             </div>
           </div>
 
-          {/* Date range footer */}
+          {rates.PKR && <p className="px-4 md:px-6 text-xs text-text-muted">Historical Pakistan prices converted using one exchange-rate snapshot{updatedAt ? ` (${updatedAt.slice(0, 10)})` : ''}. Percentage changes reflect the original PKR prices.</p>}
+         {/* Date range footer */}
           <div className="px-4 md:px-6 py-3 flex items-center justify-between text-[10px] md:text-xs text-text-muted">
             <span>{formatDate(coords[0].date)}</span>
             <span>Highest: {formatPrice(max)}</span>

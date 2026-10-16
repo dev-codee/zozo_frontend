@@ -1,4 +1,5 @@
 "use client";
+import ReferencePriceFields from "@/app/admin/components/ReferencePriceFields";
 import { notify } from "@/app/lib/notifications";
 
 
@@ -116,7 +117,7 @@ export default function AdminPhoneForm({ initialData, onSubmit, isEditing = fals
 
   const [formData, setFormData] = useState<any>(() => {
     const defaultData = {
-      name: '', brand_slug: '', model_number: '', release_date: '', status: 'available', images: [] as any[], price_pkr: '',
+      name: '', brand_slug: '', model_number: '', release_date: '', status: 'available', images: [] as any[], price_pkr: '', price_usd: '', price_usd_source: '',
       series: '', category: '', subcategory: '', country_availability: '', carrier_version: '', region_version: '', manufacturer: '', made_in: '', tags: [] as string[], video_url: '',
       specs: {
         display: { size_inches: '', resolution: '', type: '', refresh_rate_hz: '', protection: '', peak_brightness_nits: '', features: [] },
@@ -539,6 +540,9 @@ export default function AdminPhoneForm({ initialData, onSubmit, isEditing = fals
     setIsSubmitting(true);
     try {
       const payload = JSON.parse(JSON.stringify(formData));
+      payload.price_usd = formData.price_usd === '' || formData.price_usd == null ? null : Number(formData.price_usd);
+      payload.price_usd_source = formData.price_usd_source || '';
+      if (payload.price_usd !== null && (!Number.isFinite(payload.price_usd) || payload.price_usd < 0)) { notify('Enter a valid USD price'); return; }
       // Cleanup arrays and types
       if (payload.price_pkr !== undefined && payload.price_pkr !== '') {
         payload.price_pkr = Number(payload.price_pkr);
@@ -652,6 +656,7 @@ export default function AdminPhoneForm({ initialData, onSubmit, isEditing = fals
                 <h3 className="text-lg font-bold mb-4">Core Info</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {renderInput('Phone Name', formData.name, v => setFormData((p: any) => ({ ...p, name: v })))}
+                  <ReferencePriceFields value={formData.price_usd} source={formData.price_usd_source} onPrice={v => setFormData((p: any) => ({ ...p, price_usd: v }))} onSource={v => setFormData((p: any) => ({ ...p, price_usd_source: v }))} />
                   {renderInput('Price (PKR) - Header Display Price', formData.price_pkr, v => setFormData((p: any) => ({ ...p, price_pkr: v })), 'number')}
                   <div>
                     <div className="flex items-center justify-between mb-1">

@@ -1,4 +1,6 @@
 "use client";
+import Price from "@/app/components/Price";
+
 
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
@@ -137,11 +139,7 @@ export default function SearchBar({ className = "w-72" }: { className?: string }
                         )}
                       </div>
                       <span className="text-xs text-text-muted truncate mt-0.5">
-                        {(() => {
-                          if (!item.price_pkr) return "Price TBA";
-                          const num = Number(String(item.price_pkr).replace(/[^0-9.]/g, ""));
-                          return !isNaN(num) && num > 0 ? `Rs. ${num.toLocaleString()}` : String(item.price_pkr);
-                        })()}
+                        <Price product={item} />
                       </span>
                     </div>
                   </Link>

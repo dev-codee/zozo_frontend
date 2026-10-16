@@ -1,3 +1,4 @@
+import Price from "@/app/components/Price";
 import { verifiedRating } from "@/app/lib/content-quality";
 import { serializeJsonLd } from "@/app/lib/schema";
 import { cleanMetadata, withoutSiteBrand } from "@/app/lib/seo";
@@ -422,7 +423,7 @@ export default async function PhoneDetailPage({
               {/* Price */}
               <div className="flex items-baseline gap-3 flex-wrap">
                 <span className="font-display-lg text-2xl md:text-3xl font-bold text-price-green tracking-tight">
-                  {lowestPrice ? `Rs. ${lowestPrice.toLocaleString()}` : (phone.price_pkr || "Price TBA")}
+                  <Price product={phone} />
                 </span>
                 <span className="text-xs sm:text-sm text-text-muted">
                   Source: <span className="font-medium text-text-main">{priceSource}</span>
@@ -487,7 +488,7 @@ export default async function PhoneDetailPage({
                       </div>
                       <div className="flex items-center justify-between md:justify-end gap-4 w-full md:w-auto mt-1 md:mt-0 pt-3 md:pt-0 border-t border-border-subtle md:border-0">
                         <div className="font-headline-md text-lg font-bold text-text-main">
-                          Rs. {priceItem.price_pkr.toLocaleString()}
+                          <Price amount={priceItem.price_pkr} />
                         </div>
                         {priceItem.product_url ? (
                           <a
@@ -563,7 +564,7 @@ export default async function PhoneDetailPage({
                               {comp.name}
                             </h4>
                             <span className="text-sm font-bold text-text-main mt-1">
-                              {compLowestPrice ? `Rs. ${compLowestPrice.toLocaleString()}` : <span className="text-text-muted font-medium text-[10px]">(Upcoming)</span>}
+                              <Price product={comp} />
                             </span>
                           </div>
                         </Link>
@@ -603,7 +604,7 @@ export default async function PhoneDetailPage({
                   {[10000, 15000, 20000, 30000, 40000, 50000, 80000, 100000].map(price => (
                     <li key={price}>
                       <Link href={`/phones?max_price=${price}`} className="text-sm text-primary hover:underline">
-                        Mobile phone price under {price.toLocaleString()}
+                        Mobile phone price under <Price amount={price} estimate={false} />
                       </Link>
                     </li>
                   ))}

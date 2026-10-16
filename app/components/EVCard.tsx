@@ -1,3 +1,4 @@
+import Price from "@/app/components/Price";
 import Image from "next/image";
 import Link from "next/link";
 import type { Vehicle } from "@/app/lib/api";
@@ -66,9 +67,8 @@ export default function EVCard({ vehicle, variant = "list", priority = false }: 
 
         <div className="flex flex-col items-end shrink-0">
           <div className="flex items-baseline gap-0.5">
-            <span className="text-xs font-semibold text-text-muted">Rs.</span>
             <span className="text-xl font-bold text-text-main">
-              {lowestPrice ? lowestPrice.toLocaleString() : 'TBA'}
+              <Price product={vehicle} />
             </span>
           </div>
           {lowestPrice ? (

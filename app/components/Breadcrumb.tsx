@@ -1,3 +1,4 @@
+import { CurrencyText } from "@/app/components/Price";
 import Link from "next/link";
 import AppIcon from "./AppIcon";
 
@@ -25,11 +26,11 @@ export default function Breadcrumb({ items }: BreadcrumbProps) {
             <AppIcon name="chevron_right" size={16} aria-hidden="true" />
             {item.href ? (
               <Link href={item.href} className="hover:text-primary transition-colors capitalize py-1.5 px-1 inline-flex items-center min-h-[44px]">
-                {item.label}
+                <CurrencyText text={item.label} />
               </Link>
             ) : (
               <span className="text-text-main font-medium truncate max-w-[200px] md:max-w-none capitalize inline-flex items-center min-h-[44px]" aria-current="page">
-                {item.label}
+                <CurrencyText text={item.label} />
               </span>
             )}
           </li>

@@ -6,8 +6,8 @@ const SORT_OPTIONS = [
   { value: "latest", label: "Latest" },
   { value: "popular", label: "Most Popular" },
   { value: "trending", label: "Trending" },
-  { value: "price_asc", label: "Price: Low to High" },
-  { value: "price_desc", label: "Price: High to Low" },
+  { value: "price_asc", label: "USD Price: Low to High" },
+  { value: "price_desc", label: "USD Price: High to Low" },
 ];
 
 export default function SortSelect() {

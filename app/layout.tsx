@@ -1,3 +1,4 @@
+import { CurrencyProvider } from "./context/CurrencyContext";
 import NotificationHost from "@/app/components/NotificationHost";
 import { serializeJsonLd } from "@/app/lib/schema";
 import { cleanMetadata } from "@/app/lib/seo";
@@ -114,9 +115,11 @@ export default function RootLayout({
       </head>
       <body className="min-h-full flex flex-col font-sans">
         <AuthProvider>
+          <CurrencyProvider>
           <NotificationHost />
           <ActivityTracker />
           {children}
+        </CurrencyProvider>
         </AuthProvider>
       </body>
     </html>

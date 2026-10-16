@@ -1,4 +1,5 @@
 "use client";
+import ReferencePriceFields from "@/app/admin/components/ReferencePriceFields";
 import { notify } from "@/app/lib/notifications";
 
 
@@ -30,7 +31,7 @@ const emptyEarbud = () => ({
   made_in: '',
   tags: '',
   video_url: '',
-  price_pkr: '',
+  price_pkr: '', price_usd: '', price_usd_source: '',
   images: [] as any[],
   specs: {
     audio: {
@@ -464,7 +465,9 @@ export default function AdminEarbudForm({ initialData, onSubmit, isEditing = fal
         made_in: formData.made_in || undefined,
         tags: parseList(formData.tags),
         video_url: formData.video_url || undefined,
-        price_pkr: formData.price_pkr ? Number(formData.price_pkr) : undefined,
+        price_pkr: formData.price_pkr ? Number(formData.price_pkr) : null,
+        price_usd: formData.price_usd === '' || formData.price_usd == null ? null : Number(formData.price_usd),
+        price_usd_source: formData.price_usd_source || '',
         images: formData.images || [],
         prices: formData.prices || [],
         approvalStatus: formData.approvalStatus || 'APPROVED',
@@ -679,6 +682,7 @@ export default function AdminEarbudForm({ initialData, onSubmit, isEditing = fal
                     />
                   </div>
 
+                  <ReferencePriceFields value={formData.price_usd} source={formData.price_usd_source} onPrice={v => setFormData((p: any) => ({ ...p, price_usd: v }))} onSource={v => setFormData((p: any) => ({ ...p, price_usd_source: v }))} />
                   <div>
                     <label className="block text-xs font-semibold text-gray-700 mb-1">Headline Price (PKR)</label>
                     <input

@@ -1,3 +1,4 @@
+import Price from "@/app/components/Price";
 import Image from "next/image";
 import Link from "next/link";
 import type { Earbud } from "@/app/lib/api";
@@ -100,9 +101,8 @@ export default function EarbudCard({ earbud, variant = "grid", priority = false,
         {/* Price Tag */}
         <div className="flex flex-col items-end shrink-0">
           <div className="flex items-baseline gap-0.5">
-            <span className="text-xs font-semibold text-text-muted">Rs.</span>
             <span className="text-lg md:text-xl font-bold text-text-main tracking-tight">
-              {lowestPrice ? lowestPrice.toLocaleString() : "TBA"}
+              <Price product={earbud} />
             </span>
           </div>
           <span className="text-[10px] text-text-muted uppercase tracking-wider font-semibold mt-0.5">

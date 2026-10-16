@@ -1,3 +1,4 @@
+import Price, { CurrencyText } from "@/app/components/Price";
 import { cleanMetadata } from "@/app/lib/seo";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -44,7 +45,7 @@ function LinkGrid({ links }: { links: LinkItem[] }) {
               href={l.href}
               className="text-sm text-text-muted hover:text-primary hover:underline transition-colors"
             >
-              {l.label}
+              <CurrencyText text={l.label} />
             </Link>
           </li>
         ))}
@@ -76,11 +77,11 @@ export default async function SiteMapPage() {
   ];
 
   const byPrice: LinkItem[] = [
-    { label: "Mobiles under 15,000", href: "/phones?max_price=15000" },
-    { label: "Mobiles under 30,000", href: "/phones?max_price=30000" },
-    { label: "Mobiles under 50,000", href: "/phones?max_price=50000" },
-    { label: "Mobiles under 80,000", href: "/phones?max_price=80000" },
-    { label: "Mobiles under 150,000", href: "/phones?max_price=150000" },
+    { label: "Mobiles under Rs. 15,000", href: "/phones?max_price=15000" },
+    { label: "Mobiles under Rs. 30,000", href: "/phones?max_price=30000" },
+    { label: "Mobiles under Rs. 50,000", href: "/phones?max_price=50000" },
+    { label: "Mobiles under Rs. 80,000", href: "/phones?max_price=80000" },
+    { label: "Mobiles under Rs. 150,000", href: "/phones?max_price=150000" },
   ];
 
 
@@ -169,7 +170,7 @@ export default async function SiteMapPage() {
                                 {phone.name}
                               </span>
                               <span className="block text-xs font-bold text-price-green mt-0.5">
-                                {price ? `Rs. ${price.toLocaleString()}` : (phone.price_pkr || "Price TBA")}
+                                <Price product={phone} />
                               </span>
                             </div>
                           </Link>

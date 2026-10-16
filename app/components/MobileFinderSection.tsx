@@ -1,4 +1,7 @@
 "use client";
+import { useCurrency } from "@/app/context/CurrencyContext";
+import Price from "@/app/components/Price";
+
 
 import { useState } from "react";
 import Link from "next/link";
@@ -29,6 +32,9 @@ const priceChips = [15000, 20000, 25000, 30000, 40000, 50000, 80000, 100000];
 
 export default function MobileFinderSection() {
   const router = useRouter();
+  const { currency, rates, convertAmount } = useCurrency();
+  const filterCurrency = currency === "PKR" || (rates.PKR && rates[currency]) ? currency : "PKR";
+  const display = (value: number) => Number((convertAmount(value, "PKR", filterCurrency) ?? value).toFixed(2));
   const [minVal, setMinVal] = useState(PRICE_MIN);
   const [maxVal, setMaxVal] = useState(PRICE_MAX);
 
@@ -38,11 +44,11 @@ export default function MobileFinderSection() {
   const handleMaxRange = (v: number) => setMaxVal(Math.max(v, minVal + PRICE_STEP));
 
   const handleMinInput = (raw: string) => {
-    const n = clamp(Number(raw) || 0);
+    const n = clamp(convertAmount(Number(raw) || 0, filterCurrency, "PKR") ?? 0);
     setMinVal(Math.min(n, maxVal - PRICE_STEP));
   };
   const handleMaxInput = (raw: string) => {
-    const n = clamp(Number(raw) || 0);
+    const n = clamp(convertAmount(Number(raw) || 0, filterCurrency, "PKR") ?? 0);
     setMaxVal(Math.max(n, minVal + PRICE_STEP));
   };
 
@@ -72,24 +78,26 @@ export default function MobileFinderSection() {
               <h3 className="text-sm font-bold text-text-main mb-4">Price</h3>
 
               <div className="flex items-center gap-2 mb-6">
-                <span className="text-sm font-semibold text-text-muted">Rs</span>
+                <span className="text-sm font-semibold text-text-muted">{filterCurrency}</span>
                 <input
                   type="number"
+                  step="any"
                   aria-label="Minimum price"
-                  value={minVal}
-                  min={PRICE_MIN}
-                  max={PRICE_MAX}
+                  value={display(minVal)}
+                  min={display(PRICE_MIN)}
+                  max={display(PRICE_MAX)}
                   onChange={(e) => handleMinInput(e.target.value)}
                   className="w-full bg-surface-white border border-border-subtle rounded-md px-3 py-2 text-sm focus:ring-1 focus:ring-primary focus:border-primary"
                 />
                 <span className="text-sm text-text-muted px-1">to</span>
-                <span className="text-sm font-semibold text-text-muted">Rs</span>
+                <span className="text-sm font-semibold text-text-muted">{filterCurrency}</span>
                 <input
                   type="number"
+                  step="any"
                   aria-label="Maximum price"
-                  value={maxVal}
-                  min={PRICE_MIN}
-                  max={PRICE_MAX}
+                  value={display(maxVal)}
+                  min={display(PRICE_MIN)}
+                  max={display(PRICE_MAX)}
                   onChange={(e) => handleMaxInput(e.target.value)}
                   className="w-full bg-surface-white border border-border-subtle rounded-md px-3 py-2 text-sm focus:ring-1 focus:ring-primary focus:border-primary"
                 />
@@ -186,7 +194,7 @@ export default function MobileFinderSection() {
                 href={`/phones?max_price=${p}`}
                 className="text-center px-2 py-2 rounded-md border border-border-subtle bg-surface-white text-xs font-semibold text-text-main hover:border-primary hover:text-primary transition-colors"
               >
-                Rs.{(p / 1000).toLocaleString()}k
+                <Price amount={p} estimate={false} />
               </Link>
             ))}
           </div>
