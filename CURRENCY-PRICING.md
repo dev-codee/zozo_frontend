@@ -1,6 +1,6 @@
 # USD and local-currency pricing
 
-USD is the primary product price. The visitor's selected local currency appears underneath, unless it is already USD. A saved manual choice takes priority over IP country; unknown countries fall back to USD.
+USD is the primary product price, rounded to whole dollars for display only. Stored prices and conversion/filter calculations retain their precision. The visitor's selected local currency appears underneath, unless it is already USD. A saved manual choice takes priority over IP country; unknown countries fall back to USD.
 
 ## Managing prices
 
@@ -17,7 +17,7 @@ The `≈` marker identifies a conversion, and its tooltip shows the original amo
 ## Deployment
 
 1. Deploy the backend currency routes/models before the frontend. Keep `NEXT_PUBLIC_API_URL` pointing at the backend `/api` base.
-2. With Cloudflare, enable IP Geolocation and pass `CF-IPCountry` to Next.js. With Vercel, its country header is selected automatically. For another ingress, set `GEOIP_COUNTRY_HEADER` to the trusted country-code header it supplies. The ingress must overwrite this header, and direct public origin access should be restricted. Country is used only for a display preference, never permissions.
+2. With Cloudflare, enable IP Geolocation and pass `CF-IPCountry` to Next.js. With Vercel, its country header is selected automatically. For another ingress, set `GEOIP_COUNTRY_HEADER` to the trusted country-code header it supplies. The ingress must overwrite this header, and direct public origin access should be restricted. If no country header is available, automatic mode looks up the visitor's IP directly from their browser through `https://api.country.is/`, with a four-second timeout. Only the two-letter country is cached in a first-party cookie for one hour; the returned IP is not stored. Header detection takes precedence over the cached country. Manual currency choices skip the fallback. Country is used only for a display preference, never permissions.
 3. The backend fetches the public USD rates from ExchangeRate-API daily on demand and persists the last valid snapshot in MongoDB (`exchangeratesnapshots`). No API key is required. Attribution is included in the footer.
 4. Failed refreshes retain the last valid snapshot for at most seven days. Beyond that, the original currencies remain visible; cross-currency filtering returns a temporary error rather than incorrect results. Refresh retries are throttled for 15 minutes.
 

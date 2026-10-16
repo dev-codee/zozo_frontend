@@ -137,7 +137,6 @@ export default async function PhoneDetailPage({
   const rating = verifiedRating(phone.rating);
   const reviewCount = phone.rating?.count || 0;
   const hasAffiliateUrls = phone.prices?.some((p) => !!p.product_url);
-  const priceSource = phone.specs?.extra_specs?.price_section?.price_source || "Source not provided";
 
   // Fetch competitor phones
   let competitorPhones: Phone[] = [];
@@ -424,9 +423,6 @@ export default async function PhoneDetailPage({
               <div className="flex items-baseline gap-3 flex-wrap">
                 <span className="font-display-lg text-2xl md:text-3xl font-bold text-price-green tracking-tight">
                   <Price product={phone} />
-                </span>
-                <span className="text-xs sm:text-sm text-text-muted">
-                  Source: <span className="font-medium text-text-main">{priceSource}</span>
                 </span>
               </div>
 

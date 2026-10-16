@@ -1,8 +1,13 @@
 const { chromium } = await import(process.env.PLAYWRIGHT_MODULE_PATH || 'playwright');
 import assert from 'node:assert/strict';
 const browser = await chromium.launch({headless:true,executablePath:process.env.CHROMIUM_EXECUTABLE_PATH});
-const context = await browser.newContext({extraHTTPHeaders:{'cf-ipcountry':'PK'},viewport:{width:1440,height:1000}});
+const context = await browser.newContext({viewport:{width:1440,height:1000}});
 await context.route(/https:\/\/(www\.googletagmanager|www\.google-analytics|googleads|accounts\.google)/,route=>route.abort());
+let countryLookups = 0;
+await context.route('https://api.country.is/', route => {
+  countryLookups++;
+  return route.fulfill({ json: { country: 'PK' } });
+});
 const page=await context.newPage();
 const errors=[];page.on('pageerror',e=>errors.push(e.message));
 try {
@@ -11,14 +16,27 @@ try {
   await page.waitForFunction(()=>document.querySelector('select[aria-label="Local currency"]')?.textContent.includes('Auto (PKR)'));
   const prices=page.locator('[data-price-currency="USD"]');
   await prices.first().waitFor();
-  assert.match(await prices.first().innerText(),/USD\s*500\.00/);
+  assert.match(await prices.first().innerText(),/USD\s*500(?:\n|$)/);
   assert.match(await prices.first().innerText(),/PKR\s*155,000(?:\.00)?/);
+  assert.equal(countryLookups, 1, 'Missing-country header must trigger visitor IP lookup');
+  await page.reload({waitUntil:'networkidle'});
+  await page.locator('select[data-currency-ready="true"]').waitFor();
+  await page.waitForFunction(()=>document.querySelector('select[aria-label="Local currency"]')?.textContent.includes('Auto (PKR)'));
+  assert.equal(countryLookups, 1, 'Cached country should prevent repeat lookups');
+  assert.match(await prices.first().innerText(), /PKR\s*155,000/);
   await page.getByRole('combobox',{name:'Local currency'}).selectOption('AED');
   await page.waitForFunction(()=>document.body.innerText.includes('AED 1,835.00')||document.body.innerText.includes('AED 1,835.00'));
   assert.match(await prices.first().innerText(),/≈ AED\s*1,835\.00/);
   await page.reload({waitUntil:'networkidle'});
+  await page.locator('select[data-currency-ready="true"]').waitFor();
   assert.equal(await page.getByRole('combobox',{name:'Local currency'}).inputValue(),'AED');
   await page.getByRole('combobox',{name:'Local currency'}).selectOption('USD');
+  await context.clearCookies({name:'detected_country'});
+  await page.reload({waitUntil:'networkidle'});
+  await page.locator('select[data-currency-ready="true"]').waitFor();
+  await page.waitForFunction(()=>document.querySelector('select[aria-label="Local currency"]')?.value === 'USD');
+  assert.equal(countryLookups, 1, 'A manual USD preference must skip IP detection');
+  assert.equal(await page.getByRole('combobox',{name:'Local currency'}).inputValue(), 'USD');
   const max=page.getByRole('spinbutton',{name:'Maximum price in USD'}).first();
   await max.fill('500');
   await page.getByRole('button',{name:'Apply Price'}).first().click();
@@ -29,12 +47,35 @@ try {
   for (const path of ['/earbuds','/vehicles','/currency-test-phone','/currency-test-earbud','/currency-test-vehicle','/compare?slugs=currency-test-phone,currency-test-phone-2']) {
     await page.goto('http://localhost:3107'+path,{waitUntil:'networkidle'});
     assert.ok((await page.locator('[data-price-currency="USD"]').count())>0,`USD missing on ${path}`);
+    if (path === '/currency-test-phone') {
+      assert.equal(await page.getByText('Source:', {exact:false}).count(), 0);
+      const approximation = page.getByLabel('Approximately').first();
+      await approximation.waitFor();
+      const size = await approximation.evaluate(el => ({ marker: parseFloat(getComputedStyle(el).fontSize), price: parseFloat(getComputedStyle(el.parentElement).fontSize) }));
+      assert.ok(size.marker < size.price && size.marker <= 14, 'Approximation marker should be smaller than its price');
+    }
     console.log('Verified',path);
   }
   await page.setViewportSize({width:390,height:844});
   await page.goto('http://localhost:3107/phones',{waitUntil:'networkidle'});
   assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth <= innerWidth+1),'Mobile overflow');
   await page.screenshot({path:'/tmp/zozo-currency-mobile.png',fullPage:true});
+  const headerContext = await browser.newContext({extraHTTPHeaders:{'cf-ipcountry':'AE'}});
+  let unexpectedLookups = 0;
+  await headerContext.route('https://api.country.is/', route => { unexpectedLookups++; return route.abort(); });
+  const headerPage = await headerContext.newPage();
+  await headerPage.goto('http://localhost:3107/phones', {waitUntil:'networkidle'});
+  await headerPage.waitForFunction(()=>document.querySelector('select[aria-label="Local currency"]')?.textContent.includes('Auto (AED)'));
+  assert.match(await headerPage.locator('[data-price-currency="USD"]').first().innerText(), /AED\s*1,835/);
+  assert.equal(unexpectedLookups, 0, 'Country header must bypass the fallback');
+  await headerContext.close();
+  const unavailableContext = await browser.newContext();
+  await unavailableContext.route('https://api.country.is/', route => route.abort());
+  const unavailablePage = await unavailableContext.newPage();
+  await unavailablePage.goto('http://localhost:3107/phones', {waitUntil:'networkidle'});
+  assert.match(await unavailablePage.locator('[data-price-currency="USD"]').first().innerText(), /USD\s*500$/);
+  await unavailableContext.close();
+  console.log('Missing-header lookup, country cache, manual override, header detection and lookup failure verified');
   await context.addCookies([{name:'admin_token',value:'eyJhbGciOiJub25lIn0.eyJyb2xlIjoiU1VQRVJfQURNSU4ifQ.test',domain:'localhost',path:'/'}]);
   await context.addInitScript(()=>localStorage.setItem('admin_user',JSON.stringify({name:'Test Admin',role:'SUPER_ADMIN'})));
   await page.setViewportSize({width:1440,height:1000});

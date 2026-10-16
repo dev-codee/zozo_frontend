@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useEffect, useState, useCallback, useRef, type ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
-import { convert, formatMoney, validCurrency, type Rates } from '@/app/lib/currency';
+import { convert, countryCurrency, formatMoney, normalizeCountry, validCurrency, type Rates } from '@/app/lib/currency';
 
 type State = { currency: string; rates: Rates; updatedAt: string | null; stale: boolean; automatic: boolean; ready: boolean };
 const initial: State = { currency: 'USD', rates: { USD: 1 }, updatedAt: null, stale: true, automatic: true, ready: false };
@@ -17,10 +17,30 @@ export function CurrencyProvider({ children }: { children: ReactNode }) {
   const load = useCallback(async () => {
     const version = ++requestVersion.current;
     try {
-      const response = await fetch('/currency-context', { cache: 'no-store' });
+      const response = await fetch('/currency-context', { cache: 'no-store', signal: AbortSignal.timeout(10000) });
       if (!response.ok) throw new Error('Currency unavailable');
       const data = await response.json();
       if (version !== requestVersion.current || !validCurrency(data.currency)) return;
+      // Some deployments (including a plain nginx proxy) provide no country
+      // header. Look up the browser's IP, not the application server's IP.
+      // Only the country is retained, and a manual currency always wins.
+      if (data.automatic && !normalizeCountry(data.country)) {
+        try {
+          const locationResponse = await fetch('https://api.country.is/', {
+            credentials: 'omit', referrerPolicy: 'no-referrer',
+            signal: AbortSignal.timeout(4000),
+          });
+          if (locationResponse.ok) {
+            const country = normalizeCountry((await locationResponse.json()).country);
+            if (country && version === requestVersion.current) {
+              data.country = country;
+              data.currency = countryCurrency(country);
+              cookie('detected_country', country, 3600);
+            }
+          }
+        } catch { /* Keep USD and the manual selector if IP lookup is unavailable. */ }
+      }
+      if (version !== requestVersion.current) return;
       setState({ ...data, ready: true });
       const previous = document.cookie.split('; ').find(c => c.startsWith('display_currency='))?.split('=')[1];
       cookie('display_currency', data.currency);
@@ -37,6 +57,9 @@ export function CurrencyProvider({ children }: { children: ReactNode }) {
     cookie('currency_preference', currency);
     cookie('display_currency', currency);
     setState(s => ({ ...s, currency, automatic: false }));
+    // A choice made during IP detection cancels that request; still finish
+    // loading its rates through a new request using the saved preference.
+    if (!state.ready) void load();
     router.refresh();
   };
   const format = (amount: number, from = 'PKR') => {

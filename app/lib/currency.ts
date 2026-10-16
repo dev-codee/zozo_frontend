@@ -23,6 +23,11 @@ export function validCurrency(value: unknown): value is string {
 export function countryCurrency(country: string | null) {
   return COUNTRY_CURRENCY[country?.toUpperCase() || ''] || 'USD';
 }
+export function normalizeCountry(value: unknown): string | null {
+  if (typeof value !== 'string') return null;
+  const country = value.trim().toUpperCase();
+  return /^[A-Z]{2}$/.test(country) && country !== 'XX' && country !== 'ZZ' ? country : null;
+}
 export function convert(amount: number, from: string, to: string, rates: Rates): number | null {
   if (!Number.isFinite(amount) || amount < 0) return null;
   if (from === to) return amount;
@@ -32,7 +37,7 @@ export function convert(amount: number, from: string, to: string, rates: Rates):
 }
 export function formatMoney(amount: number, currency: string) {
   // Explicit precision keeps server and browser output identical across ICU versions.
-  const digits = ['PKR', 'JPY', 'KRW', 'VND', 'CLP', 'ISK'].includes(currency) ? 0 : ['KWD', 'BHD', 'OMR', 'JOD', 'IQD'].includes(currency) ? 3 : 2;
+  const digits = ['USD', 'PKR', 'JPY', 'KRW', 'VND', 'CLP', 'ISK'].includes(currency) ? 0 : ['KWD', 'BHD', 'OMR', 'JOD', 'IQD'].includes(currency) ? 3 : 2;
   return new Intl.NumberFormat('en', { style: 'currency', currency, currencyDisplay: 'code', minimumFractionDigits: digits, maximumFractionDigits: digits }).format(amount);
 }
 const positive = (value: unknown): value is number => typeof value === 'number' && Number.isFinite(value) && value > 0;

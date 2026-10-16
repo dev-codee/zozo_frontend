@@ -22,8 +22,8 @@ export default function Price({ product, amount, source = 'PKR', estimate = true
     : undefined;
   const showSecondary = secondary && secondary.currency !== primary.currency;
   return <span className="inline-flex flex-col align-top leading-snug" data-price-currency={primary.currency}>
-    <span title={title(primary)}>{primary.estimated ? '≈ ' : ''}{formatMoney(primary.amount, primary.currency)}</span>
-    {showSecondary && <span className="text-[0.75em] font-medium opacity-80" title={title(secondary)}>{secondary.estimated ? '≈ ' : ''}{formatMoney(secondary.amount, secondary.currency)}</span>}
+    <span title={title(primary)}>{primary.estimated && <><span aria-label="Approximately" className="inline-block align-[0.12em] text-[length:min(0.65em,14px)] font-normal">≈</span>{' '}</>}{formatMoney(primary.amount, primary.currency)}</span>
+    {showSecondary && <span className="text-[0.75em] font-medium opacity-80" title={title(secondary)}>{secondary.estimated && <><span aria-label="Approximately" className="inline-block align-[0.12em] text-[length:min(0.65em,14px)] font-normal">≈</span>{' '}</>}{formatMoney(secondary.amount, secondary.currency)}</span>}
   </span>;
 }
 

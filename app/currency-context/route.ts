@@ -1,12 +1,13 @@
 import type { NextRequest } from 'next/server';
 import { getApiBaseUrl } from '@/app/lib/api';
-import { countryCurrency, validCurrency } from '@/app/lib/currency';
+import { countryCurrency, normalizeCountry, validCurrency } from '@/app/lib/currency';
 
 export async function GET(request: NextRequest) {
   // Only configure a header that your ingress overwrites, and prevent direct
   // access to the origin. IP location is a preference, never authorization.
   const header = process.env.GEOIP_COUNTRY_HEADER || (process.env.VERCEL ? 'x-vercel-ip-country' : 'cf-ipcountry');
-  const country = request.headers.get(header)?.toUpperCase() || null;
+  const country = normalizeCountry(request.headers.get(header))
+    || normalizeCountry(request.cookies.get('detected_country')?.value);
   const saved = request.cookies.get('currency_preference')?.value;
   const currency = validCurrency(saved) ? saved : countryCurrency(country);
   let snapshot = { rates: { USD: 1 } as Record<string, number>, updatedAt: null as string | null, stale: true };

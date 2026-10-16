@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import ts from 'typescript';
 const compiled = ts.transpileModule(readFileSync(new URL('../app/lib/currency.ts', import.meta.url), 'utf8'), { compilerOptions: { module: ts.ModuleKind.ESNext, target: ts.ScriptTarget.ES2020 } }).outputText;
-const { convert, resolvePrice, countryCurrency, validCurrency, formatMoney } = await import(`data:text/javascript;base64,${Buffer.from(compiled).toString('base64')}`);
+const { convert, resolvePrice, countryCurrency, normalizeCountry, validCurrency, formatMoney } = await import(`data:text/javascript;base64,${Buffer.from(compiled).toString('base64')}`);
 const rates = { USD: 1, PKR: 280, AED: 3.67, JPY: 150, KWD: 0.307 };
 test('IP country defaults and supported manual choices', () => {
   assert.equal(countryCurrency('pk'), 'PKR');
@@ -12,6 +12,10 @@ test('IP country defaults and supported manual choices', () => {
   assert.equal(countryCurrency(null), 'USD');
   assert.equal(countryCurrency('XX'), 'USD');
   assert.equal(validCurrency('<script>'), false);
+  assert.equal(normalizeCountry(' pk '), 'PK');
+  assert.equal(normalizeCountry('XX'), null);
+  assert.equal(normalizeCountry('T1'), null);
+  assert.equal(normalizeCountry(null), null);
 });
 test('preserves a Pakistani price and prefers USD reference abroad', () => {
   const product = { price_usd: 500, price_pkr: 155000 };
@@ -42,4 +46,8 @@ test('budget conversion round trips and currency precision', () => {
   assert.equal(convert(canonical, 'PKR', 'USD', rates), 500);
   assert.match(formatMoney(1234.56, 'JPY'), /1,235/);
   assert.match(formatMoney(1.23456, 'KWD'), /1\.235/);
+  assert.match(formatMoney(499.49, 'USD'), /USD\s499$/);
+  assert.match(formatMoney(499.5, 'USD'), /USD\s500$/);
+  // Display rounding must not change conversion/filtering precision.
+  assert.equal(resolvePrice({ price_usd: 499.5 }, 'USD', rates).amount, 499.5);
 });
